@@ -1,14 +1,15 @@
-#to-do
+# to-do
 - toggle navbar
 - child nav
 - vertical nav full height
 
-#components
+# components
 - navigation bar
     - side bar
     - top bar
     - items
-    ``` props: {
+    ``` 
+    props: {
         icon: @mdi,
         name: string,
         child: bool (if exist),
@@ -18,7 +19,8 @@
 
 - image
     - round image
-    ```props:{
+    ```
+    props:{
         source: string,
         size: css style | width & height,
         alt: string (not necessary)
