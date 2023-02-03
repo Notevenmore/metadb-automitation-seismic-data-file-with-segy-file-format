@@ -3,12 +3,12 @@
     transform: translateX(0px);
     height: auto;
     overflow: visible;
-  }
-  
-  .sideBar {
+}
+
+.sideBar {
     opacity: 0;
     transform: translateX(-10px);
-    transition: all .5s ease;
+    transition: all 0.5s ease;
     height: 0;
     overflow: hidden;
-  }
+}
