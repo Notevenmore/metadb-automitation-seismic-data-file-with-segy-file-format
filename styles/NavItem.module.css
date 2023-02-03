@@ -1,0 +1,11 @@
+.navItem:hover .navItemChevron {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.navItemChevron {
+    display: inline-block;
+    transform: translateX(-2px);
+    transition: all .25s;
+    opacity: 0;
+}
