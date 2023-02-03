@@ -2,8 +2,8 @@ import { mdiAccount, mdiAdjust, mdiAdvertisements, mdiAirHorn, mdiAirplane,  } f
 
 export default [
     {
-        name: "Test0",
-        link: "/test",
+        name: "Home",
+        link: "/",
         icon: mdiAccount,
     },
     {
@@ -23,11 +23,15 @@ export default [
     },
     {
         name: "Test4 ahuyfgbueb",
-        link: "/test",
         icon: mdiAirplane,
-        children: [
+        child: [
             {
-                name: "Test3",
+                name: "Home 2",
+                link: "/",
+                icon: mdiAccount,
+            },
+            {
+                name: "Test55",
                 link: "/test",
                 icon: mdiAccount,
             },
