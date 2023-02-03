@@ -5,5 +5,7 @@ Example:
 ```
 import Layout from '../Layout'
 ...
-<Layout>{children}</Layout>
+<Layout>
+    <div>content</div>
+</Layout>
 ```
