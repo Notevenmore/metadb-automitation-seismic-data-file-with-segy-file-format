@@ -4,7 +4,7 @@ import RoundImage from "../image/RoundImage";
 
 export default function TopBar(props) {
     return (
-        <nav className="w-full flex justify-between items-center py-2 px-4 border-b-2 border-slate-200">
+        <nav className="w-full flex justify-between items-center py-2 px-5 border-b-2 border-slate-200">
             <div className="flex items-center gap-x-4">
                 <Icon path={mdiHomeFloorA} size={1.5} onClick={props.handleClick} />
                 <div>title</div>
