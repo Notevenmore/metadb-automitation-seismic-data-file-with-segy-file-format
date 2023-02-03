@@ -22,7 +22,7 @@
     ```
     props:{
         source: string,
-        size: css style | width & height,
+        size: css style | width or height,
         alt: string (not necessary)
     }
     ```
