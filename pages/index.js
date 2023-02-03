@@ -100,34 +100,34 @@ export default function Home() {
 
             <label className='text-4xl font-bold'>Buttons & Testing scroll</label>
             <br></br>
-            <Buttons path='/anothertest' button_description='Choose file manually' />
-            <Buttons path='/anothertest' button_description='Make a new document' />
-            <Buttons path='/anothertest' button_description='View drafts' />
-            <Buttons path='/anothertest' button_description='Connect with database' />
-            <Buttons path='/anothertest' button_description='Choose file manually' />
-            <Buttons path='/anothertest' button_description='Make a new document' />
-            <Buttons path='/anothertest' button_description='View drafts' />
-            <Buttons path='/anothertest' button_description='Connect with database' />
-            <Buttons path='/anothertest' button_description='Choose file manually' />
-            <Buttons path='/anothertest' button_description='Make a new document' />
-            <Buttons path='/anothertest' button_description='View drafts' />
-            <Buttons path='/anothertest' button_description='Connect with database' />
-            <Buttons path='/anothertest' button_description='Choose file manually' />
-            <Buttons path='/anothertest' button_description='Make a new document' />
-            <Buttons path='/anothertest' button_description='View drafts' />
-            <Buttons path='/anothertest' button_description='Connect with database' />
-            <Buttons path='/anothertest' button_description='Choose file manually' />
-            <Buttons path='/anothertest' button_description='Make a new document' />
-            <Buttons path='/anothertest' button_description='View drafts' />
-            <Buttons path='/anothertest' button_description='Connect with database' />
-            <Buttons path='/anothertest' button_description='Choose file manually' />
-            <Buttons path='/anothertest' button_description='Make a new document' />
-            <Buttons path='/anothertest' button_description='View drafts' />
-            <Buttons path='/anothertest' button_description='Connect with database' />
-            <Buttons path='/anothertest' button_description='Choose file manually' />
-            <Buttons path='/anothertest' button_description='Make a new document' />
-            <Buttons path='/anothertest' button_description='View drafts' />
-            <Buttons path='/anothertest' button_description='Connect with database' />
+            <Buttons path='/' button_description='Choose file manually' />
+            <Buttons path='/' button_description='Make a new document' />
+            <Buttons path='/' button_description='View drafts' />
+            <Buttons path='/' button_description='Connect with database' />
+            <Buttons path='/' button_description='Choose file manually' />
+            <Buttons path='/' button_description='Make a new document' />
+            <Buttons path='/' button_description='View drafts' />
+            <Buttons path='/' button_description='Connect with database' />
+            <Buttons path='/' button_description='Choose file manually' />
+            <Buttons path='/' button_description='Make a new document' />
+            <Buttons path='/' button_description='View drafts' />
+            <Buttons path='/' button_description='Connect with database' />
+            <Buttons path='/' button_description='Choose file manually' />
+            <Buttons path='/' button_description='Make a new document' />
+            <Buttons path='/' button_description='View drafts' />
+            <Buttons path='/' button_description='Connect with database' />
+            <Buttons path='/' button_description='Choose file manually' />
+            <Buttons path='/' button_description='Make a new document' />
+            <Buttons path='/' button_description='View drafts' />
+            <Buttons path='/' button_description='Connect with database' />
+            <Buttons path='/' button_description='Choose file manually' />
+            <Buttons path='/' button_description='Make a new document' />
+            <Buttons path='/' button_description='View drafts' />
+            <Buttons path='/' button_description='Connect with database' />
+            <Buttons path='/' button_description='Choose file manually' />
+            <Buttons path='/' button_description='Make a new document' />
+            <Buttons path='/' button_description='View drafts' />
+            <Buttons path='/' button_description='Connect with database' />
           </div>
         </div>
       </div>
