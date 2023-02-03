@@ -13,7 +13,7 @@ export default function Layout({ children }) {
     }
 
     return (
-        <div className={sideBar && Styles.sideBarOpen}>
+        <div className={sideBar ? Styles.sideBarOpen : undefined}>
             <TopBar handleClick={toggleNavBar}></TopBar>
             <div className={Styles.sideBar}>
                 <SideBar></SideBar>
