@@ -9,8 +9,28 @@ import Technical_report from '../public/icons/technical_report.svg'
 import Well from '../public/icons/well.svg'
 import Well_sample_core from '../public/icons/well_sample_core.svg'
 import Arrow from '../public/icons/arrow_notrail.svg'
+import TableComponent from '../components/table'
 
 const anothertest = () => {
+    const tableData = {
+        header: ["id", "email", "first_name", "last_name", "avatar"],
+        content: [
+            {
+                "id": 1,
+                "email": "george.bluth@reqres.in",
+                "first_name": "George",
+                "last_name": "Bluth",
+                "avatar": "https://reqres.in/img/faces/1-image.jpg"
+            },
+            {
+                "id": 2,
+                "email": "janet.weaver@reqres.in",
+                "first_name": "Janet",
+                "last_name": "Weaver",
+                "avatar": "https://reqres.in/img/faces/2-image.jpg"
+            }
+        ]
+    }
     return (
         <div className="flex flex-col h-screen text-[14.5px]">
             <div className="flex flex-initial items-center min-h-[50px] border border-black">
@@ -69,7 +89,8 @@ const anothertest = () => {
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vulputate mattis tortor sed bibendum. Nunc accumsan velit tortor, vulputate tempor ligula gravida eget. Nunc quam nisl, posuere ut mauris et, lobortis ullamcorper nunc. Mauris fermentum tincidunt porttitor. Nunc ac lacinia lectus, vitae mattis ex. Curabitur eget porttitor diam. Aliquam interdum suscipit urna, a semper dui pellentesque id. Cras justo nibh, cursus et sem sed, interdum pulvinar est. Nunc ut commodo nunc. Etiam ut justo tincidunt, egestas neque at, maximus erat. Maecenas maximus erat lacus, eget ultricies neque pulvinar at. Mauris sagittis tortor vel erat pharetra tempor. Integer facilisis, urna sed consectetur volutpat, justo lectus venenatis risus, laoreet bibendum mi ex vel leo. Duis in nibh dui. Vestibulum pretium at metus quis pretium. Suspendisse enim libero, posuere sed magna ac, placerat placerat mauris.
                         </p>
                         <br></br>
-
+                        <Buttons path={'/tabledemo'} button_description='Go to table demo page' />
+                        <TableComponent header={tableData.header} content={tableData.content}/>
                         <label className='text-4xl font-bold'>Buttons & Testing scroll</label>
                         <br></br>
                         <Buttons path='/anothertest' button_description='Choose file manually' />
