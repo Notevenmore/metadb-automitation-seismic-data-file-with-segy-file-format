@@ -1,4 +1,3 @@
-import { tableData } from "./demodata"
 import axios from "axios";
 
 const TableComponent = ({ header, content, additional_styles }) => {
