@@ -6,6 +6,7 @@ Props:
     name: string,
     link: path (not required if contain child),
     child: bool (default: false),
+    collapse: bool (not required)
 }
 ```
 
@@ -18,6 +19,7 @@ import {mdiIcon} from '@mdi/js'
     icon: mdiIcon,
     name: "Home",
     link: "/",
+    collapse: true || false,
 ></Item>
 or
 <Item

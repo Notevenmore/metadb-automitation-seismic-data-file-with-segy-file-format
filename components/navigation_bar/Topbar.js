@@ -14,7 +14,7 @@ export default function TopBar(props) {
                 <div className="border-l-[1.5px] border-slate-200 h-6"> </div>
                 <RoundImage
                     source="/unknown.jpg"
-                    size={{ width: "1.25rem" }}
+                    size={{ width: "1.5rem" }}
                 ></RoundImage>
             </div>
         </nav>

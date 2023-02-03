@@ -10,7 +10,11 @@ This vertical navigaiton bar will have it's data provided from [here](../../rout
 - path
 - children navigation (not yet developed)
 To add more into the vertical navigation menu, add/sort/modify the data in the link above.
-
+Props:
+```
+collapse: bool (not required)
+```
+collapse props is for collapsing the navigation name, leaving only icons behind.
 Example:
 ```
 import SideBar from '../SideBar'
@@ -23,7 +27,7 @@ This top bar will be used to display the title, notification, and user profile. 
 
 Props:
 ```
-handleClick: toggle function
+handleClick: toggle function (not required)
 ```
 
 Example: 
