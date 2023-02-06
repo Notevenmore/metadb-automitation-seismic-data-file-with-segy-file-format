@@ -12,12 +12,12 @@ export default function LayoutCollapse({ children }) {
     }
 
     return (
-        <div className={`${sideBar ? Styles.sideBarOpen : undefined} h-screen overflow-hidden`}>
+        <div className={`${sideBar ? Styles.sideBarOpen : ""} h-screen overflow-hidden`}>
             <TopBar handleClick={toggleNavBar}></TopBar>
-            <div className={`${Styles.sideBar} full-height`}>
+            <div className={`full-height ${Styles.sideBar}`}>
                 <SideBar></SideBar>
             </div>
-            <div className="full-height h-full overflow-auto">
+            <div className="h-full overflow-auto">
                 {children}
                 <Footer></Footer>
             </div>

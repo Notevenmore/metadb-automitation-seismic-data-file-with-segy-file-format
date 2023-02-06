@@ -12,14 +12,20 @@ This vertical navigaiton bar will have it's data provided from [here](../../rout
 To add more into the vertical navigation menu, add/sort/modify the data in the link above.
 Props:
 ```
-collapse: bool (not required)
+{
+    collapse: bool (not required),
+    full: bool (not required)
+}
 ```
 collapse props is for collapsing the navigation name, leaving only icons behind.
 Example:
 ```
 import SideBar from '../SideBar'
 ...
-<SideBar></SideBar>
+<SideBar
+    collapse={false}
+    half={true}
+></SideBar>
 ```
 
 ## Top Bar

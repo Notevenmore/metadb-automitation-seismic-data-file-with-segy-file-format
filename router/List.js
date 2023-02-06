@@ -13,7 +13,7 @@ export default [
     },
     {
         name: "Test2",
-        link: "/test",
+        link: "/test2",
         icon: mdiAdvertisements,
     },
     {
@@ -36,5 +36,10 @@ export default [
                 icon: mdiAccount,
             },
         ]
+    },
+    {
+        name: "Test5",
+        link: "/test",
+        icon: mdiAirHorn,
     },
 ]
