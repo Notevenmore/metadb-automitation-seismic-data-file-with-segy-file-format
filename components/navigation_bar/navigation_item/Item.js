@@ -20,7 +20,7 @@ export default function Item({ icon, name, child, link, collapse }) {
                     collapse={collapse}
                 ></Child>
             </div>
-            {child && toggleOpen && (
+            {!collapse && child && toggleOpen && (
                 <div className="ml-4">
                     {child.map((item) => (
                         <Child
@@ -40,8 +40,8 @@ function Child({ icon, name, link, collapse }) {
     const path = link ? link : "";
 
     return (
-        <Link href={path} className={`${styles.navItem}  hover:bg-gray-200`}>
-            <div className="flex justify-between items-center px-5 py-2 gap-x-4">
+        <Link href={path} className={styles.navItem}>
+            <div className="flex justify-between items-center px-5 py-2 gap-x-4 hover:bg-gray-200">
                 <div className="flex gap-x-4">
                     <Icon path={icon} size={1} />
                     {!collapse && <div>{name}</div>}
@@ -50,7 +50,7 @@ function Child({ icon, name, link, collapse }) {
                     <div>
                         <Icon
                             path={mdiChevronRight}
-                            size={1}
+                            size={.75}
                             className={styles.navItemChevron}
                         />
                     </div>
