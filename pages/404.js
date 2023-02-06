@@ -1,10 +1,15 @@
 import Styles from "../styles/Error.module.css";
+import Error from "../components/error/Error";
 
 // page not found
 export default function Custom404() {
     return (
         <div className={Styles.container}>
-            404 | the page you are trying to find doesn't exist
+            <Error
+                code="404"
+                description="Page not found"
+                text="the page you are trying to find doesn't exist"
+            ></Error>
         </div>
     );
 }
