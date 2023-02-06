@@ -4,7 +4,7 @@
 - add general button component - DONE
 - add children components: 
     - add table component - DONE
-    - add form component - WIP
+    - add form component - DONE - updated to separate input components instead of a whole form itself
 
 the side bar in this demo is for testing purposes only, but it has successfully implemented the full height with the navbar present, without having to 
 scroll the page. The body component is somewhat done too if you want to check it out. 
