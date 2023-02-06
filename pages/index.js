@@ -87,7 +87,7 @@ export default function Home() {
         <div className='flex flex-col flex-grow overflow-auto'>
           <div className='flex flex-col items-center justify-center space-y-2 py-5 px-10'>
             <label className='text-4xl font-bold'>Spent 10 lovely hours dealing with flexboxes to make this layout work (responsiveness)</label>
-            <p className='font-bold text-xl'>If someone sees this, try resizing the window page to see the page's behavior working as intended</p>
+            <p className='font-bold text-xl'>If someone sees this, try resizing the window page to see the page&aposs behavior working as intended</p>
 
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vulputate mattis tortor sed bibendum. Nunc accumsan velit tortor, vulputate tempor ligula gravida eget. Nunc quam nisl, posuere ut mauris et, lobortis ullamcorper nunc. Mauris fermentum tincidunt porttitor. Nunc ac lacinia lectus, vitae mattis ex. Curabitur eget porttitor diam. Aliquam interdum suscipit urna, a semper dui pellentesque id. Cras justo nibh, cursus et sem sed, interdum pulvinar est. Nunc ut commodo nunc. Etiam ut justo tincidunt, egestas neque at, maximus erat. Maecenas maximus erat lacus, eget ultricies neque pulvinar at. Mauris sagittis tortor vel erat pharetra tempor. Integer facilisis, urna sed consectetur volutpat, justo lectus venenatis risus, laoreet bibendum mi ex vel leo. Duis in nibh dui. Vestibulum pretium at metus quis pretium. Suspendisse enim libero, posuere sed magna ac, placerat placerat mauris.
