@@ -10,6 +10,7 @@ import Well from '../public/icons/well.svg'
 import Well_sample_core from '../public/icons/well_sample_core.svg'
 import Arrow from '../public/icons/arrow_notrail.svg'
 import TableComponent from '../components/table'
+import Input from '../components/input'
 
 const anothertest = () => {
     const tableData = {
@@ -37,7 +38,7 @@ const anothertest = () => {
                 Navbar
             </div>
             <div className="w-full flex flex-auto h-screen overflow-hidden ">
-                <div className="flex flex-col bg-side_bar min-w-[300px] max-w-[300px] justify-between">
+                <div className="flex flex-col bg-side_bar min-w-[300px] max-w-[300px] justify-between hidden">
                     <div className="overflow-y-auto px-3 py-2.5">
                         <Buttons_Sidebar path='' button_description='General information'>
                             <Info className='w-4' />
@@ -90,7 +91,37 @@ const anothertest = () => {
                         </p>
                         <br></br>
                         <Buttons path={'/tabledemo'} button_description='Go to table demo page' />
-                        <TableComponent header={tableData.header} content={tableData.content}/>
+                        <TableComponent header={tableData.header} content={tableData.content} />
+                        <form className='w-full space-y-2'>
+                            <Input
+                                label="E-mail"
+                                label_loc="beside"
+                                type="email"
+                                name={"email"}
+                                autoComplete="none"
+                                placeholder={"E-mail"}
+                                required={true}
+                            />
+                            <Input
+                                label="E-mail"
+                                label_loc="above"
+                                type="text"
+                                name={"email"}
+                                autoComplete="none"
+                                placeholder={"E-mail"}
+                                required={false}
+                                additional_styles="space-y-1"
+                                additional_styles_label=""
+                                additional_styles_input=""
+                            />
+                            <Input
+                                type="text"
+                                name={"email"}
+                                autoComplete="none"
+                                placeholder={"E-mail"}
+                                required={true}
+                            />
+                        </form>
                         <label className='text-4xl font-bold'>Buttons & Testing scroll</label>
                         <br></br>
                         <Buttons path='/anothertest' button_description='Choose file manually' />
