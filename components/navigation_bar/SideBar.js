@@ -9,7 +9,7 @@ export default function SideBar({collapse}) {
                 <Item
                     name={router.name}
                     icon={router.icon}
-                    child={router.child ? true : false}
+                    child={router.child}
                     link={router.link}
                     collapse={collapse}
                     key={router.name}
