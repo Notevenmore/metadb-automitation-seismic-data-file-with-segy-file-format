@@ -9,7 +9,7 @@ This directory is separated into sub-directories based on components and their f
     - 📁 [input_form](../input_form/)
         - 📄[input.js](../input_form/input.js)
         - 📄[Readme.md](../input_form/readme.md)
-    - 📁 [table](.)
+    - 📁 table
         - 📄[table.js](./table.js)
         - 📄[Readme.md](./readme.md)
     - 📄[Readme.md](../readme.md)
