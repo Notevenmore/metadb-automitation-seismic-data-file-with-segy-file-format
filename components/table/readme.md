@@ -21,7 +21,7 @@ The button component consists of two types, the general button and the sidebar b
 The table headers. 
 - `content: <array of objects> | required` <br>
 The table rows. **The rows' object sizes must be the same with the header array size and must contain keys that match the corresponding header names**.
-- `additional_styles: <string> | required` <br>
+- `additional_styles: <string> | optional` <br>
 Additional styles to be applied to the table.
 
 ## Usage
