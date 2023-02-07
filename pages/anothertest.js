@@ -1,4 +1,4 @@
-import Buttons, { Buttons_Sidebar } from '../components/buttons'
+import Buttons, { Buttons_Sidebar } from '../components/buttons/buttons'
 import Bibliography from '../public/icons/bibliography.svg'
 import Info from '../public/icons/info.svg'
 import Maps from '../public/icons/maps.svg'

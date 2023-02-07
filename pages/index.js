@@ -1,4 +1,4 @@
-import Buttons, { Buttons_Sidebar } from '../components/buttons'
+import Buttons, { Buttons_Sidebar } from '../components/buttons/buttons'
 import Bibliography from '../public/icons/bibliography.svg'
 import Info from '../public/icons/info.svg'
 import Maps from '../public/icons/maps.svg'
@@ -9,8 +9,8 @@ import Technical_report from '../public/icons/technical_report.svg'
 import Well from '../public/icons/well.svg'
 import Well_sample_core from '../public/icons/well_sample_core.svg'
 import Arrow from '../public/icons/arrow_notrail.svg'
-import TableComponent from '../components/table'
-import Input from '../components/input'
+import TableComponent from '../components/table/table'
+import Input from '../components/input_form/input'
 
 import styles from '../styles/Home.module.css'
 
