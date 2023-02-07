@@ -10,7 +10,7 @@
 
 This directory is separated into sub-directories based on components and their functions. For easier navigation, below list can be used to navigate through these directories. 
 
-- 📁 component
+- 📁 components
     - 📁 [buttons](./buttons/)
         - 📄[buttons.js](./buttons/buttons.js)
         - 📄[Readme.md](./buttons/readme.md)
