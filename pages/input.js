@@ -8,8 +8,8 @@ import Navbar from "../components/navbar"
 const InputPage = () => {
     const dropdownItems = ['Demo item 1', 'Demo item 2', 'Demo item 3', 'Demo item 4', 'Demo item 5', 'Demo item 6', 'Demo item 7', 'Demo item 8', 'Demo item 9']
     return (
-        <div className="flex flex-col h-screen text-[14.5px]">
-            <div className="w-full flex flex-auto h-screen overflow-hidden ">
+        <div className="flex flex-col text-[14.5px]">
+            <div className="w-full flex flex-auto">
                 <div className='flex flex-col flex-grow overflow-auto'>
                     <div className='flex flex-col space-y-2 py-5 px-10'>
                         <label className='text-4xl font-bold'>Table component</label>
