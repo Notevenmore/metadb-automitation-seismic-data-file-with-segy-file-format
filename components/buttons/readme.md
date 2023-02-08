@@ -48,4 +48,4 @@ export default Index
 ```
 
 ## Demo
-*There will be a link to the Vercel website here later on to showcase this component*
+Click [this link](https://gtn-frontend.vercel.app/button) to view the Button component demo.
