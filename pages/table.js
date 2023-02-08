@@ -37,7 +37,7 @@ const TablePage = () => {
                         <ul className='list-disc px-10'>
                             <code>
                                 <li className='pt-1 font-bold'>header: array</li>
-                                <li className='pt-1 font-bold'>content: array of objects<p className="font-sans font-normal italic text-sm">The rows' object sizes must be the same with the header array size and must contain keys that match the corresponding header names.</p></li>
+                                <li className='pt-1 font-bold'>content: array of objects<p className="font-sans font-normal italic text-sm">The rows&apos; object sizes must be the same with the header array size and must contain keys that match the corresponding header names.</p></li>
                                 <li className="pt-1 ">additional_styles: tailwind syntax string</li>
                             </code>
                         </ul>
