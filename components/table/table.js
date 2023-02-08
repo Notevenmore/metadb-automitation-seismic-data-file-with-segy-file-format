@@ -1,12 +1,12 @@
-import axios from "axios";
+import { twMerge } from "tailwind-merge"
 
-const TableComponent = ({ header, content, additional_styles }) => {
+const TableComponent = ({ header, content, additional_styles = '' }) => {
   const tableData = {
     header: header,
     content: content
   }
   return (
-    <table className={`border-separate border-spacing-0 border-2 w-full rounded-lg overflow-hidden text-[15px] ${additional_styles}`}>
+    <table className={twMerge('border-separate border-spacing-0 border-2 w-full rounded-lg overflow-hidden text-[15px]', additional_styles)}>
       <thead className="bg-gray-300">
         <tr className="text-left">
           {tableData.header.map((header, index) => {
