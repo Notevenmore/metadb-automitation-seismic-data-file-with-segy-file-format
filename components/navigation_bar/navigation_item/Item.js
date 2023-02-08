@@ -11,7 +11,7 @@ export default function Item({ icon, name, child, link, collapse }) {
     }
     
     return (
-        <>
+        <div className="text-[14.5px]">
             <div onClick={toggle}>
                 <Child
                     icon={icon}
@@ -32,7 +32,7 @@ export default function Item({ icon, name, child, link, collapse }) {
                     ))}
                 </div>
             )}
-        </>
+        </div>
     );
 }
 
@@ -43,14 +43,14 @@ function Child({ icon, name, link, collapse }) {
         <Link href={path} className={styles.navItem}>
             <div className="flex justify-between items-center px-5 py-2 gap-x-4 hover:bg-gray-200">
                 <div className="flex gap-x-4">
-                    <Icon path={icon} size={1} />
+                    <Icon path={icon} size={.9} />
                     {!collapse && <div>{name}</div>}
                 </div>
                 {!collapse && (
                     <div>
                         <Icon
                             path={mdiChevronRight}
-                            size={.75}
+                            size={.65}
                             className={styles.navItemChevron}
                         />
                     </div>

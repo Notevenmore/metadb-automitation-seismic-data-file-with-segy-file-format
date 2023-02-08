@@ -13,9 +13,7 @@ const ButtonPage = () => {
 
     return (
         <div className="flex flex-col h-screen text-[14.5px]">
-            <Navbar />
             <div className="w-full flex flex-auto h-screen overflow-hidden ">
-                <Sidebar />
                 <div className='flex flex-col flex-grow overflow-auto'>
                     <div className='flex flex-col space-y-2 py-5 px-10'>
                         <label className='text-4xl font-bold'>Button component</label>

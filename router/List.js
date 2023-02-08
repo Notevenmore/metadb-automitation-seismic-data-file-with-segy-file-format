@@ -7,18 +7,18 @@ export default [
         icon: mdiAccount,
     },
     {
-        name: "Test1",
-        link: "/test",
+        name: "Input",
+        link: "/input",
         icon: mdiAdjust,
     },
     {
-        name: "Test2",
-        link: "/test2",
+        name: "Button",
+        link: "/button",
         icon: mdiAdvertisements,
     },
     {
-        name: "Test3",
-        link: "/test",
+        name: "Table",
+        link: "/table",
         icon: mdiAirHorn,
     },
     {
@@ -32,14 +32,14 @@ export default [
             },
             {
                 name: "Test55",
-                link: "/test",
+                link: "/button",
                 icon: mdiAccount,
             },
         ]
     },
     {
         name: "Test5",
-        link: "/test",
+        link: "/input",
         icon: mdiAirHorn,
     },
 ]
