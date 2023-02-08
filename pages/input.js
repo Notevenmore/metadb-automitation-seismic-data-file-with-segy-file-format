@@ -142,7 +142,7 @@ const InputPage = () => {
                             />
                             <br></br>
                             <p>
-                                Other examples which implement the same logic as the single-line text input above with <code className="font-bold">'dropdown'</code> passed as the <code className="font-bold">type</code> prop:
+                                Other examples which implement the same logic as the single-line text input above with <code className="font-bold">&apos;dropdown&apos;</code> passed as the <code className="font-bold">type</code> prop:
                             </p>
                             <br></br>
                             <Input
