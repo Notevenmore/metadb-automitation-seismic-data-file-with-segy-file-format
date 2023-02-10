@@ -14,7 +14,7 @@ export default function TopBar(props) {
                 <img src="/icons/bell-outline.svg" className="w-[1rem]" />
                 <div className="border-l-[1.5px] border-slate-200 h-6"> </div>
                 <RoundImage
-                    source="/unknown.jpg"
+                    source="/images/unknown.jpg"
                     size={{ width: "1.5rem" }}
                 ></RoundImage>
             </div>
