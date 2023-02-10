@@ -1,45 +1,57 @@
-import { mdiAccount, mdiAdjust, mdiAdvertisements, mdiAirHorn, mdiAirplane,  } from "@mdi/js"
+import Blank from "../layout/Blank";
 
 export default [
     {
         name: "Home",
         link: "/",
-        icon: mdiAccount,
+        icon: "/icons/home-outline.svg",
     },
     {
         name: "Input",
         link: "/input",
-        icon: mdiAdjust,
+        icon: "/icons/format-text.svg",
     },
     {
         name: "Button",
         link: "/button",
-        icon: mdiAdvertisements,
+        icon: "/icons/info.svg",
     },
     {
         name: "Table",
         link: "/table",
-        icon: mdiAirHorn,
+        icon: "/icons/table.svg",
     },
     {
-        name: "Test4 ahuyfgbueb",
-        icon: mdiAirplane,
+        name: "Navigation bar",
+        icon: "/icons/format-vertical-align-center.svg",
         child: [
             {
-                name: "Home 2",
+                name: "Topbar",
                 link: "/",
-                icon: mdiAccount,
+                icon: "/icons/info.svg",
             },
             {
-                name: "Test55",
+                name: "Sidebar",
                 link: "/button",
-                icon: mdiAccount,
+                icon: "/icons/info.svg",
             },
         ]
     },
     {
-        name: "Test5",
-        link: "/input",
-        icon: mdiAirHorn,
+        name: "Login",
+        icon: "/icons/format-vertical-align-center.svg",
+        child: [
+            {
+                name: "Sign in",
+                link: "/login/signin",
+                icon: "/icons/info.svg",
+                layout: "blank"
+            },
+            {
+                name: "Sign up",
+                link: "/login/signup",
+                icon: "/icons/info.svg",
+            },
+        ]
     },
 ]

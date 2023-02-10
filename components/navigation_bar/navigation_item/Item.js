@@ -28,6 +28,7 @@ export default function Item({ icon, name, child, link, collapse }) {
                             name={item.name}
                             link={item.link}
                             collapse={collapse}
+                            key={item.name}
                         ></Child>
                     ))}
                 </div>
@@ -43,7 +44,7 @@ function Child({ icon, name, link, collapse }) {
         <Link href={path} className={styles.navItem}>
             <div className="flex justify-between items-center px-5 py-2 gap-x-4 hover:bg-gray-200">
                 <div className="flex gap-x-4">
-                    <Icon path={icon} size={.9} />
+                    <img src={icon} className="w-[.9rem] h-[22px]" />
                     {!collapse && <div>{name}</div>}
                 </div>
                 {!collapse && (

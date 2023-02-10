@@ -11,7 +11,7 @@ export default function TopBar(props) {
                 <div>KEIDC</div>
             </div>
             <div className="flex items-center gap-x-3">
-                <Icon path={mdiBellOutline} size={.75} />
+                <img src="/icons/bell-outline.svg" className="w-[1rem]" />
                 <div className="border-l-[1.5px] border-slate-200 h-6"> </div>
                 <RoundImage
                     source="/unknown.jpg"
