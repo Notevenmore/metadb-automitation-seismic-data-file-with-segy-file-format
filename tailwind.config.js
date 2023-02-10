@@ -10,7 +10,8 @@ module.exports = {
         secondary: "",
         error: "#ff0000",
         warning: "",
-        'side_bar': '#F5F8FA'
+        'side_bar': '#F5F8FA',
+        link: "#0064d9"
       }
     },
   },

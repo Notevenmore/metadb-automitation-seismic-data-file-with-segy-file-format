@@ -1,5 +1,7 @@
 export default function Blank({children}) {
     return(
-        <>{children}</>
+        <div className="w-screen">
+            {children}
+        </div>
     )
 }
