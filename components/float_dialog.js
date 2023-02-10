@@ -1,3 +1,5 @@
+import { twMerge } from "tailwind-merge"
+
 const FloatDialogNotification = () => {
     return (
         <section className="p-[25px] border-2 border-solid border-float_dialog rounded-[10px] w-[340px] h-[453px]">
@@ -12,23 +14,45 @@ const FloatDialogNotification = () => {
 
 const FloatDialogProfile = () => {
     return (
-        <div>profile floating dialog</div>
+        <section className = "p-[19px] border-2 border-solid border-float_dialog rounded-[10px] w-[263px] h-[201px] text-[16px]">
+            <section className="flex flex-col justify-between h-[59px] mb-[17px]">
+                <h2 className="leading-[15px] font-bold">Profile Name</h2>
+                <h2 className="leading-[15px] font-regular">emailaddress@email.com</h2>
+                <h2 className="leading-[15px] font-medium">Occupation</h2>
+            </section>
+            <ProfileDivider></ProfileDivider>
+            <h2 className="leading-[15px] font-medium my-[17px]">Account settings</h2>
+            <ProfileDivider></ProfileDivider>
+            <h2 className="leading-[15px] font-medium my-[17px]">Sign out</h2>
+        </section>
     )
 }
 
-const FloatSectionDivider = () => {
+const FloatDivider = ({additional_styles=null}) => {
     return (
-        <hr className="ml-[-26px] border-1 border-solid border-float_section_divider w-[340px]"></hr>
+        <hr className= {twMerge(`border-1 border-solid border-float_section_divider`, additional_styles)}></hr>
+    )
+}
+
+const NotificationDivider = () => {
+    return (
+        <FloatDivider additional_styles={"-ml-[26px] w-[340px]"}></FloatDivider>
+    )
+}
+
+const ProfileDivider = () => {
+    return (
+        <FloatDivider additional_styles={"-ml-[19px] w-[263px]"}></FloatDivider>
     )
 }
 
 const NotificationSection = () => {
     return (
         <section>
-            <FloatSectionDivider></FloatSectionDivider>
+            <NotificationDivider></NotificationDivider>
             <section className="my-[12px]">
                 <h2 className="text-[16px] font-semibold">Notification Title</h2>
-                <p className="leading-[15px]">Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                <p className="text-[13px] leading-[15px]">Lorem ipsum dolor sit amet consectetur adipisicing elit.
                  Alias amet delectus quibusdam id provident, reiciendis quam!
                 </p>
             </section>
@@ -40,15 +64,3 @@ const NotificationSection = () => {
 
 export default FloatDialogNotification
 export {FloatDialogProfile}
-// export default FloatDialogProfile
-// const Buttons = ({ path, button_description, additional_styles = null }) => {
-//     return (
-//         <div className="w-fit">
-//             <Link href={path}>
-//                 <button title={button_description} className={`block px-5 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-all  ${additional_styles}`}>
-//                     {button_description}
-//                 </button>
-//             </Link>
-//         </div>
-//     )
-// }
