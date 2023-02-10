@@ -1,7 +1,11 @@
 const FloatDialogNotification = () => {
     return (
-        <div>
-            notification floating dialog
+        <div className="p-[25px] border-2 border-solid border-[#C9C9C9] rounded-[10px] w-[340px] h-[453px]">
+            <h2 className="text-[16px] font-bold mb-[20px]">Notifications</h2>
+            <NotificationSection></NotificationSection>
+            <NotificationSection></NotificationSection>
+            <NotificationSection></NotificationSection>
+            <NotificationSection></NotificationSection>
         </div>
     )
 }
@@ -11,6 +15,29 @@ const FloatDialogProfile = () => {
         <div>profile floating dialog</div>
     )
 }
+
+const FloatSectionDivider = () => {
+    return (
+        <hr className="ml-[-26px] border-1 border-solid border-[#B1C6D3] w-[340px]"></hr>
+    )
+}
+
+const NotificationSection = () => {
+    return (
+        <section>
+            <FloatSectionDivider></FloatSectionDivider>
+            <section className="my-[12px]">
+                <h2 className="text-[16px] font-semibold">Notification Title</h2>
+                <p className="leading-[15px]">Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                 Alias amet delectus quibusdam id provident, reiciendis quam!
+                </p>
+            </section>
+        </section>
+    )
+}
+
+
+
 export default FloatDialogNotification
 export {FloatDialogProfile}
 // export default FloatDialogProfile
