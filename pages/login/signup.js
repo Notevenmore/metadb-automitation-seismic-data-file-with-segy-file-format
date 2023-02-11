@@ -7,7 +7,7 @@ SignUpPage.getLayout = getLayoutBlank;
 
 export default function SignUpPage() {
     return (
-        <div className="h-screen flex flex-row items-center m-auto">
+        <div className="h-screen flex flex-row items-center justify-center m-auto">
             <div className="w-[589px] px-[50px] flex flex-col gap-y-6">
                 <div id="title">
                     <div className="text-[100px] leading-[100px]">KEIDC</div>
@@ -72,7 +72,7 @@ export default function SignUpPage() {
                     />
                     <Buttons
                         path="/"
-                        button_description="Sign In"
+                        button_description="Sign Up"
                         additional_styles="px-12 py-1 mt-4 bg-primary"
                     />
                     <div className="flex flex-row gap-x-1 text-[12px]">

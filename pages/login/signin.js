@@ -7,7 +7,7 @@ SignInPage.getLayout = getLayoutBlank;
 
 export default function SignInPage() {
     return (
-        <div className="h-screen flex flex-row items-center m-auto">
+        <div className="h-screen flex flex-row items-center justify-center m-auto">
             <div className="w-[589px] px-[50px] flex flex-col gap-y-6">
                 <div id="title">
                     <div className="text-[100px] leading-[100px]">KEIDC</div>
