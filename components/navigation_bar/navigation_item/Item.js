@@ -49,11 +49,7 @@ function Child({ icon, name, link, collapse }) {
                 </div>
                 {!collapse && (
                     <div>
-                        <Icon
-                            path={mdiChevronRight}
-                            size={.65}
-                            className={styles.navItemChevron}
-                        />
+                        <img src="/icons/chevron-right.svg" className={`w-[25px] h-[15px] ${styles.navItemChevron}`} />
                     </div>
                 )}
             </div>
