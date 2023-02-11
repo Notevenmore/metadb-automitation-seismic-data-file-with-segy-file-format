@@ -12,3 +12,10 @@
     height: 0;
     overflow: hidden;
 }
+
+.sideBarOpen.halfSideBar .sideBar {
+    opacity: 1;
+    transform: translateX(0px);
+    height: 50%;
+    overflow: auto;
+}
