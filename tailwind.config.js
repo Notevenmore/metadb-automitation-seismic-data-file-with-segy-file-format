@@ -6,9 +6,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        primary: "#63f48c",
+        secondary: "",
+        error: "#ff0000",
+        warning: "",
         'side_bar': '#F5F8FA',
         'float_dialog': '#C9C9C9',
-        'float_section_divider': '#B1C6D3'
+        'float_section_divider': '#B1C6D3',
       }
     },
   },

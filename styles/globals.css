@@ -74,3 +74,14 @@ a {
     background: black;
   }
 } */
+
+
+.full-height {
+  height: calc(100vh - 60px)
+}
+.overflow-hidden {
+ overflow: hidden;
+}
+.overflow-auto {
+  overflow: auto;
+}
