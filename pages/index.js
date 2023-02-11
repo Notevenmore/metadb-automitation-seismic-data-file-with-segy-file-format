@@ -1,5 +1,6 @@
 import Buttons, { Buttons_Sidebar } from '../components/buttons'
 import FloatDialogNotification, {FloatDialogProfile} from "../components/float_dialog"
+import PopupDialog from '../components/popup_dialog'
 import Bibliography from '../public/icons/bibliography.svg'
 import Info from '../public/icons/info.svg'
 import Maps from '../public/icons/maps.svg'
@@ -96,6 +97,7 @@ export default function Home() {
             </p>
             <FloatDialogNotification></FloatDialogNotification>
             <FloatDialogProfile></FloatDialogProfile>
+            <PopupDialog></PopupDialog>
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vulputate mattis tortor sed bibendum. Nunc accumsan
               velit tortor, vulputate tempor ligula gravida eget. Nunc quam nisl, posuere ut mauris et, lobortis ullamcorper nunc.
