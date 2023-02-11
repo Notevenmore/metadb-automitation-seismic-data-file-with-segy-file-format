@@ -14,9 +14,9 @@ export default function SignUpPage() {
                     <div>Kangean Energy Indonesia Database Conversion</div>
                     <div className="border border-b-[#d9d9d9]"></div>
                 </div>
-                <div className="text-[30px]">Sign in</div>
+                <div className="text-[30px]">Sign up</div>
                 <form className="flex flex-col gap-y-4 w-full text-[14px] pr-10">
-                    <div className="flex flex-row gap-x-4">
+                    <div className="flex flex-row gap-x-4 w-full">
                         <Input
                             label="First Name"
                             label_loc="above"
@@ -24,7 +24,7 @@ export default function SignUpPage() {
                             name={"firstName"}
                             placeholder={"First Name"}
                             required={true}
-                            additional_styles="space-y-1"
+                            additional_styles="space-y-1 flex-1"
                             additional_styles_label="w-full"
                             additional_styles_input="bg-[#ededed]"
                         />
@@ -35,7 +35,7 @@ export default function SignUpPage() {
                             name={"lastName"}
                             placeholder={"Last Name"}
                             required={true}
-                            additional_styles="space-y-1"
+                            additional_styles="space-y-1 flex-1"
                             additional_styles_label="w-full"
                             additional_styles_input="bg-[#ededed]"
                         />
