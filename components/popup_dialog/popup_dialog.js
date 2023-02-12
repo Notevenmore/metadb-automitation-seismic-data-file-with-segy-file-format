@@ -1,7 +1,7 @@
 import {twMerge} from "tailwind-merge"
-import Buttons from "./buttons"
+import Buttons from "../buttons"
 import Close from "../public/icons/close.svg"
-import {FloatDivider as Divider} from "./float_dialog"
+import {FloatDivider as Divider} from "../float_dialog/float_dialog"
 
 const PopupDialog = () => {
     return (
