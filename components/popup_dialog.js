@@ -1,14 +1,14 @@
 import {twMerge} from "tailwind-merge"
 import Buttons from "./buttons"
 import Close from "../public/icons/close.svg"
-import {FloatDivider} from "./float_dialog"
+import {FloatDivider as Divider} from "./float_dialog"
 
 const PopupDialog = () => {
     return (
         <aside className="flex flex-col justify-between w-[470px] h-[280px]
          px-[26px] py-[24px] border-[1px] border-solid border-[#C9C9C9] rounded-[10px]">
             <PopupTitle></PopupTitle>
-            <FloatDivider additional_styles={"-ml-[27px] w-[470px]"}></FloatDivider>
+            <Divider additional_styles={"-ml-[27px] w-[470px]"}></Divider>
             <p className="text-[16px] w-[397px] text-center">You have not saved the document yet, are you sure you want to leave this page?
                 <strong>This document will not be uploaded and will be deleted.</strong>
             </p>
