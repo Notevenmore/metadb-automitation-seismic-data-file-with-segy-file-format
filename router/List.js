@@ -25,6 +25,20 @@ export default [
                 link: "/table",
                 icon: "/icons/table.svg",
             },
+            {
+                name: "Popup Dialog",
+                link: "/popup-dialog",
+                // icon: 
+            },
+            {
+                name: "Profile Floating Dialog",
+                link: "/profile-dialog",
+            },
+            {
+                name: "Notification Floating Dialog",
+                link: "/notification-dialog"
+            }
+
         ],
     },
     {
