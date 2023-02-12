@@ -1,4 +1,4 @@
-import Buttons, { Buttons_Sidebar } from '../components/buttons'
+import Buttons, { Buttons_Sidebar } from '../components/buttons/buttons'
 import Well_sample_core from '../public/icons/well_sample_core.svg'
 
 export default function Home() {
