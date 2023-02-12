@@ -1,18 +1,5 @@
-import Buttons, { Buttons_Sidebar } from '../components/buttons'
 import FloatDialogNotification, {FloatDialogProfile} from "../components/float_dialog"
 import PopupDialog from '../components/popup_dialog'
-import Bibliography from '../public/icons/bibliography.svg'
-import Info from '../public/icons/info.svg'
-import Maps from '../public/icons/maps.svg'
-import Outcrop from '../public/icons/outcrop.svg'
-import Project_file from '../public/icons/project_file.svg'
-import Seismic from '../public/icons/seismic.svg'
-import Technical_report from '../public/icons/technical_report.svg'
-import Well from '../public/icons/well.svg'
-import Well_sample_core from '../public/icons/well_sample_core.svg'
-import Arrow from '../public/icons/arrow_notrail.svg'
-import TableComponent from '../components/table'
-import Input from '../components/input'
 
 import styles from '../styles/Home.module.css'
 
