@@ -1,7 +1,7 @@
 export default function Footer() {
     return (
         <footer className="w-full flex items-center border-t-2 border-slate-100 place-content-center py-2">
-            heyy
+            <p className="text-black/[.3] text-xs">© Kangean Energy Indonesia 2023</p>
         </footer>
     )
 }
