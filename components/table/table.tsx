@@ -1,5 +1,5 @@
 import { twMerge } from "tailwind-merge"
-import { useState, useEffect, memo } from "react"
+import { useState, useEffect } from "react"
 
 
 const TableComponent = ({ header, content, with_checkbox = false, additional_styles = '', setSelectedRows }) => {

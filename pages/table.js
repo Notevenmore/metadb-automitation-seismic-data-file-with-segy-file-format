@@ -120,8 +120,7 @@ const TablePage = () => {
         ]
     }
     setSelectedRows={SelectedTableData}
-/>
-`}
+/>`}
                             </Highlight>
                             <br />
                             <p className="font-bold">Output:</p>
