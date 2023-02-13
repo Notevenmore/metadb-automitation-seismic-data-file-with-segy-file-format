@@ -44,7 +44,6 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
       // (to prevent re-render, which is very expensive in resource in this case)
       setSelectedRows[0] = Selected
       // console.log(setSelectedRows[0])
-      // console.log(Selected)
     }
   }, [Selected])
 
