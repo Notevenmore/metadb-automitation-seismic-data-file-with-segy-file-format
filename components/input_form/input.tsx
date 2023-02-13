@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import Arrow from '../../public/icons/arrow_notrail.svg'
-/**
- * This component is meant to be used for text inputs only:
- * inline-text, e-mail, and password. 
- * 
- * @param label string 
- */
 
 interface InputProps extends React.ComponentProps<"input"> {
     label: "";
