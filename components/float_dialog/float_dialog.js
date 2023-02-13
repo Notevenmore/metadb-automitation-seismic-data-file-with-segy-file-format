@@ -63,4 +63,4 @@ const NotificationSection = () => {
 
 
 export default FloatDialogNotification
-export {FloatDialogProfile, Divider as FloatDivider}
+export {FloatDialogProfile, Divider}
