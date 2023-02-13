@@ -1,7 +1,7 @@
 import hljs from 'highlight.js'
 import { useEffect } from 'react'
 import Highlight from 'react-highlight'
-import Buttons from '../components/buttons/buttons'
+import Buttons from '../components/buttons/buttons.tsx'
 import Well_sample_core from '../public/icons/well_sample_core.svg'
 import Sidebar from '../components/sidebar'
 import Navbar from '../components/navbar'
@@ -17,17 +17,16 @@ const ButtonPage = () => {
                 <div className='flex flex-col flex-grow overflow-auto'>
                     <div className='flex flex-col space-y-2 py-5 px-10'>
                         <label className='text-4xl font-bold'>Button component</label>
-                        <p>The <code>Button</code> component consists of the following props, with the bold ones being the <span className='font-bold'>required</span> props:</p>
+                        <p>The <code>Button</code> component consists of the following extended props (the native props are still supported), with the bold ones being the <span className='font-bold'>required</span> props:</p>
                         <ul className='list-disc px-10'>
                             <code>
                                 <li className='pt-1 font-bold'>path: string</li>
                                 <li className='pt-1 font-bold'>button_description: string</li>
-                                <li className='pt-1 '>additional_styles: tailwind syntax string</li>
+                                <li className='pt-1 '>additional_styles: CSS class string</li>
                             </code>
                         </ul>
                         <p>
-                            Below is the example of usage of the general button component.
-                            The sidebar button component can be seen in the side bar itself.
+                            Below are the example usages of the <code>button</code> component.
                         </p>
                         <br></br>
 

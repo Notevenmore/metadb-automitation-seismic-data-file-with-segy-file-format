@@ -12,30 +12,22 @@ const InputPage = () => {
             <div className="w-full flex flex-auto">
                 <div className='flex flex-col flex-grow overflow-auto'>
                     <div className='flex flex-col space-y-2 py-5 px-10'>
-                        <label className='text-4xl font-bold'>Table component</label>
-                        <p>The <code>Table</code> component consists of the following props, with the bold ones being the <span className='font-bold'>required</span> props:</p>
+                        <label className='text-4xl font-bold'>Input component</label>
+                        <p>The <code>Input</code> component consists of the following extended props (the native props are still supported), with the bold ones being the <span className='font-bold'>required</span> props:</p>
                         <ul className='list-disc px-10'>
                             <code>
                                 <li className='font-bold mt-1'>label: string</li>
-                                <li className='font-bold mt-1'>label_loc: above|beside<p className="font-sans font-normal italic text-sm">Required if label prop is defined</p></li>
-                                <li className='font-bold mt-1'>type: email|password|text|dropdown</li>
+                                <li className='font-bold mt-1'>label_loc: above | beside<p className="font-sans font-normal italic text-sm">Required if label prop is defined</p></li>
+                                <li className='font-bold mt-1'>type: existing HTML input types | dropdown</li>
                                 <li className='font-bold mt-1'>label_loc: above|beside<p className="font-sans font-normal italic text-sm">Required if <code>type</code> is dropdown</p></li>
-                                <li className='font-bold mt-1'>name: string</li>
-                                <li className='mt-1'>placeholder: string</li>
-                                <li className='mt-1'>onChange: function</li>
-                                <li className='mt-1'>onClick: function</li>
-                                <li className='mt-1'>autoComplete: none|auto</li>
-                                <li className='mt-1'>required: true|false</li>
-                                <li className='mt-1'>additional_styles_label: tailwind syntax string</li>
-                                <li className='mt-1'>additional_styles_input: tailwind syntax string</li>
-                                <li className='mt-1'>additional_styles_menu_container: tailwind syntax string</li>
-                                <li className='mt-1'>additional_styles: tailwind syntax string</li>
-                                <li className='mt-1'>required: true|false</li>
-                                <li>additional_styles: string</li>
+                                <li className='mt-1'>additional_styles_label: CSS class string</li>
+                                <li className='mt-1'>additional_styles_input: CSS class string</li>
+                                <li className='mt-1'>additional_styles_menu_container: CSS class string</li>
+                                <li className='mt-1'>additional_styles: CSS class string</li>
                             </code>
                         </ul>
                         <p>
-                            Below is the example of usage of the form input component.
+                            Below are the example usages of the <code>input</code> form component.
                         </p>
                         <form className='w-full space-y-2 pt-2'>
                             <h2 className="text-lg font-bold">1. An input form with a label beside it.</h2>
