@@ -87,6 +87,11 @@ export default [
                 name: "Sign up",
                 link: "/login/signup",
                 icon: "/icons/info.svg",
-            },],
+            },
+            {
+                name: "Homepage",
+                link: "/home",
+            }
+        ],
     },
 ];
