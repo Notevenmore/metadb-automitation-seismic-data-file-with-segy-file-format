@@ -45,6 +45,17 @@ const ButtonPage = () => {
                         <br></br>
 
                         <h3 className='text-xl font-bold'>Example 3</h3>
+                        <Highlight className='html rounded-md border-2'>
+                            {`<Buttons path='' button_description='Make a new document' >
+    <Well_sample_core />
+</Buttons>`}
+                        </Highlight>
+                        <Buttons path='' button_description='Make a new document' >
+                            <Well_sample_core />
+                        </Buttons>
+                        <br></br>
+
+                        <h3 className='text-xl font-bold'>Example 4</h3>
                         <p>The <code className='font-bold'>additional_styles</code> prop is not mandatory to be filled, just like the above example.</p>
                         <pre>
                             <Highlight className='html rounded-md border-2'>

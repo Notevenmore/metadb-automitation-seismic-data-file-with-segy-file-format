@@ -46,8 +46,9 @@ const TablePage = () => {
                         <ul className='list-disc px-10'>
                             <code>
                                 <li className='pt-1 font-bold'>header: array</li>
-                                <li className='pt-1 font-bold'>content: array of objects<p className="font-sans font-normal italic text-sm">The <code>content</code> prop must be a two dimensional object (array of objects | array of arrays) with the inner arrays | objects having the same size as the header's array size.</p></li>
-                                <li className="pt-1 ">additional_styles: CSS</li>
+                                <li className='pt-1 font-bold'>content: array of objects<p className="font-sans font-normal italic text-sm">The <code>content</code> prop must be a two dimensional object (array of objects | array of arrays) with the inner arrays | objects having the same size as the header&apos;s array size.</p></li>
+                                <li className="pt-1 ">with_checkbox: true|false<p className="font-sans font-normal italic text-sm">This prop will default to <code>false</code>, hence it is not mandatory to be defined when calling this component</p></li>
+                                <li className="pt-1 ">additional_styles: CSS class string</li>
                             </code>
                         </ul>
                         <p>
@@ -147,7 +148,7 @@ const TablePage = () => {
                                 setSelectedRows={SelectedTableData}
                             />
                             <div className="pt-2">
-                                <p>Selected rows: (Press the button below and check dev console to see the updates)</p>
+                                <p>Selected rows: (Change the selections in the table above, then press the button below and check dev console to see the updates)</p>
                                 <Buttons additional_styles="mt-2" path="/" button_description="Print to console" onClick={(e) => { printData(e) }} />
 
                             </div>
