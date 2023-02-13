@@ -1,45 +1,40 @@
-import { mdiAccount, mdiAdjust, mdiAdvertisements, mdiAirHorn, mdiAirplane,  } from "@mdi/js"
+import { mdiAccount, mdiAdjust, mdiAdvertisements, mdiAirHorn, mdiAirplane, mdiInformationOutline, mdiFileDocumentOutline  } from "@mdi/js"
 
 export default [
     {
         name: "Home",
         link: "/",
-        icon: mdiAccount,
+        icon: mdiInformationOutline,
     },
     {
         name: "Input",
         link: "/input",
-        icon: mdiAdjust,
+        icon: mdiFileDocumentOutline,
     },
     {
         name: "Button",
         link: "/button",
-        icon: mdiAdvertisements,
+        icon: mdiFileDocumentOutline,
     },
     {
         name: "Table",
         link: "/table",
-        icon: mdiAirHorn,
+        icon: mdiFileDocumentOutline,
     },
     {
-        name: "Test4 ahuyfgbueb",
-        icon: mdiAirplane,
+        name: "Expand and Collapse",
+        icon: mdiInformationOutline,
         child: [
             {
-                name: "Home 2",
+                name: "Home",
                 link: "/",
-                icon: mdiAccount,
+                icon: mdiFileDocumentOutline,
             },
             {
-                name: "Test55",
+                name: "Buttons",
                 link: "/button",
-                icon: mdiAccount,
+                icon: mdiFileDocumentOutline,
             },
         ]
-    },
-    {
-        name: "Test5",
-        link: "/input",
-        icon: mdiAirHorn,
     },
 ]
