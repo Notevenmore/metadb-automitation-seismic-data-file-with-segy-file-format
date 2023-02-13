@@ -1,6 +1,6 @@
 import {FloatDialogProfile} from "../components/float_dialog/float_dialog"
 
-export default function Home() {
+export default function ProfileDialogPage() {
   return (
     <div>
       <FloatDialogProfile></FloatDialogProfile>
