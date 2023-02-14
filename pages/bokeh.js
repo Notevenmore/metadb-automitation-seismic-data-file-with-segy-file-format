@@ -1,61 +1,85 @@
-import React, { useEffect, useRef } from "react";
-// import Plot from '@bokeh/bokehjs/build/js/lib/models/plots'
-// import ColumnDataSource from '@bokeh/bokehjs/lib/data/column_data_source.js';
-// import Circle from '@bokeh/bokehjs/build/js/lib/models/glyphs/circle.js';
-// import Plotting from '@bokeh/bokehjs/build/js/lib/api/plotting.js';
-// import { PlotCanvas } from '@bokeh/bokehjs-react';
-
-import Bokeh from "@bokeh/bokehjs"
-import { Button } from "@bokeh/bokehjs";
-
-// import * as Bokeh from "@bokeh/bokehjs"
-// import test from '../bokeh/test'
-
-// import { Bokeh } from "bokehjs";
-// import { useEffect, useRef } from "react";
-// import { Bokehjs } from "bokeh";
-// import { Plot, Plotting } from "bokehjs";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function BokehPage() {
-  useEffect(() => {
-    const x = Bokeh.LinAlg.linspace(-0.5, 20.5, 10);
-    console.log(x)
-  })
+	const [linspace, setLinspace] = useState(10);
+	const plotRef = useRef(null);
+	const data = [1, 2, 3, 4, 5];
+  const datay = [5,4,3,2,1]
+  const [test, setTest] = useState(null)
 
-    // const [clicks, setClicks] = useState(0);
+	let source, plot;
+	async function bokehCall() {
+		console.log("hey?");
+		if (typeof window !== "undefined") {
+			const Bokeh = await import("@bokeh/bokehjs");
 
-    // const handleClick = () => {
-    //   setCicks(clicks + 1);
-    //   console.log("Button clicked!", clicks + 1);
-    // };
-  
-    // const source = new Bokeh.ColumnDataSource({
-    //   data: { x: [1, 2, 3, 4, 5], y: [2, 5, 8, 2, 7] }
-    // });
-  
-    // const plot = new Bokeh.Plot({
-    //   title: "Example Plot",
-    //   x_range: new Bokeh.Range1d({ start: 0, end: 6 }),
-    //   y_range: new Bokeh.Range1d({ start: 0, end: 10 }),
-    //   plot_width: 300,
-    //   plot_height: 300
-    // });
-  
-    // plot.add_glyph(
-    //   new Bokeh.Line({
-    //     x: { field: "x" },
-    //     y: { field: "y" },
-    //     line_color: "blue",
-    //     line_width: 3
-    //   }),
-    //   source
-    // );
-  
-    return (
-      <div>
-        {/* <div id="plot" />
-        <Button onClick={handleClick}>Click me!</Button>
-        <p>Button clicked {clicks} times</p> */}
-      </div>
-    );
+			const x = Bokeh.LinAlg.linspace(-0.5, 20.5, 10);
+			const y = x.map(function (v) {
+				return v * 0.5 + 3.0;
+			});
+			source = new Bokeh.ColumnDataSource({ data: { x: data, y: datay } });
+
+			// create some ranges for the plot
+			const xdr = new Bokeh.Range1d({ start: -0.5, end: 20.5 });
+			const ydr = new Bokeh.Range1d({ start: -0.5, end: 20.5 });
+
+			plot = new Bokeh.Plot({
+				title: "BokehJS Plot",
+				x_range: xdr,
+				y_range: ydr,
+				width: 400,
+				height: 400,
+				background_fill_color: "#F2F2F7",
+			});
+
+			// add axes to the plot
+			const xaxis = new Bokeh.LinearAxis({ axis_line_color: null });
+			const yaxis = new Bokeh.LinearAxis({ axis_line_color: null });
+			plot.add_layout(xaxis, "below");
+			plot.add_layout(yaxis, "left");
+
+			// add grids to the plot
+			const xgrid = new Bokeh.Grid({ ticker: xaxis.ticker, dimension: 0 });
+			const ygrid = new Bokeh.Grid({ ticker: yaxis.ticker, dimension: 1 });
+			plot.add_layout(xgrid);
+			plot.add_layout(ygrid);
+
+			// add a Line glyph
+			const line = new Bokeh.Circle({
+				x: { field: "x" },
+				y: { field: "y" },
+				line_color: "#666699",
+				line_width: 2,
+			});
+			plot.add_glyph(line, source);
+
+			Bokeh.Plotting.show(plot, plotRef.current);
+		}
+	}
+	useEffect(() => {
+		// test2
+		console.log("aa?");
+		bokehCall();
+	}, []);
+
+	const handleClick = () => {
+		source.data.x.push(Math.floor(Math.random() * 20));
+		source.data.y.push(Math.floor(Math.random() * 20));
+		source.change.emit();
+		console.log("aaa", source.data);
+	};
+
+	useEffect(() => {
+    console.log("eh?/")
+    plotRef.current.innerHTML = ""
+    bokehCall()}, [source]);
+
+	return (
+		<div>
+			<div ref={plotRef}></div>
+			<button className="border border-black p-3" onClick={handleClick}>
+				add data
+			</button>
+		</div>
+	);
 }
