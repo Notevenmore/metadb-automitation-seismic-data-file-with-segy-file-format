@@ -1,11 +1,7 @@
-import hljs from "highlight.js";
-import { useEffect } from "react";
 import Highlight from "react-highlight";
 import Container from "../../components/container/container";
 
 export default function TopBarPage() {
-    useEffect(() => hljs.highlightAll());
-
     return (
         <Container>
             <div className="flex flex-col gap-y-3">
@@ -13,7 +9,7 @@ export default function TopBarPage() {
                 <p>
                     For the layout of the component, define it in the Layout
                     folder on the root folder. The sidebar and topbar can be
-                    used however you want. For the page to use a different
+                    used however you want to form the layout. For the page to use a different
                     layout than what is defined in the <code>_app.js</code> file
                     you can find <code>getLayout</code> file in the Layout
                     folder. Inside the file define the function to define the

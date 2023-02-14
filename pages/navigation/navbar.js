@@ -1,11 +1,7 @@
-import hljs from "highlight.js";
-import { useEffect } from "react";
 import Highlight from "react-highlight";
 import Container from "../../components/container/container";
 
 export default function TopBarPage() {
-    useEffect(() => hljs.highlightAll());
-
     return (
         <Container>
             <div className="flex flex-col space-y-2">

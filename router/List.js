@@ -28,7 +28,7 @@ export default [
             {
                 name: "Layout",
                 link: "/components/layout",
-                icon: "/icons/table.svg",
+                icon: "/icons/layers.svg",
             },
         ],
     },
@@ -75,9 +75,9 @@ export default [
                 icon: "/icons/well_sample_core.svg",
             },
             {
-                name: "Sign up",
-                link: "/login/signup",
-                icon: "/icons/info.svg",
+                name: "Bokeh",
+                link: "/bokeh",
+                icon: "/icons/chart-line-variant.svg",
             },],
     },
 ];
