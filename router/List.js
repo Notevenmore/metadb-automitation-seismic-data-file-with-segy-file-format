@@ -22,6 +22,11 @@ export default [
         icon: mdiFileDocumentOutline,
     },
     {
+        name: "Profile",
+        link: "/profile",
+        icon: mdiAccount,
+    },
+    {
         name: "Expand and Collapse",
         icon: mdiInformationOutline,
         child: [
