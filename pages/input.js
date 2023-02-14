@@ -153,8 +153,8 @@ const InputPage = () => {
                         <div className="py-5 w-full text-center flex flex-col items-center space-y-2">
                             <p>Other documentations:</p>
                             <div className="flex space-x-2">
-                                <Buttons path={'/button'} button_description='Buttons component'><Well_sample_core /></Buttons>
-                                <Buttons path={'/table'} button_description='Table component'><Well_sample_core /></Buttons>
+                                <Buttons path={'/button'} button_description='Buttons component'><Well_sample_core className='w-4 h-4' /></Buttons>
+                                <Buttons path={'/table'} button_description='Table component'><Well_sample_core className='w-4 h-4' /></Buttons>
                             </div>
                         </div>
                     </div>

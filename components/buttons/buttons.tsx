@@ -12,8 +12,8 @@ const Buttons: React.FunctionComponent<ButtonProps> = ({ path, button_descriptio
         <div className="w-fit">
             <Link href={path}>
                 <button title={button_description} className={twMerge(`flex items-center space-x-2 px-5 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-all`, additional_styles)} {...buttonProps}>
-                    {children ? <div className="w-4 h-4">{children}</div> : null}
-                    <label>{button_description}</label>
+                    {children ? <div>{children}</div> : null}
+                    {button_description ? <p>{button_description}</p> : null}
                 </button>
             </Link>
         </div>
@@ -29,7 +29,7 @@ const Buttons_Sidebar: React.FunctionComponent<ButtonProps> = ({ path, button_de
                     <label>{button_description}</label>
                 </div>
                 <div id="bt_sidebar_right_arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={ 1.5 } stroke="currentColor" className="w-[15px] h-w-[15px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[15px] h-w-[15px]">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                     </svg>
                 </div>
