@@ -6,10 +6,10 @@ import { useState } from "react";
 
 export default function Item({ icon, name, child, link, collapse }) {
     const [toggleOpen, setToggleOpen] = useState(false);
-    function toggle(){
+    function toggle() {
         setToggleOpen(prevToggle => !prevToggle)
     }
-    
+
     return (
         <div className="text-[14.5px]">
             <div onClick={toggle}>
@@ -22,8 +22,9 @@ export default function Item({ icon, name, child, link, collapse }) {
             </div>
             {!collapse && child && toggleOpen && (
                 <div className="ml-4">
-                    {child.map((item) => (
+                    {child.map((item, index) => (
                         <Child
+                            key={index}
                             icon={item.icon}
                             name={item.name}
                             link={item.link}
