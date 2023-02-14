@@ -17,43 +17,45 @@ import { Button } from "@bokeh/bokehjs";
 // import { Plot, Plotting } from "bokehjs";
 
 export default function BokehPage() {
-    // const x = Bokeh.LinAlg.linspace(-0.5, 20.5, 10);
-    // console.log(x)
+  useEffect(() => {
+    const x = Bokeh.LinAlg.linspace(-0.5, 20.5, 10);
+    console.log(x)
+  })
 
-    const [clicks, setClicks] = useState(0);
+    // const [clicks, setClicks] = useState(0);
 
-    const handleClick = () => {
-      setCicks(clicks + 1);
-      console.log("Button clicked!", clicks + 1);
-    };
+    // const handleClick = () => {
+    //   setCicks(clicks + 1);
+    //   console.log("Button clicked!", clicks + 1);
+    // };
   
-    const source = new Bokeh.ColumnDataSource({
-      data: { x: [1, 2, 3, 4, 5], y: [2, 5, 8, 2, 7] }
-    });
+    // const source = new Bokeh.ColumnDataSource({
+    //   data: { x: [1, 2, 3, 4, 5], y: [2, 5, 8, 2, 7] }
+    // });
   
-    const plot = new Bokeh.Plot({
-      title: "Example Plot",
-      x_range: new Bokeh.Range1d({ start: 0, end: 6 }),
-      y_range: new Bokeh.Range1d({ start: 0, end: 10 }),
-      plot_width: 300,
-      plot_height: 300
-    });
+    // const plot = new Bokeh.Plot({
+    //   title: "Example Plot",
+    //   x_range: new Bokeh.Range1d({ start: 0, end: 6 }),
+    //   y_range: new Bokeh.Range1d({ start: 0, end: 10 }),
+    //   plot_width: 300,
+    //   plot_height: 300
+    // });
   
-    plot.add_glyph(
-      new Bokeh.Line({
-        x: { field: "x" },
-        y: { field: "y" },
-        line_color: "blue",
-        line_width: 3
-      }),
-      source
-    );
+    // plot.add_glyph(
+    //   new Bokeh.Line({
+    //     x: { field: "x" },
+    //     y: { field: "y" },
+    //     line_color: "blue",
+    //     line_width: 3
+    //   }),
+    //   source
+    // );
   
     return (
       <div>
-        <div id="plot" />
+        {/* <div id="plot" />
         <Button onClick={handleClick}>Click me!</Button>
-        <p>Button clicked {clicks} times</p>
+        <p>Button clicked {clicks} times</p> */}
       </div>
     );
 }

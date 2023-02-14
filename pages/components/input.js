@@ -1,9 +1,7 @@
-import Sidebar from "../components/sidebar"
-import Buttons from "../components/buttons/buttons"
-import Well_sample_core from '../public/icons/well_sample_core.svg'
-import Input from "../components/input_form/input"
+import Buttons from "../../components/buttons/buttons"
+import Well_sample_core from '../../public/icons/well_sample_core.svg'
+import Input from "../../components/input_form/input"
 import Highlight from "react-highlight"
-import Navbar from "../components/navbar"
 
 const InputPage = () => {
     const dropdownItems = ['Demo item 1', 'Demo item 2', 'Demo item 3', 'Demo item 4', 'Demo item 5', 'Demo item 6', 'Demo item 7', 'Demo item 8', 'Demo item 9']

@@ -1,9 +1,7 @@
 import Highlight from "react-highlight"
-import Buttons from "../components/buttons/buttons"
-import Navbar from "../components/navbar"
-import Sidebar from "../components/sidebar"
-import TableComponent from "../components/table/table"
-import Well_sample_core from '../public/icons/well_sample_core.svg'
+import Buttons from "../../components/buttons/buttons"
+import TableComponent from "../../components/table/table"
+import Well_sample_core from '../../public/icons/well_sample_core.svg'
 
 const TablePage = () => {
     const tableData = {
