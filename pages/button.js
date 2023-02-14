@@ -51,7 +51,7 @@ const ButtonPage = () => {
 </Buttons>`}
                         </Highlight>
                         <Buttons path='' button_description='Make a new document' >
-                            <Well_sample_core />
+                            <Well_sample_core className='w-4 h-4' />
                         </Buttons>
                         <br></br>
 

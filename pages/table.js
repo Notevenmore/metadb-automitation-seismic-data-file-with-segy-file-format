@@ -46,8 +46,8 @@ const TablePage = () => {
                         <ul className='list-disc px-10'>
                             <code>
                                 <li className='pt-1 font-bold'>header: array</li>
-                                <li className='pt-1 font-bold'>content: array of objects<p className="font-sans font-normal italic text-sm">The <code>content</code> prop must be a two dimensional object (array of objects | array of arrays) with the inner arrays | objects having the same size as the header&apos;s array size.</p></li>
-                                <li className="pt-1 ">with_checkbox: true|false<p className="font-sans font-normal italic text-sm">This prop will default to <code>false</code>, hence it is not mandatory to be defined when calling this component</p></li>
+                                <li className='pt-1 font-bold'>content: array of objects<p className="font-sans font-normal italic text-sm">The <code className="bg-gray-200 px-1">content</code> prop must be a two dimensional object (array of objects | array of arrays) with the inner arrays | objects having the same size as the header&apos;s array size.</p></li>
+                                <li className="pt-1 ">with_checkbox: true|false<p className="font-sans font-normal italic text-sm">This prop will default to <code className="bg-gray-200 px-1">false</code>, hence it is not mandatory to be defined when calling this component</p></li>
                                 <li className="pt-1 ">additional_styles: CSS class string</li>
                             </code>
                         </ul>
@@ -94,7 +94,7 @@ const TablePage = () => {
                                 {`let SelectedTableData = [[]]`}
                             </Highlight>
                             <p>
-                                Directly using the setState function is prevented for performance sake
+                                Directly using React&apos;s <code className="bg-gray-200 px-1">setState</code> function is prevented for performance sake
                                 (to prevent unecessary re-renders, which is very resource expensive in this case),
                                 hence the use of dev console to see the previously initialized array being updated.
                             </p>
