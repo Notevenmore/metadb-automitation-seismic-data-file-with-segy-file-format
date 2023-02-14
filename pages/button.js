@@ -47,7 +47,7 @@ const ButtonPage = () => {
                         <h3 className='text-xl font-bold'>Example 3</h3>
                         <Highlight className='html rounded-md border-2'>
                             {`<Buttons path='' button_description='Make a new document' >
-    <Well_sample_core />
+    <Well_sample_core className='w-4 h-4' />
 </Buttons>`}
                         </Highlight>
                         <Buttons path='' button_description='Make a new document' >
