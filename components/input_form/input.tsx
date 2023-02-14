@@ -10,10 +10,10 @@ interface InputProps extends React.ComponentProps<"input"> {
     additional_styles_input: "";
     additional_styles_menu_container: "";
     additional_styles: "";
-
+    setSelectedItem;
 }
 
-const Input: React.FunctionComponent<InputProps> = ({ label = "none", label_loc = "none", type, dropdown_items = [], additional_styles_label = '', additional_styles_input = '', additional_styles_menu_container = '', additional_styles = '', ...inputProps }) => {
+const Input: React.FunctionComponent<InputProps> = ({ label = "none", label_loc = "none", type, dropdown_items = [], additional_styles_label = '', additional_styles_input = '', additional_styles_menu_container = '', additional_styles = '', setSelectedItem, ...inputProps }) => {
     const [Selected, setSelected] = useState()
     const [CurrentlyFocused, setCurrentlyFocused] = useState<Element>()
     const handleUnfocus = (e) => {
@@ -25,6 +25,14 @@ const Input: React.FunctionComponent<InputProps> = ({ label = "none", label_loc 
             setCurrentlyFocused(document.activeElement)
         }
     }
+    useEffect(() => {
+        // directly using the setState function is prevented for performance sake 
+        // (to prevent re-render, which is very expensive in resource in this case)
+        if (setSelectedItem) {
+            setSelectedItem[0] = [Selected]
+        }
+    }, [Selected])
+
     return (
         <div className={twMerge(`${label_loc.toLowerCase() === "beside" ? "flex items-center space-x-2" : label_loc.toLowerCase() === "above" ? "flex flex-col items-start" : ""}`, additional_styles)}>
             <label className={twMerge(`${label.toLowerCase() !== "none" ? "block" : "hidden"} w-[45%]  border-black`, additional_styles_label)}>
