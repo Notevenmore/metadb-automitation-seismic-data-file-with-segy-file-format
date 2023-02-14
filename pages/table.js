@@ -94,7 +94,7 @@ const TablePage = () => {
                                 {`let SelectedTableData = [[]]`}
                             </Highlight>
                             <p>
-                                Directly using React&apos;s <code className="bg-gray-200 px-1">setState</code> function is prevented for performance sake
+                                Directly using React&apos;s <code className="bg-gray-200 px-1">setState</code> hook is prevented for performance sake
                                 (to prevent unecessary re-renders, which is very resource expensive in this case),
                                 hence the use of dev console to see the previously initialized array being updated.
                             </p>
