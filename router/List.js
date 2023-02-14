@@ -12,17 +12,22 @@ export default [
         child: [
             {
                 name: "Input",
-                link: "/input",
+                link: "/components/input",
                 icon: "/icons/format-text.svg",
             },
             {
                 name: "Button",
-                link: "/button",
+                link: "/components/button",
                 icon: "/icons/info.svg",
             },
             {
                 name: "Table",
-                link: "/table",
+                link: "/components/table",
+                icon: "/icons/table.svg",
+            },
+            {
+                name: "Layout",
+                link: "/components/layout",
                 icon: "/icons/table.svg",
             },
         ],
@@ -33,12 +38,12 @@ export default [
         child: [
             {
                 name: "Topbar",
-                link: "/",
+                link: "/navigation/topbar",
                 icon: "/icons/info.svg",
             },
             {
                 name: "Sidebar",
-                link: "/button",
+                link: "/navigation/navbar",
                 icon: "/icons/info.svg",
             },
         ],
