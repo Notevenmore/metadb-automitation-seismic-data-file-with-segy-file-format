@@ -8,7 +8,7 @@ export default function Container({children}) {
     )
 }
 
-Container.Title = ({children}) => {
+Container.TitleBack = ({children}) => {
     const router = useRouter();
     return (
     <div className="flex flex-row items-center text-[30px] mb-10 gap-x-5">
@@ -20,3 +20,9 @@ Container.Title = ({children}) => {
         </div>
     </div>
 )}
+
+Container.Title = ({children}) => {
+    return (<div className="flex items-center text-[30px] mb-10 font-medium">
+        {children}
+    </div>)
+}

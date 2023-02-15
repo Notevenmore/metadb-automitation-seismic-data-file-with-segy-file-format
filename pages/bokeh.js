@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+import Container from "../components/container/container";
 
 export default function BokehPage() {
-	const [linspace, setLinspace] = useState(10);
 	const plotRef = useRef(null);
 	const data = [1, 2, 3, 4, 5];
-  const datay = [5,4,3,2,1]
-  const [test, setTest] = useState(null)
+	const datay = [5, 4, 3, 2, 1];
 
 	let source, plot;
 	async function bokehCall() {
@@ -57,7 +56,6 @@ export default function BokehPage() {
 		}
 	}
 	useEffect(() => {
-		// test2
 		console.log("aa?");
 		bokehCall();
 	}, []);
@@ -69,17 +67,12 @@ export default function BokehPage() {
 		console.log("aaa", source.data);
 	};
 
-	useEffect(() => {
-    console.log("eh?/")
-    plotRef.current.innerHTML = ""
-    bokehCall()}, [source]);
-
 	return (
-		<div>
+		<Container>
 			<div ref={plotRef}></div>
-			<button className="border border-black p-3" onClick={handleClick}>
+			<button className="border border-black p-3 w-[150px]" onClick={handleClick}>
 				add data
 			</button>
-		</div>
+		</Container>
 	);
 }
