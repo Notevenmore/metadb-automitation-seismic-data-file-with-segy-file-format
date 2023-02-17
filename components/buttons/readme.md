@@ -48,4 +48,8 @@ export default Index
 ```
 
 ## Demo
+<<<<<<< HEAD
 Click [this link](https://gtn-frontend.vercel.app/button) to view the Button component demo.
+=======
+Click [this link](https://gtn-frontend.vercel.app/button) to view the Button component demo.
+>>>>>>> origin/karel
