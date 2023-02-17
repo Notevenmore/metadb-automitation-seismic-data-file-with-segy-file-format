@@ -1,5 +1,3 @@
-import Blank from "../layout/Blank";
-
 export default [
 	{
 		name: "Home",
@@ -25,6 +23,11 @@ export default [
 				link: "/table",
 				icon: "/icons/table.svg",
 			},
+            {
+                name: "Layout",
+                link: "/components/layout",
+                icon: "/icons/layers.svg",
+            },
 		],
 	},
 	{
@@ -70,8 +73,8 @@ export default [
 				icon: "/icons/well_sample_core.svg",
 			},
 			{
-				name: "Sign up",
-				link: "/login/signup",
+				name: "Bokeh",
+				link: "/bokeh",
 				icon: "/icons/info.svg",
 			},
             {
@@ -79,6 +82,6 @@ export default [
                 link: "/profile",
                 icon: "/icons/info.svg",
             },
-		],
-	},
+        ],
+    },
 ];

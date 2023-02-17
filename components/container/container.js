@@ -2,13 +2,13 @@ import { useRouter } from "next/router"
 
 export default function Container({children}) {
     return(
-        <div className="container w-full flex flex-col p-10">
+        <div className="w-full flex flex-col p-10">
             {children}
         </div>
     )
 }
 
-Container.Title = ({children}) => {
+Container.TitleBack = ({children}) => {
     const router = useRouter();
     return (
     <div className="flex flex-row items-center text-[30px] mb-10 gap-x-5">
@@ -20,3 +20,9 @@ Container.Title = ({children}) => {
         </div>
     </div>
 )}
+
+Container.Title = ({children}) => {
+    return (<div className="flex items-center text-[30px] mb-10 font-medium">
+        {children}
+    </div>)
+}

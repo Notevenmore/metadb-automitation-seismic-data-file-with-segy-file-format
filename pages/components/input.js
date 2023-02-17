@@ -1,10 +1,7 @@
-import Sidebar from "../components/sidebar"
-import Buttons from "../components/buttons/buttons"
-import Well_sample_core from '../public/icons/well_sample_core.svg'
-import Input from "../components/input_form/input"
+import Buttons from "../../components/buttons/buttons"
+import Well_sample_core from '../../public/icons/well_sample_core.svg'
+import Input from "../../components/input_form/input"
 import Highlight from "react-highlight"
-import Navbar from "../components/navbar"
-import { useState } from "react"
 
 const InputPage = () => {
     let demo_holder_1 = [[]]
@@ -17,11 +14,7 @@ const InputPage = () => {
                 <div className='flex flex-col flex-grow overflow-auto'>
                     <div className='flex flex-col space-y-2 py-5 px-10'>
                         <label className='text-4xl font-bold'>Input component</label>
-<<<<<<< HEAD
-                        <p>The <code>Table</code> component consists of the following props, with the bold ones being the <span className='font-bold'>required</span> props:</p>
-=======
                         <p>The <code>Input</code> component consists of the following extended props (the native props are still supported), with the bold ones being the <span className='font-bold'>required</span> props:</p>
->>>>>>> origin/karel
                         <ul className='list-disc px-10'>
                             <code>
                                 <li className='font-bold mt-1'>label: string</li>

@@ -1,10 +1,8 @@
 import hljs from 'highlight.js'
 import { useEffect } from 'react'
 import Highlight from 'react-highlight'
-import Buttons from '../components/buttons/buttons.tsx'
-import Well_sample_core from '../public/icons/well_sample_core.svg'
-import Sidebar from '../components/sidebar'
-import Navbar from '../components/navbar'
+import Well_sample_core from '../../public/icons/well_sample_core.svg'
+import Buttons from '../../components/buttons/buttons'
 
 const ButtonPage = () => {
     useEffect(() => {

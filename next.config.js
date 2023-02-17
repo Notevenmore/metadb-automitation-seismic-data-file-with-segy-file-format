@@ -9,6 +9,7 @@ const nextConfig = {
     return config
   },
   swcMinify: true,
+  transpilePackages: ['@bokeh/bokehjs'],
 }
 
 module.exports = nextConfig
