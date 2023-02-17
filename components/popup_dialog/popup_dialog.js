@@ -1,4 +1,4 @@
-import Buttons from "../buttons"
+import Buttons from "../buttons/buttons"
 import Close from "../../public/icons/close.svg"
 import {Divider} from "../float_dialog/float_dialog"
 

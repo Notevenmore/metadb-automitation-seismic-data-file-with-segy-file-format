@@ -30,16 +30,16 @@ export default [
             },
             {
                 name: "Popup Dialog",
-                link: "/popup-dialog",
+                link: "/components/popup-dialog",
                 // icon: 
             },
             {
                 name: "Profile Floating Dialog",
-                link: "/profile-dialog",
+                link: "/components/profile-dialog",
             },
             {
                 name: "Notification Floating Dialog",
-                link: "/notification-dialog"
+                link: "/components/notification-dialog"
             }
 		],
 	},
@@ -102,38 +102,6 @@ export default [
 				icon: "/icons/info.svg",
             },
 
-        ],
-    },
-    {
-        name: "Navigation bar",
-        icon: "/icons/format-vertical-align-center.svg",
-        child: [
-            {
-                name: "Topbar",
-                link: "/",
-                icon: "/icons/info.svg",
-            },
-            {
-                name: "Sidebar",
-                link: "/button",
-                icon: "/icons/info.svg",
-            },
-        ],
-    },
-    {
-        name: "Login",
-        icon: "/icons/login.svg",
-        child: [
-            {
-                name: "Sign in",
-                link: "/login/signin",
-                icon: "/icons/info.svg",
-            },
-            {
-                name: "Sign up",
-                link: "/login/signup",
-                icon: "/icons/info.svg",
-            },
         ],
     },
 ];

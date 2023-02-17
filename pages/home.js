@@ -1,4 +1,4 @@
-import Buttons from "../components/buttons"
+import Buttons from "../components/buttons/buttons"
 import FileIcon from "../public/icons/file.svg"
 import { Divider } from "../components/float_dialog/float_dialog"
 

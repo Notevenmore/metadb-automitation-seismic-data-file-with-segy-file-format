@@ -1,8 +1,8 @@
 import hljs from 'highlight.js'
 import { useEffect } from 'react'
 import Highlight from 'react-highlight'
-import PopupDialog from '../components/popup_dialog/popup_dialog'
-import { Divider } from '../components/float_dialog/float_dialog'
+import PopupDialog from '../../components/popup_dialog/popup_dialog'
+import { Divider } from '../../components/float_dialog/float_dialog'
 
 export default function PopupDialogPage() {
   useEffect(() => {
