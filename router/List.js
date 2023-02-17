@@ -31,15 +31,17 @@ export default [
             {
                 name: "Popup Dialog",
                 link: "/components/popup-dialog",
-                // icon: 
+				icon: "/icons/window-maximize.svg",
             },
             {
                 name: "Profile Floating Dialog",
                 link: "/components/profile-dialog",
+				icon: "/icons/window-maximize.svg",
             },
             {
                 name: "Notification Floating Dialog",
-                link: "/components/notification-dialog"
+                link: "/components/notification-dialog",
+				icon: "/icons/window-maximize.svg",
             }
 		],
 	},
@@ -67,7 +69,6 @@ export default [
 				name: "Sign in",
 				link: "/login/signin",
 				icon: "/icons/info.svg",
-				layout: "blank",
 			},
 			{
 				name: "Sign up",
@@ -88,7 +89,7 @@ export default [
 			{
 				name: "Bokeh",
 				link: "/bokeh",
-				icon: "/icons/info.svg",
+				icon: "/icons/chart-line-variant.svg",
 			},
             {
                 name: "Profile",
@@ -99,9 +100,45 @@ export default [
             {
                 name: "Homepage",
                 link: "/home",
-				icon: "/icons/info.svg",
+				icon: "/icons/home-outline.svg",
             },
 
         ],
     },
+	{
+		name: "Error",
+		icon: "/icons/info.svg",
+		child: [
+			{
+				name: "403",
+				link: "/403",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "404",
+				link: "/404",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "500",
+				link: "/500",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "502",
+				link: "/502",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "503",
+				link: "/503",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "504",
+				link: "/504",
+				icon: "/icons/info.svg",
+			},
+		]
+	}
 ];

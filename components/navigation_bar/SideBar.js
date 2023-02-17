@@ -8,7 +8,7 @@ export default function SideBar({ half }) {
         <div
             className={`float-left ${
                 half ? "h-full" : "h-screen"
-            } flex flex-col py-5 max-w-xs bg-side_bar overflow-y-auto`}
+            } flex flex-col pt-5 pb-10 max-w-xs bg-side_bar overflow-y-auto`}
         >
             <div onClick={() => setIconCollapse(prev => !prev)}>
                 <Item
