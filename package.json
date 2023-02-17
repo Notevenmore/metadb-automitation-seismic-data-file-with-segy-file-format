@@ -34,7 +34,9 @@
     "sprintf-js": "^1.1.2",
     "tailwind-merge": "^1.9.1",
     "timezone": "^1.0.23",
-    "underscore.template": "^0.1.7"
+    "underscore.template": "^0.1.7",
+    "react-use": "^17.4.0",
+    "tailwind-merge": "^1.9.1"
   },
   "devDependencies": {
     "@types/node": "^18.13.0",

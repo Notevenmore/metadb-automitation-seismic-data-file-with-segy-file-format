@@ -28,7 +28,7 @@ const FloatDialogProfile = () => {
     )
 }
 
-const FloatDivider = ({additional_styles=null}) => {
+const Divider = ({additional_styles=null}) => {
     return (
         <hr className= {twMerge(`border-1 border-solid border-float_section_divider`, additional_styles)}></hr>
     )
@@ -36,13 +36,13 @@ const FloatDivider = ({additional_styles=null}) => {
 
 const NotificationDivider = () => {
     return (
-        <FloatDivider additional_styles={"-ml-[26px] w-[340px]"}></FloatDivider>
+        <Divider additional_styles={"-ml-[26px] w-[340px]"}></Divider>
     )
 }
 
 const ProfileDivider = () => {
     return (
-        <FloatDivider additional_styles={"-ml-[19px] w-[263px]"}></FloatDivider>
+        <Divider additional_styles={"-ml-[19px] w-[263px]"}></Divider>
     )
 }
 
@@ -63,4 +63,4 @@ const NotificationSection = () => {
 
 
 export default FloatDialogNotification
-export {FloatDialogProfile, FloatDivider}
+export {FloatDialogProfile, Divider}
