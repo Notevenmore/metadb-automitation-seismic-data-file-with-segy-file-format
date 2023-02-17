@@ -1,5 +1,5 @@
 import {twMerge} from "tailwind-merge"
-import Buttons from "./buttons/buttons"
+import Buttons from "./buttons"
 import Close from "../public/icons/close.svg"
 import {FloatDivider} from "./float_dialog"
 
