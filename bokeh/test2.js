@@ -37,7 +37,7 @@ plot.add_layout(xgrid);
 plot.add_layout(ygrid);
 
 // add a Line glyph
-const line = new Bokeh.Line({
+const line = new Bokeh.Circle({
 	x: { field: "x" },
 	y: { field: "y" },
 	line_color: "#666699",
@@ -45,4 +45,13 @@ const line = new Bokeh.Line({
 });
 plot.add_glyph(line, source);
 
-Bokeh.Plotting.show(plot);
+function addPoint() {
+    // add data --- all fields must be the same length.
+    source.data.x.push(Math.random())
+    source.data.y.push(Math.random())
+
+    // update the data source with local changes
+    source.change.emit()
+}
+
+Bokeh.Plotting.show(plot, "#plotground");

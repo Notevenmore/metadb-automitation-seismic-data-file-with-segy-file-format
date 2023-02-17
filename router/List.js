@@ -1,5 +1,3 @@
-import Blank from "../layout/Blank";
-
 export default [
     {
         name: "Home",
