@@ -1,45 +1,78 @@
-import { mdiAccount, mdiAdjust, mdiAdvertisements, mdiAirHorn, mdiAirplane,  } from "@mdi/js"
+import Blank from "../layout/Blank";
 
 export default [
     {
         name: "Home",
         link: "/",
-        icon: mdiAccount,
+        icon: "/icons/home-outline.svg",
     },
     {
-        name: "Input",
-        link: "/input",
-        icon: mdiAdjust,
-    },
-    {
-        name: "Button",
-        link: "/button",
-        icon: mdiAdvertisements,
-    },
-    {
-        name: "Table",
-        link: "/table",
-        icon: mdiAirHorn,
-    },
-    {
-        name: "Test4 ahuyfgbueb",
-        icon: mdiAirplane,
+        name: "Small Components",
+        icon: "/icons/layers-outline.svg",
         child: [
             {
-                name: "Home 2",
-                link: "/",
-                icon: mdiAccount,
+                name: "Input",
+                link: "/input",
+                icon: "/icons/format-text.svg",
             },
             {
-                name: "Test55",
+                name: "Button",
                 link: "/button",
-                icon: mdiAccount,
+                icon: "/icons/info.svg",
             },
-        ]
+            {
+                name: "Table",
+                link: "/table",
+                icon: "/icons/table.svg",
+            },
+        ],
     },
     {
-        name: "Test5",
-        link: "/input",
-        icon: mdiAirHorn,
+        name: "Navigation bar",
+        icon: "/icons/format-vertical-align-center.svg",
+        child: [
+            {
+                name: "Topbar",
+                link: "/",
+                icon: "/icons/info.svg",
+            },
+            {
+                name: "Sidebar",
+                link: "/button",
+                icon: "/icons/info.svg",
+            },
+        ],
     },
-]
+    {
+        name: "Login",
+        icon: "/icons/login.svg",
+        child: [
+            {
+                name: "Sign in",
+                link: "/login/signin",
+                icon: "/icons/info.svg",
+                layout: "blank",
+            },
+            {
+                name: "Sign up",
+                link: "/login/signup",
+                icon: "/icons/info.svg",
+            },
+        ],
+    },
+    {
+        name: "Pages",
+        icon: "/icons/page-layout-body.svg",
+        child: [
+            {
+                name: "Drafts",
+                link: "/drafts",
+                icon: "/icons/well_sample_core.svg",
+            },
+            {
+                name: "Sign up",
+                link: "/login/signup",
+                icon: "/icons/info.svg",
+            },],
+    },
+];

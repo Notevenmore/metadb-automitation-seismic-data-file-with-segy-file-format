@@ -12,7 +12,7 @@ const InputPage = () => {
             <div className="w-full flex flex-auto">
                 <div className='flex flex-col flex-grow overflow-auto'>
                     <div className='flex flex-col space-y-2 py-5 px-10'>
-                        <label className='text-4xl font-bold'>Table component</label>
+                        <label className='text-4xl font-bold'>Input component</label>
                         <p>The <code>Table</code> component consists of the following props, with the bold ones being the <span className='font-bold'>required</span> props:</p>
                         <ul className='list-disc px-10'>
                             <code>
