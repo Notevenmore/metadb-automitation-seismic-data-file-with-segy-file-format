@@ -37,9 +37,9 @@ export default function Home() {
               Press the buttons present in the sidebar or press one of the buttons below to start viewing the detailed documentations of the components
             </p>
             <div className='flex flex-col space-y-2'>
-              <Buttons path={'/button'} button_description='Buttons documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
-              <Buttons path={'/table'} button_description='Table documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
-              <Buttons path={'/input'} button_description='Input form documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
+              <Buttons path={'/components/button'} button_description='Buttons documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
+              <Buttons path={'/components/table'} button_description='Table documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
+              <Buttons path={'/components/input'} button_description='Input form documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
             </div>
           </div>
         </div>
