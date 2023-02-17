@@ -6,7 +6,7 @@ export default function DraftPage() {
     return(
         <Container>
             <Container.TitleBack>
-                Title
+                Draft
             </Container.TitleBack>
             <TableComponent
                 header={Draft.header}

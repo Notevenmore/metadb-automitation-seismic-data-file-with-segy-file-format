@@ -26,3 +26,11 @@ Container.Title = ({children}) => {
         {children}
     </div>)
 }
+
+Container.Subtitle = ({children, additional_class, tab=false}) => {
+    return (
+        <div className={`text-[12px] -mt-10 lg:text-[16px] mb-10 ${additional_class}`} style={{marginLeft: tab && "58px"}}>
+            {children}
+        </div>
+    )
+}

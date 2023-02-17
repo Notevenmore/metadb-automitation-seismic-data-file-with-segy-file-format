@@ -29,7 +29,6 @@ export default function Item({ icon, name, child, link, collapse }) {
                             name={item.name}
                             link={item.link}
                             collapse={collapse}
-                            key={item.name}
                         ></Child>
                     ))}
                 </div>
@@ -38,11 +37,10 @@ export default function Item({ icon, name, child, link, collapse }) {
     );
 }
 
-function Child({ icon, name, link, collapse }) {
-    const path = link ? link : "";
+function Child({ icon, name, link="", collapse }) {
 
     return (
-        <Link href={path} className={styles.navItem}>
+        <Link href={link} className={styles.navItem}>
             <div className="flex justify-between items-center px-5 py-2 gap-x-4 hover:bg-gray-200">
                 <div className="flex gap-x-4">
                     <img src={icon} className="w-[.9rem] h-[22px]" />
