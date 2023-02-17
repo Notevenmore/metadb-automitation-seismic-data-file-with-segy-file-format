@@ -2,12 +2,11 @@ import Buttons from "../../components/buttons/buttons";
 import Container from "../../components/container/container";
 import Input from "../../components/input_form/input";
 
-export default function DatabasePage() {
+export default function Database() {
     const additional_styles_label = "w-[20%]"
 	return (
 		<Container>
-			<Container.TitleBack>Connect with database</Container.TitleBack>
-            <Container.Subtitle tab>Select a table to use from the list below to map the records in it to the app</Container.Subtitle>
+			<Container.Title back>Connect with database</Container.Title>
 			<form className="flex flex-col items-center justify-center h-full w-full gap-y-3" onSubmit={() => console.log("submit")}>
 				<div className="w-full text-[12px] lg:w-[710px] lg:text-[16px] flex flex-col gap-y-3">
 					<Input

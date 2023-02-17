@@ -5,9 +5,9 @@ import Container from "../components/container/container"
 export default function DraftPage() {
     return(
         <Container>
-            <Container.TitleBack>
+            <Container.Title back>
                 Draft
-            </Container.TitleBack>
+            </Container.Title>
             <TableComponent
                 header={Draft.header}
                 content={Draft.content}

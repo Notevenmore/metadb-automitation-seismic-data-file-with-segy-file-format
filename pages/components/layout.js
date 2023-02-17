@@ -1,7 +1,7 @@
 import Highlight from "react-highlight";
 import Container from "../../components/container/container";
 
-export default function TopBarPage() {
+export default function LayoutPage() {
     return (
         <Container>
             <div className="flex flex-col gap-y-3">

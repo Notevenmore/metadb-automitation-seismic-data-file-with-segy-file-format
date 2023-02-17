@@ -29,6 +29,11 @@ export default [
                 icon: "/icons/layers.svg",
             },
             {
+                name: "Container",
+                link: "/components/container",
+                icon: "/icons/layers.svg",
+            },
+            {
                 name: "Popup Dialog",
                 link: "/components/popup-dialog",
 				icon: "/icons/window-maximize.svg",

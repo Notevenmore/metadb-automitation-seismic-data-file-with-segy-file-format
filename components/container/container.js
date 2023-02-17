@@ -8,24 +8,18 @@ export default function Container({children}) {
     )
 }
 
-Container.TitleBack = ({children}) => {
+Container.Title = ({children, back=false}) => {
     const router = useRouter();
     return (
     <div className="flex flex-row items-center text-[30px] mb-10 gap-x-5">
-        <div className="bg-[#d9d9d9]/[49%] rounded w-[35px] h-[35px] flex justify-center items-center" onClick={() => router.back()}>
+        {back && <div className="bg-[#d9d9d9]/[49%] rounded w-[35px] h-[35px] flex justify-center items-center" onClick={() => router.back()}>
             <img src="/icons/chevron-left.svg" className="w-[25px] h-[25px]" />
-        </div>
+        </div>}
         <div className="font-medium">
             {children}
         </div>
     </div>
 )}
-
-Container.Title = ({children}) => {
-    return (<div className="flex items-center text-[30px] mb-10 font-medium">
-        {children}
-    </div>)
-}
 
 Container.Subtitle = ({children, additional_class, tab=false}) => {
     return (
