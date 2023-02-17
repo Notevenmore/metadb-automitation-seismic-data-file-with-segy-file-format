@@ -58,6 +58,8 @@ export default function BokehPage() {
 	useEffect(() => {
 		console.log("aa?");
 		bokehCall();
+
+		return () => {}
 	}, []);
 
 	const handleClick = () => {
