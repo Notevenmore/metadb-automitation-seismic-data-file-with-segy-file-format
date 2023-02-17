@@ -87,4 +87,4 @@ export default Index
 ```
 
 ## Demo
-Click [this link](https://gtn-frontend.vercel.app/input) to view the Input Form component demo.
+Click [this link](https://gtn-frontend.vercel.app/input) to view the Button component demo.

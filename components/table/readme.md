@@ -59,4 +59,4 @@ export default Index
 ```
 
 ## Demo
-Click [this link](https://gtn-frontend.vercel.app/table) to view the Table component demo.
+Click [this link](https://gtn-frontend.vercel.app/table) to view the Button component demo.
