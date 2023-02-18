@@ -49,12 +49,12 @@ export default function ContainerPage() {
 					}
 				</Highlight>
                 <p className="font-bold">Output:</p>
+                <Container.Title>Title</Container.Title>
+                <Container.Subtitle>Subtitle here</Container.Subtitle>
                 <p>
                     Adding a <code>tab</code> as seen below, will align the subtitle to the title if it contains a back button inside
                 </p>
                 <p className="font-bold">Code:</p>
-                <Container.Title>Title</Container.Title>
-                <Container.Subtitle>Subtitle here</Container.Subtitle>
                 <Highlight className="html rounded-md border-2">
 					{
 						"<Container> \n\t<Container.Title back>Title</Container.Title> \n\t<Container.Subtitle tab>subtitle</Container.Subtitle> \n\t<div></div> \n</Container>"

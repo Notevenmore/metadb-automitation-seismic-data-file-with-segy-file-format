@@ -1,10 +1,60 @@
 import React, { useEffect, useRef, useState } from "react";
 import Container from "../components/container/container";
+import axios from "axios";
 
-export default function BokehPage() {
+// export async function getServerSideProps() {
+// 	try {
+// 		const response = await axios.get("http://127.0.0.1:8000/test");
+// 		console.log(response)
+// 		return {
+// 			props: {
+// 				bokeh: response,
+// 			},
+// 		};
+// 	} catch (err) {
+// 		return {
+// 			props: {
+// 				error: err,
+// 			},
+// 		};
+// 	}
+// }
+
+export default function BokehPage({}) {
 	const plotRef = useRef(null);
 	const data = [1, 2, 3, 4, 5];
 	const datay = [5, 4, 3, 2, 1];
+
+	async function test() {
+		plotRef.current.innerHTML = ""
+		if (typeof window !== "undefined") {
+			const Bokeh = await import("@bokeh/bokehjs");
+
+			axios.get("http://127.0.0.1:8000/test")
+				.then((res) => {
+					console.log("test1");
+					Bokeh.embed.embed_item(res.data, plotRef.current);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}
+	async function test2() {
+		plotRef.current.innerHTML = ""
+		if (typeof window !== "undefined") {
+			const Bokeh = await import("@bokeh/bokehjs");
+
+			axios.get("http://127.0.0.1:8000/test2")
+				.then((res) => {
+					console.log("test2");
+					Bokeh.embed.embed_item(res.data, plotRef.current);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}
 
 	let source, plot;
 	async function bokehCall() {
@@ -57,9 +107,10 @@ export default function BokehPage() {
 	}
 	useEffect(() => {
 		console.log("aa?");
-		bokehCall();
+		// bokehCall();
+		// test();
 
-		return () => {}
+		return () => {};
 	}, []);
 
 	const handleClick = () => {
@@ -71,10 +122,12 @@ export default function BokehPage() {
 
 	return (
 		<Container>
-			<div ref={plotRef}></div>
-			<button className="border border-black p-3 w-[150px]" onClick={handleClick}>
+			<div ref={plotRef} className="bk-root"></div>
+			{/* <button className="border border-black p-3 w-[150px]" onClick={handleClick}>
 				add data
-			</button>
+			</button> */}
+			<button onClick={test} className="border border-black p-3 w-[150px]">test 1</button>
+			<button onClick={test2} className="border border-black p-3 w-[150px]">test 2</button>
 		</Container>
 	);
 }
