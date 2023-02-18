@@ -1,8 +1,11 @@
 import React from 'react'
+import Input from "../../components/input_form/input.tsx"
 
 const Documentation = () => {
   return (
-    <div>Documentation</div>
+    <div>
+      <Input type='text' />
+    </div>
   )
 }
 
