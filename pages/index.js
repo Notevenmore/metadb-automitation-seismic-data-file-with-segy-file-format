@@ -1,18 +1,5 @@
 import Buttons, { Buttons_Sidebar } from '../components/buttons/buttons'
-import Bibliography from '../public/icons/bibliography.svg'
-import Info from '../public/icons/info.svg'
-import Maps from '../public/icons/maps.svg'
-import Outcrop from '../public/icons/outcrop.svg'
-import Project_file from '../public/icons/project_file.svg'
-import Seismic from '../public/icons/seismic.svg'
-import Technical_report from '../public/icons/technical_report.svg'
-import Well from '../public/icons/well.svg'
 import Well_sample_core from '../public/icons/well_sample_core.svg'
-import Arrow from '../public/icons/arrow_notrail.svg'
-import TableComponent from '../components/table/table'
-import Input from '../components/input_form/input'
-import Sidebar from '../components/sidebar'
-import Navbar from '../components/navbar'
 
 export default function Home() {
   const tableData = {
@@ -50,9 +37,9 @@ export default function Home() {
               Press the buttons present in the sidebar or press one of the buttons below to start viewing the detailed documentations of the components
             </p>
             <div className='flex flex-col space-y-2'>
-              <Buttons path={'/button'} button_description='Buttons documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
-              <Buttons path={'/table'} button_description='Table documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
-              <Buttons path={'/input'} button_description='Input form documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
+              <Buttons path={'/components/button'} button_description='Buttons documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
+              <Buttons path={'/components/table'} button_description='Table documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
+              <Buttons path={'/components/input'} button_description='Input form documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
             </div>
           </div>
         </div>

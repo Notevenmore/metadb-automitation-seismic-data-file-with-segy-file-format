@@ -37,23 +37,18 @@ export default function Item({ icon, name, child, link, collapse }) {
     );
 }
 
-function Child({ icon, name, link, collapse }) {
-    const path = link ? link : "";
+function Child({ icon, name, link="", collapse }) {
 
     return (
-        <Link href={path} className={styles.navItem}>
+        <Link href={link} className={styles.navItem}>
             <div className="flex justify-between items-center px-5 py-2 gap-x-4 hover:bg-gray-200">
                 <div className="flex gap-x-4">
-                    <Icon path={icon} size={.9} />
+                    <img src={icon} className="w-[.9rem] h-[22px]" />
                     {!collapse && <div>{name}</div>}
                 </div>
                 {!collapse && (
                     <div>
-                        <Icon
-                            path={mdiChevronRight}
-                            size={.65}
-                            className={styles.navItemChevron}
-                        />
+                        <img src="/icons/chevron-right.svg" className={`w-[25px] h-[15px] ${styles.navItemChevron}`} />
                     </div>
                 )}
             </div>

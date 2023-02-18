@@ -1,10 +1,7 @@
-import Sidebar from "../components/sidebar"
-import Buttons from "../components/buttons/buttons"
-import Well_sample_core from '../public/icons/well_sample_core.svg'
-import Input from "../components/input_form/input"
+import Buttons from "../../components/buttons/buttons"
+import Well_sample_core from '../../public/icons/well_sample_core.svg'
+import Input from "../../components/input_form/input"
 import Highlight from "react-highlight"
-import Navbar from "../components/navbar"
-import { useState } from "react"
 
 const InputPage = () => {
     let demo_holder_1 = [[]]

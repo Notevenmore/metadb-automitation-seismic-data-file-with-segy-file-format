@@ -14,7 +14,7 @@ Props:
 ```
 {
     collapse: bool (not required),
-    full: bool (not required)
+    half: bool (not required)
 }
 ```
 collapse props is for collapsing the navigation name, leaving only icons behind.
