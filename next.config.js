@@ -9,6 +9,7 @@ const nextConfig = {
     return config
   },
   swcMinify: true,
+  transpilePackages: ['react-syntax-highlighter', 'lodash-es'],
 }
 
 module.exports = nextConfig

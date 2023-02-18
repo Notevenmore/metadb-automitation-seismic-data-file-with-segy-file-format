@@ -11,8 +11,15 @@ module.exports = {
         error: "#ff0000",
         warning: "",
         'side_bar': '#F5F8FA'
-      }
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '1500px',
+          },
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography'),],
 }
