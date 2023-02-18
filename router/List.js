@@ -111,6 +111,11 @@ export default [
                 link: "/database",
 				icon: "/icons/database.svg",
             },
+            {
+                name: "Upload File",
+                link: "/upload-file",
+				icon: "/icons/file-document-outline.svg",
+            },
 
         ],
     },
