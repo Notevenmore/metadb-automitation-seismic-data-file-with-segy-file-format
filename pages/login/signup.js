@@ -71,7 +71,7 @@ export default function SignUpPage() {
                         additional_styles_input="bg-[#ededed]"
                     />
                     <Buttons
-                        path="/"
+                        path="/login/account-approval"
                         button_description="Sign Up"
                         additional_styles="px-12 py-1 mt-4 bg-primary"
                     />
