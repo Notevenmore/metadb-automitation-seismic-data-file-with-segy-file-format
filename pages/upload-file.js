@@ -5,7 +5,7 @@ import Input from "../components/input_form/input";
 
 export default function UploadFilePage() {
     const additional_styles_label = "w-[20%]"
-    const [detail, setDetail] = useState();
+    const [detail, setDetail] = useState("bbb");
     const [fileUpload, setFileUpload] = useState([]);
 
     const fileUploadRef = useRef(null)
@@ -15,6 +15,9 @@ export default function UploadFilePage() {
         else setFileUpload(e.target.files)
     }
 
+    useEffect(() => {
+        console.log("detail", detail)
+    }, [detail])
     useEffect(() => {
         console.log(fileUpload)
     }, [fileUpload])
@@ -29,7 +32,7 @@ export default function UploadFilePage() {
                     <Buttons path="" button_description="Choose a file" onClick={() => fileUploadRef.current.click()} />
 					<input
                         type="file"
-                        style={{display: "none"}}
+                        className="hidden"
                         ref={fileUploadRef}
                         onChange={(e) => changeFile(e)}
                     />
@@ -42,22 +45,24 @@ export default function UploadFilePage() {
 						type="dropdown"
 						name={"dataType"}
 						placeholder={"Data type"}
-                        dropdown_items={[]}
+                        dropdown_items={["a", "b", "c"]}
 						required={true}
                         additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-                        onChange={(e) => setDetail(e.target.value)}
+                        onChange={(e) => setDetail(e.target.name)}
 					/>
                     <Input
 						label="Data classification"
 						label_loc="beside"
-						type="dropdown"
+						type="text"
 						name={"dataClassification"}
 						placeholder={"Data classification"}
                         dropdown_items={[]}
 						required={true}
                         additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
+                        value={detail}
+                        onChange={(e) => setDetail(e.target.value)}
 					/>
                     <Input
 						label="Sub data classification"
