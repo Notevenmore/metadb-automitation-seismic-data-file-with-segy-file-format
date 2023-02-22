@@ -1,8 +1,8 @@
 import { useRouter } from "next/router"
 
-export default function Container({children, additional_class}) {
+export default function Container({children, additional_class, ...divProps}) {
     return(
-        <div className={`w-full flex flex-col p-10 ${additional_class}`}>
+        <div className={`w-full flex flex-col p-10 ${additional_class}`} {...divProps}>
             {children}
         </div>
     )
