@@ -1,3 +1,5 @@
+import { mdiIpOutline } from "@mdi/js";
+
 export default [
 	{
 		name: "Home",
@@ -116,6 +118,11 @@ export default [
                 link: "/database",
 				icon: "/icons/database.svg",
             },
+			{
+				name: "New Document",
+				link: "/new-document",
+				icon: "/icons/file-document-outline.svg"
+			},
             {
                 name: "Upload File",
                 link: "/upload-file",
