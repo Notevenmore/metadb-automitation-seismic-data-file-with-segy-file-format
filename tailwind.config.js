@@ -14,6 +14,7 @@ module.exports = {
         link: "#0064d9",
         'float_dialog': '#C9C9C9',
         'float_section_divider': '#B1C6D3',
+        searchbg: '#d5e1f0'
       }
     },
   },

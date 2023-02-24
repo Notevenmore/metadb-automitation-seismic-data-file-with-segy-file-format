@@ -1,6 +1,7 @@
 import Item from "./navigation_item/Item";
 import List from "../../router/List";
 import { useState } from "react";
+import SearchWidget from "../widget/Search";
 
 export default function SideBar({ half }) {
     const [iconCollapse, setIconCollapse] = useState(false);
@@ -8,8 +9,12 @@ export default function SideBar({ half }) {
         <div
             className={`float-left ${
                 half ? "h-full" : "h-screen"
-            } flex flex-col pt-5 pb-10 max-w-xs bg-side_bar overflow-y-auto`}
+            } flex flex-col pt-2 pb-10 w-[314px] bg-side_bar overflow-y-auto`}
+            style={{width: iconCollapse && "auto"}}
         >
+            <div>
+                {iconCollapse ? <Item icon="/icons/magnify.svg" collapse={iconCollapse} /> : <SearchWidget />}
+            </div>
             <div onClick={() => setIconCollapse(prev => !prev)}>
                 <Item
                     name="Collapse"
