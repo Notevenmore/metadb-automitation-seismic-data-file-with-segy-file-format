@@ -10,7 +10,7 @@ export default function SideBar({ half }) {
             className={`float-left ${
                 half ? "h-full" : "h-screen"
             } flex flex-col pt-2 pb-10 w-[314px] bg-side_bar overflow-y-auto`}
-            style={{width: iconCollapse && "auto"}}
+            style={{width: iconCollapse ? "auto" : ""}}
         >
             <div>
                 {iconCollapse ? <Item icon="/icons/magnify.svg" collapse={iconCollapse} /> : <SearchWidget />}
