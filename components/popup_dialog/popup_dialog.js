@@ -41,7 +41,7 @@ const PopupTitle = ({title}) => {
 const ButtonsSection = ({button_desc1="Save", button_desc2="Save and exit", button_desc3="Discard changes"}) => {
     return (
         <section className="flex flex-row justify-around">
-            <Buttons path='/' button_description={button_desc1} additional_styles="bg-[#63F48C]" children="<h1>Hello<h1>"/>
+            <Buttons path='/' button_description={button_desc1} additional_styles="bg-[#63F48C]"/>
             <Buttons path='/' button_description={button_desc2} additional_styles="bg-[#63F48C]"/>
             <Buttons path='/' button_description={button_desc3} additional_styles="text-[#FF0000]"/>
         </section>
