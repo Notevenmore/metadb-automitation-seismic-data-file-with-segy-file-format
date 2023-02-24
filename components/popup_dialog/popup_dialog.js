@@ -2,6 +2,7 @@ import Buttons from "../buttons/buttons"
 import Close from "../../public/icons/close.svg"
 import {Divider} from "../float_dialog/float_dialog"
 
+// FIXME create onClick event for the button
 const PopupDialog = ({title="Are you sure?", content,
      button_desc1="Save", button_desc2="Save and exit",
       button_desc3="Discard changes"}) => 

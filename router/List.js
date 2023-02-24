@@ -38,6 +38,11 @@ export default [
                 link: "/components/popup-dialog",
 				icon: "/icons/window-maximize.svg",
             },
+			{
+				name: "Floating Dialog",
+				link: "/components/float-dialog",
+				icon: "/icons/window-maximize.svg",
+			},
             {
                 name: "Profile Floating Dialog",
                 link: "/components/profile-dialog",
