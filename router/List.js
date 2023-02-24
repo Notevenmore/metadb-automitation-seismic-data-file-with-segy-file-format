@@ -133,6 +133,11 @@ export default [
                 link: "/basin",
 				icon: "/icons/file-document-outline.svg",
             },
+			{
+				name: "Basin Edit",
+				link: "/basin-edit",
+				icon: "/icons/file-document-outline.svg"
+			}
 
         ],
     },
