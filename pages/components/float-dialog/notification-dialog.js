@@ -1,10 +1,10 @@
-import {FloatDialogProfile} from "../../components/float_dialog/float_dialog"
+import FloatDialogNotification from "../../../components/float_dialog/float_dialog"
 import hljs from 'highlight.js'
 import { useEffect } from 'react'
 import Highlight from 'react-highlight'
-import { Divider } from '../../components/float_dialog/float_dialog'
+import { Divider } from '../../../components/float_dialog/float_dialog'
 
-export default function ProfileDialogPage() {
+export default function NotificationDialogPage() {
   return (
     <div>
       <HeaderSection></HeaderSection>
@@ -28,7 +28,7 @@ export default function ProfileDialogPage() {
         <br/><br/>
         Overall, this component provides a convenient and reusable way to render floating dialog boxes in React.
       </p>
-      <FloatDialogProfile></FloatDialogProfile>
+      <FloatDialogNotification></FloatDialogNotification>
     </div>
   )
 }

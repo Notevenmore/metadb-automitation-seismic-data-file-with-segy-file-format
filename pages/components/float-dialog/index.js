@@ -1,8 +1,8 @@
-import FloatDialog, {FloatDialogNotification, ProfileIcon, NotificationIcon, IconSection} from "../../components/float_dialog/float_dialog"
+import FloatDialog, {FloatDialogNotification, ProfileIcon, NotificationIcon, IconSection} from "../../../components/float_dialog/float_dialog"
 import hljs from 'highlight.js'
 import { useEffect } from 'react'
 import Highlight from 'react-highlight'
-import { Divider } from '../../components/float_dialog/float_dialog'
+import { Divider } from '../../../components/float_dialog/float_dialog'
 
 export default function FloatingDialogPage() {
   useEffect(() => {

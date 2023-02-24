@@ -45,12 +45,12 @@ export default [
 			},
             {
                 name: "Profile Floating Dialog",
-                link: "/components/profile-dialog",
+                link: "/components/float-dialog/profile-dialog",
 				icon: "/icons/window-maximize.svg",
             },
             {
                 name: "Notification Floating Dialog",
-                link: "/components/notification-dialog",
+                link: "/components/float-dialog/notification-dialog",
 				icon: "/icons/window-maximize.svg",
             }
 		],
