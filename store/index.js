@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { generalSlice } from "./generalSlice";
+import generalReducer from "./generalSlice";
+import searchReducer from './searchSlice'
 
-export const store = () => configureStore({
+export const store = configureStore({
     reducer: {
-        generalSlice
+        general: generalReducer,
+        search: searchReducer
     }
 })

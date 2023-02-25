@@ -1,27 +1,23 @@
 import "../styles/globals.css";
-import LayoutIcon from "../layout/LayoutIcon";
-import LayoutCollapse from "../layout/LayoutCollapse";
-import LayoutWidget from "../layout/LayoutWidget";
 import "highlight.js/styles/github.css";
-import { getLayoutIcon } from "../layout/getLayout";
-
+import { getLayoutIcon, getLayoutWidget } from "../layout/getLayout";
+import { store } from "../store";
+import { Provider } from "react-redux";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }) {
-    // return (
-    //     <LayoutIcon>
-    //       <Component {...pageProps} />
-    //     </LayoutIcon>
-        // <LayoutCollapse>
-        //     <Component {...pageProps} />
-        // </LayoutCollapse>
-        // <LayoutWidget>
-        //     <Component {...pageProps} />
-        // </LayoutWidget>
-    // );
+	const getLayout = Component.getLayout || getLayoutIcon;
 
-    const getLayout = Component.getLayout || getLayoutIcon
-
-    return getLayout(<Component {...pageProps} />)
+	return (
+		<Provider store={store}>
+			<Head>
+				<title>Kangean Energy Indonesia Database Converter App</title>
+				<meta name="description" content="Kangean Energy Indonesia Database Converter App" />
+				<link rel="icon" href="/icons/kangean_logo.svg" />
+			</Head>
+			{getLayout(<Component {...pageProps} />)}
+		</Provider>
+	);
 }
 
-export default MyApp
+export default MyApp;

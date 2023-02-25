@@ -9,7 +9,7 @@ const nextConfig = {
     return config
   },
   swcMinify: true,
-  transpilePackages: ['@bokeh/bokehjs'],
+  transpilePackages: ['@bokeh/bokehjs', 'react-syntax-highlighter', 'lodash-es'],
 }
 
 module.exports = nextConfig

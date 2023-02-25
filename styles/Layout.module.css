@@ -16,6 +16,6 @@
 .sideBarOpen.halfSideBar .sideBar {
     opacity: 1;
     transform: translateX(0px);
-    height: 50%;
+    height: 47.5vh;
     overflow: auto;
 }

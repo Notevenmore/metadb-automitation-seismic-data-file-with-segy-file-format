@@ -29,15 +29,20 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-highlight": "^0.15.0",
+    "react-markdown": "^8.0.5",
     "react-redux": "^8.0.5",
+    "react-syntax-highlighter": "^15.5.0",
+    "react-use": "^17.4.0",
     "regl": "^2.1.0",
+    "rehype-raw": "^6.1.1",
+    "remark-gfm": "^3.0.1",
     "sprintf-js": "^1.1.2",
     "tailwind-merge": "^1.9.1",
     "timezone": "^1.0.23",
-    "underscore.template": "^0.1.7",
-    "react-use": "^17.4.0"
+    "underscore.template": "^0.1.7"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.9",
     "@types/node": "^18.13.0",
     "@types/react": "^18.0.28",
     "autoprefixer": "^10.4.13",
