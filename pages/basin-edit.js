@@ -6,11 +6,23 @@ import { Divider } from "../components/float_dialog/float_dialog";
 
 const HeaderDivider = () => {
     return (
-        <Divider additional_styles={"-ml-[20px] w-[1207px]"}></Divider>
+        <Divider additional_styles={"-ml-[20px] w-[calc(100%+40px)]"}></Divider>
     )
 }
 
-export default function NewDocumentPage() {
+const InputComponent1 = ({label1, label2, children}) => {
+    return (
+        <div className="flex lg:flex-row sm:flex-col w-full">
+            <div className="flex space-x-2 w-[535px] mt-[5px]">
+                <label>{label1}</label>
+                <label className="text-[#A3A3A3]">{label2}</label>
+            </div>
+            <>{children}</>
+        </div>
+    )
+}
+
+export default function BasinEditPage() {
     const [detail, setDetail] = useState("bbb");
 	return (
 		<Container additional_class="full-height relative" onDragEnter={(e) => handleDrag(e)}>
@@ -30,10 +42,8 @@ export default function NewDocumentPage() {
             <section className="border border-solid border-float_dialog rounded-md px-5">
                 <section className="font-bold py-2">Header</section>
                 <HeaderDivider/>
-                <div className="relative">
+                <InputComponent1 label1={"Nama KKKS"} label2={"(KKKS Name)"}>
                     <Input
-                        label="Nama KKKS"
-                        label_loc="beside"
                         type="text"
                         name={"KKKS_Name"}
                         placeholder={"Kangean Energy Indonesia"}
@@ -41,13 +51,10 @@ export default function NewDocumentPage() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                    <div className="absolute top-[6px] left-[90px] text-[#A3A3A3]">(KKKS Name)</div>
-                </div>
+                </InputComponent1>
                 <HeaderDivider/>
-                <div className="relative">
+                <InputComponent1 label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
-                        label="Nama wilayah kerja"
-                        label_loc="beside"
                         type="text"
                         name={"workingArea"}
                         placeholder={"Pulau Kangean"}
@@ -55,28 +62,22 @@ export default function NewDocumentPage() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                    <div className="absolute top-[6px] left-[145px] text-[#A3A3A3]">(Working Area)</div>
-                </div>
+                </InputComponent1>
                 <HeaderDivider/>
-                <div className="relative">
+                <InputComponent1 label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
                     <Input
-                        label="Jenis penyerahan data"
-                        label_loc="beside"
                         type="dropdown"
                         name={"submissionType"}
-                        placeholder={"Kangean Energy Indonesia"}
+                        placeholder={"Quarterly"}
                         dropdown_items={["a", "b", "c"]}
                         required={true}
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                    <div className="absolute top-[6px] left-[163px] text-[#A3A3A3]">(Submission Type)</div>
-                </div>
+                </InputComponent1>
                 <HeaderDivider/>
-                <div className="relative">
+                <InputComponent1 label1={"Nomor AFE"} label2={"(AFE Number)"}>
                     <Input
-                        label="Nomor AFE"
-                        label_loc="beside"
                         type="text"
                         name={"AFE_Number"}
                         placeholder={"01"}
@@ -84,8 +85,8 @@ export default function NewDocumentPage() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                    <div className="absolute top-[6px] left-[87px] text-[#A3A3A3]">(AFE Number)</div>
-                </div>
+                </InputComponent1>
+                <HeaderDivider/>
             </section>
             <section className="flex gap-x-3 mt-10">
                 <Buttons path="" additional_styles="bg-primary">Save changes</Buttons>
