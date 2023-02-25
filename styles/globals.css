@@ -11,7 +11,7 @@
 }
 
 @font-face {
-  font-family: "mulish";
+  font-family: "Mulish";
   src: url(./fonts/Mulish-VariableFont_wght.ttf) format("truetype");
 }
 @font-face {
@@ -27,7 +27,7 @@
 }
 
 html, body {
-  font-family: mulish;
+  font-family: Mulish;
 }
 
 .material-icons {
@@ -92,4 +92,7 @@ a {
 }
 .overflow-auto {
   overflow: auto;
+}
+::-webkit-scrollbar {
+  display: none;
 }
