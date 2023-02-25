@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@bokeh/bokehjs": "^3.0.3",
+    "@bokeh/bokehjs": "^2.4.3",
     "@bokeh/numbro": "^1.6.2",
     "@bokeh/slickgrid": "^2.4.4102",
     "@mdi/js": "^7.1.96",
