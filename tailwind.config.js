@@ -15,8 +15,15 @@ module.exports = {
         'float_dialog': '#C9C9C9',
         'float_section_divider': '#B1C6D3',
         searchbg: '#d5e1f0'
-      }
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '1500px',
+          },
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography'),],
 }

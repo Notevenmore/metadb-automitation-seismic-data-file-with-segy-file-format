@@ -77,14 +77,14 @@ export default function SearchWidget() {
 							additional_styles_input="bg-searchbg text-black text-[14.5px] indent-5"
 						/>
 					</div>
-					<div className="flex flex-row items-center gap-x-1 justify-between">
+					<div className="flex flex-row items-center justify-between gap-x-1 w-full">
 						<Input
 							label="Data type"
 							label_loc="above"
 							type="dropdown"
 							name={"dataType"}
 							dropdown_items={["a", "b", "c"]}
-							additional_styles="w-full"
+							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
 							additional_styles_input={inputAdditionalStyle}
 							onChange={handleChange}
@@ -95,7 +95,7 @@ export default function SearchWidget() {
 							type="dropdown"
 							name={"dataClass"}
 							dropdown_items={["a", "b", "c"]}
-							additional_styles="w-full"
+							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
 							additional_styles_input={inputAdditionalStyle}
 							onChange={handleChange}
@@ -119,7 +119,7 @@ export default function SearchWidget() {
 							type="dropdown"
 							name={"type"}
 							dropdown_items={["a", "b", "c"]}
-							additional_styles="w-full"
+							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
 							additional_styles_input={inputAdditionalStyle}
 							onChange={handleChange}
@@ -130,7 +130,7 @@ export default function SearchWidget() {
 							type="dropdown"
 							name={"workingArea"}
 							dropdown_items={["a", "b", "c"]}
-							additional_styles="w-full"
+							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
 							additional_styles_input={inputAdditionalStyle}
 							onChange={handleChange}
