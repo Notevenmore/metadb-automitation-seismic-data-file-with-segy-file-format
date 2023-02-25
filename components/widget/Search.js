@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next/Image";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { applySearch } from "../../store/searchSlice";
@@ -10,28 +10,20 @@ export default function SearchWidget() {
 	const inputAdditionalStyle = "bg-searchbg text-black text-[14.5px] py-0 w-full";
 	// search function when expand = false will directly go to the slice
 	// implement search to store after apply filter
-	const [searchValues, setSearchValues] = useState({
-		searchAll: "",
-		dataType: "",
-		dataClass: "",
-		subDataClassification: "",
-		type: "",
-		workingArea: "",
-		AFE: "",
-	});
+    const dispatch = useDispatch()
+    const searches = useSelector((state) => state.search.value)
+	const [searchValues, setSearchValues] = useState(searches);
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setSearchValues((prev) => ({
 			...prev,
 			[name]: value,
 		}));
+		console.log("on change", e.target)
 	};
 
-    const dispatch = useDispatch()
-    const searches = useSelector((state) => state.search.value)
     const applyFilter = (e) => {
         e.preventDefault();
-        console.log(searchValues)
         dispatch(applySearch(searchValues))
     }
 
@@ -39,19 +31,20 @@ export default function SearchWidget() {
 		<div className="w-full h-auto px-5 text-[14.5px]">
 			{!expandSearch ? (
 				<div className="flex flex-row items-center relative justify-between">
-					<Image src="/icons/magnify.svg" width={30} height={30} className="w-[.9rem] h-[22px] absolute" />
+					<Image alt="icon" src="/icons/magnify.svg" width={30} height={30} className="w-[.9rem] h-[22px] absolute" />
 					<Input
 						type="string"
 						name={"searchAll"}
 						placeholder={"Search all"}
 						additional_styles="flex-1"
+						value={searchValues.searchAll}
 						additional_styles_input="bg-transparent text-black text-[14.5px] indent-5 flex-1"
 					/>
 					<div
 						className="flex flex-row items-center text-[11px] text-[#939393]"
 						onClick={() => setExpandSearch(true)}>
 						<div>Expand</div>
-						<Image
+						<Image alt="icon"
 							src="/icons/chevron-down.svg"
 							width={30}
 							height={30}
@@ -62,7 +55,7 @@ export default function SearchWidget() {
 			) : (
 				<form className="relative flex flex-col gap-y-2 pb-2 w-full" onSubmit={applyFilter}>
 					<div className="flex flex-row items-center relative w-full">
-						<Image
+						<Image alt="icon"
 							src="/icons/magnify.svg"
 							width={30}
 							height={30}
@@ -74,6 +67,7 @@ export default function SearchWidget() {
 							placeholder={"Search all"}
 							additional_styles="w-full"
 							onChange={handleChange}
+							value={searchValues.searchAll}
 							additional_styles_input="bg-searchbg text-black text-[14.5px] indent-5"
 						/>
 					</div>
@@ -86,6 +80,7 @@ export default function SearchWidget() {
 							dropdown_items={["a", "b", "c"]}
 							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
+							value={searchValues.dataType}
 							additional_styles_input={inputAdditionalStyle}
 							onChange={handleChange}
 						/>
@@ -94,9 +89,10 @@ export default function SearchWidget() {
 							label_loc="above"
 							type="dropdown"
 							name={"dataClass"}
-							dropdown_items={["a", "b", "c"]}
+							dropdown_items={["d", "e", "f"]}
 							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
+							value={searchValues.dataClass}
 							additional_styles_input={inputAdditionalStyle}
 							onChange={handleChange}
 						/>
@@ -105,8 +101,9 @@ export default function SearchWidget() {
 						label="Sub-data classification"
 						label_loc="above"
 						type="dropdown"
-						name={"subDataClassficiation"}
-						dropdown_items={["a", "b", "c"]}
+						name={"subDataClassification"}
+						dropdown_items={["a", "b", "???"]}
+						value={searchValues.subDataClassification}
 						additional_styles="w-full"
 						additional_styles_label="w-full"
 						additional_styles_input={inputAdditionalStyle}
@@ -119,6 +116,7 @@ export default function SearchWidget() {
 							type="dropdown"
 							name={"type"}
 							dropdown_items={["a", "b", "c"]}
+							value={searchValues.type}
 							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
 							additional_styles_input={inputAdditionalStyle}
@@ -130,6 +128,7 @@ export default function SearchWidget() {
 							type="dropdown"
 							name={"workingArea"}
 							dropdown_items={["a", "b", "c"]}
+							value={searchValues.workingArea}
 							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
 							additional_styles_input={inputAdditionalStyle}
@@ -143,6 +142,7 @@ export default function SearchWidget() {
 							placeholder="0"
 							type="number"
 							name={"AFE"}
+							value={searchValues.AFE}
 							additional_styles="w-full"
 							additional_styles_label="w-full"
 							additional_styles_input={inputAdditionalStyle}
@@ -162,7 +162,7 @@ export default function SearchWidget() {
 						/>
 					</div>
 					<div className="absolute bottom-0 right-0">
-						<Image
+						<Image alt="icon"
 							src="/icons/chevron-double-up.svg"
 							width={30}
 							height={30}
