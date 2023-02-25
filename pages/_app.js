@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 import Head from "next/head";
 
 function MyApp({ Component, pageProps }) {
-	const getLayout = Component.getLayout || getLayoutWidget;
+	const getLayout = Component.getLayout || getLayoutIcon;
 
 	return (
 		<Provider store={store}>

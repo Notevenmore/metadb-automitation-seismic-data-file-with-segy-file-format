@@ -6,7 +6,7 @@ import Buttons from "../buttons/buttons";
 import Input from "../input_form/input";
 
 export default function SearchWidget() {
-	const [expandSearch, setExpandSearch] = useState(true);
+	const [expandSearch, setExpandSearch] = useState(false);
 	const inputAdditionalStyle = "bg-searchbg text-black text-[14.5px] py-0 w-full";
 	// search function when expand = false will directly go to the slice
 	// implement search to store after apply filter
