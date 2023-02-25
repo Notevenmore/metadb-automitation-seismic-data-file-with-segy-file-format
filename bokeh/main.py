@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from bokeh.plotting import figure, show
 from bokeh.resources import CDN
-from bokeh.embed import json_item
+from bokeh.embed import json_item, components, file_html
 from bokeh.layouts import layout, column, row
 from bokeh.models import CustomJS, ColumnDataSource, Slider, Spinner
 from bokeh.sampledata.autompg import autompg
+from bokeh.resources import CDN
 import json
+
+import panel as pn
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -33,12 +36,14 @@ async def test():
     x = [x*0.005 for x in range(0, 200)]
     y = x
 
+    # create a new plot with a title and axis labels
     p = figure(title="Simple line example", x_axis_label="x", y_axis_label="y")
 
     # add a line renderer with legend and line thickness
-    points = p.circle(x=x, y=y, size=30, fill_color="#21a7df")
+    p.line(x, y, legend_label="Temp.", line_width=2)
 
-    return json_item(p, "plot")
+    # show the results
+    return json_item(p, "#plot")
 
 @app.get("/test2")
 async def test2():
@@ -54,4 +59,44 @@ async def test2():
 
     layout = row(column(spinner, width=100), p)
 
-    return json_item(layout, "plot")
+    return json_item(layout, "#plot")
+
+class JsonButton(pn.widgets.Button):
+    def to_dict(self):
+        button_dict = super().to_dict()
+        button_dict["clicks"] = self.clicks
+        return button_dict
+
+@app.route("/test-callback")
+def buttonCallback(event):
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+
+buttonPanel = JsonButton(name='Click me!', button_type='primary').get_root()
+# buttonPanel.on_click(buttonCallback)
+buttonPanel.js_on_click(CustomJS(args=dict(button=buttonPanel), code="""
+    fetch('/test-callback', {method: 'GET'})
+"""))
+
+layoutButton = pn.Column(buttonPanel)
+# layoutButton.servable()
+@app.get("/widgets")
+async def widgets():
+    # button_dict = buttonPanel.to_dict()
+    # button_json = json.dumps(button_dict)
+    # return button_json
+    script,html = components(buttonPanel)
+    # return json_item(buttonPanel, '#plot')
+    return file_html(buttonPanel, CDN, "my plot")
+    # return html
+
+
+vtk_pane = pn.pane.VTK('https://raw.githubusercontent.com/Kitware/vtk-js/master/Data/StanfordDragon.vtkjs',
+                     sizing_mode='stretch_width', height=400, enable_keybindings=True, orientation_widget=True)
+@app.get("/try-vtk")
+async def vtk():
+    temp = vtk_pane.get_root()
+    return json_item(temp, "#plot")
+
+
+if __name__=="__main__":
+    pn.serve(app)
