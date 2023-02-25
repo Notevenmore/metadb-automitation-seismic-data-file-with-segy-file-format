@@ -11,6 +11,10 @@
 }
 
 @font-face {
+  font-family: "mulish";
+  src: url(./fonts/Mulish-VariableFont_wght.ttf) format("truetype");
+}
+@font-face {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
@@ -20,6 +24,10 @@
     url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
     url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
     url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+html, body {
+  font-family: mulish;
 }
 
 .material-icons {
