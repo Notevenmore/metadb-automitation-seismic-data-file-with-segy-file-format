@@ -33,7 +33,6 @@ const InputComponent2 = ({label, children}) => {
         </div>
     )
 }
-// TODO: make the inputs into components
 
 export default function NewDocumentPage() {
     const [detail, setDetail] = useState("bbb");
