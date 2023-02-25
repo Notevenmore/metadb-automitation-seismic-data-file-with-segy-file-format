@@ -3,12 +3,37 @@ import Buttons from "../components/buttons/buttons";
 import Container from "../components/container/container.js";
 import Input from "../components/input_form/input";
 import { Divider } from "../components/float_dialog/float_dialog";
+import { current } from "@reduxjs/toolkit";
 
 const HeaderDivider = () => {
     return (
-        <Divider additional_styles={"-ml-[20px] w-[1207px]"}></Divider>
+        <Divider additional_styles={"-ml-[20px] w-[calc(100%+40px)]"}></Divider>
     )
 }
+
+const InputComponent1 = ({label1, label2, children}) => {
+    return (
+        <div className="flex lg:flex-row sm:flex-col w-full">
+            <div className="flex space-x-2 w-[535px] mt-[5px]">
+                <label>{label1}</label>
+                <label className="text-[#A3A3A3]">{label2}</label>
+            </div>
+            <>{children}</>
+        </div>
+    )
+}
+
+const InputComponent2 = ({label, children}) => {
+    return (
+        <div className="flex lg:flex-row sm:flex-col w-full">
+            <div className="flex space-x-2 w-[535px] mt-[5px]">
+                <label className="font-semibold">{label}</label>
+            </div>
+            <>{children}</>
+        </div>
+    )
+}
+// TODO: make the inputs into components
 
 export default function NewDocumentPage() {
     const [detail, setDetail] = useState("bbb");
@@ -18,10 +43,8 @@ export default function NewDocumentPage() {
             <section className="border border-solid border-float_dialog rounded-md px-5">
                 <section className="font-bold py-2">Header</section>
                 <HeaderDivider/>
-                <div className="relative">
+                <InputComponent1 label1={"Nama KKKS"} label2={"(KKKS Name)"}>
                     <Input
-                        label="Nama KKKS"
-                        label_loc="beside"
                         type="text"
                         name={"KKKS_Name"}
                         placeholder={"Kangean Energy Indonesia"}
@@ -29,13 +52,10 @@ export default function NewDocumentPage() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                    <div className="absolute top-[6px] left-[90px] text-[#A3A3A3]">(KKKS Name)</div>
-                </div>
+                </InputComponent1>
                 <HeaderDivider/>
-                <div className="relative">
+                <InputComponent1 label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
-                        label="Nama wilayah kerja"
-                        label_loc="beside"
                         type="text"
                         name={"workingArea"}
                         placeholder={"Pulau Kangean"}
@@ -43,28 +63,22 @@ export default function NewDocumentPage() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                    <div className="absolute top-[6px] left-[145px] text-[#A3A3A3]">(Working Area)</div>
-                </div>
+                </InputComponent1>
                 <HeaderDivider/>
-                <div className="relative">
+                <InputComponent1 label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
                     <Input
-                        label="Jenis penyerahan data"
-                        label_loc="beside"
                         type="dropdown"
                         name={"submissionType"}
-                        placeholder={"Kangean Energy Indonesia"}
+                        placeholder={"Quarterly"}
                         dropdown_items={["a", "b", "c"]}
                         required={true}
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                    <div className="absolute top-[6px] left-[163px] text-[#A3A3A3]">(Submission Type)</div>
-                </div>
+                </InputComponent1>
                 <HeaderDivider/>
-                <div className="relative">
+                <InputComponent1 label1={"Nomor AFE"} label2={"(AFE Number)"}>
                     <Input
-                        label="Nomor AFE"
-                        label_loc="beside"
                         type="text"
                         name={"AFE_Number"}
                         placeholder={"01"}
@@ -72,47 +86,47 @@ export default function NewDocumentPage() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                    <div className="absolute top-[6px] left-[87px] text-[#A3A3A3]">(AFE Number)</div>
-                </div>
+                </InputComponent1>
                 <HeaderDivider/>
-                <Input
-                    label="Data type"
-                    label_loc="beside"
-                    type="dropdown"
-                    name="dataType"
-                    placeholder="Seismic data"
-                    dropdown_items={["a", "b", "c"]}
-                    additional_styles="w-full"
-                    additional_styles_label="font-semibold"
-                    additional_styles_input="font-semibold"
-                    onChange={(e) => setDetail(e.target.name)}
-                />
+                <InputComponent2 label={"Data type"}>
+                    <Input
+                        type="dropdown"
+                        name={"dataType"}
+                        placeholder={"Seismic data"}
+                        dropdown_items={["a", "b", "c"]}
+                        required={true}
+                        additional_styles="w-full"
+                        additional_styles_input="font-semibold"
+                        onChange={(e) => setDetail(e.target.name)}
+                    />
+                </InputComponent2>
                 <HeaderDivider/>
-                <Input
-                    label="Data classification"
-                    label_loc="beside"
-                    type="dropdown"
-                    name="dataClassification"
-                    placeholder="Seismic data"
-                    dropdown_items={["a", "b", "c"]}
-                    additional_styles="w-full"
-                    additional_styles_label="font-semibold"
-                    additional_styles_input="font-semibold"
-                    onChange={(e) => setDetail(e.target.name)}
-                />
+                <InputComponent2 label={"Data classification"}>
+                    <Input
+                        type="dropdown"
+                        name={"dataClassification"}
+                        placeholder={"3D"}
+                        dropdown_items={["a", "b", "c"]}
+                        required={true}
+                        additional_styles="w-full"
+                        additional_styles_input="font-semibold"
+                        onChange={(e) => setDetail(e.target.name)}
+                    />
+                </InputComponent2>
                 <HeaderDivider/>
-                <Input
-                    label="Data sub-classification"
-                    label_loc="beside"
-                    type="dropdown"
-                    name="dataSubClassification"
-                    placeholder="2D field data"
-                    dropdown_items={["a", "b", "c"]}
-                    additional_styles="w-full"
-                    additional_styles_label="font-semibold"
-                    additional_styles_input="font-semibold"
-                    onChange={(e) => setDetail(e.target.name)}
-                />
+                <InputComponent2 label={"Data sub-classification"}>
+                    <Input
+                        type="dropdown"
+                        name={"dataSubClassification"}
+                        placeholder={"Stored in media"}
+                        dropdown_items={["a", "b", "c"]}
+                        required={true}
+                        additional_styles="w-full"
+                        additional_styles_input="font-semibold"
+                        onChange={(e) => setDetail(e.target.name)}
+                    />
+                </InputComponent2>
+                
             </section>
             <section className="flex gap-x-3 mt-10">
                 <Buttons path="" additional_styles="bg-primary">Save changes</Buttons>
