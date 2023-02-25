@@ -96,3 +96,8 @@ a {
 ::-webkit-scrollbar {
   display: none;
 }
+
+/* hide bokeh logo */
+.bk-logo {
+  display: none !important;
+}

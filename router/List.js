@@ -107,11 +107,6 @@ export default [
 				icon: "/icons/info.svg",
 			},
             {
-                name: "Homepage",
-                link: "/home",
-				icon: "/icons/home-outline.svg",
-            },
-            {
                 name: "Database",
                 link: "/database",
 				icon: "/icons/database.svg",
