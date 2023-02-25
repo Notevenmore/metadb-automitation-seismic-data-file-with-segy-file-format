@@ -1,7 +1,8 @@
 import Image from "next/Image";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { applySearch } from "../../store/searchSlice";
+import { applySearch, setSearchState, singleSearch } from "../../store/searchSlice";
 import Buttons from "../buttons/buttons";
 import Input from "../input_form/input";
 
@@ -19,13 +20,28 @@ export default function SearchWidget() {
 			...prev,
 			[name]: value,
 		}));
-		console.log("on change", e.target)
 	};
 
     const applyFilter = (e) => {
         e.preventDefault();
+		dispatch(setSearchState(true))
         dispatch(applySearch(searchValues))
     }
+
+	const singleSearchChange = (e) => {
+		dispatch(singleSearch(e.target.value))
+	}
+
+	useEffect(() => {
+		if(expandSearch) setSearchValues(searches)
+	}, [expandSearch])
+
+	// if the search state is true redirect to home
+	const searchState = useSelector((state) => state.search.search)
+	const router = useRouter()
+	useEffect(() => {
+		if(searchState) router.push('/')
+	}, [searchState])
 
 	return (
 		<div className="w-full h-auto px-5 pt-1 text-[14.5px]">
@@ -36,8 +52,9 @@ export default function SearchWidget() {
 						type="string"
 						name={"searchAll"}
 						placeholder={"Search all"}
+						value={searches.searchAll}
 						additional_styles="flex-1"
-						value={searchValues.searchAll}
+						onChange={singleSearchChange}
 						additional_styles_input="bg-transparent text-black text-[14.5px] indent-5 flex-1"
 					/>
 					<div

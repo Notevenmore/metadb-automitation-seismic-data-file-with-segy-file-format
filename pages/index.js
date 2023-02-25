@@ -1,49 +1,67 @@
-import Buttons, { Buttons_Sidebar } from '../components/buttons/buttons'
-import Well_sample_core from '../public/icons/well_sample_core.svg'
+import Buttons from "../components/buttons/buttons";
+import FileIcon from "../public/icons/file.svg";
+import { Divider } from "../components/float_dialog/float_dialog";
+import Container from "../components/container/container";
+import { useSelector } from "react-redux";
+import TableComponent from "../components/table/table";
+import draft from "../dummy-data/draft";
+import { useEffect, useState } from "react";
 
-export default function Home() {
-  const tableData = {
-    header: ["id", "email", "first_name", "last_name", "avatar"],
-    content: [
-      {
-        "id": 1,
-        "email": "george.bluth@reqres.in",
-        "first_name": "George",
-        "last_name": "Bluth",
-        "avatar": "https://reqres.in/img/faces/1-image.jpg"
-      },
-      {
-        "id": 2,
-        "email": "janet.weaver@reqres.in",
-        "first_name": "Janet",
-        "last_name": "Weaver",
-        "avatar": "https://reqres.in/img/faces/2-image.jpg"
-      }
-    ]
-  }
-  const dropdownItems = ['Demo item 1', 'Demo item 2', 'Demo item 3', 'Demo item 4', 'Demo item 5', 'Demo item 6', 'Demo item 7', 'Demo item 8', 'Demo item 9']
-  return (
-    <div className="flex flex-col h-screen text-[14.5px]">
-      <div className="w-full flex flex-auto">
-        <div className='flex flex-col flex-grow overflow-auto'>
-          <div className='flex flex-col space-y-2 py-5 px-10'>
-            <h2 className='text-4xl font-bold'>Page demo and Component Documentations</h2>
-            <br></br>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vulputate mattis tortor sed bibendum. Nunc accumsan velit tortor, vulputate tempor ligula gravida eget. Nunc quam nisl, posuere ut mauris et, lobortis ullamcorper nunc. Mauris fermentum tincidunt porttitor. Nunc ac lacinia lectus, vitae mattis ex. Curabitur eget porttitor diam. Aliquam interdum suscipit urna, a semper dui pellentesque id. Cras justo nibh, cursus et sem sed, interdum pulvinar est. Nunc ut commodo nunc. Etiam ut justo tincidunt, egestas neque at, maximus erat. Maecenas maximus erat lacus, eget ultricies neque pulvinar at. Mauris sagittis tortor vel erat pharetra tempor. Integer facilisis, urna sed consectetur volutpat, justo lectus venenatis risus, laoreet bibendum mi ex vel leo. Duis in nibh dui. Vestibulum pretium at metus quis pretium. Suspendisse enim libero, posuere sed magna ac, placerat placerat mauris.
-            </p>
-            <br></br>
-            <p>
-              Press the buttons present in the sidebar or press one of the buttons below to start viewing the detailed documentations of the components
-            </p>
-            <div className='flex flex-col space-y-2'>
-              <Buttons path={'/components/button'} button_description='Buttons documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
-              <Buttons path={'/components/table'} button_description='Table documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
-              <Buttons path={'/components/input'} button_description='Input form documentation'><Well_sample_core className='w-4 h-4' /></Buttons>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+export default function HomePage() {
+    // if the search state is true change the view of the home page
+	const searches = useSelector((state) => state.search.search);
+
+	return <>{!searches ? <HomeSection /> : <SearchResult />}</>;
 }
+
+const HomeSection = () => {
+	return (
+		<section className="flex flex-col justify-center items-center w-full h-full">
+			<section className="flex flex-col justify-around w-[944px] h-[426px] items-center">
+				<FileIcon className="w-[114px] h-[132px]"></FileIcon>
+				<h1 className="text-[24px] leading-[30px] font-semibold opacity-50 text-center">
+					Choose the record of which data type to be shown by selecting from the side bar,
+					<br></br>or drag and drop a document here to be uploaded
+				</h1>
+				<div className="flex justify-center">
+					<Buttons path={"/"} button_description="Choose file manually"></Buttons>
+				</div>
+				<p className="text-center opacity-50">
+					The document to be uploaded must be either PDF, XLSX, JPG, or PNG format.
+				</p>
+				<section className="flex justify-center items-center">
+					<Divider additional_styles={"w-[284px]"}></Divider>
+					<h1 className="text-[24px] font-semibold opacity-50 mx-[37px]">or</h1>
+					<Divider additional_styles={"w-[284px]"}></Divider>
+				</section>
+				<section className="flex flex-row gap-x-3">
+					<Buttons path={"/"} button_description="Make a new document"></Buttons>
+					<Buttons path={"/"} button_description="View drafts"></Buttons>
+					<Buttons path={"/"} button_description="Connect with database"></Buttons>
+				</section>
+			</section>
+		</section>
+	);
+};
+
+const SearchResult = () => {
+    const [data, setData] = useState(draft.content);
+    const searches = useSelector((state) => state.search.value)
+    
+    useEffect(() => {
+        const name = searches.searchAll.toLocaleLowerCase();
+		let temp = draft.content;
+		temp = temp.filter((item) => {
+			return item.name.toLocaleLowerCase().includes(name);
+		});
+		console.log("search", temp);
+		setData(temp);
+    }, [searches])
+
+	return (
+		<Container>
+			<Container.Title>Search result</Container.Title>
+            <TableComponent header={draft.header} content={data} />
+		</Container>
+	);
+};
