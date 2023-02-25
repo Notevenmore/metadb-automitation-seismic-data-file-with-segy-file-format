@@ -28,7 +28,7 @@ export default function SearchWidget() {
     }
 
 	return (
-		<div className="w-full h-auto px-5 text-[14.5px]">
+		<div className="w-full h-auto px-5 pt-1 text-[14.5px]">
 			{!expandSearch ? (
 				<div className="flex flex-row items-center relative justify-between">
 					<Image alt="icon" src="/icons/magnify.svg" width={30} height={30} className="w-[.9rem] h-[22px] absolute" />
