@@ -34,7 +34,7 @@ const Input: React.FunctionComponent<InputProps> = ({ label = "none", label_loc 
         }
         // forcefully trigger onChange event to make onChange on parent component works
         if (Selected) {
-            const selector = (document.getElementById('selected_item') as any)
+            const selector = (selectorRef.current as any)
             const lastValue = selector.value
             selector.value = Selected;
             const event = new Event("input", { bubbles: true });
