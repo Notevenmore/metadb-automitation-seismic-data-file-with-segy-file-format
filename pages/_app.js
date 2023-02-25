@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }) {
 	return (
 		<Provider store={store}>
 			<Head>
-				<title>Profile - Kangean Energy Indonesia Database Converter App</title>
+				<title>Kangean Energy Indonesia Database Converter App</title>
 				<meta name="description" content="Kangean Energy Indonesia Database Converter App" />
 				<link rel="icon" href="/icons/kangean_logo.svg" />
 			</Head>
