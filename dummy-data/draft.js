@@ -4,9 +4,9 @@ import Buttons from "../components/buttons/buttons"
 const Action = () => {
     return (
         <div className="flex flex-row gap-x-1 items-center">
-            <Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " />
-            <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " />
-            <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " />
+            <Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+            <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+            <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
         </div>
     )
 }

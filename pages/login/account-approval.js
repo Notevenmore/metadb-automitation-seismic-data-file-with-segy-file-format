@@ -21,7 +21,7 @@ export default function AccountApprovalPage() {
 					the admin.
                     <Buttons path="/login/signin" button_description="I understand" additional_styles="bg-primary text-[16px]" />
 				</div>
-                <Image src="/images/small-group-logo.png" width={410} height={66} />
+                <Image src="/images/small-group-logo.png" width={410} height={66} alt="icon" />
 			</div>
 		</Container>
 	);

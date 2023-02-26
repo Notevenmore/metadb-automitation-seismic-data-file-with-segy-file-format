@@ -7,9 +7,6 @@ import Draft from "../dummy-data/draft";
 
 export default function BasinPage() {
 	let selectedTableData = [[]];
-	if(selectedTableData.length>0) {
-		console.log(selectedTableData)
-	}
 
 	const [data, setData] = useState(Draft.content);
 	const onSearch = (e) => {
