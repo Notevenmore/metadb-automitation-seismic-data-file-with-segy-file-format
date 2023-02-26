@@ -11,8 +11,8 @@ export default function SearchWidget() {
 	const inputAdditionalStyle = "bg-searchbg text-black text-[14.5px] py-0 w-full";
 	// search function when expand = false will directly go to the slice
 	// implement search to store after apply filter
-    const dispatch = useDispatch()
-    const searches = useSelector((state) => state.search.value)
+	const dispatch = useDispatch();
+	const searches = useSelector((state) => state.search.value);
 	const [searchValues, setSearchValues] = useState(searches);
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -20,34 +20,57 @@ export default function SearchWidget() {
 			...prev,
 			[name]: value,
 		}));
+		console.log(name, value)
 	};
 
-    const applyFilter = (e) => {
-        e.preventDefault();
-		dispatch(setSearchState(true))
-        dispatch(applySearch(searchValues))
-    }
+	const applyFilter = (e) => {
+		e.preventDefault();
+		dispatch(setSearchState(true));
+		dispatch(applySearch(searchValues));
+	};
 
 	const singleSearchChange = (e) => {
-		dispatch(singleSearch(e.target.value))
-	}
+		dispatch(singleSearch(e.target.value));
+	};
 
 	useEffect(() => {
-		if(expandSearch) setSearchValues(searches)
-	}, [expandSearch])
+		if (expandSearch) setSearchValues(searches);
+		else {
+			if (searches.searchAll === "") {
+				dispatch(setSearchState(false));
+			}
+			dispatch(
+				applySearch({
+					searchAll: searches.searchAll,
+					dataType: "",
+					dataClass: "",
+					subDataClassification: "",
+					type: "",
+					workingArea: "",
+					AFE: "",
+				})
+			);
+		}
+	}, [expandSearch]);
 
 	// if the search state is true redirect to home
-	const searchState = useSelector((state) => state.search.search)
-	const router = useRouter()
+	const searchState = useSelector((state) => state.search.search);
+	const router = useRouter();
 	useEffect(() => {
-		if(searchState) router.push('/')
-	}, [searchState])
+		if (searchState) router.push("/");
+	}, [searchState]);
 
 	return (
 		<div className="w-full h-auto px-5 pt-1 text-[14.5px]">
 			{!expandSearch ? (
 				<div className="flex flex-row items-center relative justify-between">
-					<Image alt="icon" src="/icons/magnify.svg" width={30} height={30} className="w-[.9rem] h-[22px] absolute" />
+					<Image
+						alt="icon"
+						src="/icons/magnify.svg"
+						width={30}
+						height={30}
+						className="w-[.9rem] h-[22px] absolute"
+					/>
 					<Input
 						type="string"
 						name={"searchAll"}
@@ -61,7 +84,8 @@ export default function SearchWidget() {
 						className="flex flex-row items-center text-[11px] text-[#939393]"
 						onClick={() => setExpandSearch(true)}>
 						<div>Expand</div>
-						<Image alt="icon"
+						<Image
+							alt="icon"
 							src="/icons/chevron-down.svg"
 							width={30}
 							height={30}
@@ -72,7 +96,8 @@ export default function SearchWidget() {
 			) : (
 				<form className="relative flex flex-col gap-y-2 pb-2 w-full" onSubmit={applyFilter}>
 					<div className="flex flex-row items-center relative w-full">
-						<Image alt="icon"
+						<Image
+							alt="icon"
 							src="/icons/magnify.svg"
 							width={30}
 							height={30}
@@ -144,7 +169,7 @@ export default function SearchWidget() {
 							label_loc="above"
 							type="dropdown"
 							name={"workingArea"}
-							dropdown_items={["a", "b", "c"]}
+							dropdown_items={["jakarta", "bandung", "somewhere", "not set"]}
 							value={searchValues.workingArea}
 							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
@@ -174,12 +199,13 @@ export default function SearchWidget() {
 							path=""
 							type="submit"
 							button_description="Apply filters"
-                            onClick={applyFilter}
+							onClick={applyFilter}
 							additional_styles="py-1 w-[160px] justify-center bg-searchbg"
 						/>
 					</div>
 					<div className="absolute bottom-0 right-0">
-						<Image alt="icon"
+						<Image
+							alt="icon"
 							src="/icons/chevron-double-up.svg"
 							width={30}
 							height={30}

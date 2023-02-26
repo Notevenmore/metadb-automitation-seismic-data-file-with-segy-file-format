@@ -54,6 +54,14 @@ const SearchResult = () => {
 		temp = temp.filter((item) => {
 			return item.name.toLocaleLowerCase().includes(name);
 		});
+
+		const workingArea = searches.workingArea.toLocaleLowerCase();
+		if(workingArea !== ""){
+			temp = temp.filter(item => {
+				return item["wilayah kerja"].toLocaleLowerCase().includes(workingArea)
+			})
+		}
+
 		console.log("search", temp);
 		setData(temp);
     }, [searches])
