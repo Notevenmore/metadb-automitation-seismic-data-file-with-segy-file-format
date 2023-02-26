@@ -121,11 +121,21 @@ export default [
 			{
 				name: "New Document",
 				link: "/new-document",
-				icon: "/icons/file-document-outline.svg"
+				icon: "/icons/file-document-outline.svg",
+			},
+			{
+				name: "Connect to Database - New Document",
+				link: "/database-new-document",
+				icon: "/icons/file-document-outline.svg",
 			},
             {
                 name: "Upload File",
                 link: "/upload-file",
+				icon: "/icons/file-document-outline.svg",
+            },
+			{
+                name: "Upload File Review",
+                link: "/upload-file-review",
 				icon: "/icons/file-document-outline.svg",
             },
             {
