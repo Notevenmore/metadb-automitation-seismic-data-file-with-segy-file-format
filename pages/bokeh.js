@@ -43,7 +43,6 @@ export default function BokehPage({}) {
 	async function widgetTest() {
 		plotRef.current.innerHTML = ""
 		if (typeof window !== "undefined") {
-
 			axios.get("http://127.0.0.1:8000/widgets")
 				.then((res) => {
 					console.log(res.data);
@@ -60,14 +59,12 @@ export default function BokehPage({}) {
 	async function vtkTest() {
 		plotRef.current.innerHTML = ""
 		if (typeof window !== "undefined") {
-			const Bokeh = await import("@bokeh/bokehjs");
-
 			axios.get("http://127.0.0.1:8000/try-vtk")
 				.then((res) => {
-					console.log(res);
+					console.log(res.data);
 					// Bokeh.embed.embed_item(res.data, 'plot');
-					Bokeh.embed.embed_item(res.data, 'plot');
-					console.log(plotRef.current)
+					// console.log(plotRef.current)
+					setSourceFrame(res.data)
 				})
 				.catch((err) => {
 					console.log(err);
@@ -75,22 +72,35 @@ export default function BokehPage({}) {
 		}
 	}
 
-	useEffect(() => {
-		console.log("aa?");
-		// bokehCall();
-		// test();
-
-		return () => {};
-	}, []);
+	const [panel, setPanel] = useState(null)
+	async function buttonTest() {
+		plotRef.current.innerHTML = ""
+		if (typeof window !== "undefined") {
+			axios.get("http://127.0.0.1:8000/try-button")
+				.then((res) => {
+					console.log(res.data);
+					// Bokeh.embed.embed_item(res.data, 'plot');
+					// console.log(plotRef.current)
+					const panel = createReactPanel(res.data)
+					setPanel(panel)
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}
 
 
 	return (
 		<Container>
 			<div ref={plotRef} id="plot" className="bk-root"></div>
+			<div>{panel}</div>
 			<iframe ref={frameRef} srcDoc={sourceFrame}></iframe>
 			<button onClick={test} className="border border-black p-3 w-[150px]">test 1</button>
 			<button onClick={test2} className="border border-black p-3 w-[150px]">test 2</button>
 			<button onClick={widgetTest} className="border border-black p-3 w-[150px]">test widget</button>
+			{/* <button onClick={vtkTest} className="border border-black p-3 w-[150px]">test vtk iframe</button>
+			<button onClick={buttonTest} className="border border-black p-3 w-[150px]">test button</button> */}
 		</Container>
 	);
 }

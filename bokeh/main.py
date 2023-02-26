@@ -1,4 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
+from fastapi.responses import JSONResponse
+from starlette.responses import HTMLResponse
+
 from bokeh.plotting import figure, show
 from bokeh.resources import CDN
 from bokeh.embed import json_item, components, file_html
@@ -94,8 +97,18 @@ vtk_pane = pn.pane.VTK('https://raw.githubusercontent.com/Kitware/vtk-js/master/
                      sizing_mode='stretch_width', height=400, enable_keybindings=True, orientation_widget=True)
 @app.get("/try-vtk")
 async def vtk():
-    temp = vtk_pane.get_root()
-    return json_item(temp, "#plot")
+    temp = vtk_pane
+    # return json_item(temp, "#plot")
+    # return file_html(temp, CDN, "my plot")
+    return temp.show()
+
+
+pn.extension()
+button2 = pn.widgets.Button(name='Click me!', button_type='primary')
+@app.get("/try-button", response_class=JSONResponse)
+async def try_button():
+    # response_data = button2.serve(json=True)
+    return button2.param.get_param_values()
 
 
 if __name__=="__main__":
