@@ -3,7 +3,7 @@ import Buttons from "../components/buttons/buttons";
 import Container from "../components/container/container.js";
 import Input from "../components/input_form/input";
 import { Divider } from "../components/float_dialog/float_dialog";
-import { current } from "@reduxjs/toolkit";
+import TableComponent from "../components/table/table";
 
 const HeaderDivider = () => {
     return (
@@ -38,7 +38,17 @@ export default function NewDocumentPage() {
     const [detail, setDetail] = useState("bbb");
 	return (
 		<Container additional_class="full-height relative" onDragEnter={(e) => handleDrag(e)}>
-			<Container.Title back>New document</Container.Title>
+			<Container.Title >New document</Container.Title>
+            <Input
+                label="Name"
+                label_loc="above"
+                type="text"
+                name={"documentName"}
+                placeholder={"Lorem ipsum laporan 2008"}
+                additional_styles={"-mt-[20px] mb-[20px]"}
+                additional_styles_label={"font-bold text-[16px]"}
+                additional_styles_input={"font-bold text-[36px]"}
+            />
             <section className="border border-solid border-float_dialog rounded-md px-5">
                 <section className="font-bold py-2">Header</section>
                 <HeaderDivider/>
@@ -125,12 +135,11 @@ export default function NewDocumentPage() {
                         onChange={(e) => setDetail(e.target.name)}
                     />
                 </InputComponent2>
-                
             </section>
             <section className="flex gap-x-3 mt-10">
                 <Buttons path="" additional_styles="bg-primary">Save changes</Buttons>
                 <Buttons path="" additional_styles="bg-primary">Save and exit</Buttons>
-                <Buttons path="" additional_styles="text-error">Cancel</Buttons>          
+                <Buttons path="" additional_styles="text-error">Cancel and discard all</Buttons>          
             </section>
         </Container>
 	);
