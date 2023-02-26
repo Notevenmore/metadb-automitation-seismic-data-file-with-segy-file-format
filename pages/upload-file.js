@@ -5,7 +5,6 @@ import Input from "../components/input_form/input";
 
 export default function UploadFilePage() {
 	const additional_styles_label = "w-[20%]";
-	const [detail, setDetail] = useState("bbb");
 	const [fileUpload, setFileUpload] = useState([]);
 
 	const fileUploadRef = useRef(null);
@@ -72,14 +71,13 @@ export default function UploadFilePage() {
 					<Input
 						label="Data classification"
 						label_loc="beside"
-						type="text"
+						type="dropdown"
 						name={"dataClassification"}
 						placeholder={"Data classification"}
-						dropdown_items={[]}
+						dropdown_items={["d", "e", "f"]}
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-						value={detail}
 						onChange={(e) => setDetail(e.target.value)}
 					/>
 					<Input
