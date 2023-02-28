@@ -3,11 +3,17 @@ import Buttons from "../components/buttons/buttons";
 import Container from "../components/container/container.js";
 import Input from "../components/input_form/input";
 import { Divider } from "../components/float_dialog/float_dialog";
-import { current } from "@reduxjs/toolkit";
+import TableComponent from "../components/table/table";
+
+const ContentDivider = () => {
+    return (
+        <Divider additional_styles={"-ml-[60px] w-[calc(100%+60px)]"}></Divider>
+    )
+}
 
 const HeaderDivider = () => {
     return (
-        <Divider additional_styles={"-ml-[20px] w-[calc(100%+40px)]"}></Divider>
+        <Divider additional_styles={"-ml-[20px] w-[calc(100%+29px)]"}></Divider>
     )
 }
 
@@ -34,14 +40,98 @@ const InputComponent2 = ({label, children}) => {
     )
 }
 
+const TableContent1 = ({label1, label2, content}) => {
+    return (
+        <div className="flex lg:flex-row sm:flex-col w-full text-[16px]">
+            <p className="font-semibold inline-block w-[368px]">
+                {label1} <span className="text-[#A3A3A3]">{label2}</span>
+            </p>
+            <p>{content}</p>
+        </div>
+    )
+}
+
+const TableContent2 = ({label, content}) => {
+    return (
+        <div className="flex lg:flex-row sm:flex-col w-full text-[16px]">
+            <p className="font-semibold w-[368px]">{label}</p>
+            <p>{content}</p>
+        </div>
+    )
+}
 export default function UploadFileReview() {
     const [detail, setDetail] = useState("bbb");
 	return (
 		<Container additional_class="full-height relative" onDragEnter={(e) => handleDrag(e)}>
 			<Container.Title>Review</Container.Title>
+            <section className="-mt-5 mb-5">
+                <p className="font-bold">Name</p>
+                <h1 className="font-bold text-[36px]">Lorem ipsum laporan 2008</h1>
+            </section>
+            <TableComponent
+                additional_styles="border border-solid border-float_dialog rounded-md text-[16px]"
+                header={[
+                    <div>
+                        <h1>Header</h1>
+                        <HeaderDivider></HeaderDivider>
+                    </div>
+                ]}
+                content={[
+                    [
+                        <div>
+                            <TableContent1
+                            label1={"Nama KKKS"}
+                            label2={"(KKKS Name)"}
+                            content={"Kangean Energy Indonesia"}
+                            />
+                            <ContentDivider/>
+                        </div>
+                            
+                    ],
+                    [
+                        <TableContent1
+                            label1={"Nama wilayah kerja"}
+                            label2={"(Working Area)"}
+                            content={"Pulau Kangean"}
+                        />
+                    ],
+                    [
+                        <TableContent1
+                            label1={"Jenis penyerahan data"}
+                            label2={"(Submission Type)"}
+                            content={"Quarterly"}
+                        />  
+                    ],
+                    [
+                        <TableContent1
+                            label1={"Nomor AFE"}
+                            label2={"(AFE Number)"}
+                            content={"01"}
+                        />  
+                    ],
+                    [
+                        <TableContent2
+                            label={"Data type"}
+                            content={"Seismic Data"}
+                        />
+                    ],
+                    [
+                        <TableContent2
+                            label={"Data classification"}
+                            content={"3D"}
+                        />
+                    ],
+                    [
+                        <TableContent2
+                            label={"Data sub-classification"}
+                            content={"Stored in media"}
+                        />
+                    ]
+                ]}
+            />
             <section className="border border-solid border-float_dialog rounded-md px-5">
                 <section className="font-bold py-2">Header</section>
-                <HeaderDivider/>
+                <ContentDivider/>                    
                 <InputComponent1 label1={"Nama KKKS"} label2={"(KKKS Name)"}>
                     <Input
                         type="text"
@@ -52,7 +142,7 @@ export default function UploadFileReview() {
                         onChange={(e) => setDetail(e.target.name)}
                     />
                 </InputComponent1>
-                <HeaderDivider/>
+                <ContentDivider/>
                 <InputComponent1 label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
                         type="text"
@@ -63,7 +153,7 @@ export default function UploadFileReview() {
                         onChange={(e) => setDetail(e.target.name)}
                     />
                 </InputComponent1>
-                <HeaderDivider/>
+                <ContentDivider/>
                 <InputComponent1 label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
                     <Input
                         type="dropdown"
@@ -75,7 +165,7 @@ export default function UploadFileReview() {
                         onChange={(e) => setDetail(e.target.name)}
                     />
                 </InputComponent1>
-                <HeaderDivider/>
+                <ContentDivider/>
                 <InputComponent1 label1={"Nomor AFE"} label2={"(AFE Number)"}>
                     <Input
                         type="text"
@@ -86,7 +176,7 @@ export default function UploadFileReview() {
                         onChange={(e) => setDetail(e.target.name)}
                     />
                 </InputComponent1>
-                <HeaderDivider/>
+                <ContentDivider/>
                 <InputComponent2 label={"Data type"}>
                     <Input
                         type="dropdown"
@@ -99,7 +189,7 @@ export default function UploadFileReview() {
                         onChange={(e) => setDetail(e.target.name)}
                     />
                 </InputComponent2>
-                <HeaderDivider/>
+                <ContentDivider/>
                 <InputComponent2 label={"Data classification"}>
                     <Input
                         type="dropdown"
@@ -112,7 +202,7 @@ export default function UploadFileReview() {
                         onChange={(e) => setDetail(e.target.name)}
                     />
                 </InputComponent2>
-                <HeaderDivider/>
+                <ContentDivider/>
                 <InputComponent2 label={"Data sub-classification"}>
                     <Input
                         type="dropdown"

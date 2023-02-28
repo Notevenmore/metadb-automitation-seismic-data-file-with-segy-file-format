@@ -134,7 +134,7 @@ export default [
 				icon: "/icons/file-document-outline.svg",
             },
 			{
-                name: "Upload File Review",
+                name: "Upload File - Review",
                 link: "/upload-file-review",
 				icon: "/icons/file-document-outline.svg",
             },
