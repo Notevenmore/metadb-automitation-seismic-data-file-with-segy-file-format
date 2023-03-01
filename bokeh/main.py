@@ -2,6 +2,7 @@ from fastapi import FastAPI, Response
 from fastapi.responses import JSONResponse
 from starlette.responses import HTMLResponse
 
+import bokeh.plotting as bop
 from bokeh.plotting import figure, show
 from bokeh.resources import CDN
 from bokeh.embed import json_item, components, file_html
@@ -92,16 +93,56 @@ async def widgets():
     return file_html(buttonPanel, CDN, "my plot")
     # return html
 
+import numpy as np
 
-vtk_pane = pn.pane.VTK('https://raw.githubusercontent.com/Kitware/vtk-js/master/Data/StanfordDragon.vtkjs',
-                     sizing_mode='stretch_width', height=400, enable_keybindings=True, orientation_widget=True)
-@app.get("/try-vtk")
-async def vtk():
-    temp = vtk_pane
-    # return json_item(temp, "#plot")
-    # return file_html(temp, CDN, "my plot")
-    return temp.show()
+bop.reset_output()
+def sourcee():
+    x5 = np.linspace(0, np.pi)
+    y5 = np.sin(x5)
+    source5 = ColumnDataSource(data=dict(x=x5, y=y5))
+    return source5
 
+def sliding(source):
+    freq = Slider(name="Frequency", start=0, end=10, value=2)
+    phase = Slider(name="Phase", start=0, end=np.pi)
+
+    callback5 = CustomJS(args=dict(source=source, val=freq),
+                        code="""
+        const data5 = source.data;
+        const freq5 = val.value;
+        const x = data5['x'];
+        const y = data5['y'];
+        for (var i = 0; i < x.length; i++) {
+            y[i] = Math.sin(freq5*x[i]);
+        }
+        console.log(y)
+        source.change.emit()
+    """)
+    freq.js_on_change('value', callback5)
+    return freq
+
+def sine():
+    source5 = sourcee()
+    bop.reset_output()
+    p5 = figure()
+    p5.line('x', 'y', source = source5, line_width=3, line_alpha=0.5)
+    freq = sliding(source5)
+    return p5, freq
+
+# sine = pn.bind(sine, freq = freq, phase = phase)
+
+@app.get("/try-fastgrid")
+async def fastGrid(): 
+    # temp = row(phase, freq, sine)
+    p5, freq = sine()
+    try:
+        layout = row(column(freq, width=100), p5)
+        print("AAAAAAAAAA")
+        return json_item(layout, "plot")
+    except:
+        layout = row(column(freq, width=100), p5)
+        print("BBBBBBBBBBBBBBB")
+        return json_item(layout, "plot")
 
 pn.extension()
 button2 = pn.widgets.Button(name='Click me!', button_type='primary')

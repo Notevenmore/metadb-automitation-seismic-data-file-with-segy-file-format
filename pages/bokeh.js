@@ -5,15 +5,13 @@ import axios from "axios";
 export default function BokehPage({}) {
 	const plotRef = useRef(null);
 	const frameRef = useRef(null);
-	const data = [1, 2, 3, 4, 5];
-	const datay = [5, 4, 3, 2, 1];
 
 	async function test() {
 		plotRef.current.innerHTML = ""
 		if (typeof window !== "undefined") {
 			const Bokeh = await import("@bokeh/bokehjs");
 
-			axios.get("http://127.0.0.1:8000/test")
+			axios.get("http://127.0.0.1:8000/try-fastgrid")
 				.then((res) => {
 					console.log("test1");
 					Bokeh.embed.embed_item(res.data, 'plot');
@@ -56,22 +54,6 @@ export default function BokehPage({}) {
 		}
 	}
 
-	async function vtkTest() {
-		plotRef.current.innerHTML = ""
-		if (typeof window !== "undefined") {
-			axios.get("http://127.0.0.1:8000/try-vtk")
-				.then((res) => {
-					console.log(res.data);
-					// Bokeh.embed.embed_item(res.data, 'plot');
-					// console.log(plotRef.current)
-					setSourceFrame(res.data)
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		}
-	}
-
 	const [panel, setPanel] = useState(null)
 	async function buttonTest() {
 		plotRef.current.innerHTML = ""
@@ -89,6 +71,10 @@ export default function BokehPage({}) {
 				});
 		}
 	}
+
+	useEffect(() => {
+		return 
+	})
 
 
 	return (
