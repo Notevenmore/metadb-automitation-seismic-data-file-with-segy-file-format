@@ -4,11 +4,11 @@ const initialState = {
     search: false,
     value: {
         searchAll: "",
-		dataType: "",
-		dataClass: "",
-		subDataClassification: "",
-		type: "",
-		workingArea: "",
+		dataType: "Select an Item",
+		dataClass: "Select an Item",
+		subDataClassification: "Select an Item",
+		type: "Select an Item",
+		workingArea: "Select an Item",
 		AFE: "",
     }
 }

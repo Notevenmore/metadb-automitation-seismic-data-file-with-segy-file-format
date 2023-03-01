@@ -42,11 +42,11 @@ export default function SearchWidget() {
 			dispatch(
 				applySearch({
 					searchAll: searches.searchAll,
-					dataType: "",
-					dataClass: "",
-					subDataClassification: "",
-					type: "",
-					workingArea: "",
+					dataType: "Select an Item",
+					dataClass: "Select an Item",
+					subDataClassification: "Select an Item",
+					type: "Select an Item",
+					workingArea: "Select an Item",
 					AFE: "",
 				})
 			);
@@ -119,7 +119,7 @@ export default function SearchWidget() {
 							label_loc="above"
 							type="dropdown"
 							name={"dataType"}
-							dropdown_items={["a", "b", "c"]}
+							dropdown_items={["Select an Item", "a", "b", "c"]}
 							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
 							value={searchValues.dataType}
@@ -131,7 +131,7 @@ export default function SearchWidget() {
 							label_loc="above"
 							type="dropdown"
 							name={"dataClass"}
-							dropdown_items={["d", "e", "f"]}
+							dropdown_items={["Select an Item", "d", "e", "f"]}
 							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
 							value={searchValues.dataClass}
@@ -144,7 +144,7 @@ export default function SearchWidget() {
 						label_loc="above"
 						type="dropdown"
 						name={"subDataClassification"}
-						dropdown_items={["a", "b", "???"]}
+						dropdown_items={["Select an Item", "a", "b", "???"]}
 						value={searchValues.subDataClassification}
 						additional_styles="w-full"
 						additional_styles_label="w-full"
@@ -157,7 +157,7 @@ export default function SearchWidget() {
 							label_loc="above"
 							type="dropdown"
 							name={"type"}
-							dropdown_items={["a", "b", "c"]}
+							dropdown_items={["Select an Item", "a", "b", "c"]}
 							value={searchValues.type}
 							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
@@ -169,7 +169,7 @@ export default function SearchWidget() {
 							label_loc="above"
 							type="dropdown"
 							name={"workingArea"}
-							dropdown_items={["jakarta", "bandung", "somewhere", "not set"]}
+							dropdown_items={["Select an Item", "jakarta", "bandung", "somewhere", "not set"]}
 							value={searchValues.workingArea}
 							additional_styles="w-[49%]"
 							additional_styles_label="w-full"
