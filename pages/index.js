@@ -30,7 +30,7 @@ const HomeSection = () => {
 					<br></br>or drag and drop a document here to be uploaded
 				</h1>
 				<div className="flex justify-center">
-					<Buttons path={"/"} button_description="Choose file manually"></Buttons>
+					<Buttons path={"/upload-file"} button_description="Choose file manually"></Buttons>
 				</div>
 				<p className="text-center opacity-50">
 					The document to be uploaded must be either PDF, XLSX, JPG, or PNG format.
@@ -62,11 +62,12 @@ const SearchResult = () => {
 		});
 
 		const workingArea = searches.workingArea.toLocaleLowerCase();
-		if(workingArea !== ""){
+		if(workingArea !== "select an item"){
 			temp = temp.filter(item => {
 				return item["wilayah kerja"].toLocaleLowerCase().includes(workingArea)
 			})
 		}
+		console.log(workingArea)
 
 		console.log("search", temp);
 		setData(temp);

@@ -1,18 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = [
-    {
-        id: "",
-        name: "",
-    }
-]
+const initialState = {
+    file: []
+}
 
 export const generalSlice = createSlice({
     name:"general",
     initialState,
     reducers: {
-        doSth: (state, action) => {
-            console.log(state.value)
+        storeFile: (state, action) => {
+            console.log(action.payload)
+            state.file = action.payload
         }
     }
 })
+
+export const {storeFile} = generalSlice.actions
+export default generalSlice.reducer;

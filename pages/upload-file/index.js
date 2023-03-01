@@ -1,7 +1,10 @@
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import Buttons from "../components/buttons/buttons";
-import Container from "../components/container/container.js";
-import Input from "../components/input_form/input";
+import { useDispatch } from "react-redux";
+import Buttons from "../../components/buttons/buttons";
+import Container from "../../components/container/container.js";
+import Input from "../../components/input_form/input";
+import { storeFile } from "../../store/generalSlice";
 
 export default function UploadFilePage() {
 	const additional_styles_label = "w-[20%]";
@@ -13,10 +16,6 @@ export default function UploadFilePage() {
 		if (e.target.files.length == 0) setFileUpload([]);
 		else setFileUpload(e.target.files);
 	};
-
-	useEffect(() => {
-		console.log(fileUpload);
-	}, [fileUpload]);
 
 	const [dragActive, setDragActive] = useState(false);
 	const handleDrop = (e) => {
@@ -40,14 +39,21 @@ export default function UploadFilePage() {
 		console.log("detail", dragActive);
 	}, [dragActive]);
 
+	const router = useRouter();
+	const dispatch = useDispatch()
+	const handleSubmit = (e) => {
+		e.preventDefault()
+		dispatch(storeFile(fileUpload))
+		router.push('/upload-file/uploading')
+		console.log("???")
+	}
+
 	return (
 		<Container additional_class="full-height relative" onDragEnter={(e) => handleDrag(e)}>
 			<Container.Title back>Upload File</Container.Title>
 			<form
 				className="flex flex-col items-center justify-center gap-y-4 w-full"
-				onSubmit={(e) => {
-					e.preventDefault();
-				}}>
+				onSubmit={(e) =>{ handleSubmit(e); console.log("aaa")}}>
 				<div className="flex flex-col items-center gap-y-1">
 					<div className="font-medium">Choose the right settings for the uploaded file</div>
 					{fileUpload.length > 0 && <div className="underline">{fileUpload[0].name}</div>}
@@ -109,6 +115,7 @@ export default function UploadFilePage() {
 						path=""
 						button_description="Upload and process file"
 						additional_styles="bg-primary"
+						onClick={handleSubmit}
 					/>
 					<button type="submit"> Cancel</button>
 				</div>

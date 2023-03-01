@@ -87,6 +87,10 @@ a {
 .full-height {
   height: calc(100vh - 60px)
 }
+.full-height-container {
+  height: calc(100vh - 250px)
+}
+
 .overflow-hidden {
  overflow: hidden;
 }
