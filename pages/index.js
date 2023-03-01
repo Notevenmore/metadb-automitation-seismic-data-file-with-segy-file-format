@@ -6,17 +6,23 @@ import { useSelector } from "react-redux";
 import TableComponent from "../components/table/table";
 import draft from "../dummy-data/draft";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 export default function HomePage() {
     // if the search state is true change the view of the home page
 	const searches = useSelector((state) => state.search.search);
-
 	return <>{!searches ? <HomeSection /> : <SearchResult />}</>;
 }
 
 const HomeSection = () => {
+	const router = useRouter()
+	const handleDrag = (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		router.push('/upload-file')
+	}
 	return (
-		<section className="flex flex-col justify-center items-center w-full h-full">
+		<section className="flex flex-col justify-center items-center w-full h-full" onDragEnter={(e) => handleDrag(e)}>
 			<section className="flex flex-col justify-around w-[944px] h-[426px] items-center">
 				<FileIcon className="w-[114px] h-[132px]"></FileIcon>
 				<h1 className="text-[24px] leading-[30px] font-semibold opacity-50 text-center">
@@ -35,9 +41,9 @@ const HomeSection = () => {
 					<Divider additional_styles={"w-[284px]"}></Divider>
 				</section>
 				<section className="flex flex-row gap-x-3">
-					<Buttons path={"/"} button_description="Make a new document"></Buttons>
-					<Buttons path={"/"} button_description="View drafts"></Buttons>
-					<Buttons path={"/"} button_description="Connect with database"></Buttons>
+					<Buttons path={"/upload-file"} button_description="Make a new document"></Buttons>
+					<Buttons path={"/drafts"} button_description="View drafts"></Buttons>
+					<Buttons path={"/database"} button_description="Connect with database"></Buttons>
 				</section>
 			</section>
 		</section>
