@@ -51,9 +51,9 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
     <table 
     className={
       twMerge(
-        'table-fixed break-words overflow-x-scroll' +
-        'border-separate border-spacing-0 border-2' + 
-        'min-w-0 w-full rounded-lg text-[15px]',
+        `table-fixed break-words overflow-x-scroll
+        border-separate border-spacing-0 border-2 border-solid border-black/20 rounded
+        min-w-0 w-full rounded-lg text-[15px]`,
         additional_styles
       )
     }>
@@ -82,7 +82,7 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
         {tableData.content.map((row, row_index) =>
           <tr key={row_index} id={'row_' + row_index} className="hover:bg-side_bar">
             {with_checkbox ?
-             <td className={twMerge("pl-[14px] pt-1 w-5", additional_styles_row)}>
+             <td className={twMerge("pl-[14px] pt-1 w-5 border-t-2 border-solid border-black/20", additional_styles_row)}>
               <input id={'row_input_' + row_index} name="checkbox_row" type="checkbox"
               onClick={
                 (e) => handleSelectRow(e, "row_input_" + row_index, "row_" + row_index)
@@ -96,7 +96,7 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
                 return (
                   <td key={column_index}
                    className={
-                    twMerge("pl-5 pr-2 py-2", additional_styles_row)
+                    twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)
                   }>
                     <div className="whitespace-nowrap text-ellipsis overflow-hidden">
                       {column}
