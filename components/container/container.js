@@ -23,7 +23,7 @@ Container.Title.displayName = 'Container.Title';
 function BackButton() {
     const router = useRouter();
     return (
-        <div className="hover:bg-black/[0.15] rounded w-[50px] h-[35px] flex justify-center items-center" onClick={() => router.back()}>
+        <div className="hover:bg-black/[0.15] rounded w-[50px] h-[50px] flex justify-center items-center" onClick={() => router.back()}>
             <Image src="/icons/chevron-left.svg" alt="back icon" width={35} height={35} />
         </div>
     );
@@ -31,7 +31,7 @@ function BackButton() {
 
 Container.Subtitle = ({children, additional_class, tab=false}) => {
     return (
-        <div className={`text-[12px] -mt-10 lg:text-[16px] mb-10 ${additional_class}`} style={{marginLeft: tab && "58px"}}>
+        <div className={`text-[12px] -mt-10 lg:text-[16px] mb-10 ${additional_class}`} style={{marginLeft: tab && "73.5px"}}>
             {children}
         </div>
     )

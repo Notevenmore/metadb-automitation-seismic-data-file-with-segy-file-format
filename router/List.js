@@ -118,19 +118,9 @@ export default [
 				link: "/new-document",
 				icon: "/icons/file-document-outline.svg",
 			},
-			{
-				name: "Connect to Database - New Document",
-				link: "/database-new-document",
-				icon: "/icons/file-document-outline.svg",
-			},
             {
                 name: "Upload File",
                 link: "/upload-file",
-				icon: "/icons/file-document-outline.svg",
-            },
-			{
-                name: "Upload File - Review",
-                link: "/upload-file-review",
 				icon: "/icons/file-document-outline.svg",
             },
             {
@@ -138,11 +128,6 @@ export default [
                 link: "/basin",
 				icon: "/icons/file-document-outline.svg",
             },
-			{
-				name: "Basin Edit",
-				link: "/basin-edit",
-				icon: "/icons/file-document-outline.svg"
-			}
 
         ],
     },

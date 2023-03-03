@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import Buttons from "../components/buttons/buttons";
-import Container from "../components/container/container.js";
-import Input from "../components/input_form/input";
-import { Divider } from "../components/float_dialog/float_dialog";
-import TableComponent from "../components/table/table";
+import Buttons from "../../components/buttons/buttons";
+import Container from "../../components/container/container.js";
+import Input from "../../components/input_form/input";
+import { Divider } from "../../components/float_dialog/float_dialog";
+import TableComponent from "../../components/table/table";
 
 const HeaderDivider = () => {
     return (

@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import Container from "../components/container/container";
-import Input from "../components/input_form/input";
-import TableComponent from "../components/table/table";
-import Draft from "../dummy-data/draft";
+import Container from "../../components/container/container";
+import Input from "../../components/input_form/input";
+import TableComponent from "../../components/table/table";
+import Draft from "../../dummy-data/draft";
 
 export default function BasinPage() {
 	let selectedTableData = [[]];

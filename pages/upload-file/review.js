@@ -1,11 +1,11 @@
 /* eslint-disable react/jsx-key */
 import { useEffect, useRef, useState } from "react";
-import Buttons from "../components/buttons/buttons";
-import Container from "../components/container/container.js";
-import Input from "../components/input_form/input";
-import TableComponent from "../components/table/table";
+import Buttons from "../../components/buttons/buttons";
+import Container from "../../components/container/container.js";
+import Input from "../../components/input_form/input";
+import TableComponent from "../../components/table/table";
 import { twMerge } from "tailwind-merge";
-import { Divider } from "../components/float_dialog/float_dialog";
+import { Divider } from "../../components/float_dialog/float_dialog";
 
 const TableContent1 = ({label1, label2, content=false}) => {
     return (

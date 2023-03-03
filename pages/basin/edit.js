@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import Buttons from "../components/buttons/buttons";
-import Container from "../components/container/container.js";
-import Input from "../components/input_form/input";
-import { Divider } from "../components/float_dialog/float_dialog";
+import Buttons from "../../components/buttons/buttons";
+import Container from "../../components/container/container.js";
+import Input from "../../components/input_form/input";
+import { Divider } from "../../components/float_dialog/float_dialog";
 
 const HeaderDivider = () => {
     return (
