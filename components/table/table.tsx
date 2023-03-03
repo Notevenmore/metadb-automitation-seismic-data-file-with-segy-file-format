@@ -2,7 +2,8 @@ import { twMerge } from "tailwind-merge"
 import { useState, useEffect } from "react"
 
 
-const TableComponent = ({ header, content, with_checkbox = false, additional_styles = '', setSelectedRows }) => {
+const TableComponent = ({ header, content, with_checkbox = false, additional_styles = '',
+                         additional_styles_header='', additional_styles_row='', setSelectedRows }) => {
   const [Selected, setSelected] = useState([])
   const tableData = {
     header: header,
@@ -47,13 +48,32 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
   }, [Selected])
 
   return (
-    <table className={twMerge('table-fixed break-words overflow-x-scroll border-separate border-spacing-0 border-2 min-w-0 w-full rounded-lg text-[15px]', additional_styles)}>
+    <table 
+    className={
+      twMerge(
+        'table-fixed break-words overflow-x-scroll' +
+        'border-separate border-spacing-0 border-2' + 
+        'min-w-0 w-full rounded-lg text-[15px]',
+        additional_styles
+      )
+    }>
       <thead className="bg-gray-200">
         <tr className="text-left">
-          {with_checkbox ? <th className="pl-[14px] pt-1 w-5"><input type="checkbox" id="checkbox_all" onClick={(e) => handleSelectAll(e)} /></th> : null}
+          {with_checkbox ?
+           <th className={twMerge("pl-[14px] pt-1 w-5", additional_styles_header)}>
+            <input type="checkbox" id="checkbox_all"
+             onClick={(e) => handleSelectAll(e)}
+            />
+           </th>
+          : null
+          }
           {tableData.header.map((header, index) => {
             return (
-              <th key={index} className="pl-5 pr-2 py-2">{header}</th>
+              <th key={index} 
+                  className={twMerge("pl-5 pr-2 py-2", additional_styles_header)}
+              >
+                {header}
+              </th>
             )
           })}
         </tr>
@@ -61,20 +81,36 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
       <tbody className="text-ellipsis break-words">
         {tableData.content.map((row, row_index) =>
           <tr key={row_index} id={'row_' + row_index} className="hover:bg-side_bar">
-            {with_checkbox ? <td className="pl-[14px] pt-1 w-5 border-t-2"><input id={'row_input_' + row_index} name="checkbox_row" type="checkbox" onClick={(e) => handleSelectRow(e, "row_input_" + row_index, "row_" + row_index)} /></td> : null}
+            {with_checkbox ?
+             <td className={twMerge("pl-[14px] pt-1 w-5", additional_styles_row)}>
+              <input id={'row_input_' + row_index} name="checkbox_row" type="checkbox"
+              onClick={
+                (e) => handleSelectRow(e, "row_input_" + row_index, "row_" + row_index)
+              }
+              />
+             </td>
+            : null
+            }
             {typeof row === 'object' && !Array.isArray(row) && row !== null ?
               Object.values(row).map((column: any, column_index: number) => {
                 return (
-                  <td key={column_index} className="pl-5 pr-2 py-2 border-t-2">
-                    <div className="whitespace-nowrap text-ellipsis overflow-hidden">{column}</div>
+                  <td key={column_index}
+                   className={
+                    twMerge("pl-5 pr-2 py-2", additional_styles_row)
+                  }>
+                    <div className="whitespace-nowrap text-ellipsis overflow-hidden">
+                      {column}
+                    </div>
                   </td>
                 )
               })
               :
               row.map((column: any, column_index: number) => {
                 return (
-                  <td key={column_index} className="pl-5 pr-2 py-2 border-t-2">
-                    <div className="whitespace-nowrap text-ellipsis overflow-hidden">{column}</div>
+                  <td key={column_index} className={twMerge("pl-5 pr-2 py-2", additional_styles_row)}>
+                    <div className="whitespace-nowrap text-ellipsis overflow-hidden">
+                      {column}
+                    </div>
                   </td>
                 )
               })

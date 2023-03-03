@@ -17,6 +17,8 @@ const FloatDialog = ({children, float_title=false, items=null, onClick=null,
     function handleClick(){
         setShow(!show)
     }
+    const isNotification = items.type == "notification"
+    const isProfile = items.type == "profile"
     return (
         <section className="relative">
             <section onClick={onClick ? onClick : handleClick}>
@@ -30,14 +32,21 @@ const FloatDialog = ({children, float_title=false, items=null, onClick=null,
                     <h2 className="text-[16px] font-bold my-[20px]">
                         {float_title ? float_title : ""}</h2>
                 }
-                {
-                    items.contents.map((content) => {
+                {items.contents.map((content) => {
+                    if(items.type == "notification"){
                         return(
                             <FloatSection section_title={content.section_title}
                             section_content={content.section_content}/>
                         )
-                    })
-                }
+                    }
+                    // else if(items.type == "profile"){
+                    //     return(
+
+
+                    //     )
+                    // }
+                })}
+                    
             </section>
             }
         </section>   
