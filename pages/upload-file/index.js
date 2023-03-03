@@ -35,10 +35,6 @@ export default function UploadFilePage() {
 		}
 	};
 
-	useEffect(() => {
-		console.log("detail", dragActive);
-	}, [dragActive]);
-
 	const router = useRouter();
 	const dispatch = useDispatch()
 	const handleSubmit = (e) => {
