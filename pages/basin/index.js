@@ -42,7 +42,7 @@ export default function BasinPage() {
 					</div>
 				</div>
 			</Container.Title>
-			<TableComponent header={Draft.header} content={data} setSelectedRows={selectedTableData} with_checkbox />
+			<TableComponent header={Draft.header} content={data} setSelectedRows={selectedTableData} with_checkbox additional_styles="border-collapse" />
 		</Container>
 	);
 }

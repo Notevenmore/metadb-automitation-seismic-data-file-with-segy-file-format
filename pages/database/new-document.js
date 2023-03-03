@@ -35,7 +35,6 @@ const InputComponent2 = ({label, children}) => {
 }
 
 export default function NewDocumentPage() {
-    const [detail, setDetail] = useState("bbb");
 	return (
 		<Container additional_class="full-height relative" onDragEnter={(e) => handleDrag(e)}>
 			<Container.Title >New document</Container.Title>
@@ -59,7 +58,7 @@ export default function NewDocumentPage() {
                         placeholder={"Kangean Energy Indonesia"}
                         required={true}
                         additional_styles="w-full"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent1>
                 <HeaderDivider/>
@@ -70,7 +69,7 @@ export default function NewDocumentPage() {
                         placeholder={"Pulau Kangean"}
                         required={true}
                         additional_styles="w-full"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent1>
                 <HeaderDivider/>
@@ -82,7 +81,7 @@ export default function NewDocumentPage() {
                         dropdown_items={["a", "b", "c"]}
                         required={true}
                         additional_styles="w-full"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent1>
                 <HeaderDivider/>
@@ -93,7 +92,7 @@ export default function NewDocumentPage() {
                         placeholder={"01"}
                         required={true}
                         additional_styles="w-full"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent1>
                 <HeaderDivider/>
@@ -106,7 +105,7 @@ export default function NewDocumentPage() {
                         required={true}
                         additional_styles="w-full"
                         additional_styles_input="font-semibold"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent2>
                 <HeaderDivider/>
@@ -119,7 +118,7 @@ export default function NewDocumentPage() {
                         required={true}
                         additional_styles="w-full"
                         additional_styles_input="font-semibold"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent2>
                 <HeaderDivider/>
@@ -132,7 +131,7 @@ export default function NewDocumentPage() {
                         required={true}
                         additional_styles="w-full"
                         additional_styles_input="font-semibold"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent2>
             </section>

@@ -72,7 +72,6 @@ export default function UploadFilePage() {
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-						onChange={(e) => setDetail(e.target.name)}
 					/>
 					<Input
 						label="Data classification"
@@ -84,7 +83,6 @@ export default function UploadFilePage() {
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-						onChange={(e) => setDetail(e.target.value)}
 					/>
 					<Input
 						label="Sub data classification"

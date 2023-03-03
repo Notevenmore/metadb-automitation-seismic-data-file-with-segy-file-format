@@ -45,7 +45,6 @@ const TableContent2 = ({label, content}) => {
     )
 }
 export default function UploadFileReview() {
-    const [detail, setDetail] = useState("bbb");
 	return (
 		<Container additional_class="full-height relative" onDragEnter={(e) => handleDrag(e)}>
 			<Container.Title>Review</Container.Title>
@@ -68,7 +67,7 @@ export default function UploadFileReview() {
                         placeholder={"Pulau Kangean"}
                         required={true}
                         additional_styles="w-full"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent1>
                 <HeaderDivider/>
@@ -80,7 +79,7 @@ export default function UploadFileReview() {
                         dropdown_items={["a", "b", "c"]}
                         required={true}
                         additional_styles="w-full"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent1>
                 <HeaderDivider/>
@@ -91,7 +90,7 @@ export default function UploadFileReview() {
                         placeholder={"01"}
                         required={true}
                         additional_styles="w-full"
-                        onChange={(e) => setDetail(e.target.name)}
+                        
                     />
                 </InputComponent1>
                 <HeaderDivider/>
@@ -110,82 +109,6 @@ export default function UploadFileReview() {
                     content={"Stored in media"}
                 />
             </section>
-            {/* <TableComponent
-                additional_styles={"border border-solid border-float_dialog rounded-lg text-[16px]"}
-                additional_styles_row={"border-t-[1px] border-solid border-float_dialog"}
-                header={["Header"]}
-                content={[
-                    [
-                        <TableContent1
-                            label1={"Nama KKKS"}
-                            label2={"(KKKS Name)"}
-                            content={"Kangean Energy Indonesia"}
-                            
-                        />    
-                    ],
-                    [
-                        <InputComponent1 label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
-                            <Input
-                                type="text"
-                                name={"workingArea"}
-                                placeholder={"Pulau Kangean"}
-                                required={true}
-                                additional_styles="w-full"
-                                onChange={(e) => setDetail(e.target.name)}
-                            />
-                        </InputComponent1>
-                    ],
-                    [
-                        <InputComponent1 label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
-                            <Input
-                                type="dropdown"
-                                name={"submissionType"}
-                                placeholder={"Quarterly"}
-                                dropdown_items={["a", "b", "c"]}
-                                required={true}
-                                additional_styles="w-full"
-                                onChange={(e) => setDetail(e.target.name)}
-                            />
-                        </InputComponent1>
-                    ],
-                    [
-                        <InputComponent1 label1={"Nomor AFE"} label2={"(AFE Number)"}>
-                            <Input
-                                type="text"
-                                name={"AFE_Number"}
-                                placeholder={"01"}
-                                required={true}
-                                additional_styles="w-full"
-                                onChange={(e) => setDetail(e.target.name)}
-                            />
-                        </InputComponent1>
-                        // <TableContent1
-                        //     label1={"Nomor AFE"}
-                        //     label2={"(AFE Number)"}
-                        //     content={"01"}
-                        // />  
-                    ],
-                    [
-                        <TableContent2
-                            label={"Data type"}
-                            content={"Seismic Data"}
-                        />
-                    ],
-                    [
-                        <TableContent2
-                            label={"Data classification"}
-                            content={"3D"}
-                        />
-                    ],
-                    [
-                        <TableContent2
-                            label={"Data sub-classification"}
-                            content={"Stored in media"}
-                        />
-                    ]
-                ]}
-                
-            /> */}
             <section className="flex gap-x-3 mt-10">
                 <Buttons path="" additional_styles="bg-primary">Save changes</Buttons>
                 <Buttons path="" additional_styles="bg-primary">Save and exit</Buttons>
