@@ -51,9 +51,9 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
     <table 
     className={
       twMerge(
-        'table-fixed break-words overflow-x-scroll' +
-        'border-separate border-spacing-0 border-2' + 
-        'min-w-0 w-full rounded-lg text-[15px]',
+        'table-fixed break-words overflow-x-scroll ' +
+        'border-separate border-spacing-0 border-2 ' + 
+        'min-w-0 w-full rounded-lg text-[15px] ',
         additional_styles
       )
     }>
