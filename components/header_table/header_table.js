@@ -1,5 +1,4 @@
 import { Divider } from "../float_dialog/float_dialog"
-import Input from "../input_form/input"
 
 const HeaderTable = ({children}) => {
     return (
