@@ -2,8 +2,12 @@ import { Divider } from "../float_dialog/float_dialog"
 
 const HeaderTable = ({children}) => {
     return (
-        <section className="border border-solid border-float_dialog rounded-md lg:pl-4 px-2">
-            <section className="font-bold py-2 bg-black/[.16] lg:pl-4 pl-2 -mr-2 lg:-ml-4 -ml-2 rounded-t">Header</section>
+        <section className="border border-solid 
+        border-float_dialog rounded-md lg:pl-4 px-2">
+            <section className="font-bold py-2 bg-black/[.16]
+             lg:pl-4 pl-2 -mr-2 lg:-ml-4 -ml-2 rounded-t">
+                Header
+             </section>
             <HeaderDivider/>
             <>{children}</>
         </section>
@@ -77,4 +81,5 @@ const HeaderInput2 = ({label, children}) => {
 
 
 export default HeaderTable;
-export {HeaderDivider, HeaderRow, HeaderLabel, HeaderLabel1, HeaderLabel2, HeaderInput1, HeaderInput2};
+export {HeaderDivider, HeaderRow, HeaderLabel, HeaderLabel1,
+     HeaderLabel2, HeaderInput1, HeaderInput2};
