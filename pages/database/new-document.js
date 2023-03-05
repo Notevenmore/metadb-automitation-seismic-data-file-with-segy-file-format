@@ -5,6 +5,7 @@ import Input from "../../components/input_form/input";
 import { Divider } from "../../components/float_dialog/float_dialog";
 import TableComponent from "../../components/table/table";
 
+// TODO: generalize NewDocument's structure to this page
 const HeaderDivider = () => {
     return (
         <Divider additional_styles={"-ml-[20px] w-[calc(100%+40px)]"}></Divider>

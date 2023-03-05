@@ -7,6 +7,7 @@ import TableComponent from "../../components/table/table";
 import { twMerge } from "tailwind-merge";
 import { Divider } from "../../components/float_dialog/float_dialog";
 
+// TODO: generalize NewDocument's structure to this page
 const TableContent1 = ({label1, label2, content=false}) => {
     return (
         <div className="flex items-center lg:flex-row sm:flex-col w-full text-[16px] h-[55px]">
