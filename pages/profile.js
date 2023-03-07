@@ -1,8 +1,11 @@
 import Buttons from "../components/buttons/buttons";
 import TableComponent from "../components/table/table";
 import Container from "../components/container/container";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
+    const user = useSelector((state) => state.user.user)
+
 	return (
 		<Container>
 			<Container.Title back>Account settings</Container.Title>
@@ -10,9 +13,9 @@ const Profile = () => {
 				<TableComponent
 					header={["Account information", ""]}
 					content={[
-						["Email", "john.doe@email.com"],
-						["Date joined", "01 - 01 - 2023"],
-						["Role", "IT Admin"],
+						["Email", user.email],
+						["Date joined", user.date_joined],
+						["Role", user.role_id],
 					]}
 					additional_styles="text-[14.5px]"
 				/>
