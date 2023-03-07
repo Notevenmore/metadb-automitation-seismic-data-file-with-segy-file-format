@@ -2,10 +2,45 @@ import Input from "../../components/input_form/input";
 import Buttons from "../../components/buttons/buttons"
 import { getLayoutBlank } from "../../layout/getLayout";
 import Link from "next/link";
+import { getLogin } from "../../services/user";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/router";
+import { setUser } from "../../store/userSlice";
 
 SignInPage.getLayout = getLayoutBlank;
 
 export default function SignInPage() {
+    const [loginData, setLoginData] = useState({
+        email: "",
+        password: "",
+    })
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setLoginData(prev => ({
+            ...prev,
+            [name]: value
+        }))
+    }
+
+    const dispatch = useDispatch()
+    const router = useRouter()
+    const handleSignIn = async () => {
+        await getLogin(loginData.email, loginData.password).then(
+            (res) => {
+                const {succeed, data} = res
+                if(succeed) {
+                    console.log(data)
+                    dispatch(setUser(data))
+                    router.push('/')
+                    return;
+                }
+                console.log(data)
+                return;
+            }
+        )
+    }
+
     return (
         <div className="h-screen flex flex-col-reverse my-10 md:flex-row md:my-0 items-center justify-center m-auto gap-y-10">
             <div className="w-[589px] px-[50px] flex flex-col gap-y-6">
@@ -22,6 +57,8 @@ export default function SignInPage() {
                         type="email"
                         name={"email"}
                         placeholder={"E-mail"}
+                        value={loginData.email}
+                        onChange={(e) => handleChange(e)}
                         required={true}
                         additional_styles="space-y-1 text-[14px]"
                         additional_styles_input="bg-[#ededed]"
@@ -32,6 +69,8 @@ export default function SignInPage() {
                         type="password"
                         name={"password"}
                         placeholder={"password"}
+                        value={loginData.password}
+                        onChange={(e) => handleChange(e)}
                         required={true}
                         additional_styles="space-y-1 text-[14px]"
                         additional_styles_input="bg-[#ededed]"
@@ -43,7 +82,7 @@ export default function SignInPage() {
                         </div>
                         <div className="text-link">Forgot your password?</div>
                     </div>
-                    <Buttons path="/" button_description="Sign In" additional_styles="px-12 py-1 mt-4 bg-primary" />
+                    <Buttons path="" button_description="Sign In" additional_styles="px-12 py-1 mt-4 bg-primary" onClick={handleSignIn} />
                     <div className="flex flex-row gap-x-1 text-[12px]">Don't have an account? <Link href="/login/signup" className="text-link">Sign up now</Link></div>
                 </form>
             </div>

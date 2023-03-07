@@ -76,6 +76,34 @@ export default function BokehPage({}) {
 		return 
 	})
 
+	async function testAlt() {
+		plotRef.current.innerHTML = ""
+		if (typeof window !== "undefined") {
+			const Bokeh = await import("@bokeh/bokehjs");
+
+			axios.get("http://127.0.0.1:8000")
+				.then((res) => {
+					console.log("test1");
+					Bokeh.embed.embed_item(res.data, 'plot');
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}
+	async function testAltUpdate(){
+		let x = Math.floor(Math.random() * 20);
+		let y = Math.floor(Math.random() * 20);
+		await axios.post(`http://127.0.0.1:8000/update_data/?x=${x}&y=${y}`).then(
+			(res) => {
+				console.log(res)
+			}
+		).catch((err) => {
+			console.log(err)
+		})
+		testAlt()
+	}
+
 
 	return (
 		<Container>
@@ -87,6 +115,9 @@ export default function BokehPage({}) {
 			<button onClick={widgetTest} className="border border-black p-3 w-[150px]">test widget</button>
 			{/* <button onClick={vtkTest} className="border border-black p-3 w-[150px]">test vtk iframe</button>
 			<button onClick={buttonTest} className="border border-black p-3 w-[150px]">test button</button> */}
+			
+			<button onClick={testAlt} className="border border-black p-3 w-[150px]">test alt 1</button>
+			<button onClick={testAltUpdate} className="border border-black p-3 w-[150px]">test update alt 1</button>
 		</Container>
 	);
 }
