@@ -2,23 +2,19 @@ import Buttons from "../components/buttons/buttons";
 import TableComponent from "../components/table/table";
 import Container from "../components/container/container";
 import { useSelector } from "react-redux";
-import { checkAuth } from "../layout/getLayout";
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import base64 from "base-64";
+import moment from "moment/moment";
 
 const Profile = () => {
 	const user = useSelector((state) => state.user.user);
-	console.log("???");
 
 	const [content, setContent] = useState([])
 	useEffect(() => {
 		setContent([
 			["Email", user.email],
-			["Date joined", user.date_joined],
+			["Date joined", moment(user.date_joined).format("DD - MM - YYYY")],
 			["Role", user.role_id],
 		])
-		console.log(base64.decode(user.profile_picture));
 	}, []);
 
 	return (
@@ -38,9 +34,6 @@ const Profile = () => {
 					</p>
 				</div>
 				<Buttons path="" button_description="Change my password" />
-				<div className="h-[200px] w-[200px]">
-					<Image src="" width={100} height={100} className="object-fit" />
-				</div>
 			</div>
 		</Container>
 	);
