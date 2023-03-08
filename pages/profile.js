@@ -1,12 +1,14 @@
 import Buttons from "../components/buttons/buttons";
 import TableComponent from "../components/table/table";
 import Container from "../components/container/container";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import moment from "moment/moment";
+import { logOut } from "../store/userSlice";
 
 const Profile = () => {
 	const user = useSelector((state) => state.user.user);
+	const dispatch = useDispatch()
 
 	const [content, setContent] = useState([])
 	useEffect(() => {
@@ -16,6 +18,10 @@ const Profile = () => {
 			["Role", user.role_id],
 		])
 	}, []);
+
+	const handleSignOut = () => {
+		dispatch(logOut())
+	}
 
 	return (
 		<Container>
@@ -34,6 +40,7 @@ const Profile = () => {
 					</p>
 				</div>
 				<Buttons path="" button_description="Change my password" />
+				<Buttons path="" button_description="handleSignOut" onClick={handleSignOut} />
 			</div>
 		</Container>
 	);

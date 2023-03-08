@@ -6,6 +6,7 @@ var signatures = {
 };
 
 export default function Mime(b64) {
+    if(typeof b64 === "undefined" || !b64 || b64==="null") return;
     let mime;
     for (var s in signatures) {
         if (b64.indexOf(s) == 0) {
