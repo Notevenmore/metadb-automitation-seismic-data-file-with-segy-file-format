@@ -19,3 +19,18 @@ export async function getLogin(email, password) {
 
 	return result;
 }
+
+export async function getAllRoles() {
+	const result = axios
+		.get(`${process.env.backend_url}/roles`)
+		.then((res) => {
+			// console.log(res)
+			return { data: res, succeed: true };
+		})
+		.catch((err) => {
+			// console.log(err)
+			return {data: err,succeed: false,};
+		});
+
+	return result;
+}

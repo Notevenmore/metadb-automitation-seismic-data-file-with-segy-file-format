@@ -2,7 +2,7 @@ import Input from "../../components/input_form/input";
 import Buttons from "../../components/buttons/buttons"
 import { getLayoutBlank } from "../../layout/getLayout";
 import Link from "next/link";
-import { getLogin } from "../../services/user";
+import { getAllRoles, getLogin } from "../../services/user";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
@@ -30,8 +30,8 @@ export default function SignInPage() {
             (res) => {
                 const {succeed, data} = res
                 if(succeed) {
-                    console.log(data)
-                    dispatch(setUser(data))
+                    console.log(data.data)
+                    dispatch(setUser(data.data))
                     router.push('/')
                     return;
                 }

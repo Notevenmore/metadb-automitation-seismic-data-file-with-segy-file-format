@@ -10,7 +10,7 @@ function checkAuth(){
     const user = useSelector((state) => state.user.user)
     const router = useRouter()
     useEffect(() => {
-        if(!user || user === "null") router.push("/login/signin")
+        if(!user.email || user.email === "null") router.push("/login/signin")
     })
 }
 
