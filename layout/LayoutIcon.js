@@ -7,7 +7,7 @@ import TopBar from "../components/navigation_bar/Topbar";
 import { checkAuth } from "./getLayout";
 
 export default function LayoutIcon({ children }) {
-    checkAuth()
+    // checkAuth()
 
     return (
         <div className="h-screen overflow-hidden">
@@ -15,7 +15,7 @@ export default function LayoutIcon({ children }) {
             <SideBar></SideBar>
             <div className="full-height h-full overflow-auto">
                 {children}
-                <Footer></Footer>
+                {/* <Footer></Footer> */}
             </div>
         </div>
     );

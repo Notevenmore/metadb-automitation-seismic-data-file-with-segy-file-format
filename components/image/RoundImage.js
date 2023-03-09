@@ -5,7 +5,7 @@ export default function RoundImage({ source, size, alt }) {
                 className="object-scale-none rounded-full"
                 src={source}
                 style={size}
-                alt={alt}
+                alt="profile"
             />
         </>
     );

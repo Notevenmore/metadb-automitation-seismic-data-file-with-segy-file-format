@@ -1,5 +1,3 @@
-import { mdiIpOutline } from "@mdi/js";
-
 export default [
 	{
 		name: "Home",
@@ -63,12 +61,12 @@ export default [
 		child: [
 			{
 				name: "Topbar",
-				link: "/",
+				link: "/navigation/topbar",
 				icon: "/icons/info.svg",
 			},
 			{
 				name: "Sidebar",
-				link: "/button",
+				link: "/navigation/navbar",
 				icon: "/icons/info.svg",
 			},
 		],

@@ -43,12 +43,12 @@ function Child({ icon, name, link="", collapse }) {
         <Link href={link} className={styles.navItem}>
             <div className="flex justify-between items-center px-5 py-2 gap-x-4 hover:bg-gray-200">
                 <div className="flex gap-x-4">
-                    <img src={icon} className="w-[.9rem] h-[22px]" />
+                    <img src={icon} className="w-[.9rem] h-[22px]" alt="icon" />
                     {!collapse && <div>{name}</div>}
                 </div>
                 {!collapse && (
                     <div>
-                        <img src="/icons/chevron-right.svg" className={`w-[25px] h-[15px] ${styles.navItemChevron}`} />
+                        <img src="/icons/chevron-right.svg" alt="icon" className={`w-[25px] h-[15px] ${styles.navItemChevron}`} />
                     </div>
                 )}
             </div>

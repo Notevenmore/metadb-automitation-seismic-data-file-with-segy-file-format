@@ -13,6 +13,7 @@ export default function TopBar(props) {
 	const [profile, setProfile] = useState("")
 	useEffect(() => {
 		setProfile(Mime(user.profile_picture))
+        console.log(profile)
 	}, []);
 
     return (
@@ -22,10 +23,10 @@ export default function TopBar(props) {
                 <div>KEIDC</div>
             </Link>
             <div className="flex items-center gap-x-3">
-                <img src="/icons/bell-outline.svg" className="w-[1rem]" />
+                <img src="/icons/bell-outline.svg" className="w-[1rem]" alt="notification" />
                 <div className="border-l-[1.5px] border-slate-200 h-6"> </div>
                 <RoundImage
-                    source={profile}
+                    source={profile?profile:"/images/unknown.jpg"}
                     size={{ width: "1.5rem" }}
                 ></RoundImage>
             </div>
