@@ -148,7 +148,19 @@ from alt import *
 
 @app.get("/try-fastgrid")
 async def fastGrid():
-    return sine()
+    source = ColumnDataSource(data=dict(x=x, y=y))
+    return sine(source=source)
+
+
+# test
+
+
+
+
+
+
+# end of test
+
 
 pn.extension()
 button2 = pn.widgets.Button(name='Click me!', button_type='primary')

@@ -4,9 +4,11 @@ import { getLayoutIcon, getLayoutWidget } from "../layout/getLayout";
 import { store } from "../store";
 import { Provider } from "react-redux";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }) {
 	const getLayout = Component.getLayout || getLayoutIcon;
+	const router = useRouter();
 
 	return (
 		<Provider store={store}>

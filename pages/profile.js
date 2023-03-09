@@ -1,19 +1,35 @@
 import Buttons from "../components/buttons/buttons";
 import TableComponent from "../components/table/table";
 import Container from "../components/container/container";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import moment from "moment/moment";
+import { logOut } from "../store/userSlice";
 
 const Profile = () => {
+	const user = useSelector((state) => state.user.user);
+	const dispatch = useDispatch()
+
+	const [content, setContent] = useState([])
+	useEffect(() => {
+		setContent([
+			["Email", user.email],
+			["Date joined", moment(user.date_joined).format("DD - MM - YYYY")],
+			["Role", user.role_id],
+		])
+	}, []);
+
+	const handleSignOut = () => {
+		dispatch(logOut())
+	}
+
 	return (
 		<Container>
 			<Container.Title back>Account settings</Container.Title>
 			<div className="space-y-5">
 				<TableComponent
 					header={["Account information", ""]}
-					content={[
-						["Email", "john.doe@email.com"],
-						["Date joined", "01 - 01 - 2023"],
-						["Role", "IT Admin"],
-					]}
+					content={content}
 					additional_styles="text-[14.5px]"
 				/>
 				<div>
@@ -24,6 +40,7 @@ const Profile = () => {
 					</p>
 				</div>
 				<Buttons path="" button_description="Change my password" />
+				<Buttons path="" button_description="handleSignOut" onClick={handleSignOut} />
 			</div>
 		</Container>
 	);

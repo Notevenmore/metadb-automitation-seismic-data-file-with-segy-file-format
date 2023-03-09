@@ -9,7 +9,7 @@ export default function SideBar({ half }) {
 		<div
 			className={`float-left ${
 				half ? "h-full" : "h-screen"
-			} flex flex-col pt-2 pb-10 w-[314px] bg-side_bar overflow-y-auto`}
+			} flex flex-col pt-2 pb-10 w-[314px] bg-side_bar overflow-y-auto relative`}
 			style={{ width: iconCollapse ? "auto" : "" }}>
 			{iconCollapse ? (
 				<div>
@@ -36,6 +36,9 @@ export default function SideBar({ half }) {
 					collapse={iconCollapse}
 					key={router.name}></Item>
 			))}
+			<div className={`fixed bottom-0 h-[40px] ${iconCollapse? "" :"w-[314px]"} flex items-center justify-center text-[12px] text-[#a3a3a3] bg-side_bar`}>
+				<div>© Kangean Energy Indonesia 2023</div>
+			</div>
 		</div>
 	);
 }
