@@ -3,7 +3,7 @@ import {createSlice} from "@reduxjs/toolkit"
 const user = {
     email: null,
     date_joined: null,
-    role_id: null
+    role_name: null
 }
 const initialState = {
     user: typeof window !== "undefined" ? localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) :user : user,

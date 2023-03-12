@@ -15,7 +15,7 @@ const Profile = () => {
 		setContent([
 			["Email", user.email],
 			["Date joined", moment(user.date_joined).format("DD - MM - YYYY")],
-			["Role", user.role_id],
+			["Role", user.role_name],
 		])
 	}, []);
 
