@@ -1,6 +1,3 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import Footer from "../components/footer/Footer";
 import SideBar from "../components/navigation_bar/SideBar";
 import TopBar from "../components/navigation_bar/Topbar";

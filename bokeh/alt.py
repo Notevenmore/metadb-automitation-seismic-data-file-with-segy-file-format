@@ -18,7 +18,7 @@ y = np.sin(x)
 
 def sine(source=source):
     # source = ColumnDataSource(data=dict(x=x, y=y))
-    freq = Slider(name="Frequency", start=0, end=10, value=2)
+    freq = Slider(name="Frequency", start=0, end=100, value=2, step=1)
     callback = CustomJS(args=dict(source=source, val=freq),
                         code="""
         const data = source.data;
@@ -28,7 +28,6 @@ def sine(source=source):
         for (var i = 0; i < x.length; i++) {
             y[i] = Math.sin(freq*x[i]);
         }
-        console.log(y)
         source.change.emit()
     """)
     freq.js_on_change('value', callback)

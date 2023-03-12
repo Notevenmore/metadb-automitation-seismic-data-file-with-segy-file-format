@@ -105,3 +105,6 @@ a {
 .bk-logo {
   display: none !important;
 }
+.bk-root .noUi-origin {
+  width: 100%;
+}
