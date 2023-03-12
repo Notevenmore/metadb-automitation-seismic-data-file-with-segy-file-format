@@ -1,5 +1,6 @@
 import { twMerge } from "tailwind-merge"
 import { useState } from "react"
+import Link from "next/link"
 
 const items_notification = {
     type: "notification",
@@ -14,38 +15,42 @@ const items_notification = {
 const FloatDialog = ({children, float_title=false, items=null, onClick=null,
      width="340px", className}) => {
     const [show, setShow] = useState(false)
-    function handleClick(){
-        setShow(!show)
+    function toggleDialog(){
+        setShow(prev => !prev)
     }
-    const isNotification = items.type == "notification"
-    const isProfile = items.type == "profile"
+    // const isNotification = items.type == "notification"
+    // const isProfile = items.type == "profile"
     return (
         <section className="relative">
-            <section onClick={onClick ? onClick : handleClick}>
+            <section onClick={onClick ? onClick : toggleDialog}>
                 {children}
             </section>
             { show &&
-            <section className={twMerge(`bg-white absolute z-auto p-[25px] pt-4 
-            border-2 border-solid border-float_dialog rounded-[10px]
+            <section className={twMerge(`bg-white absolute z-5  
+            border-[1px] border-solid border-float_dialog rounded-[10px]
             h-fit`, className)} style={{width: width}}>
                 {float_title && 
-                    <h2 className="text-[16px] font-bold my-[20px]">
-                        {float_title ? float_title : ""}</h2>
+                    <><h2 className="text-[16px] font-bold my-[20px] px-[12px]">
+                        {float_title ? float_title : ""}
+                        </h2>
+                        <Divider />
+                        </>
                 }
-                {items.contents.map((content) => {
-                    if(items.type == "notification"){
-                        return(
-                            <FloatSection section_title={content.section_title}
-                            section_content={content.section_content}/>
-                        )
-                    }
+                {items.contents.map((content, index) => (
+                    <FloatSection key={index} content={content} index={index} toggleDialog={toggleDialog} />
+                    // if(items.type == "notification"){
+                    //     return(
+                    //         <FloatSection section_title={content.section_title}
+                    //         section_content={content.section_content}/>
+                    //     )
+                    // }
                     // else if(items.type == "profile"){
                     //     return(
 
 
                     //     )
                     // }
-                })}
+                ))}
                     
             </section>
             }
@@ -53,14 +58,19 @@ const FloatDialog = ({children, float_title=false, items=null, onClick=null,
     )
 }
 
-const FloatSection = ({section_title="Section Title", section_content="section content"}) => {
+const FloatSection = ({content, index, toggleDialog}) => {
     return (
         <section>
-            <Divider></Divider>
-            <section className="my-[12px]">
-                <h2 className="text-[16px] font-semibold">{section_title}</h2>
-                <p className="text-[13px] leading-[15px]">{section_content}</p>
+            {index !== 0 && <Divider></Divider>}
+            <Link href={`${content.link ? content.link : ""}`}>
+            <section className="my-[12px] px-[12px]" onClick={(e) => {
+                if(content.handleClick) content.handleClick.handleClick(e)
+                toggleDialog()
+            }}>
+                <h2 className="text-[16px] font-semibold">{content.section_title}</h2>
+                <p className="text-[13px] leading-[15px]">{content.section_content}</p>
             </section>
+            </Link>
         </section>
     )
     
