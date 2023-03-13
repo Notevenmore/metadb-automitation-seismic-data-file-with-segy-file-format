@@ -1,4 +1,4 @@
-export default [
+const routing_list = [
 	{
 		name: "Home",
 		link: "/",
@@ -52,7 +52,13 @@ export default [
                 name: "Notification Floating Dialog",
                 link: "/components/float-dialog/notification-dialog",
 				icon: "/icons/window-maximize.svg",
-            }
+            },
+			{
+				name: "Progress Bar",
+				link: "/components/progress-bar",
+				icon: "/icons/info.svg"
+
+			}
 		],
 	},
 	{
@@ -166,3 +172,4 @@ export default [
 		]
 	}
 ];
+export default routing_list;
