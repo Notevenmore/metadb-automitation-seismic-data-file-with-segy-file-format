@@ -25,36 +25,36 @@ export default [
 				link: "/components/table",
 				icon: "/icons/table.svg",
 			},
-            {
-                name: "Layout",
-                link: "/components/layout",
-                icon: "/icons/layers.svg",
-            },
-            {
-                name: "Container",
-                link: "/components/container",
-                icon: "/icons/layers.svg",
-            },
-            {
-                name: "Popup Dialog",
-                link: "/components/popup-dialog",
+			{
+				name: "Layout",
+				link: "/components/layout",
+				icon: "/icons/layers.svg",
+			},
+			{
+				name: "Container",
+				link: "/components/container",
+				icon: "/icons/layers.svg",
+			},
+			{
+				name: "Popup Dialog",
+				link: "/components/popup-dialog",
 				icon: "/icons/window-maximize.svg",
-            },
+			},
 			{
 				name: "Floating Dialog",
 				link: "/components/float-dialog",
 				icon: "/icons/window-maximize.svg",
 			},
-            {
-                name: "Profile Floating Dialog",
-                link: "/components/float-dialog/profile-dialog",
+			{
+				name: "Profile Floating Dialog",
+				link: "/components/float-dialog/profile-dialog",
 				icon: "/icons/window-maximize.svg",
-            },
-            {
-                name: "Notification Floating Dialog",
-                link: "/components/float-dialog/notification-dialog",
+			},
+			{
+				name: "Notification Floating Dialog",
+				link: "/components/float-dialog/notification-dialog",
 				icon: "/icons/window-maximize.svg",
-            }
+			}
 		],
 	},
 	{
@@ -103,34 +103,49 @@ export default [
 				link: "/bokeh",
 				icon: "/icons/chart-line-variant.svg",
 			},
-            {
-                name: "Profile",
-                link: "/profile",
+			{
+				name: "Profile",
+				link: "/profile",
 				icon: "/icons/info.svg",
 			},
-            {
-                name: "Database",
-                link: "/database",
+			{
+				name: "Database",
+				link: "/database",
 				icon: "/icons/database.svg",
-            },
+			},
 			{
 				name: "New Document",
 				link: "/new-document",
 				icon: "/icons/file-document-outline.svg",
 			},
-            {
-                name: "Upload File",
-                link: "/upload-file",
+			{
+				name: "Edit Document",
+				link: "/edit_document",
 				icon: "/icons/file-document-outline.svg",
-            },
-            {
-                name: "Basin",
-                link: "/basin",
+			},
+			{
+				name: "Upload File",
+				link: "/upload-file",
 				icon: "/icons/file-document-outline.svg",
-            },
+			},
+			{
+				name: "Basin",
+				link: "/basin",
+				icon: "/icons/file-document-outline.svg",
+			},
+			{
+				name: "Temporary help page",
+				link: "/help/developer_playground",
+				icon: "/icons/file-document-outline.svg",
+			},
+			{
+				name: "Markdown editor",
+				link: "/help/editor",
+				icon: "/icons/file-document-outline.svg",
+			},
 
-        ],
-    },
+		],
+	},
 	{
 		name: "Error",
 		icon: "/icons/info.svg",
