@@ -107,7 +107,7 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
               :
               row.map((column: any, column_index: number) => {
                 return (
-                  <td key={column_index} className={twMerge("pl-5 pr-2 py-2", additional_styles_row)}>
+                  <td key={column_index} className={twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)}>
                     <div className="whitespace-nowrap text-ellipsis overflow-hidden">
                       {column}
                     </div>
