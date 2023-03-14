@@ -1,6 +1,5 @@
 import { Divider } from "../float_dialog/float_dialog"
 import { twMerge } from "tailwind-merge"
-// TODO: complete the components
 
 const HeaderTable = ({children}) => {
     return (
@@ -36,68 +35,47 @@ const HeaderRow = ({children}) => {
     )
 }
 
-const HeaderLabel = ({children, className}) => {
+const HeaderLabel = ({label1, label2}) => {
     return (
-        <div className={twMerge("flex space-x-2 lg:min-w-[325px] mb-[7px] lg:my-[5px]", className)}>
-            <>{children}</>
+        <div className={"flex flex-wrap space-x-2 lg:min-w-[325px] mb-[7px] lg:my-[5px]"}>
+            {label2?
+                <>
+                    <label>{label1}</label>
+                    <label className="text-[#A3A3A3]">{label2}</label>
+                </>
+            : 
+                <label className="font-semibold">{label1}</label>
+            }
         </div>
     )
 }
 
-const HeaderLabel1 = ({label1, label2}) => {
-    return (
-        <HeaderLabel className={"flex-wrap"}>
-            <label>{label1}</label>
-            <label className="text-[#A3A3A3]">{label2}</label>
-        </HeaderLabel>
-    )
-}
 
-const HeaderLabel2 = ({label}) => {
-    return (
-        <HeaderLabel>
-            <label className="font-semibold">{label}</label>
-        </HeaderLabel>
-    )
-}
-
-const HeaderStatic1 = ({label1, label2, content=false}) => {
+const HeaderStatic = ({label1, label2, content=false}) => {
     return (
         <HeaderRow>
+            {label2 ?
             <p className="font-semibold lg:min-w-[325px] max-lg:mb-2">
-                {label1} <span className="font-light text-[#A3A3A3]">{label2}</span>
+                {label1} 
+                <span className="font-light text-[#A3A3A3]"> {label2}</span>
             </p>
+            :
+            <p className="font-semibold min-w-[325px]">{label1}</p>
+            }
             <p className="inline lg:ml-[8px] w-full">{content}</p>
         </HeaderRow>
-        
     )
 }
 
-const HeaderStatic2 = ({label, content}) => {
+const HeaderInput = ({label1, label2=false, children}) => {
     return (
         <HeaderRow>
-            <p className="font-semibold min-w-[325px]">{label}</p>
-            <p className="lg:ml-[8px] w-full">{content}</p>
-        </HeaderRow>
-    )
-}
-const HeaderInput1 = ({label1, label2, children}) => {
-    return (
-        <HeaderRow>
-            <HeaderLabel1 label1={label1} label2={label2}/>
+            <HeaderLabel label1={label1} label2={label2}/>
             <>{children}</>
         </HeaderRow>
     )
 }
 
-const HeaderInput2 = ({label, children}) => {
-    return (
-        <HeaderRow>
-            <HeaderLabel2 label={label}/>
-            <>{children}</>
-        </HeaderRow>
-    )
-}
 
 const ButtonsSection = ({children, className=""}) => {
     return (
@@ -109,6 +87,4 @@ const ButtonsSection = ({children, className=""}) => {
 }
 
 export default HeaderTable;
-export {HeaderDivider, HeaderRow, HeaderLabel, HeaderLabel1,
-    HeaderLabel2, HeaderStatic1, HeaderStatic2, HeaderInput1,
-    HeaderInput2, ButtonsSection};
+export {HeaderDivider, HeaderRow, HeaderLabel, HeaderStatic, HeaderInput, ButtonsSection};
