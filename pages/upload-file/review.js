@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Buttons from "../../components/buttons/buttons";
 import Container from "../../components/container/container.js";
 import Input from "../../components/input_form/input";
-import HeaderTable, {HeaderDivider, HeaderStatic1, 
-    HeaderStatic2, HeaderInput1, HeaderInput2, ButtonsSection}
+import HeaderTable, {HeaderDivider, HeaderStatic, HeaderInput, ButtonsSection}
     from "../../components/header_table/header_table";
 
 export default function UploadFileReview() {
@@ -17,10 +16,10 @@ export default function UploadFileReview() {
                 <h1 className="font-bold text-[36px]">Lorem ipsum laporan 2008</h1>
             </section>
             <HeaderTable>
-                <HeaderStatic1 label1={"Nama KKKS"} label2={"(KKKS Name)"}
+                <HeaderStatic label1={"Nama KKKS"} label2={"(KKKS Name)"}
                  content="Kangean Energy Indonesia"/>
                 <HeaderDivider/>
-                <HeaderInput1 label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
+                <HeaderInput label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
                         type="text"
                         name={"workingArea"}
@@ -29,9 +28,9 @@ export default function UploadFileReview() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput1 label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
+                <HeaderInput label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
                     <Input
                         type="dropdown"
                         name={"submissionType"}
@@ -41,9 +40,9 @@ export default function UploadFileReview() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput1 label1={"Nomor AFE"} label2={"(AFE Number)"}>
+                <HeaderInput label1={"Nomor AFE"} label2={"(AFE Number)"}>
                     <Input
                         type="text"
                         name={"AFE_Number"}
@@ -52,13 +51,13 @@ export default function UploadFileReview() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderStatic2 label={"Data type"} content={"Seismic data"}/>
+                <HeaderStatic label1={"Data type"} content={"Seismic data"}/>
                 <HeaderDivider/>
-                <HeaderStatic2 label={"Data classification"} content={"3D"}/>
+                <HeaderStatic label1={"Data classification"} content={"3D"}/>
                 <HeaderDivider/>
-                <HeaderStatic2 label={"Data sub-classification"} content={"Stored in media"}/>
+                <HeaderStatic label1={"Data sub-classification"} content={"Stored in media"}/>
             </HeaderTable>
             <ButtonsSection>
                 <Buttons path="" additional_styles="bg-primary">Save changes</Buttons>
