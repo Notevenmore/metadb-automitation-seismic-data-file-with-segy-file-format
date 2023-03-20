@@ -72,15 +72,6 @@ export default function SignUpPage() {
                         additional_styles="space-y-1 text-[14px]"
                         additional_styles_input="bg-[#ededed]"
                     />
-                    {/* <div className="flex flex-col max-md:items-center gap-y-3">
-                        <Buttons path="" button_description="Sign In" 
-                        additional_styles="px-12 py-1 mt-4 bg-primary"
-                         onClick={handleSignIn} />
-                        <div className="flex flex-row gap-x-1 text-[12px]">
-                            Don&apos;t have an account? 
-                            <Link href="/login/signup" className="text-link">Sign up now</Link>
-                        </div>
-                    </div> */}
                     <div className="flex flex-col max-md:items-center gap-y-3">
                         <Buttons
                             path="/login/account-approval"
