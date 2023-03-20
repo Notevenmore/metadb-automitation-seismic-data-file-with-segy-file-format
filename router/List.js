@@ -185,6 +185,17 @@ const routing_list = [
 				icon: "/icons/info.svg",
 			},
 		]
-	}
+	},
+	{
+		name: "Well Summary",
+		icon: "/icons/info.svg",
+		child: [
+			{
+				name: "Printed Well Report",
+				link: "/well_summary/printed_report",
+				icon: "/icons/info.svg",
+			},
+		]
+	},
 ];
 export default routing_list;

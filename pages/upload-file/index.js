@@ -9,6 +9,10 @@ import { storeFile } from "../../store/generalSlice";
 export default function UploadFilePage() {
 	const additional_styles_label = "w-[20%]";
 	const [fileUpload, setFileUpload] = useState([]);
+	const [DataType, setDataType] = useState()
+	const [DataClassification, setDataClassification] = useState()
+	const [DataSubClass, setDataSubClass] = useState()
+	const [FileFormat, setFileFormat] = useState()
 
 	const fileUploadRef = useRef(null);
 
@@ -43,6 +47,10 @@ export default function UploadFilePage() {
 	const dispatch = useDispatch()
 	const handleSubmit = (e) => {
 		e.preventDefault()
+		if (!fileUpload) {
+			window.alert("Please select a file")
+			return
+		}
 		dispatch(storeFile(fileUpload))
 		router.push('/upload-file/uploading')
 		console.log("???")
@@ -68,11 +76,11 @@ export default function UploadFilePage() {
 						type="dropdown"
 						name={"dataType"}
 						placeholder={"Data type"}
-						dropdown_items={["a", "b", "c"]}
+						dropdown_items={["Well summary"]}
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-						onChange={(e) => setDetail(e.target.name)}
+						onChange={(e) => setDataType(e.target.value)}
 					/>
 					<Input
 						label="Data classification"
@@ -80,11 +88,11 @@ export default function UploadFilePage() {
 						type="dropdown"
 						name={"dataClassification"}
 						placeholder={"Data classification"}
-						dropdown_items={["d", "e", "f"]}
+						dropdown_items={["Report"]}
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-						onChange={(e) => setDetail(e.target.value)}
+						onChange={(e) => setDataClassification(e.target.value)}
 					/>
 					<Input
 						label="Sub data classification"
@@ -92,10 +100,11 @@ export default function UploadFilePage() {
 						type="dropdown"
 						name={"subDataClassification"}
 						placeholder={"Sub data classification"}
-						dropdown_items={[]}
+						dropdown_items={["Printed"]}
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
+						onChange={(e) => setDataSubClass(e.target.value)}
 					/>
 					<Input
 						label="File format"
@@ -103,10 +112,11 @@ export default function UploadFilePage() {
 						type="dropdown"
 						name={"fileFormat"}
 						placeholder={"File format"}
-						dropdown_items={[]}
+						dropdown_items={["PDF"]}
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
+						onChange={(e) => setFileFormat(e.target.value)}
 					/>
 				</div>
 				<div className="flex flex-row gap-x-3">

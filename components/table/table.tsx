@@ -3,7 +3,8 @@ import { useState, useEffect } from "react"
 
 
 const TableComponent = ({ header, content, with_checkbox = false, additional_styles = '',
-                         additional_styles_header='', additional_styles_row='', setSelectedRows }) => {
+                         additional_styles_header='', additional_styles_row='', additional_styles_column='',
+                         setSelectedRows }) => {
   const [Selected, setSelected] = useState([])
   const tableData = {
     header: header,
@@ -52,7 +53,7 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
     className={
       twMerge(
         `table-fixed break-words overflow-x-scroll
-        border-separate border-spacing-0 border-2 border-solid border-black/20 rounded
+        border-separate border-spacing-0 border-2 border-solid border-black/20
         min-w-0 w-full rounded-lg text-[15px]`,
         additional_styles
       )
@@ -98,7 +99,7 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
                    className={
                     twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)
                   }>
-                    <div className="whitespace-nowrap text-ellipsis overflow-hidden">
+                    <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)}>
                       {column}
                     </div>
                   </td>
@@ -108,7 +109,7 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
               row.map((column: any, column_index: number) => {
                 return (
                   <td key={column_index} className={twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)}>
-                    <div className="whitespace-nowrap text-ellipsis overflow-hidden">
+                    <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)}>
                       {column}
                     </div>
                   </td>
