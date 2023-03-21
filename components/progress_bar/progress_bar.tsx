@@ -18,7 +18,7 @@ const ProgressBar: React.FC<{ isRouteChanging: boolean }> = ({
 
         .bar {
           background: #29d;
-          height: 2px;
+          height: 6px;
           left: 0;
           margin-left: ${(-1 + progress) * 100}%;
           position: fixed;
@@ -28,20 +28,32 @@ const ProgressBar: React.FC<{ isRouteChanging: boolean }> = ({
           z-index: 1031;
         }
 
+        @keyframes spinner {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
         .spinner {
-          box-shadow: 0 0 10px #29d, 0 0 5px #29d;
-          display: block;
-          height: 100%;
-          opacity: 1;
-          position: absolute;
-          right: 0;
-          transform: rotate(3deg) translate(0px, -4px);
-          width: 100px;
+          animation: spinner 400ms linear  infinite ;
+          border-bottom: 3px solid transparent;
+          border-left: 3px solid #29d;
+          border-radius: 50%;
+          border-right: 3px solid transparent;
+          border-top: 3px solid #29d;
+          box-sizing: border-box;
+          height: 30px;
+          width: 30px;
         }
       `}</style>
       <div className="container">
         <div className="bar">
-          <div className="spinner" />
+        </div>
+        <div className="block fixed right-6 top-[80px] z-50">
+            <div className="spinner" />
         </div>
       </div>
     </>
