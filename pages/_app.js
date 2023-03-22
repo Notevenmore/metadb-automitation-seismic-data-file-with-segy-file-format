@@ -48,9 +48,10 @@ function MyApp({ Component, pageProps }) {
 		<Provider store={store}>
 			<ProgressBar isRouteChanging={state.isRouteChanging} key={state.loadingKey} />
 			<Head>
-				<title>Kangean Energy Indonesia Database Converter App</title>
+				<title>Geodwipa Teknika Nusantara Database Converter App</title>
 				<meta name="description" content="Kangean Energy Indonesia Database Converter App" />
-				<link rel="icon" href="/icons/kangean_logo.svg" />
+				{/* <link rel="icon" href="/icons/kangean_logo.svg" /> */}
+				<link rel="icon" href="/images/gtn_logo_fire.png" />
 			</Head>
 			{getLayout(<Component {...pageProps} />)}
 		</Provider>

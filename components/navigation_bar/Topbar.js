@@ -3,6 +3,7 @@ import { mdiBellOutline, mdiHomeFloorA } from "@mdi/js";
 import RoundImage from "../image/RoundImage";
 import Kangean from '../../public/icons/kangean_logo.svg'
 import BSP from "../../public/icons/PT_BSP_logo.svg"
+import GTN from "../../public/images/gtn_logo_singleline.png"
 import Link from "next/link"
 import { useEffect, useState } from "react";
 import Mime from "../../dummy-data/mime";
@@ -36,10 +37,12 @@ export default function TopBar(props) {
 
 
     return (
-        <nav className="w-full flex justify-between items-center py-2 px-5 border-b border-gray-300">
+        <nav className="w-full flex justify-between items-center py-3 px-5 border-b border-gray-300">
             <Link href="/" className="flex items-center gap-x-4">
-                <BSP className="w-[60px]" onClick={props.handleClick}/>
-                <div>KEIDC</div>
+                {/* <BSP className="w-[60px]" onClick={props.handleClick}/> */}
+                {/* <img src={GTN} className='w-5 h-5'/> */}
+                <Image src={GTN} width={115} height={50}/>
+                {/* <div>GTNDC</div> */}
             </Link>
             <div className="flex items-center gap-x-3">
                 <img src="/icons/bell-outline.svg" className="w-[1rem]" alt="notification" />

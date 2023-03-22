@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import Button from '../../components/buttons/buttons'
 import Sheets from "../../components/sheets/sheets"
 import TableComponent from "../../components/table/table"
@@ -8,6 +8,7 @@ import Container from "../../components/container/container"
 
 const DocEditor = ({ spreadsheetID }) => {
     const [IsSaved, setIsSaved] = useState(false)
+    const iframe_ref = useRef()
     const warningText
         = 'You have unsaved changes - Are you sure you want to leave this page?'
     // const sheetID = spreadsheetID.response
@@ -34,19 +35,23 @@ const DocEditor = ({ spreadsheetID }) => {
             router.events.off('routeChangeStart', handleBrowseAway);
         };
     }, [IsSaved])
+    useEffect(() => {
+      console.log(iframe_ref.current)
+    }, [iframe_ref])
+    
     return (
         <Container additional_class='space-y-3'>
             <Container.Title back>Edit Document</Container.Title>
             <Input type='text' placeholder='Document title' additional_styles_input='text-xl font-semibold p-3' defaultValue={'Lorem ipsum'} />
             <TableComponent additional_styles_column="overflow-visible" header={["Header", ""]} content={
                 [
-                    [<div className="flex space-x-2"><p>Nama KKKS</p><p className="text-gray-400">(KKKS Name)</p></div>, <p>Kangean Energy Indonesia</p>],
-                    [<div className="flex space-x-2"><p>Nama wilayah kerja</p><p className="text-gray-400">(Working area)</p></div>, <p>Kangean Energy Indonesia</p>],
-                    [<div className="flex space-x-2"><p>Jenis penyerahan data</p><p className="text-gray-400">(Submission type)</p></div>, <p>Quarterly</p>],
-                    [<div className="flex space-x-2"><p>Nomor AFE</p><p className="text-gray-400">(AFE number)</p></div>, <p>2023</p>],
-                    [<p className="font-semibold">Data type</p>, <p>Well summary</p>],
-                    [<p className="font-semibold">Data classification</p>, <p>Report</p>],
-                    [<p className="font-semibold">Data sub-classification</p>, <p>Printed</p>]
+                    [<div className="flex space-x-2"><p>Nama KKKS</p><p className="text-gray-400">(KKKS Name)</p></div>, <Input type={"text"} defaultValue="Kangean Energy Indonesia" />],
+                    [<div className="flex space-x-2"><p>Nama wilayah kerja</p><p className="text-gray-400">(Working area)</p></div>, <Input type={"text"} defaultValue="Kangean Energy Indonesia" />],
+                    [<div className="flex space-x-2"><p>Jenis penyerahan data</p><p className="text-gray-400">(Submission type)</p></div>, <Input type={"dropdown"} dropdown_items={["Quarterly", "Relinquishment", "Termination", "Spec New", "Spec Ext", "Spec Term", "Joint Study", "DIPA"]} />],
+                    [<div className="flex space-x-2"><p>Nomor AFE</p><p className="text-gray-400">(AFE number)</p></div>, <Input type={"number"} defaultValue='1' />],
+                    [<p className="font-bold">Data type</p>, <Input type={"dropdown"} dropdown_items={["Well data"]} />],
+                    [<p className="font-bold">Data classification</p>, <Input type={"dropdown"} dropdown_items={["Report"]} />],
+                    [<p className="font-bold">Data sub-classification</p>, <Input type={"dropdown"} dropdown_items={["Printed"]} />]
                 ]
             } />
             <div className="h-full">
@@ -55,7 +60,7 @@ const DocEditor = ({ spreadsheetID }) => {
                         <p>Data</p>
                     </div>
                 ]} content={[
-                    [<div className="h-[750px]"><Sheets existingID='1gT18bQYG2ZRSS3mW1paHSn012L917jAuUDweXBGQdWc' /></div>]
+                    [<div className="h-[750px]"><Sheets ref={iframe_ref} type='update' form_type='printed_well_report' /></div>]
                 ]} additional_styles_row='p-0' additional_styles="overflow-hidden" />
             </div>
             <div className="flex space-x-2 w-full">

@@ -41,7 +41,7 @@ const HomeSection = () => {
 					<Divider additional_styles={"w-[284px]"}></Divider>
 				</section>
 				<section className="flex flex-row gap-x-3">
-					<Buttons path={"/upload-file"} button_description="Make a new document"></Buttons>
+					<Buttons path={"/new-document"} button_description="Make a new document"></Buttons>
 					<Buttons path={"/drafts"} button_description="View drafts"></Buttons>
 					<Buttons path={"/database"} button_description="Connect with database"></Buttons>
 				</section>

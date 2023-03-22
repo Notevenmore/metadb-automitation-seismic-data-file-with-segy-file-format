@@ -47,8 +47,8 @@ export default function SignInPage() {
          md:flex-row md:my-0 items-center justify-center m-auto gap-y-5">
             <div className="w-[589px] px-[50px] flex flex-col gap-y-6">
                 <div id="title" className="max-md:text-center">
-                    <div className="text-[100px] leading-[100px]">KEIDC</div>
-                    <div>Kangean Energy Indonesia Database Conversion</div>
+                    <div className="text-[100px] leading-[100px]">GTNDC</div>
+                    <div>Geodwipa Teknika Nusantara Database Conversion</div>
                     <div className="border border-b-[#d9d9d9]"></div>
                 </div>
                 <div className="max-md:text-center text-[30px]">Sign in</div>
@@ -99,7 +99,7 @@ export default function SignInPage() {
             </div>
             <div className="w-[50%] px-[100px] flex flex-row justify-center">
                 <div className="min-w-[400px]">
-                    <Image src="/images/PT_BSP_logo.png" alt="logo Bumi Siak Pusako" width={600} height={600}/>
+                    <Image src="/images/gtn_logo.png" alt="logo Bumi Siak Pusako" width={400} height={400}/>
                 </div>
             </div>
         </div>
