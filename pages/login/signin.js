@@ -2,6 +2,7 @@ import Input from "../../components/input_form/input";
 import Buttons from "../../components/buttons/buttons"
 import { getLayoutBlank } from "../../layout/getLayout";
 import Link from "next/link";
+import Image from "next/image";
 import { getAllRoles, getLogin } from "../../services/user";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -42,15 +43,16 @@ export default function SignInPage() {
     }
 
     return (
-        <div className="h-screen flex flex-col-reverse my-10 md:flex-row md:my-0 items-center justify-center m-auto gap-y-10">
+        <div className="h-screen flex flex-col-reverse my-10
+         md:flex-row md:my-0 items-center justify-center m-auto gap-y-5">
             <div className="w-[589px] px-[50px] flex flex-col gap-y-6">
-                <div id="title">
+                <div id="title" className="max-md:text-center">
                     <div className="text-[100px] leading-[100px]">KEIDC</div>
                     <div>Kangean Energy Indonesia Database Conversion</div>
                     <div className="border border-b-[#d9d9d9]"></div>
                 </div>
-                <div className="text-[30px]">Sign in</div>
-                <form className="flex flex-col gap-y-4 w-full pr-10">
+                <div className="max-md:text-center text-[30px]">Sign in</div>
+                <form className="flex flex-col gap-y-4 w-full md:pr-10">
                     <Input
                         label="Email"
                         label_loc="above"
@@ -82,12 +84,23 @@ export default function SignInPage() {
                         </div>
                         <div className="text-link">Forgot your password?</div>
                     </div>
-                    <Buttons path="" button_description="Sign In" additional_styles="px-12 py-1 mt-4 bg-primary" onClick={handleSignIn} />
-                    <div className="flex flex-row gap-x-1 text-[12px]">Don't have an account? <Link href="/login/signup" className="text-link">Sign up now</Link></div>
-                </form>
+                    <div className="flex flex-col max-md:items-center gap-y-3">
+                        <Buttons 
+                            path="" button_description="Sign In" 
+                            additional_styles="px-12 py-1 mt-4 bg-primary"
+                            onClick={handleSignIn} 
+                        />
+                        <div className="flex flex-row gap-x-1 text-[12px]">
+                            Don&apos;t have an account? 
+                            <Link href="/login/signup" className="text-link">Sign up now</Link>
+                        </div>
+                    </div>
+                    </form>
             </div>
             <div className="w-[50%] px-[100px] flex flex-row justify-center">
-                <img src="/images/keidc-big-logo.png" alt="KEIDC" className="w-full lg:w-[250px]" />
+                <div className="min-w-[400px]">
+                    <Image src="/images/PT_BSP_logo.png" alt="logo Bumi Siak Pusako" width={600} height={600}/>
+                </div>
             </div>
         </div>
     );

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Buttons from "../../components/buttons/buttons";
 import Container from "../../components/container/container.js";
 import Input from "../../components/input_form/input";
-import HeaderTable, {HeaderDivider, HeaderStatic1, HeaderInput1, HeaderInput2, ButtonsSection}
+import HeaderTable, {HeaderDivider, HeaderStatic, HeaderInput, ButtonsSection}
  from "../../components/header_table/header_table";
 
 export default function NewDocumentPageDatabase() {
@@ -21,10 +21,10 @@ export default function NewDocumentPageDatabase() {
                 additional_styles_input={"font-bold text-[36px]"}
             />
             <HeaderTable>
-                <HeaderStatic1 label1={"Nama KKKS"} label2={"(KKKS Name)"}
+                <HeaderStatic label1={"Nama KKKS"} label2={"(KKKS Name)"}
                  content="Kangean Energy Indonesia"/>
                 <HeaderDivider/>
-                <HeaderInput1 label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
+                <HeaderInput label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
                         type="text"
                         name={"workingArea"}
@@ -33,9 +33,9 @@ export default function NewDocumentPageDatabase() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput1 label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
+                <HeaderInput label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
                     <Input
                         type="dropdown"
                         name={"submissionType"}
@@ -45,9 +45,9 @@ export default function NewDocumentPageDatabase() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput1 label1={"Nomor AFE"} label2={"(AFE Number)"}>
+                <HeaderInput label1={"Nomor AFE"} label2={"(AFE Number)"}>
                     <Input
                         type="text"
                         name={"AFE_Number"}
@@ -56,9 +56,9 @@ export default function NewDocumentPageDatabase() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput2 label={"Data type"}>
+                <HeaderInput label1={"Data type"}>
                     <Input
                         type="dropdown"
                         name={"dataType"}
@@ -69,9 +69,9 @@ export default function NewDocumentPageDatabase() {
                         additional_styles_input="font-semibold"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput2>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput2 label={"Data classification"}>
+                <HeaderInput label1={"Data classification"}>
                     <Input
                         type="dropdown"
                         name={"dataClassification"}
@@ -82,9 +82,9 @@ export default function NewDocumentPageDatabase() {
                         additional_styles_input="font-semibold"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput2>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput2 label={"Data sub-classification"}>
+                <HeaderInput label1={"Data sub-classification"}>
                     <Input
                         type="dropdown"
                         name={"dataSubClassification"}
@@ -95,7 +95,7 @@ export default function NewDocumentPageDatabase() {
                         additional_styles_input="font-semibold"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput2>
+                </HeaderInput>
             </HeaderTable>
             <ButtonsSection>
                 <Buttons path="" additional_styles="bg-primary">Save changes</Buttons>

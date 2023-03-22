@@ -3,10 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Buttons from "../../components/buttons/buttons";
 import Container from "../../components/container/container.js";
 import Input from "../../components/input_form/input";
-import HeaderTable, {
-    HeaderDivider, HeaderStatic1,
-    HeaderStatic2, HeaderInput1, HeaderInput2, ButtonsSection
-}
+import HeaderTable, {HeaderDivider, HeaderStatic, HeaderInput, ButtonsSection}
     from "../../components/header_table/header_table";
 import Sheets from "../../components/sheets/sheets"
 import Table from "../../components/table/table"
@@ -21,10 +18,10 @@ export default function UploadFileReview() {
                 <h1 className="font-bold text-[36px]">Lorem ipsum laporan 2008</h1>
             </section>
             <HeaderTable>
-                <HeaderStatic1 label1={"Nama KKKS"} label2={"(KKKS Name)"}
-                    content="Kangean Energy Indonesia" />
-                <HeaderDivider />
-                <HeaderInput1 label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
+                <HeaderStatic label1={"Nama KKKS"} label2={"(KKKS Name)"}
+                 content="Kangean Energy Indonesia"/>
+                <HeaderDivider/>
+                <HeaderInput label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
                         type="text"
                         name={"workingArea"}
@@ -33,9 +30,9 @@ export default function UploadFileReview() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
-                <HeaderDivider />
-                <HeaderInput1 label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
+                </HeaderInput>
+                <HeaderDivider/>
+                <HeaderInput label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
                     <Input
                         type="dropdown"
                         name={"submissionType"}
@@ -47,9 +44,9 @@ export default function UploadFileReview() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
-                <HeaderDivider />
-                <HeaderInput1 label1={"Nomor AFE"} label2={"(AFE Number)"}>
+                </HeaderInput>
+                <HeaderDivider/>
+                <HeaderInput label1={"Nomor AFE"} label2={"(AFE Number)"}>
                     <Input
                         type="number"
                         name={"AFE_Number"}
@@ -59,13 +56,13 @@ export default function UploadFileReview() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
-                <HeaderDivider />
-                <HeaderStatic2 label={"Data type"} content={"Well summary"} />
-                <HeaderDivider />
-                <HeaderStatic2 label={"Data classification"} content={"Report"} />
-                <HeaderDivider />
-                <HeaderStatic2 label={"Data sub-classification"} content={"Printed"} />
+                </HeaderInput>
+                <HeaderDivider/>
+                <HeaderStatic label1={"Data type"} content={"Seismic data"}/>
+                <HeaderDivider/>
+                <HeaderStatic label1={"Data classification"} content={"3D"}/>
+                <HeaderDivider/>
+                <HeaderStatic label1={"Data sub-classification"} content={"Stored in media"}/>
             </HeaderTable>
             <div className="pt-3">
                 <Table

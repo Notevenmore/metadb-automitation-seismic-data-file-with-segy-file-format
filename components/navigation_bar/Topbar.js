@@ -2,12 +2,14 @@ import Icon from "@mdi/react";
 import { mdiBellOutline, mdiHomeFloorA } from "@mdi/js";
 import RoundImage from "../image/RoundImage";
 import Kangean from '../../public/icons/kangean_logo.svg'
+import BSP from "../../public/icons/PT_BSP_logo.svg"
 import Link from "next/link"
 import { useEffect, useState } from "react";
 import Mime from "../../dummy-data/mime";
 import { useDispatch, useSelector } from "react-redux";
 import FloatDialog from "../float_dialog/float_dialog";
 import { logOut } from "../../store/userSlice";
+import Image from "next/image";
 
 export default function TopBar(props) {
 	const user = useSelector((state) => state.user.user);
@@ -36,7 +38,7 @@ export default function TopBar(props) {
     return (
         <nav className="w-full flex justify-between items-center py-2 px-5 border-b border-gray-300">
             <Link href="/" className="flex items-center gap-x-4">
-                <Kangean className='w-7' onClick={props.handleClick} />
+                <BSP className="w-[60px]" onClick={props.handleClick}/>
                 <div>KEIDC</div>
             </Link>
             <div className="flex items-center gap-x-3">
