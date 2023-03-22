@@ -29,6 +29,13 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                 body: JSON.stringify({
                     spreadsheetID: previousID
                 })
+            }).then(response => {
+                return response.json()
+            }).then(response => {
+                if (response.status !== 200) {
+                    sethasError(true)
+                    setErrorMessage(response.response)
+                }
             }).catch(error => { throw error })
         }
         const makeTemp = await fetch('http://localhost:5000/createSpreadsheet')
@@ -65,8 +72,13 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                     form_type: props.form_type,
                     spreadsheetID: sheetID
                 })
-            }).then(res => {
-                console.log(res)
+            }).then(response => {
+                return response.json()
+            }).then(response => {
+                if (response.status !== 200) {
+                    sethasError(true)
+                    setErrorMessage(response.response)
+                }
             }).catch(error => { throw error })
             setLoadingMsg("All done")
             setLoading(false)
