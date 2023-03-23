@@ -112,7 +112,7 @@ export default function UploadFilePage() {
 						type="dropdown"
 						name={"fileFormat"}
 						placeholder={"File format"}
-						dropdown_items={["PDF"]}
+						dropdown_items={["PDF", "PPTX", "CSV", "LAS", "SEGY"]}
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
 interface IframeProps extends React.ComponentProps<"iframe"> {
-    existingID: "",
-    type: "",
-    form_type: ""
+    existingID: any,
+    type: any,
+    form_type: any
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
@@ -29,13 +29,6 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                 body: JSON.stringify({
                     spreadsheetID: previousID
                 })
-            }).then(response => {
-                return response.json()
-            }).then(response => {
-                if (response.status !== 200) {
-                    sethasError(true)
-                    setErrorMessage(response.response)
-                }
             }).catch(error => { throw error })
         }
         const makeTemp = await fetch('http://localhost:5000/createSpreadsheet')
@@ -80,6 +73,27 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                     setErrorMessage(response.response)
                 }
             }).catch(error => { throw error })
+            if (props.type === "update") {
+                setLoadingMsg(`Fetching from database`)
+                await fetch('http://localhost:5000/appendFromDatabase', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        form_type: props.form_type,
+                        spreadsheetID: sheetID
+                    })
+                }).then(response => {
+                    return response.json()
+                }).then(response => {
+                    if (response.status !== 200) {
+                        sethasError(true)
+                        setErrorMessage(response.response)
+                        console.log(response)
+                    }
+                }).catch(error => { throw error })
+            }
             setLoadingMsg("All done")
             setLoading(false)
         }
@@ -94,13 +108,15 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
 
     return (
         Loading ?
-            <div className="flex flex-col items-center justify-center space-y-2" {...props}>
-                <div className="w-5 h-5 border-black border-2 rounded-full border-t-transparent animate-spin"></div>
+            <div className="flex flex-col items-center justify-center space-y-2 h-full" {...props}>
+                <div className="w-5 h-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
                 <p>{LoadingMsg}</p>
             </div>
             :
             hasError ?
-                <p className="text-center text-red-500">Internal server error. Please contact maintainer. <br />---<br /><strong>{ErrorMessage}</strong></p>
+                <div className="h-full flex items-center justify-center">
+                    <p className="text-center text-red-500">Internal server error. Please contact maintainer. <br />---<br /><strong>{ErrorMessage}</strong></p>
+                </div>
                 :
                 <div className="h-full">
                     <iframe {...props} className="w-full h-full" src={`https://docs.google.com/spreadsheets/d/${sheetID}?single=false&widget=false&headers=false&rm=embedded`}></iframe>

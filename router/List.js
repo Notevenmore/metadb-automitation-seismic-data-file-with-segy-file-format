@@ -98,7 +98,7 @@ const routing_list = [
 			},
 			{
 				name: "Printed Well Report",
-				link: "/well_data/edit",
+				link: "/well_data/printed_report",
 				icon: "/icons/info.svg",
 			},
 			{

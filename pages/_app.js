@@ -49,8 +49,8 @@ function MyApp({ Component, pageProps }) {
 			<ProgressBar isRouteChanging={state.isRouteChanging} key={state.loadingKey} />
 			<Head>
 				<title>Geodwipa Teknika Nusantara Database Converter App</title>
-				<meta name="description" content="Kangean Energy Indonesia Database Converter App" />
-				{/* <link rel="icon" href="/icons/kangean_logo.svg" /> */}
+				<meta name="description" content="Geodwipa Teknika Nusantara Database Converter App" />
+				{/* <link rel="icon" href="/icons/Geodwipa_logo.svg" /> */}
 				<link rel="icon" href="/images/gtn_logo_fire.png" />
 			</Head>
 			{getLayout(<Component {...pageProps} />)}

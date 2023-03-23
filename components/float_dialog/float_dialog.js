@@ -19,7 +19,7 @@ const FloatDialog = ({ children, float_title, items = null, onClick = null, widt
 	}
 	// const isNotification = items.type == "notification"
 	// const isProfile = items.type == "profile"
-    console.log(float_title)
+    // console.log(float_title)
 	return (
 		<section className="relative">
 			<section onClick={onClick ? onClick : toggleDialog}>{children}</section>

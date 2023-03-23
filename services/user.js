@@ -4,16 +4,20 @@ export async function getLogin(email, password) {
 	const result = axios
 		.get(`${process.env.backend_url}/users`, {
 			headers: {
-				email: "anya.forger@binus.ac.id",
-				password: "peanut",
+				email: email,
+				password: password,
 			},
 		})
 		.then((res) => {
-			// console.log(res)
+			console.log(res)
+			if (!res.data){
+				throw new Error("Incorrent credentials. Try again or use a different account if the problem still persists")
+			}
 			return { data: res, succeed: true };
 		})
 		.catch((err) => {
 			// console.log(err)
+			throw new Error("Incorrent credentials. Try again or use a different account if the problem still persists")
 			return {data: err,succeed: false,};
 		});
 

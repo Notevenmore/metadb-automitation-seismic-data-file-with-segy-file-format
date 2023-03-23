@@ -19,13 +19,13 @@ export default function UploadFileReview() {
             </section>
             <HeaderTable>
                 <HeaderStatic label1={"Nama KKKS"} label2={"(KKKS Name)"}
-                 content="Kangean Energy Indonesia"/>
+                 content="Geodwipa Teknika Nusantara"/>
                 <HeaderDivider/>
                 <HeaderInput label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
                         type="text"
                         name={"workingArea"}
-                        placeholder={"Pulau Kangean"}
+                        placeholder={"Pulau Geodwipa"}
                         required={true}
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
@@ -68,7 +68,7 @@ export default function UploadFileReview() {
                 <Table
                     header={["Data"]}
                     content={[
-                        [<div className="h-[750px]"><Sheets existingID='1gT18bQYG2ZRSS3mW1paHSn012L917jAuUDweXBGQdWc' /></div>]
+                        [<div className="h-[750px]"><Sheets existingID='1hvMSFfTRb8JLqDDqfRPLG7EpbwbUYiB8XlPUZaPFGWQ' /></div>]
                     ]}
                     additional_styles='overflow-hidden'
                     additional_styles_row='p-0'

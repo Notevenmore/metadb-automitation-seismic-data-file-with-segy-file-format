@@ -12,12 +12,13 @@ import { setUser } from "../../store/userSlice";
 SignInPage.getLayout = getLayoutBlank;
 
 export default function SignInPage() {
+    const [Error, setError] = useState("")
     const [loginData, setLoginData] = useState({
         email: "",
         password: "",
     })
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setLoginData(prev => ({
             ...prev,
             [name]: value
@@ -27,19 +28,23 @@ export default function SignInPage() {
     const dispatch = useDispatch()
     const router = useRouter()
     const handleSignIn = async () => {
-        await getLogin(loginData.email, loginData.password).then(
-            (res) => {
-                const {succeed, data} = res
-                if(succeed) {
-                    console.log(data.data)
-                    dispatch(setUser(data.data))
-                    router.push('/')
+        try {
+            await getLogin(loginData.email, loginData.password).then(
+                (res) => {
+                    const { succeed, data } = res
+                    if (succeed) {
+                        console.log(data.data)
+                        dispatch(setUser(data.data))
+                        router.push('/')
+                        return;
+                    }
+                    console.log(data)
                     return;
                 }
-                console.log(data)
-                return;
-            }
-        )
+            )
+        } catch (error) {
+            setError(String(error))
+        }
     }
 
     return (
@@ -84,22 +89,30 @@ export default function SignInPage() {
                         </div>
                         <div className="text-link">Forgot your password?</div>
                     </div>
+                    <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${Error ? "" : "-translate-y-20"}`}>
+                        <p>{Error}</p>
+                        <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setError("") }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </Buttons>
+                    </div>
                     <div className="flex flex-col max-md:items-center gap-y-3">
-                        <Buttons 
-                            path="" button_description="Sign In" 
+                        <Buttons
+                            path="" button_description="Sign In"
                             additional_styles="px-12 py-1 mt-4 bg-primary"
-                            onClick={handleSignIn} 
+                            onClick={handleSignIn}
                         />
                         <div className="flex flex-row gap-x-1 text-[12px]">
-                            Don&apos;t have an account? 
+                            Don&apos;t have an account?
                             <Link href="/login/signup" className="text-link">Sign up now</Link>
                         </div>
                     </div>
-                    </form>
+                </form>
             </div>
             <div className="w-[50%] px-[100px] flex flex-row justify-center">
                 <div className="min-w-[400px]">
-                    <Image src="/images/gtn_logo.png" alt="logo Bumi Siak Pusako" width={400} height={400}/>
+                    <Image src="/images/gtn_logo.png" alt="logo Bumi Siak Pusako" width={400} height={400} />
                 </div>
             </div>
         </div>

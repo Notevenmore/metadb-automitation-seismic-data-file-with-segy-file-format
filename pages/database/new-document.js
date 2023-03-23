@@ -22,13 +22,13 @@ export default function NewDocumentPageDatabase() {
             />
             <HeaderTable>
                 <HeaderStatic label1={"Nama KKKS"} label2={"(KKKS Name)"}
-                 content="Kangean Energy Indonesia"/>
+                 content="Geodwipa Teknika Nusantara"/>
                 <HeaderDivider/>
                 <HeaderInput label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
                         type="text"
                         name={"workingArea"}
-                        placeholder={"Pulau Kangean"}
+                        placeholder={"Pulau Geodwipa"}
                         required={true}
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}

@@ -68,8 +68,8 @@ const DocEditor = ({ spreadsheetID }) => {
             <Input type='text' placeholder='Document title' additional_styles_input='text-xl font-semibold p-3' />
             <TableComponent additional_styles_column="overflow-visible" header={["Header", ""]} content={
                 [
-                    [<div className="flex space-x-2"><p>Nama KKKS</p><p className="text-gray-400">(KKKS Name)</p></div>, <Input type={"text"} defaultValue="Kangean Energy Indonesia" readOnly />],
-                    [<div className="flex space-x-2"><p>Nama wilayah kerja</p><p className="text-gray-400">(Working area)</p></div>, <Input type={"text"} defaultValue="Kangean Energy Indonesia" readOnly />],
+                    [<div className="flex space-x-2"><p>Nama KKKS</p><p className="text-gray-400">(KKKS Name)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" readOnly />],
+                    [<div className="flex space-x-2"><p>Nama wilayah kerja</p><p className="text-gray-400">(Working area)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" readOnly />],
                     [<div className="flex space-x-2"><p>Jenis penyerahan data</p><p className="text-gray-400">(Submission type)</p></div>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />],
                     [<div className="flex space-x-2"><p>Nomor AFE</p><p className="text-gray-400">(AFE number)</p></div>, <Input type={"number"} defaultValue='1' />],
                     [<p className="font-bold">Data type</p>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />],

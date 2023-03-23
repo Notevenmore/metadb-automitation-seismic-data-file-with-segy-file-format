@@ -1,8 +1,6 @@
 import Icon from "@mdi/react";
 import { mdiBellOutline, mdiHomeFloorA } from "@mdi/js";
 import RoundImage from "../image/RoundImage";
-import Kangean from '../../public/icons/kangean_logo.svg'
-import BSP from "../../public/icons/PT_BSP_logo.svg"
 import GTN from "../../public/images/gtn_logo_singleline.png"
 import Link from "next/link"
 import { useEffect, useState } from "react";
@@ -11,10 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import FloatDialog from "../float_dialog/float_dialog";
 import { logOut } from "../../store/userSlice";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function TopBar(props) {
 	const user = useSelector((state) => state.user.user);
-
+    const router = useRouter()
 	const [profile, setProfile] = useState("")
     const profileItem = {
         type: "",
@@ -33,6 +32,7 @@ export default function TopBar(props) {
     const dispatch = useDispatch()
 	const handleSignOut = () => {
 		dispatch(logOut())
+		router.push("/")
 	}
 
 
