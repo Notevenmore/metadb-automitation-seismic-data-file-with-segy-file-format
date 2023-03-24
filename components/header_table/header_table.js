@@ -90,6 +90,24 @@ const HeaderInput1 = ({label1, label2, children}) => {
     )
 }
 
+const HeaderRowWithGap = ({ children }) => {
+    return (
+        <div className="flex justify-center lg:items-center
+         lg:flex-row flex-col w-full py-[10px] lg:h-[55px] gap-1">
+            <>{children}</>
+        </div>
+    )
+}
+
+const HeaderInputInput = ({leftChildren, rightChildren}) => {
+    return (
+        <HeaderRowWithGap>
+            <>{leftChildren}</>
+            <>{rightChildren}</>
+        </HeaderRowWithGap>
+    )
+}
+
 const HeaderInput2 = ({label, children}) => {
     return (
         <HeaderRow>
@@ -111,4 +129,4 @@ const ButtonsSection = ({children, className=""}) => {
 export default HeaderTable;
 export {HeaderDivider, HeaderRow, HeaderLabel, HeaderLabel1,
     HeaderLabel2, HeaderStatic1, HeaderStatic2, HeaderInput1,
-    HeaderInput2, ButtonsSection};
+    HeaderInput2, ButtonsSection, HeaderInputInput};

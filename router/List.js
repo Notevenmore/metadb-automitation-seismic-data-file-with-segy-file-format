@@ -126,6 +126,11 @@ export default [
                 link: "/basin",
 				icon: "/icons/file-document-outline.svg",
             },
+			{
+                name: "Basin",
+                link: "/basin",
+				icon: "/icons/file-document-outline.svg",
+            },
 
         ],
     },
