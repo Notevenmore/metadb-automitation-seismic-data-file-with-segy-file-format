@@ -1,173 +1,187 @@
-export default [
+const routing_list = [
 	{
-		name: "Home",
-		link: "/",
-		icon: "/icons/home-outline.svg",
-	},
-	{
-		name: "Small Components",
+		name: "General Information",
 		icon: "/icons/layers-outline.svg",
 		child: [
 			{
-				name: "Input",
-				link: "/components/input",
+				name: "Basin",
+				link: "/basin",
 				icon: "/icons/format-text.svg",
 			},
 			{
-				name: "Button",
-				link: "/components/button",
+				name: "Working area",
+				link: "",
 				icon: "/icons/info.svg",
 			},
 			{
-				name: "Table",
-				link: "/components/table",
+				name: "Field information",
+				link: "",
 				icon: "/icons/table.svg",
 			},
-            {
-                name: "Layout",
-                link: "/components/layout",
-                icon: "/icons/layers.svg",
-            },
-            {
-                name: "Container",
-                link: "/components/container",
-                icon: "/icons/layers.svg",
-            },
-            {
-                name: "Popup Dialog",
-                link: "/components/popup-dialog",
-				icon: "/icons/window-maximize.svg",
-            },
-			{
-				name: "Floating Dialog",
-				link: "/components/float-dialog",
-				icon: "/icons/window-maximize.svg",
-			},
-            {
-                name: "Profile Floating Dialog",
-                link: "/components/float-dialog/profile-dialog",
-				icon: "/icons/window-maximize.svg",
-            },
-            {
-                name: "Notification Floating Dialog",
-                link: "/components/float-dialog/notification-dialog",
-				icon: "/icons/window-maximize.svg",
-            }
 		],
 	},
 	{
-		name: "Navigation bar",
+		name: "Seismic Data",
 		icon: "/icons/format-vertical-align-center.svg",
 		child: [
 			{
-				name: "Topbar",
-				link: "/navigation/topbar",
+				name: "2D Seismic",
+				link: "",
 				icon: "/icons/info.svg",
 			},
 			{
-				name: "Sidebar",
-				link: "/navigation/navbar",
+				name: "3D Seismic",
+				link: "",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "Printed 2D/3D Seismic Report",
+				link: "",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "Digital 2D/3D Seismic Report",
+				link: "",
 				icon: "/icons/info.svg",
 			},
 		],
 	},
 	{
-		name: "Login",
+		name: "Non-Seismic and Seismis Non-Conventional Data",
 		icon: "/icons/login.svg",
 		child: [
 			{
-				name: "Sign in",
-				link: "/login/signin",
+				name: "Non-Seismic and Seismis Non-Conventional Data Summary",
+				link: "",
 				icon: "/icons/info.svg",
 			},
 			{
-				name: "Sign up",
-				link: "/login/signup",
+				name: "Non-Seismic and Seismic Non-Conventional Data Stored in Media",
+				link: "",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "Non-Seismic and Seismic Non-Conventional Digital Data",
+				link: "",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "Printed Non-Seismic and Seismic Non-Conventional Report",
+				link: "",
+				icon: "/icons/info.svg",
+			},
+			{
+				name: "Digital Non-Seismic and Seismic Non-Conventional Report",
+				link: "",
 				icon: "/icons/info.svg",
 			},
 		],
 	},
 	{
-		name: "Pages",
+		name: "Well Data",
 		icon: "/icons/page-layout-body.svg",
 		child: [
 			{
-				name: "Drafts",
-				link: "/drafts",
+				name: "Well Summary",
+				link: "",
 				icon: "/icons/well_sample_core.svg",
 			},
 			{
-				name: "Bokeh",
-				link: "/bokeh",
-				icon: "/icons/chart-line-variant.svg",
+				name: "Well Logs",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
 			},
-            {
-                name: "Profile",
-                link: "/profile",
+			{
+				name: "Well Report",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
+			},
+			{
+				name: "Printed Well Report",
+				link: "/well_data/printed_report",
 				icon: "/icons/info.svg",
 			},
-            {
-                name: "Database",
-                link: "/database",
-				icon: "/icons/database.svg",
-            },
 			{
-				name: "New Document",
-				link: "/new-document",
-				icon: "/icons/file-document-outline.svg",
+				name: "Well Seismic Profile",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
 			},
-            {
-                name: "Upload File",
-                link: "/upload-file",
-				icon: "/icons/file-document-outline.svg",
-            },
-            {
-                name: "Basin",
-                link: "/basin",
-				icon: "/icons/file-document-outline.svg",
-            },
-			{
-                name: "Basin",
-                link: "/basin",
-				icon: "/icons/file-document-outline.svg",
-            },
 
-        ],
-    },
+		],
+	},
 	{
-		name: "Error",
-		icon: "/icons/info.svg",
+		name: "Well Sample and Well Core Sample",
+		icon: "/icons/page-layout-body.svg",
 		child: [
 			{
-				name: "403",
-				link: "/403",
-				icon: "/icons/info.svg",
+				name: "Well Sample",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
 			},
 			{
-				name: "404",
-				link: "/404",
-				icon: "/icons/info.svg",
+				name: "Well Core Sample",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
+			},
+		],
+	},
+	{
+		name: "Outcrop",
+		link: "",
+		icon: "/icons/page-layout-body.svg",
+	},
+	{
+		name: "Technical Report",
+		icon: "/icons/page-layout-body.svg",
+		child: [
+			{
+				name: "Printed Technical Report",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
 			},
 			{
-				name: "500",
-				link: "/500",
-				icon: "/icons/info.svg",
+				name: "Digital Technical Report",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
+			},
+		],
+	},
+	{
+		name: "Maps and Technical Drawing",
+		icon: "/icons/page-layout-body.svg",
+		child: [
+			{
+				name: "Printed Maps and Technical Drawing",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
 			},
 			{
-				name: "502",
-				link: "/502",
-				icon: "/icons/info.svg",
+				name: "Digital Maps and Technical Drawing",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
+			},
+		],
+	},
+	{
+		name: "Project File",
+		icon: "/icons/page-layout-body.svg",
+		child: [
+			{
+				name: "Digital Project File",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
 			},
 			{
-				name: "503",
-				link: "/503",
-				icon: "/icons/info.svg",
+				name: "Project File Stored in Media",
+				link: "",
+				icon: "/icons/well_sample_core.svg",
 			},
-			{
-				name: "504",
-				link: "/504",
-				icon: "/icons/info.svg",
-			},
-		]
-	}
+		],
+	},
+	{
+		name: "Bibliography",
+		link: "",
+		icon: "/icons/page-layout-body.svg",
+	},
 ];
+export default routing_list;

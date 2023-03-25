@@ -34,3 +34,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# bokeh
+/bokeh/HORIZON
+/bokeh/PROJECT
+/bokeh/SEGY
+/bokeh/TEMP
+/bokeh/UTILS
+/bokeh/WELL
+/bokeh/__pycache__

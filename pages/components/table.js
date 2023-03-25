@@ -101,19 +101,19 @@ const TablePage = () => {
     header={["Document name", "Working area", "Type", "AFE", "Action"]}
     content={
         [
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
         ]
     }
     setSelectedRows={SelectedTableData}
@@ -126,19 +126,19 @@ const TablePage = () => {
                                 header={["Document name", "Working area", "Type", "AFE", "Action"]}
                                 content={
                                     [
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-                                        ["Lorem ipsum", "Pulau Kangean", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                                        ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
                                     ]
                                 }
                                 setSelectedRows={SelectedTableData}

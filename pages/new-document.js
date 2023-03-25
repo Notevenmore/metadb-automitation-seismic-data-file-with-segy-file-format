@@ -3,31 +3,29 @@ import Buttons from "../components/buttons/buttons";
 import Container from "../components/container/container.js";
 import Input from "../components/input_form/input";
 // import { current } from "@reduxjs/toolkit";
-import HeaderTable, {HeaderDivider, HeaderStatic1, HeaderInput1, HeaderInput2, ButtonsSection}
+import HeaderTable, {HeaderDivider, HeaderStatic, HeaderInput, ButtonsSection}
  from "../components/header_table/header_table";
-
-// TODO: generalize this page structure to other pages that use header too
 export default function NewDocumentPage() {
     const [detail, setDetail] = useState("bbb");
 	return (
 		<Container additional_class="full-height relative" onDragEnter={(e) => handleDrag(e)}>
 			<Container.Title back>New document</Container.Title>
             <HeaderTable>
-                <HeaderStatic1 label1={"Nama KKKS"} label2={"(KKKS Name)"}
-                    content="Kangean Energy Indonesia"/>
+                <HeaderStatic label1={"Nama KKKS"} label2={"(KKKS Name)"}
+                content={"Geodwipa Teknika Nusantara"}/>
                 <HeaderDivider/>
-                <HeaderInput1 label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
+                <HeaderInput label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
                         type="text"
                         name={"workingArea"}
-                        placeholder={"Pulau Kangean"}
+                        placeholder={"Pulau Geodwipa"}
                         required={true}
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput1 label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
+                <HeaderInput label1={"Jenis penyerahan data"} label2={"(Submission Type)"}>
                     <Input
                         type="dropdown"
                         name={"submissionType"}
@@ -37,9 +35,9 @@ export default function NewDocumentPage() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput1 label1={"Nomor AFE"} label2={"(AFE Number)"}>
+                <HeaderInput label1={"Nomor AFE"} label2={"(AFE Number)"}>
                     <Input
                         type="text"
                         name={"AFE_Number"}
@@ -48,9 +46,9 @@ export default function NewDocumentPage() {
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput1>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput2 label={"Data type"}>
+                <HeaderInput label1={"Data type"}>
                     <Input
                         type="dropdown"
                         name={"dataType"}
@@ -61,9 +59,9 @@ export default function NewDocumentPage() {
                         additional_styles_input="font-semibold"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput2>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput2 label={"Data classification"}>
+                <HeaderInput label1={"Data classification"}>
                     <Input
                         type="dropdown"
                         name={"dataClassification"}
@@ -74,9 +72,9 @@ export default function NewDocumentPage() {
                         additional_styles_input="font-semibold"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput2>
+                </HeaderInput>
                 <HeaderDivider/>
-                <HeaderInput2 label={"Data sub-classification"}>
+                <HeaderInput label1={"Data sub-classification"}>
                     <Input
                         type="dropdown"
                         name={"dataSubClassification"}
@@ -87,7 +85,7 @@ export default function NewDocumentPage() {
                         additional_styles_input="font-semibold"
                         onChange={(e) => setDetail(e.target.name)}
                     />
-                </HeaderInput2>
+                </HeaderInput>
             </HeaderTable>
             <ButtonsSection>
                 <Buttons path="" additional_styles="bg-primary">Save changes</Buttons>

@@ -1,13 +1,8 @@
 import FloatDialog, {FloatDialogNotification, ProfileIcon, NotificationIcon, IconSection} from "../../../components/float_dialog/float_dialog"
-import hljs from 'highlight.js'
-import { useEffect } from 'react'
 import Highlight from 'react-highlight'
 import { Divider } from '../../../components/float_dialog/float_dialog'
 
 export default function FloatingDialogPage() {
-  useEffect(() => {
-    hljs.highlightAll()
-  }, [])
 
   return (
     <section className="flex flex-col w-full h-fit text-[14.5px] px-10 py-5">
@@ -18,9 +13,6 @@ export default function FloatingDialogPage() {
 }
 
 function PopupDialogPage() {
-  useEffect(() => {
-    hljs.highlightAll()
-  }, [])
   return (
     <section className="flex flex-col w-full h-fit text-[14.5px] px-10 py-5">
       <HeaderSection></HeaderSection>

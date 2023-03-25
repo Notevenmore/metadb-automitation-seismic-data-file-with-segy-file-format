@@ -36,8 +36,8 @@ export default function SideBar({ half }) {
 					collapse={iconCollapse}
 					key={router.name}></Item>
 			))}
-			<div className={`fixed bottom-0 h-[40px] ${iconCollapse? "" :"w-[314px]"} flex items-center justify-center text-[12px] text-[#a3a3a3] bg-side_bar`}>
-				<div>© Kangean Energy Indonesia 2023</div>
+			<div className={`fixed bottom-0 h-[40px] ${iconCollapse? "hidden" :"w-[314px]"} flex items-center justify-center text-[12px] text-[#a3a3a3] bg-side_bar`}>
+				<div>© Geodwipa Teknika Nusantara 2023</div>
 			</div>
 		</div>
 	);
