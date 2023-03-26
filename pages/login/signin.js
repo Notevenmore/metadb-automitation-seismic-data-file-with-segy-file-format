@@ -70,7 +70,7 @@ export default function SignInPage({ setTitle }) {
                     <p className="text-xl">Effectively Cataloging and Managing E&amp;P Physical Assets</p>
                     <div className="border border-b-[#d9d9d9] mt-2"></div>
                 </div>
-                <div className="max-md:text-center text-[30px]">Sign in</div>
+                <div className="max-md:text-center text-[30px] font-bold">Sign in</div>
                 <form className="flex flex-col gap-y-4 w-full md:pr-10">
                     <Input
                         label="Email"

@@ -13,11 +13,17 @@ export default function UploadFilePage({ setTitle }) {
 	const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
 	const additional_styles_label = "w-[20%]";
 	const [fileUpload, setFileUpload] = useState([]);
-	const [DataType, setDataType] = useState()
-	const [DataClassification, setDataClassification] = useState()
-	const [DataSubClass, setDataSubClass] = useState()
-	const [FileFormat, setFileFormat] = useState()
+	// const [DataType, setDataType] = useState()
+	// const [DataClassification, setDataClassification] = useState()
+	// const [DataSubClass, setDataSubClass] = useState()
+	// const [FileFormat, setFileFormat] = useState()
 	const [Error, setError] = useState("")
+	const [UplSettings, setUplSettings] = useState({
+		DataType: "",
+		DataClassification: "",
+		DataSubClass: "",
+		FileFormat: ""
+	})
 
 	const fileUploadRef = useRef(null);
 
@@ -49,14 +55,15 @@ export default function UploadFilePage({ setTitle }) {
 	}, [dragActive]);
 
 	const dispatch = useDispatch()
+
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		if (fileUpload.length < 1) {
-			setError("Please select a file before continuing to the next process")
+		if (fileUpload.length < 1 || !UplSettings.DataType || !UplSettings.DataClassification || !UplSettings.DataSubClass || !UplSettings.FileFormat ) {
+			setError("Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.")
 			return
 		}
 		dispatch(storeFile(fileUpload))
-		// router.push('/upload_file/uploading')
+		router.push('/upload_file/matching')
 		// console.log("???")
 	}
 
@@ -96,7 +103,7 @@ export default function UploadFilePage({ setTitle }) {
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-						onChange={(e) => setDataType(e.target.value)}
+						onChange={(e) => setUplSettings({...UplSettings, DataType: e.target.value})}
 						withSearch
 					/>
 					<Input
@@ -109,7 +116,7 @@ export default function UploadFilePage({ setTitle }) {
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-						onChange={(e) => setDataClassification(e.target.value)}
+						onChange={(e) => setUplSettings({...UplSettings, DataClassification: e.target.value})}
 						withSearch
 					/>
 					<Input
@@ -122,7 +129,7 @@ export default function UploadFilePage({ setTitle }) {
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-						onChange={(e) => setDataSubClass(e.target.value)}
+						onChange={(e) => setUplSettings({...UplSettings, DataSubClass: e.target.value})}
 						withSearch
 					/>
 					<Input
@@ -135,20 +142,18 @@ export default function UploadFilePage({ setTitle }) {
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
-						onChange={(e) => setFileFormat(e.target.value)}
+						onChange={(e) => setUplSettings({...UplSettings, FileFormat: e.target.value})}
 						withSearch
 					/>
 				</div>
 				<div className="flex flex-row gap-x-3">
-					<Link href={{ pathname: `${""}`, query: "" }}>
-						<Buttons
-							type="submit"
-							path=""
-							button_description="Upload and process file"
-							additional_styles="bg-primary"
-							onClick={handleSubmit}
-						/>
-					</Link>
+					<Buttons
+						type="submit"
+						path=""
+						button_description="Upload and process file"
+						additional_styles="bg-primary"
+						onClick={handleSubmit}
+					/>
 					<Buttons type="submit" button_description="Cancel" path="" />
 				</div>
 			</form>

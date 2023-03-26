@@ -99,7 +99,7 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
                    className={
                     twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)
                   }>
-                    <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)}>
+                    <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)} title={column}>
                       {column}
                     </div>
                   </td>
@@ -109,7 +109,7 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
               row.map((column: any, column_index: number) => {
                 return (
                   <td key={column_index} className={twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)}>
-                    <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)}>
+                    <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)} title={column}>
                       {column}
                     </div>
                   </td>

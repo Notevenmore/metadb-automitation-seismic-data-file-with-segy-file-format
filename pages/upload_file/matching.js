@@ -9,6 +9,8 @@ import HeaderTable, {
   HeaderRow,
   HeaderInput,
 } from "../../components/header_table/header_table";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
 const FullButton = ({ children, onClick }) => {
   return (
@@ -259,7 +261,44 @@ export default function MatchReview({ setTitle }) {
   const [state, setState] = useState(initialState);
   const [dropDownOptions, setDropDownOptions] = useState([]);
   const [imageBase64Str, setImageBase64Str] = useState("");
+  const [Loading, setLoading] = useState("")
+  const [Message, setMessage] = useState("")
   const inputFileRef = useRef(null);
+  const files = useSelector((state) => state.general.file)
+  const router = useRouter()
+
+  useEffect(() => {
+    const init = async () => {
+      router.events.emit("routeChangeStart")
+      setLoading("Reading data... Please wait for a moment")
+      if (files.length < 1) {
+        router.push("/upload_file")
+        return
+      } else {
+        const file = files[0];
+        //   const filename = file.name;
+        //   const size = file.size;
+        const imageBase64Str = await toBase64(file);
+        const result = await postScrapeAnnotate(imageBase64Str);
+        console.log(result);
+        if (result.status === "success") {
+          setImageBase64Str((_) => result.body.base64str);
+          setDropDownOptions((_) => result.body.dropdown);
+          setState((_) => initialState);
+        }
+      }
+      router.events.emit("routeChangeComplete")
+      setLoading("")
+    }
+    init()
+    setMessage("Make sure you have inputted all of the data correctly before proceeding to the next step (viewing the data in spreadsheet form).")
+  }, [files])
+
+  useEffect(() => {
+    localStorage.setItem("reviewUploadedImage", imageBase64Str)
+  }, [imageBase64Str])
+  
+
 
   const handleUploadButtonClick = (_) => {
     inputFileRef.current.click();
@@ -300,6 +339,12 @@ export default function MatchReview({ setTitle }) {
       return [...state.slice(0, index), newPair, ...state.slice(index + 1)];
     });
   };
+
+  useEffect(() => {
+    localStorage.setItem('reviewData', JSON.stringify(state))
+    console.log(localStorage.getItem('reviewData'))
+  }, [state])
+  
 
   const removePair = (id) => {
     setState((state) => {
@@ -367,45 +412,60 @@ export default function MatchReview({ setTitle }) {
   );
 
   return (
-    <Container additional_class="full-height relative">
-      <Container.Title>Data Matching</Container.Title>
-      <div className="grid grid-cols-2">
-        <HeaderTable>
-          {state.map(toRowComponent)}
-          <HeaderDivider />
-          {/* <HeaderRow>
+    Loading ?
+      <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
+        <div className="animate-spin border-4 border-t-transparent border-gray-500/[.7] rounded-full w-14 h-14"></div>
+        <p className="text-xl font-semibold text-gray-500">{Loading}</p>
+      </div>
+      :
+      <Container additional_class="full-height relative">
+        <Container.Title>Data Matching</Container.Title>
+        <div className="grid grid-cols-2">
+          <HeaderTable>
+            {state.map(toRowComponent)}
+            <HeaderDivider />
+            {/* <HeaderRow>
             <FullButton onClick={addPair}>+</FullButton>
           </HeaderRow> */}
-        </HeaderTable>
-        <img src={imageBase64Str} alt="" className="object-contain m-auto" />
-      </div>
-      <input
-        accept="image/*"
-        style={{ display: "none" }}
-        ref={inputFileRef}
-        type="file"
-        hidden
-        onChange={handleChangeUploadFile}
-      />
-      <ButtonsSection>
-        <Buttons
-          path=""
-          additional_styles="bg-primary"
-          component="label"
-          onClick={handleUploadButtonClick}
-        >
-          Upload File
-        </Buttons>
-        <Buttons path="" additional_styles="bg-primary">
-          Save changes
-        </Buttons>
-        <Buttons path="" additional_styles="bg-primary">
-          Save and exit
-        </Buttons>
-        <Buttons path="" additional_styles="text-error">
-          Cancel
-        </Buttons>
-      </ButtonsSection>
-    </Container>
+          </HeaderTable>
+          <img src={imageBase64Str} alt="" className="object-contain m-auto" />
+        </div>
+        <input
+          accept="image/*"
+          style={{ display: "none" }}
+          ref={inputFileRef}
+          type="file"
+          hidden
+          onChange={handleChangeUploadFile}
+        />
+        <ButtonsSection>
+          {/* <Buttons
+            path=""
+            additional_styles="bg-primary"
+            component="label"
+            onClick={handleUploadButtonClick}
+          >
+            Upload File
+          </Buttons>
+          <Buttons path="" additional_styles="bg-primary">
+            Save changes
+          </Buttons>
+          <Buttons path="" additional_styles="bg-primary">
+            Save and exit
+          </Buttons>
+          <Buttons path="" additional_styles="text-error">
+            Cancel
+          </Buttons> */}
+          <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" />
+        </ButtonsSection>
+        <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
+          <p>{Message}</p>
+          <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage("") }}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </Buttons>
+        </div>
+      </Container>
   );
 }

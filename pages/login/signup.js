@@ -17,7 +17,7 @@ export default function SignUpPage({ setTitle }) {
                     <p className="text-xl">Effectively Cataloging and Managing E&amp;P Physical Assets</p>
                     <div className="border border-b-[#d9d9d9] mt-2"></div>
                 </div>
-                <div className="max-md:text-center text-[30px]">Sign up</div>
+                <div className="max-md:text-center text-[30px] font-bold">Sign up</div>
                 <form className="flex flex-col gap-y-4 w-full text-[14px] md:pr-10">
                     <div className="flex flex-row gap-x-4 w-full">
                         <Input

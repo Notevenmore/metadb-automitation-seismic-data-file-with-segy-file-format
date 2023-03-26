@@ -3,7 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react"
 interface IframeProps extends React.ComponentProps<"iframe"> {
     existingID: any,
     type: any,
-    form_type: any
+    form_type: any,
+    data: any
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
@@ -21,7 +22,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
         }
         const previousID = localStorage.getItem('spreadsheetID')
         if (previousID) {
-            await fetch('http://localhost:6000/deleteSpreadsheet', {
+            await fetch('http://localhost:5050/deleteSpreadsheet', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -31,7 +32,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                 })
             }).catch(error => { throw error })
         }
-        const makeTemp = await fetch('http://localhost:6000/createSpreadsheet')
+        const makeTemp = await fetch('http://localhost:5050/createSpreadsheet')
         const spreadsheetID = await makeTemp.json()
         setsheetID(spreadsheetID.response)
         setSkipInitialization(false)
@@ -55,7 +56,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
         const updateSheet = async () => {
             setLoading(true)
             setLoadingMsg(`Initializing document form based on form type ${props.form_type}`)
-            await fetch('http://localhost:6000/updateSpreadsheet/v2', {
+            await fetch('http://localhost:5050/updateSpreadsheet/v2', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -75,7 +76,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
             }).catch(error => { throw error })
             if (props.type === "update") {
                 setLoadingMsg(`Fetching from database`)
-                await fetch('http://localhost:6000/appendFromDatabase', {
+                await fetch('http://localhost:5050/appendFromDatabase', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -93,6 +94,42 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                         console.log(response)
                     }
                 }).catch(error => { throw error })
+            } else if (props.type === "review") {
+                try {
+                    console.log("first")
+                    setLoadingMsg("Appending read data to the spreadsheet")
+                    let data = props.data
+                    if (!data) {
+                        throw new Error("Data not found. Make sure you correctly passed the data into the component.")
+                    }
+                    // let existing_data = localStorage.getItem('reviewData') as any
+                    // if (existing_data) {
+                    //     data = [...existing_data, data]
+                    // }
+                    // localStorage.setItem('reviewData', JSON.stringify(data))
+                    await fetch('http://localhost:5050/appendToSheets', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            form_type: props.form_type,
+                            spreadsheetID: sheetID,
+                            data: data
+                        })
+                    }).then(response => {
+                        return response.json()
+                    }).then(response => {
+                        if (response.status !== 200) {
+                            sethasError(true)
+                            setErrorMessage(response.response)
+                            console.log(response)
+                        }
+                    }).catch(error => { throw error })
+                } catch (error) {
+                    sethasError(true)
+                    setErrorMessage(String(error))
+                }
             }
             setLoadingMsg("All done")
             setLoading(false)

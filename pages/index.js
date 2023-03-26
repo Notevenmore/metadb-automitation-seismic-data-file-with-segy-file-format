@@ -34,7 +34,7 @@ const HomeSection = () => {
 					<Buttons path={"/upload_file"} button_description="Choose file manually"></Buttons>
 				</div>
 				<p className="text-center opacity-50">
-					The document to be uploaded must be either PDF, XLSX, JPG, or PNG format.
+					The document to be uploaded must be in either JPG, PNG, PDF, PPTX, CSV, XLSX, LAS, or SEGY format.
 				</p>
 				<section className="flex justify-center items-center">
 					<Divider additional_styles={"w-[284px]"}></Divider>
