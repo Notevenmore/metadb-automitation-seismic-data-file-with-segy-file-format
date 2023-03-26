@@ -129,7 +129,7 @@ const routing_list = [
 			},
 			{
 				name: "Upload File",
-				link: "/upload-file",
+				link: "/upload_file",
 				icon: "/icons/file-document-outline.svg",
 			},
 			{

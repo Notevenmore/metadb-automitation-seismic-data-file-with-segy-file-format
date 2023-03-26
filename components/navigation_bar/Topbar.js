@@ -2,6 +2,7 @@ import Icon from "@mdi/react";
 import { mdiBellOutline, mdiHomeFloorA } from "@mdi/js";
 import RoundImage from "../image/RoundImage";
 import GTN from "../../public/images/gtn_logo_singleline.png"
+import MetaDB from "../../public/images/metadata3.png"
 import Link from "next/link"
 import { useEffect, useState } from "react";
 import Mime from "../../dummy-data/mime";
@@ -41,8 +42,9 @@ export default function TopBar(props) {
             <Link href="/" className="flex items-center gap-x-4">
                 {/* <BSP className="w-[60px]" onClick={props.handleClick}/> */}
                 {/* <img src={GTN} className='w-5 h-5'/> */}
-                <Image src={GTN} width={115} height={50}/>
-                {/* <div>GTNDC</div> */}
+                {/* <Image src={GTN} width={115} height={50}/> */}
+                <Image src={MetaDB} width={30} height={50}/>
+                <h1 className="text-xl font-bold">MetaDB</h1>
             </Link>
             <div className="flex items-center gap-x-3">
                 <img src="/icons/bell-outline.svg" className="w-[1rem]" alt="notification" />

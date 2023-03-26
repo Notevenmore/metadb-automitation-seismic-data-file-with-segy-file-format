@@ -4,18 +4,22 @@ import Container from "../../components/container/container";
 import Input from "../../components/input_form/input";
 import TableComponent from "../../components/table/table";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
-const PrintedWellReport = () => {
+const PrintedWellReport = ({ setTitle }) => {
+    setTitle("Printed Well Report")
+    const router = useRouter()
+    const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
     let selectedTableData = [[]];
     let table_data = [
-        { No: 1, Name: "Laporan Data 2023", KKS: "GTN", "wilayah kerja": "Jakarta", jenis: "Not set", AFE: "28937289", action: <div className="flex flex-row gap-x-1 items-center"><Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /><Link href="/well_data/edit"><Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></Link><Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></div> },
+        { No: 1, Name: "Laporan Data 2023", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Not set", AFE: "28937289", action: <div className="flex flex-row gap-x-1 items-center"><Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /><Link href="/well_data/edit"><Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></Link><Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></div> },
     ]
     const [data, setData] = useState(table_data);
     const onSearch = (e) => {
         const name = e.target.value.toLocaleLowerCase();
         let temp = table_data;
         temp = temp.filter((item) => {
-            return item.name.toLocaleLowerCase().includes(name);
+            return item.Name.toLocaleLowerCase().includes(name);
         });
         console.log("search", temp);
         setData(temp);
@@ -24,7 +28,10 @@ const PrintedWellReport = () => {
         <Container>
             <Container.Title>
                 <div className="flex flex-row items-center justify-between">
-                    <div>Printed Well Report</div>
+                    <div>
+                        <p className="text-base font-normal capitalize">{path_query}</p>
+                        <p>Printed Well Report</p>
+                    </div>
                     <div className="w-[80%] lg:w-[40%] relative">
                         <Input
                             label=""

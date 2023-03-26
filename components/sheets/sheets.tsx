@@ -21,7 +21,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
         }
         const previousID = localStorage.getItem('spreadsheetID')
         if (previousID) {
-            await fetch('http://localhost:5000/deleteSpreadsheet', {
+            await fetch('http://localhost:6000/deleteSpreadsheet', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -31,7 +31,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                 })
             }).catch(error => { throw error })
         }
-        const makeTemp = await fetch('http://localhost:5000/createSpreadsheet')
+        const makeTemp = await fetch('http://localhost:6000/createSpreadsheet')
         const spreadsheetID = await makeTemp.json()
         setsheetID(spreadsheetID.response)
         setSkipInitialization(false)
@@ -55,7 +55,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
         const updateSheet = async () => {
             setLoading(true)
             setLoadingMsg(`Initializing document form based on form type ${props.form_type}`)
-            await fetch('http://localhost:5000/updateSpreadsheet/v2', {
+            await fetch('http://localhost:6000/updateSpreadsheet/v2', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -75,7 +75,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
             }).catch(error => { throw error })
             if (props.type === "update") {
                 setLoadingMsg(`Fetching from database`)
-                await fetch('http://localhost:5000/appendFromDatabase', {
+                await fetch('http://localhost:6000/appendFromDatabase', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

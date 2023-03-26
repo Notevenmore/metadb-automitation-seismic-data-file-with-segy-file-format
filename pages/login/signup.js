@@ -6,15 +6,16 @@ import Image from "next/image";
 
 SignUpPage.getLayout = getLayoutBlank;
 
-export default function SignUpPage() {
+export default function SignUpPage({ setTitle }) {
+    setTitle("Sign up")
     return (
         <div className="md:h-screen flex flex-col-reverse my-10
          md:flex-row md:my-0 items-center justify-center m-auto gap-y-5">
-            <div className="w-[589px] px-[50px] flex flex-col gap-y-6">
+            <div className="px-[50px] flex flex-col gap-y-6">
                 <div id="title" className="max-md:text-center">
-                    <div className="text-[100px] leading-[100px]">GTNDC</div>
-                    <div>Geodwipa Teknika Nusantara Database Conversion</div>
-                    <div className="border border-b-[#d9d9d9]"></div>
+                    <p className="text-[100px] leading-[100px] font-bold">MetaDB</p>
+                    <p className="text-xl">Effectively Cataloging and Managing E&amp;P Physical Assets</p>
+                    <div className="border border-b-[#d9d9d9] mt-2"></div>
                 </div>
                 <div className="max-md:text-center text-[30px]">Sign up</div>
                 <form className="flex flex-col gap-y-4 w-full text-[14px] md:pr-10">
@@ -85,12 +86,13 @@ export default function SignUpPage() {
                             </Link>
                         </div>
                     </div>
-                    
+
                 </form>
             </div>
             <div className="w-[50%] px-[100px] flex flex-row justify-center">
-                <div className="min-w-[400px]">
-                    <Image src="/images/gtn_logo.png" alt="logo Bumi Siak Pusako" width={400} height={400}/>
+                <div className="min-w-[400px] space-y-3">
+                    <Image src="/images/metadbpng.png" alt="MetaDB logo" width={400} height={400} />
+                    <p className="text-center">&copy; Geodwipa Teknika Nusantara 2023</p>
                 </div>
             </div>
         </div>

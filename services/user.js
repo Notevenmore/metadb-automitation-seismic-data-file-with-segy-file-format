@@ -16,8 +16,8 @@ export async function getLogin(email, password) {
 			return { data: res, succeed: true };
 		})
 		.catch((err) => {
-			// console.log(err)
-			throw new Error("Incorrent credentials. Try again or use a different account if the problem still persists")
+			console.log(err.code, err.message)
+			throw new Error(`${err.message}. Please contact maintainer.`)
 			return {data: err,succeed: false,};
 		});
 

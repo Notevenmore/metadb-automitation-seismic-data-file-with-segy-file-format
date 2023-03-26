@@ -11,7 +11,8 @@ import Mime from "dummy-data/mime";
 import ProfilePic from "dummy-data/profile_pic"
 import { useRouter } from "next/router";
 
-const Profile = () => {
+const Profile = ({ setTitle }) => {
+	setTitle("Profile")
 	const user = useSelector((state) => state.user.user);
 	const router = useRouter()
 	const [currentUser, setcurrentUser] = useState({
@@ -44,7 +45,7 @@ const Profile = () => {
 						const final = reader.result.replace(/^(.+)(?=,)/.exec(reader.result)[0] + ',', '')
 						setcurrentUser({ ...currentUser, profile_picture: final })
 						console.log(final)
-						
+
 					} else {
 						alert("Please upload only image formatted file (JPG/PNG)");
 						return;

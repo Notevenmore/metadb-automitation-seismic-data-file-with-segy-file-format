@@ -8,8 +8,9 @@ import draft from "../dummy-data/draft";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-export default function HomePage() {
-    // if the search state is true change the view of the home page
+export default function HomePage({ setTitle }) {
+	setTitle("Home")
+	// if the search state is true change the view of the home page
 	const searches = useSelector((state) => state.search.search);
 	return <>{!searches ? <HomeSection /> : <SearchResult />}</>;
 }
@@ -19,7 +20,7 @@ const HomeSection = () => {
 	const handleDrag = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
-		router.push('/upload-file')
+		router.push('/upload_file')
 	}
 	return (
 		<section className="flex flex-col justify-center items-center w-full h-full" onDragEnter={(e) => handleDrag(e)}>
@@ -30,7 +31,7 @@ const HomeSection = () => {
 					<br></br>or drag and drop a document here to be uploaded
 				</h1>
 				<div className="flex justify-center">
-					<Buttons path={"/upload-file"} button_description="Choose file manually"></Buttons>
+					<Buttons path={"/upload_file"} button_description="Choose file manually"></Buttons>
 				</div>
 				<p className="text-center opacity-50">
 					The document to be uploaded must be either PDF, XLSX, JPG, or PNG format.
@@ -41,9 +42,9 @@ const HomeSection = () => {
 					<Divider additional_styles={"w-[284px]"}></Divider>
 				</section>
 				<section className="flex flex-row gap-x-3">
-					<Buttons path={"/new-document"} button_description="Make a new document"></Buttons>
-					<Buttons path={"/drafts"} button_description="View drafts"></Buttons>
-					<Buttons path={"/database"} button_description="Connect with database"></Buttons>
+					<Buttons path={"/new_document"} button_description="Make a new document"></Buttons>
+					{/* <Buttons path={"/drafts"} button_description="View drafts"></Buttons> */}
+					{/* <Buttons path={"/database"} button_description="Connect with database"></Buttons> */}
 				</section>
 			</section>
 		</section>
@@ -51,18 +52,18 @@ const HomeSection = () => {
 };
 
 const SearchResult = () => {
-    const [data, setData] = useState(draft.content);
-    const searches = useSelector((state) => state.search.value)
-    
-    useEffect(() => {
-        const name = searches.searchAll.toLocaleLowerCase();
+	const [data, setData] = useState(draft.content);
+	const searches = useSelector((state) => state.search.value)
+
+	useEffect(() => {
+		const name = searches.searchAll.toLocaleLowerCase();
 		let temp = draft.content;
 		temp = temp.filter((item) => {
 			return item.name.toLocaleLowerCase().includes(name);
 		});
 
 		const workingArea = searches.workingArea.toLocaleLowerCase();
-		if(workingArea !== "select an item"){
+		if (workingArea !== "select an item") {
 			temp = temp.filter(item => {
 				return item["wilayah kerja"].toLocaleLowerCase().includes(workingArea)
 			})
@@ -71,12 +72,12 @@ const SearchResult = () => {
 
 		console.log("search", temp);
 		setData(temp);
-    }, [searches])
+	}, [searches])
 
 	return (
 		<Container>
 			<Container.Title>Search result</Container.Title>
-            <TableComponent header={draft.header} content={data} />
+			<TableComponent header={draft.header} content={data} />
 		</Container>
 	);
 };

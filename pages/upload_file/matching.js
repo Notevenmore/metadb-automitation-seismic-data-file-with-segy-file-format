@@ -131,7 +131,8 @@ const postScrapeAnnotate = async (imageBase64Str) => {
   }
 };
 
-export default function MatchReview() {
+export default function MatchReview({ setTitle }) {
+  setTitle("Upload File - Data Matching")
   const initialState = [
     {
       id: 0,
@@ -318,16 +319,17 @@ export default function MatchReview() {
     <div key={data.id}>
       <HeaderDivider />
       <HeaderInput label1={data.key}>
-          <Input
-            value={data.value}
-            type="dropdown"
-            name={"submissionType"}
-            placeholder={"Value"}
-            dropdown_items={dropDownOptions}
-            required={true}
-            additional_styles="w-full"
-            onChange={(e) => setValueForId(data.id, e.target.value)}
-          />
+        <Input
+          value={data.value}
+          type="dropdown"
+          name={"submissionType"}
+          placeholder={"Value"}
+          dropdown_items={dropDownOptions}
+          required={true}
+          additional_styles="w-full"
+          onChange={(e) => setValueForId(data.id, e.target.value)}
+          withSearch
+        />
       </HeaderInput>
       {/* <HeaderInputInput
         leftChildren={

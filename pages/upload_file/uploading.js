@@ -12,7 +12,7 @@ export default function UploadingPage({}) {
 
 	useEffect(() => {
 		if(file.length === 0) {
-			router.push("/upload-file")
+			router.push("/upload_file")
 			return;
 		}
 		setTimeout(() => {
@@ -40,7 +40,7 @@ export default function UploadingPage({}) {
 					<div className="border-b border-b-[#7a7a7a] w-full my-5"></div>
 					<div>
 						{load === "completed" ? <div className="flex flex-row gap-x-3">
-                            <Buttons path="/upload-file/review" button_description="Continue and review" additional_styles="bg-primary flex-1" />
+                            <Buttons path="/upload_file/review" button_description="Continue and review" additional_styles="bg-primary flex-1" />
                             <Buttons path="" button_description="Save draft" additional_styles="bg-primary flex-1" />
                             <Buttons path="" button_description="Cancel" additional_styles="bg-[#e0e4e9] text-error" />
                         </div> : "This process will take some time, please be patient..."}

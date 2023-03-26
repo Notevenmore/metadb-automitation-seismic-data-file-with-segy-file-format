@@ -11,7 +11,8 @@ import { setUser } from "../../store/userSlice";
 
 SignInPage.getLayout = getLayoutBlank;
 
-export default function SignInPage() {
+export default function SignInPage({ setTitle }) {
+    setTitle("Sign in")
     const [Error, setError] = useState("")
     const [loginData, setLoginData] = useState({
         email: "",
@@ -27,7 +28,19 @@ export default function SignInPage() {
 
     const dispatch = useDispatch()
     const router = useRouter()
-    const handleSignIn = async () => {
+    const handleSignIn = async (e) => {
+        e.preventDefault()
+        router.events.emit('routeChangeStart');
+        if (!loginData.password || !loginData.email) {
+            setError("All input fields must not be empty")
+            router.events.emit('routeChangeComplete');
+            return
+        }
+        if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.exec(loginData.email)) {
+            setError("Please enter a valid email address")
+            router.events.emit('routeChangeComplete');
+            return
+        }
         try {
             await getLogin(loginData.email, loginData.password).then(
                 (res) => {
@@ -45,16 +58,17 @@ export default function SignInPage() {
         } catch (error) {
             setError(String(error))
         }
+        router.events.emit('routeChangeComplete');
     }
 
     return (
         <div className="h-screen flex flex-col-reverse my-10
          md:flex-row md:my-0 items-center justify-center m-auto gap-y-5">
-            <div className="w-[589px] px-[50px] flex flex-col gap-y-6">
+            <div className="px-[50px] flex flex-col gap-y-6">
                 <div id="title" className="max-md:text-center">
-                    <div className="text-[100px] leading-[100px]">GTNDC</div>
-                    <div>Geodwipa Teknika Nusantara Database Conversion</div>
-                    <div className="border border-b-[#d9d9d9]"></div>
+                    <p className="text-[100px] leading-[100px] font-bold">MetaDB</p>
+                    <p className="text-xl">Effectively Cataloging and Managing E&amp;P Physical Assets</p>
+                    <div className="border border-b-[#d9d9d9] mt-2"></div>
                 </div>
                 <div className="max-md:text-center text-[30px]">Sign in</div>
                 <form className="flex flex-col gap-y-4 w-full md:pr-10">
@@ -111,8 +125,9 @@ export default function SignInPage() {
                 </form>
             </div>
             <div className="w-[50%] px-[100px] flex flex-row justify-center">
-                <div className="min-w-[400px]">
-                    <Image src="/images/gtn_logo.png" alt="logo Bumi Siak Pusako" width={400} height={400} />
+                <div className="min-w-[400px] space-y-3">
+                    <Image src="/images/metadbpng.png" alt="MetaDB logo" width={400} height={400} />
+                    <p className="text-center">&copy; Geodwipa Teknika Nusantara 2023</p>
                 </div>
             </div>
         </div>

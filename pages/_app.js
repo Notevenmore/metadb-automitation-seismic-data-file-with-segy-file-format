@@ -11,49 +11,49 @@ import ProgressBar from "../components/progress_bar/progress_bar"
 function MyApp({ Component, pageProps }) {
 	const getLayout = Component.getLayout || getLayoutIcon;
 	const router = useRouter();
+	const [PageTitle, setPageTitle] = useState("")
 
 	const [state, setState] = useState({
 		isRouteChanging: false,
 		loadingKey: 0,
-	  })
-	
-	  useEffect(() => {
+	})
+
+	useEffect(() => {
 		const handleRouteChangeStart = () => {
-		  setState((prevState) => ({
-			...prevState,
-			isRouteChanging: true,
-			loadingKey: prevState.loadingKey ^ 1,
-		  }))
+			setState((prevState) => ({
+				...prevState,
+				isRouteChanging: true,
+				loadingKey: prevState.loadingKey ^ 1,
+			}))
 		}
-	
+
 		const handleRouteChangeEnd = () => {
-		  setState((prevState) => ({
-			...prevState,
-			isRouteChanging: false,
-		  }))
+			setState((prevState) => ({
+				...prevState,
+				isRouteChanging: false,
+			}))
 		}
-	
+
 		router.events.on('routeChangeStart', handleRouteChangeStart)
 		router.events.on('routeChangeComplete', handleRouteChangeEnd)
 		router.events.on('routeChangeError', handleRouteChangeEnd)
-	
+
 		return () => {
-		  router.events.off('routeChangeStart', handleRouteChangeStart)
-		  router.events.off('routeChangeComplete', handleRouteChangeEnd)
-		  router.events.off('routeChangeError', handleRouteChangeEnd)
+			router.events.off('routeChangeStart', handleRouteChangeStart)
+			router.events.off('routeChangeComplete', handleRouteChangeEnd)
+			router.events.off('routeChangeError', handleRouteChangeEnd)
 		}
-	  }, [router.events])
+	}, [router.events])
 
 	return (
 		<Provider store={store}>
 			<ProgressBar isRouteChanging={state.isRouteChanging} key={state.loadingKey} />
 			<Head>
-				<title>Geodwipa Teknika Nusantara Database Converter App</title>
-				<meta name="description" content="Geodwipa Teknika Nusantara Database Converter App" />
-				{/* <link rel="icon" href="/icons/Geodwipa_logo.svg" /> */}
-				<link rel="icon" href="/images/gtn_logo_fire.png" />
+				<title>{PageTitle ? `${PageTitle} - MetaDB` : "MetaDB"}</title>
+				<meta name="description" content="MetaDB" />
+				<link rel="icon" href="/metadb.svg" />
 			</Head>
-			{getLayout(<Component {...pageProps} />)}
+			{getLayout(<Component {...pageProps} setTitle={setPageTitle} />)}
 		</Provider>
 	);
 }
