@@ -22,8 +22,16 @@ export default function NewDocumentPage({ setTitle }) {
                 <Input type={"text"} defaultValue="New document" />
             </Container.Title>
             <HeaderTable>
-                <HeaderStatic label1={"Nama KKKS"} label2={"(KKKS Name)"}
-                    content={"Geodwipa Teknika Nusantara"} />
+                <HeaderInput label1={"Nama KKKS"} label2={"(KKKS Name)"}>
+                    <Input
+                        type="text"
+                        name={"workingArea"}
+                        placeholder={"Geodwipa Teknika Nusantara"}
+                        required={true}
+                        additional_styles="w-full"
+                        onChange={(e) => setDetail(e.target.name)}
+                    />
+                </HeaderInput>
                 <HeaderDivider />
                 <HeaderInput label1={"Nama wilayah kerja"} label2={"(Working Area)"}>
                     <Input
@@ -41,10 +49,11 @@ export default function NewDocumentPage({ setTitle }) {
                         type="dropdown"
                         name={"submissionType"}
                         placeholder={"Quarterly"}
-                        dropdown_items={["a", "b", "c"]}
+                        dropdown_items={["Quarterly", "Relinquishment", "Termination", "Spec New", "Spec Ext", "Spec Term", "Joint Study", "DIPA"]}
                         required={true}
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
+                        withSearch
                     />
                 </HeaderInput>
                 <HeaderDivider />

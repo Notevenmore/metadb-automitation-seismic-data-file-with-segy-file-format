@@ -14,6 +14,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
     const [hasError, sethasError] = useState(false)
     const [ErrorMessage, setErrorMessage] = useState("")
     const [SkipInitialization, setSkipInitialization] = useState(false)
+
     const init = useCallback(async () => {
         if (props.existingID) {
             setsheetID(props.existingID)
@@ -37,6 +38,10 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
         setsheetID(spreadsheetID.response)
         setSkipInitialization(false)
     }, [])
+
+    const delay = delay_amount_ms =>
+        new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
+
     useEffect(() => {
         console.log(props.type, props.form_type)
         const getInit = async () => {
@@ -52,6 +57,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
         }
         getInit()
     }, [init])
+
     useEffect(() => {
         const updateSheet = async () => {
             setLoading(true)
@@ -76,14 +82,30 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
             }).catch(error => { throw error })
             if (props.type === "update") {
                 setLoadingMsg(`Fetching from database`)
-                await fetch('http://localhost:5050/appendFromDatabase', {
+                delay(3000)
+                // const id = props.id
+                const id = "Laporan Data 2023"
+                let data, final = []
+                const workspaces = JSON.parse(localStorage.getItem("workspaces"))
+                workspaces.some(workspace => {
+                    if (id === workspace.name) {
+                        data = JSON.parse(localStorage.getItem(workspace.name))
+                        return true
+                    }
+                })
+                console.log(workspaces)
+                data.some(item => {
+                    final.push({ no: '-', ...item })
+                })
+                await fetch('http://localhost:5050/appendToSheets2', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
                         form_type: props.form_type,
-                        spreadsheetID: sheetID
+                        spreadsheetID: sheetID,
+                        data: JSON.stringify(final)
                     })
                 }).then(response => {
                     return response.json()
@@ -94,6 +116,26 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                         console.log(response)
                     }
                 }).catch(error => { throw error })
+
+                // await fetch('http://localhost:5050/appendFromDatabase', {
+                //     method: "POST",
+                //     headers: {
+                //         "Content-Type": "application/json"
+                //     },
+                //     body: JSON.stringify({
+                //         form_type: props.form_type,
+                //         spreadsheetID: sheetID
+                //     })
+                // }).then(response => {
+                //     return response.json()
+                // }).then(response => {
+                //     if (response.status !== 200) {
+                //         sethasError(true)
+                //         setErrorMessage(response.response)
+                //         console.log(response)
+                //     }
+                // }).catch(error => { throw error })
+
             } else if (props.type === "review") {
                 try {
                     console.log("first")
