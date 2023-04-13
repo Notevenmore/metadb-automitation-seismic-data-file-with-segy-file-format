@@ -7,13 +7,13 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 function checkAuth() {
-    const user = useSelector((state) => state.user.user)
-    const router = useRouter()
-    useEffect(() => {
-        if (!user.email) {
-            router.push("/login/signin")
-        }
-    }, [user, router.events, useSelector((state) => state.user.user)])
+    // const user = useSelector((state) => state.user.user)
+    // const router = useRouter()
+    // useEffect(() => {
+    //     if (!user.email) {
+    //         router.push("/login/signin")
+    //     }
+    // }, [user, router.events, useSelector((state) => state.user.user)])
 }
 
 function getLayoutBlank(page) {

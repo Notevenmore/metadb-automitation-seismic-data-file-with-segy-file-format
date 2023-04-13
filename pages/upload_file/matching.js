@@ -103,26 +103,47 @@ const generateKeyValuePair = () => {
   return newPair;
 };
 
-const options = ["WellSummary", "Lebakan", "Kilter", "abood"];
-
-const postScrapeAnnotate = async (imageBase64Str) => {
+const uploadImage = async (imageBase64Str) => {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   var raw = JSON.stringify({
-    base64str: imageBase64Str,
+    "base64str": imageBase64Str
   });
 
   var requestOptions = {
-    method: "POST",
+    method: 'POST',
     headers: myHeaders,
     body: raw,
+    redirect: 'follow'
+  };
+
+  try {
+    const response = await fetch(
+      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
+      requestOptions
+    );
+    const result = await response.text();
+    return { status: "success", body: { ...JSON.parse(result) } };
+  } catch (e) {
+    console.log(e);
+    return { status: "failed", body: null}
+  }
+}
+
+const postScrapeAnnotate = async (docId, page) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var requestOptions = {
+    method: "GET",
+    headers: myHeaders,
     redirect: "follow",
   };
 
   try {
     const response = await fetch(
-      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/scrape-annotate/base64`,
+      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/scrape/${docId}/${page}`,
       requestOptions
     );
     const result = await response.text();
@@ -132,6 +153,10 @@ const postScrapeAnnotate = async (imageBase64Str) => {
     return { status: "failed", body: null };
   }
 };
+
+const generateImageUrl = (docId, page) => {
+  return `${process.env.OCR_SERVICE_URL}/ocr_service/v1/annotate/${docId}/${page}`;
+}
 
 export default function MatchReview({ setTitle }) {
   setTitle("Upload File - Data Matching")
@@ -279,11 +304,14 @@ export default function MatchReview({ setTitle }) {
         //   const filename = file.name;
         //   const size = file.size;
         const imageBase64Str = await toBase64(file);
-        const result = await postScrapeAnnotate(imageBase64Str);
+        const uploadResponse = await uploadImage(imageBase64Str);
+        if (uploadResponse.status === "failed") return;
+        const { doc_id: docId } = uploadResponse.body;
+        const result = await postScrapeAnnotate(docId, 1);
         console.log(result);
         if (result.status === "success") {
-          setImageBase64Str((_) => result.body.base64str);
-          setDropDownOptions((_) => result.body.dropdown);
+          setImageBase64Str((_) => generateImageUrl(docId, 1));
+          setDropDownOptions((_) => result.body.words);
           setState((_) => initialState);
         }
       }
