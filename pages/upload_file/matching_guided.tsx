@@ -153,7 +153,7 @@ async function extractTextFromBounds(doc_id: string, page_no: number, bound: Tup
   };
 
   try {
-    const response = await fetch(`http://localhost:5000/ocr_service/v1/scrape-bounds/${doc_id}/${page_no}`, requestOptions);
+    const response = await fetch(`${process.env.OCR_SERVICE}/ocr_service/v1/scrape-bounds/${doc_id}/${page_no}`, requestOptions);
     const result = await response.text();
     return { status: "success", body: { ...JSON.parse(result)}};
   } catch (e) {
@@ -167,6 +167,7 @@ export default function MatchingGuided() {
 
   const doc_id: string = "c5fd3ac264d654b04b759f193a16254b8eb0c878a3f0de0f914aaf2cae3da47f";
   const page_no: number = 2;
+
   const [ state, setState ] = useState<TableRow[]>(initialState);
   const [ selectedRow, setSelectedRow ] = useState<number>(-1);
   const [ message, setMessage ] = useState<string>("");
