@@ -154,6 +154,25 @@ const postScrapeAnnotate = async (docId, page) => {
   }
 };
 
+const fetchDocumentSummary = (async (docId) => {
+  var requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+
+  try {
+    const response = await fetch(
+      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
+      requestOptions
+    );
+    const result = await response.text();
+    return { status: "success", body: { ...JSON.parse(result)}};
+  } catch (e) {
+    console.log(e);
+    return { status: "failed", body: null };
+  }
+});
+
 const generateImageUrl = (docId, page) => {
   return `${process.env.OCR_SERVICE_URL}/ocr_service/v1/annotate/${docId}/${page}`;
 }
@@ -164,133 +183,167 @@ export default function MatchReview({ setTitle }) {
     {
       id: 0,
       key: "NO",
-      value: null,
+      value: "",
     },
     {
       id: 1,
       key: "BA_LONG_NAME",
-      value: null,
+      value: "",
     },
     {
       id: 2,
       key: "BA_TYPE",
-      value: null,
+      value: "",
     },
     {
       id: 3,
       key: "AREA_ID",
-      value: null,
+      value: "",
     },
     {
       id: 4,
       key: "AREA_TYPE",
-      value: null,
+      value: "",
     },
     {
       id: 5,
       key: "FIELD_NAME",
-      value: null,
+      value: "",
     },
     {
       id: 6,
       key: "WELL_NAME",
-      value: null,
+      value: "",
     },
     {
       id: 7,
       key: "UWI",
-      value: null,
+      value: "",
     },
     {
       id: 8,
       key: "TITLE",
-      value: null,
+      value: "",
     },
     {
       id: 9,
       key: "CREATOR_NAME",
-      value: null,
+      value: "",
     },
     {
       id: 10,
       key: "CREATE_DATE",
-      value: null,
+      value: "",
     },
     {
       id: 11,
       key: "MEDIA_TYPE",
-      value: null,
+      value: "",
     },
     {
       id: 12,
       key: "DOCUMENT_TYPE",
-      value: null,
+      value: "",
     },
     {
       id: 13,
       key: "ITEM_CATEGORY",
-      value: null,
+      value: "",
     },
     {
       id: 14,
       key: "ITEM_SUB_CATEGORY",
-      value: null,
+      value: "",
     },
     {
       id: 15,
       key: "PAGE_COUNT",
-      value: null,
+      value: "",
     },
     {
       id: 16,
       key: "REMARK",
-      value: null,
+      value: "",
     },
     {
       id: 17,
       key: "BA_LONG_NAME",
-      value: null,
+      value: "",
     },
     {
       id: 18,
       key: "BA_TYPE",
-      value: null,
+      value: "",
     },
     {
       id: 19,
       key: "DATA_STORE_NAME",
-      value: null,
+      value: "",
     },
     {
       id: 20,
       key: "DATA_STORE_TYPE",
-      value: null,
+      value: "",
     },
     {
       id: 21,
       key: "SOURCE",
-      value: null,
+      value: "",
     },
     {
       id: 22,
       key: "QC_STATUS",
-      value: null,
+      value: "",
     },
     {
       id: 23,
       key: "CHECKED_BY_BA_ID",
-      value: null,
+      value: "",
     },
   ];
 
   const [state, setState] = useState(initialState);
   const [dropDownOptions, setDropDownOptions] = useState([]);
   const [imageBase64Str, setImageBase64Str] = useState("");
+  const [docId, _setDocId] = useState(null);
+  const [totalPageNo, setTotalPageNo] = useState(1);
+  const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState("")
   const [Message, setMessage] = useState("")
   const inputFileRef = useRef(null);
   const files = useSelector((state) => state.general.file)
   const router = useRouter()
+
+  const setDocId = ((newDocId) => {
+    if (docId === null) {
+      _setDocId(_ => newDocId);
+    }
+  });
+
+  const nextPage = (() => {
+    if (pageNo < totalPageNo) {
+      setPageNo(oldPageNo => oldPageNo + 1);
+    }
+  });
+
+  useEffect(() => {
+    const onPageChange = async () => {
+      if (docId === null) return
+      setImageBase64Str(_ => generateImageUrl(docId, pageNo));
+      const responseWords = await postScrapeAnnotate(docId, pageNo);
+      if (responseWords.status === "success") {
+        setDropDownOptions(_ => responseWords.body.words);
+        setState(_ => [...initialState]);
+      }
+    }
+    onPageChange();
+  }, [pageNo]);
+
+  const prevPage = (() => {
+    if (pageNo > 1) {
+      setPageNo(oldPageNo => oldPageNo - 1);
+    }
+  });
 
   useEffect(() => {
     const init = async () => {
@@ -307,10 +360,14 @@ export default function MatchReview({ setTitle }) {
         const uploadResponse = await uploadImage(imageBase64Str);
         if (uploadResponse.status === "failed") return;
         const { doc_id: docId } = uploadResponse.body;
-        const result = await postScrapeAnnotate(docId, 1);
-        console.log(result);
+        const summaryResponse = await fetchDocumentSummary(docId);
+        if (summaryResponse.status === "success") {
+          setTotalPageNo(_ => summaryResponse.body.page_count);
+        }
+        setDocId(docId);
+        const result = await postScrapeAnnotate(docId, pageNo);
         if (result.status === "success") {
-          setImageBase64Str((_) => generateImageUrl(docId, 1));
+          setImageBase64Str((_) => generateImageUrl(docId, pageNo));
           setDropDownOptions((_) => result.body.words);
           setState((_) => initialState);
         }
@@ -485,6 +542,8 @@ export default function MatchReview({ setTitle }) {
             Cancel
           </Buttons> */}
           <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" />
+          <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage}/>
+          <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage}/>
         </ButtonsSection>
         <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
           <p>{Message}</p>

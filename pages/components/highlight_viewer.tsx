@@ -83,7 +83,8 @@ export enum ImageEditorActionType {
     SET_MOUSE_POS_RELATIVE_TO_IMAGE = "SET_MOUSE_POS_RELATIVE_TO_IMAGE",
 
     SET_EDITOR_DIM = "SET_EDITOR_DIM",
-    ADD_BOUND = "ADD_BOUND"
+    ADD_BOUND = "ADD_BOUND",
+    CLEAR_BOUNDS = "CLEAR_BOUNDS"
 };
 
 type ImageEditorAction =
@@ -95,6 +96,7 @@ type ImageEditorAction =
     | { actionType: ImageEditorActionType.SET_MOUSE_POS_RELATIVE_TO_IMAGE, mousePos: Tuple2<number> }
     | { actionType: ImageEditorActionType.SET_EDITOR_DIM, editorDim: Tuple2<number> }
     | { actionType: ImageEditorActionType.ADD_BOUND, bound: Tuple4<number> }
+    | { actionType: ImageEditorActionType.CLEAR_BOUNDS }
 
 export type ImageEditorContextType = { state: ImageEditorState, dispatch: Dispatch<ImageEditorAction> };
 
@@ -182,7 +184,12 @@ function imageEditorReducer(state: ImageEditorState, action: ImageEditorAction):
             return {
                 ...state,
                 bounds: [ ...state.bounds, action.bound ]
-            }
+            };
+        case ImageEditorActionType.CLEAR_BOUNDS:
+            return {
+                ...state,
+                bounds: []
+            };
 
         default:
             return state;
@@ -729,7 +736,7 @@ export const SelectionBox = (({ bound }: SelectionBoxProps) => {
             width: `${width}px`,
             height: `${height}px`,
             zIndex: "9",
-            backgroundColor: "rgba(200, 200, 100, 0.5)"
+            backgroundColor: "rgba(89, 190, 233, 0.5)"
         }}>
         </div>
     )
@@ -762,6 +769,7 @@ const ImageEditorView = ({ imageUrl }: ImageEditorViewProps) => {
     const imageWrapperRef = useRef(null);
     const imageRef = useRef(null);
 
+    const { dispatch } = useContext(ImageEditorContext);
     useTranslateDraggable(ImageEditorContext, viewerRef);
     useBoundingBox(ImageEditorContext);
     useScrollingValueWithin(ImageEditorContext, viewerRef, 1, 1, 5, 0.05);
@@ -779,7 +787,12 @@ const ImageEditorView = ({ imageUrl }: ImageEditorViewProps) => {
     } = state;
 
     const mouseDown = useMouseDown();
-    // scrolling to set zooming into and out of document
+    // imageUrl listener to clear bounds, whenever the imageUrl changes
+    useEffect(() => {
+        dispatch({
+            actionType: ImageEditorActionType.CLEAR_BOUNDS
+        });
+    }, [imageUrl]);
 
     const { dim: [ width, height ], reload } = useNaturalImageDim(imageRef);
     useEffect(() => { reload(); }, []);

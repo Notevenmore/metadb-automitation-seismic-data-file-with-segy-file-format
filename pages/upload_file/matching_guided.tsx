@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "../../components/container/container";
 import HeaderTable, {
   HeaderDivider,
@@ -8,6 +8,8 @@ import HeaderTable, {
 } from "../../components/header_table/header_table";
 import Buttons from "../../components/buttons/buttons";
 import { ImageEditor, Tuple4 } from "../components/highlight_viewer";
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 
 interface TableRow {
   id: number,
@@ -138,6 +140,13 @@ const initialState: TableRow[] = [
   },
 ];
 
+export const toBase64 = (file: File) => new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result.toString());
+    reader.onerror = (error) => reject(error);
+  });
+
 async function extractTextFromBounds(doc_id: string, page_no: number, bound: Tuple4<number>) {
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -153,7 +162,7 @@ async function extractTextFromBounds(doc_id: string, page_no: number, bound: Tup
   };
 
   try {
-    const response = await fetch(`${process.env.OCR_SERVICE}/ocr_service/v1/scrape-bounds/${doc_id}/${page_no}`, requestOptions);
+    const response = await fetch(`${process.env.OCR_SERVICE_URL}/ocr_service/v1/scrape-bounds/${doc_id}/${page_no}`, requestOptions);
     const result = await response.text();
     return { status: "success", body: { ...JSON.parse(result)}};
   } catch (e) {
@@ -162,6 +171,57 @@ async function extractTextFromBounds(doc_id: string, page_no: number, bound: Tup
   }
 }
 
+const uploadImage = async (imageBase64Str: string) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "base64str": imageBase64Str
+  });
+
+  var requestOptions: RequestInit = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  try {
+    const response = await fetch(
+      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
+      requestOptions
+    );
+    const result = await response.text();
+    return { status: "success", body: { ...JSON.parse(result) } };
+  } catch (e) {
+    console.log(e);
+    return { status: "failed", body: null}
+  }
+}
+
+const fetchDocumentSummary = (async (docId: string) => {
+  var requestOptions: RequestInit = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+
+  try {
+    const response = await fetch(
+      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
+      requestOptions
+    );
+    const result = await response.text();
+    return { status: "success", body: { ...JSON.parse(result)}};
+  } catch (e) {
+    console.log(e);
+    return { status: "failed", body: null };
+  }
+});
+
+const generateImageUrl = (docId: string, page: number) => {
+        //  `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`
+  return `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`;
+}
 
 export default function MatchingGuided() {
 
@@ -170,13 +230,77 @@ export default function MatchingGuided() {
 
   const [ state, setState ] = useState<TableRow[]>(initialState);
   const [ selectedRow, setSelectedRow ] = useState<number>(-1);
-  const [ message, setMessage ] = useState<string>("");
+  const [ pageNo, setPageNo ] = useState<number>(1);
+  const [ totalPageNo, setTotalPageNo ] = useState<number>(1);
+  const [docId, _setDocId] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  // utility states
+  const [loading, setLoading] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+
+  // @ts-ignore
+  const files = useSelector((state) => state.general.file)
+  const router = useRouter();
+  
+  const prevPage = (() => {
+    if (pageNo > 1) {
+      setPageNo(oldPageNo => oldPageNo - 1);
+    }
+  });
+
+  const nextPage = (() => {
+    if (pageNo < totalPageNo) {
+      setPageNo(oldPageNo => oldPageNo + 1);
+    }
+  });
+
+  // Page change use effect
+  useEffect(() => {
+    const onPageChange = async () => {
+      if (docId === null) return;
+      setState(_ => [...initialState]);
+    }
+    onPageChange();
+  }, [pageNo]);
+
+
+  useEffect(() => {
+    const init = async () => {
+      router.events.emit("routeChangeStart");
+      setLoading("Reading data... Please wait for a moment");
+      if (files.length < 1) {
+        router.push("/upload_file")
+      } else {
+        const file = files[0];
+
+        const imageBase64Str = await toBase64(file);
+        const uploadResponse = await uploadImage(imageBase64Str);
+        if (uploadResponse.status === "failed") {
+          setLoading("Upload image failed...");
+          return;
+        }
+        const { doc_id: docId } = uploadResponse.body;
+        setDocId(docId);
+        setImageUrl(_ => generateImageUrl(docId, pageNo));
+        const summaryResponse = await fetchDocumentSummary(docId);
+        if (summaryResponse.status === "success") {
+          setTotalPageNo(summaryResponse.body.page_count);
+        }
+      }
+      router.events.emit("routeChangeComplete");
+      setLoading(null);
+    };
+    init();
+    setMessage("Make sure you have inputted all of the data correct before preceeding to the next step (viewing the data in spreadhsheet form).")
+  }, []);
 
   async function boundsObserver(bounds: Tuple4<number>[]) {
     if (bounds.length === 0) return;
+    if (selectedRow === -1) return;
     const last = bounds.length - 1;
     const bound = bounds[ last ];
-    const response = await extractTextFromBounds(doc_id, page_no, bound);
+    const response = await extractTextFromBounds(docId, pageNo, bound);
     if (response.status === "success") {
       setValueForId(selectedRow, response.body.word);
     }
@@ -191,10 +315,13 @@ export default function MatchingGuided() {
     });
   };
 
+  const setDocId = (newDocId: string) => {
+    _setDocId(newDocId);
+  }
+
   function clickRow(dataId: number) {
     setSelectedRow(_ => dataId);
   }
-
 
   const toRowComponent = (data: TableRow) => (
     <div key={data.id} className={((selectedRow === data.id) ? "text-red-500 underline" : "") + " cursor-pointer"}>
@@ -210,7 +337,12 @@ export default function MatchingGuided() {
     </div>
   );
 
-  return (
+  return (loading) ? (
+      <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
+        <div className="animate-spin border-4 border-t-transparent border-gray-500/[.7] rounded-full w-14 h-14"></div>
+        <p className="text-xl font-semibold text-gray-500">{loading}</p>
+      </div>
+  ) : (
     <Container additional_class="full-height relative">
       <Container.Title>Data Matching</Container.Title>
       <div className="grid grid-cols-2 gap-14">
@@ -218,13 +350,17 @@ export default function MatchingGuided() {
           {state.map(toRowComponent)}
           <HeaderDivider />
         </HeaderTable>
-        <ImageEditor boundsObserver={boundsObserver} imageUrl={`${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${doc_id}/${page_no}`} />
+        <ImageEditor boundsObserver={boundsObserver} imageUrl={generateImageUrl(docId, pageNo)} />
       </div>
       <ButtonsSection>
         {/* @ts-ignore */}
         <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" />
+        {/* @ts-ignore */}
+        <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage}/>
+        {/* @ts-ignore */}
+        <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage}/>
       </ButtonsSection>
-      <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${message ? "" : "-translate-y-20"}`}>
+      <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all z-40 ${message ? "" : "-translate-y-20"}`}>
         <p>{message}</p>
         {/* @ts-ignore */}
         <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage("") }}>
