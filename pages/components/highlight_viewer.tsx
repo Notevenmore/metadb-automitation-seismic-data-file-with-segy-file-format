@@ -788,14 +788,12 @@ const ImageEditorView = ({ imageUrl }: ImageEditorViewProps) => {
 
     const mouseDown = useMouseDown();
     // imageUrl listener to clear bounds, whenever the imageUrl changes
+    const { dim: [ width, height ], reload } = useNaturalImageDim(imageRef);
     useEffect(() => {
         dispatch({
             actionType: ImageEditorActionType.CLEAR_BOUNDS
         });
     }, [imageUrl]);
-
-    const { dim: [ width, height ], reload } = useNaturalImageDim(imageRef);
-    useEffect(() => { reload(); }, []);
     const InsetShadow = () => (<>
         <div
             style={{
@@ -851,6 +849,7 @@ const ImageEditorView = ({ imageUrl }: ImageEditorViewProps) => {
                 {bounds.map(b => (<SelectionBox key={b.toString()} bound={b} />))}
                 <img src={imageUrl} alt=""
                     ref={imageRef}
+                    onLoad={_ => reload()}
                     draggable={false}
                     style={{
                         width: `${width}px`,
