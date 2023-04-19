@@ -58,10 +58,10 @@ export default function UploadFilePage({ setTitle }) {
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		if (fileUpload.length < 1 || !UplSettings.DataType || !UplSettings.DataClassification || !UplSettings.DataSubClass || !UplSettings.FileFormat ) {
-			setError("Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.")
-			return
-		}
+		// if (fileUpload.length < 1 || !UplSettings.DataType || !UplSettings.DataClassification || !UplSettings.DataSubClass || !UplSettings.FileFormat ) {
+		// 	setError("Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.")
+		// 	return
+		// }
 		dispatch(storeFile(fileUpload))
 		router.push('/upload_file/matching')
 		// console.log("???")
@@ -71,7 +71,7 @@ export default function UploadFilePage({ setTitle }) {
 		<Container additional_class="full-height relative" onDragEnter={(e) => handleDrag(e)}>
 			<Container.Title back>
 				<div className="-space-y-2">
-					<p className="capitalize text-base font-normal">{path_query}</p>
+					<p className="capitalize text-sm font-normal">{path_query}</p>
 					<p>Upload File</p>
 				</div>
 			</Container.Title>
@@ -154,7 +154,7 @@ export default function UploadFilePage({ setTitle }) {
 						additional_styles="bg-primary"
 						onClick={handleSubmit}
 					/>
-					<Buttons type="submit" button_description="Cancel" path="" />
+					<Buttons type="submit" button_description="Cancel" path="" onClick={router.back}/>
 				</div>
 			</form>
 			{dragActive && (
