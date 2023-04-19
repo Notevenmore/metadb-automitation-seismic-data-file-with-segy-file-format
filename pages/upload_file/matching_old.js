@@ -136,11 +136,11 @@ const postScrapeAnnotate = async (imageBase64Str) => {
 export default function MatchReview({ setTitle }) {
   setTitle("Upload File - Data Matching")
   const initialState = [
-    {
-      id: 0,
-      key: "NO",
-      value: null,
-    },
+    // {
+    //   id: 0,
+    //   key: "NO",
+    //   value: null,
+    // },
     {
       id: 1,
       key: "BA_LONG_NAME",
@@ -297,7 +297,7 @@ export default function MatchReview({ setTitle }) {
   useEffect(() => {
     localStorage.setItem("reviewUploadedImage", imageBase64Str)
   }, [imageBase64Str])
-  
+
 
 
   const handleUploadButtonClick = (_) => {
@@ -341,10 +341,19 @@ export default function MatchReview({ setTitle }) {
   };
 
   useEffect(() => {
-    localStorage.setItem('reviewData', JSON.stringify(state))
+    // localStorage.setItem('reviewData', JSON.stringify(state))
+    let temp = {}
+    state.forEach(item => {
+      try {
+        temp[item.key.toLowerCase()] = item?.value || '-'
+      } catch (error) {
+        console.log(error)
+      }
+    })
+    localStorage.setItem('reviewData', JSON.stringify([temp]))
     console.log(localStorage.getItem('reviewData'))
   }, [state])
-  
+
 
   const removePair = (id) => {
     setState((state) => {
