@@ -3,6 +3,7 @@ import { mdiChevronRight } from "@mdi/js";
 import Link from "next/link";
 import styles from "../../../styles/NavItem.module.css";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 export default function Item({ icon, name, child, link, collapse }) {
     const [toggleOpen, setToggleOpen] = useState(false);
@@ -38,9 +39,9 @@ export default function Item({ icon, name, child, link, collapse }) {
 }
 
 function Child({ icon, name, link="", collapse }) {
-
+    const router = useRouter()
     return (
-        <Link href={link} className={styles.navItem}>
+        <Link href={link || router.asPath} className={styles.navItem}>
             <div className="flex justify-between items-center px-5 py-2 gap-x-4 hover:bg-gray-200">
                 <div className="flex gap-x-4">
                     <img src={icon} className="w-[.9rem] h-[22px]" alt="icon" />
