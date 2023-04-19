@@ -3,11 +3,21 @@ import Buttons from "../../components/buttons/buttons";
 import { getLayoutBlank } from "../../layout/getLayout";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 SignUpPage.getLayout = getLayoutBlank;
 
 export default function SignUpPage({ setTitle }) {
     setTitle("Sign up")
+    const user = useSelector((state) => state.user.user)
+    const router = useRouter()
+    useEffect(() => {
+        if (user.email) {
+            router.push("/")
+        }
+    }, [])
     return (
         <div className="md:h-screen flex flex-col-reverse my-10
          md:flex-row md:my-0 items-center justify-center m-auto gap-y-5">
@@ -91,7 +101,7 @@ export default function SignUpPage({ setTitle }) {
             </div>
             <div className="w-[50%] px-[100px] flex flex-row justify-center">
                 <div className="min-w-[400px] space-y-3">
-                    <Image src="/images/metadbpng.png" alt="MetaDB logo" width={400} height={400} />
+                    <Image src="/images/metadbpng.png" alt="MetaDB logo" className="select-none pointer-events-none" width={400} height={400} />
                     <p className="text-center">&copy; Geodwipa Teknika Nusantara 2023</p>
                 </div>
             </div>

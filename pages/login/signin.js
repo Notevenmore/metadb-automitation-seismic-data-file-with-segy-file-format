@@ -5,13 +5,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { getAllRoles, getLogin } from "../../services/user";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { setUser } from "../../store/userSlice";
+import { useEffect } from "react";
 
 SignInPage.getLayout = getLayoutBlank;
 
 export default function SignInPage({ setTitle }) {
+    const user = useSelector((state) => state.user.user)
+    const router = useRouter()
+    useEffect(() => {
+        if (user.email) {
+            router.push("/")
+        }
+    }, [])
+
     setTitle("Sign in")
     const [Error, setError] = useState("")
     const [loginData, setLoginData] = useState({
@@ -27,7 +36,6 @@ export default function SignInPage({ setTitle }) {
     }
 
     const dispatch = useDispatch()
-    const router = useRouter()
     const handleSignIn = async (e) => {
         e.preventDefault()
         router.events.emit('routeChangeStart');
@@ -71,7 +79,7 @@ export default function SignInPage({ setTitle }) {
                     <div className="border border-b-[#d9d9d9] mt-2"></div>
                 </div>
                 <div className="max-md:text-center text-[30px] font-bold">Sign in</div>
-                <form className="flex flex-col gap-y-4 w-full md:pr-10">
+                <form className="flex flex-col gap-y-4 w-full md:pr-10" autoComplete="off">
                     <Input
                         label="Email"
                         label_loc="above"
@@ -126,7 +134,7 @@ export default function SignInPage({ setTitle }) {
             </div>
             <div className="w-[50%] px-[100px] flex flex-row justify-center">
                 <div className="min-w-[400px] space-y-3">
-                    <Image src="/images/metadbpng.png" alt="MetaDB logo" width={400} height={400} />
+                    <Image src="/images/metadbpng.png" className="select-none pointer-events-none" alt="MetaDB logo" width={400} height={400} />
                     <p className="text-center">&copy; Geodwipa Teknika Nusantara 2023</p>
                 </div>
             </div>
