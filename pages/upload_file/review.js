@@ -17,6 +17,7 @@ export default function UploadFileReview({ setTitle }) {
     const [ImageReview, setImageReview] = useState("")
     const [Message, setMessage] = useState()
     const router = useRouter()
+    const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
     useEffect(() => {
         const review_data = localStorage.getItem("reviewData")
         if (review_data) {
@@ -32,11 +33,35 @@ export default function UploadFileReview({ setTitle }) {
             setImageReview("Cannot find uploaded image. Please retry the process or see the original image by opening it directly from your computer.")
         }
     }
+    const saveWorkspace = (e) => {
+        e.preventDefault()
+        // let counter = 0, name = ""
+        // while (true) {
+        //     const workspace_exist = localStorage.getItem("new_workspace_from_uploaded_file")
+        //     if (workspace_exist) {
+        //         counter = counter + 1
+        //     } else {
+        //         name = !counter ? "new_workspace_from_uploaded_file" : `new_workspace_from_uploaded_file_${counter}`
+        //         localStorage.setItem(name, ReviewData)
+        //         break
+        //     }
+        // }
+        // let workspaces = JSON.parse(localStorage.getItem("workspaces"))
+        // workspaces.push({ "name": name })
+        console.log("first")
+        localStorage.setItem("new_workspace_from_uploaded_file", ReviewData)
+        setMessage("Workspace successfully saved.")
+    }
 
     const files = useSelector((state) => state.general.file)
     return (
-        <Container additional_class="full-height relative" onDragEnter={(e) => handleDrag(e)}>
-            <Container.Title>Review</Container.Title>
+        <Container additional_class="full-height relative">
+            <Container.Title>
+                <div className="-space-y-2">
+                    <p className="capitalize text-sm font-normal">{path_query}</p>
+                    <p>Review</p>
+                </div>
+            </Container.Title>
             <section className="-mt-5 mb-5 space-y-2">
                 <p className="font-bold">Name</p>
                 {/* <h1 className="font-bold text-[36px]">Lorem ipsum laporan 2008</h1> */}
@@ -68,6 +93,7 @@ export default function UploadFileReview({ setTitle }) {
                         required={true}
                         additional_styles="w-full"
                         onChange={(e) => setDetail(e.target.name)}
+                        withSearch
                     />
                 </HeaderInput>
                 <HeaderDivider />
@@ -119,7 +145,7 @@ export default function UploadFileReview({ setTitle }) {
                 :
                 null}
             <ButtonsSection>
-                <Buttons path="" additional_styles="bg-primary" onClick={(e) => { setMessage("Workspace successfully saved.") }}>Save changes</Buttons>
+                <Buttons path="" additional_styles="bg-primary" onClick={saveWorkspace}>Save changes</Buttons>
                 <Buttons path="" additional_styles="bg-primary" onClick={(e) => { router.push("/") }}>Save and exit</Buttons>
                 {/* <Buttons path="" additional_styles="text-error">Cancel</Buttons> */}
             </ButtonsSection>
