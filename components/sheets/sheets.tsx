@@ -94,6 +94,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                     }
                 })
                 console.log(workspaces)
+                console.log(data)
                 data.some(item => {
                     final.push({ no: '-', ...item })
                 })
@@ -140,34 +141,45 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                 try {
                     console.log("first")
                     setLoadingMsg("Appending read data to the spreadsheet")
-                    let data = props.data
+                    let data = props.data, final = []
+                    console.log(data)
                     if (!data) {
                         throw new Error("Data not found. Make sure you correctly passed the data into the component.")
                     }
-                    // let existing_data = localStorage.getItem('reviewData') as any
-                    // if (existing_data) {
-                    //     data = [...existing_data, data]
+
+                    // ---| NEW WORKFLOW |---
+
+                    
+                    
+                    // ---| OLD WORKFLOW |---
+
+                    // if (props.form_type !== "bibliography"){
+                    //     data.forEach(item => {
+                    //         final.push({ no: '-', ...item })
+                    //     })
+                    // } else {
+                    //     final = data
                     // }
-                    // localStorage.setItem('reviewData', JSON.stringify(data))
-                    await fetch('http://localhost:5050/appendToSheets', {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            form_type: props.form_type,
-                            spreadsheetID: sheetID,
-                            data: data
-                        })
-                    }).then(response => {
-                        return response.json()
-                    }).then(response => {
-                        if (response.status !== 200) {
-                            sethasError(true)
-                            setErrorMessage(response.response)
-                            console.log(response)
-                        }
-                    }).catch(error => { throw error })
+
+                    // await fetch('http://localhost:5050/appendToSheets2', {
+                    //     method: "POST",
+                    //     headers: {
+                    //         "Content-Type": "application/json"
+                    //     },
+                    //     body: JSON.stringify({
+                    //         form_type: props.form_type,
+                    //         spreadsheetID: sheetID,
+                    //         data: JSON.stringify(final)
+                    //     })
+                    // }).then(response => {
+                    //     return response.json()
+                    // }).then(response => {
+                    //     if (response.status !== 200) {
+                    //         sethasError(true)
+                    //         setErrorMessage(response.response)
+                    //         console.log(response)
+                    //     }
+                    // }).catch(error => { throw error })
                 } catch (error) {
                     sethasError(true)
                     setErrorMessage(String(error))
