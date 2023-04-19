@@ -7,9 +7,11 @@ import HeaderTable, { HeaderDivider, HeaderStatic, HeaderInput, ButtonsSection }
     from "../components/header_table/header_table";
 import Sheets from "../components/sheets/sheets";
 import TableComponent from "../components/table/table";
+import { useRouter } from "next/router";
 
 export default function NewDocumentPage({ setTitle }) {
     setTitle("New document")
+    const router = useRouter()
     const [detail, setDetail] = useState("bbb");
     const [Message, setMessage] = useState("")
     const saveChanges = (e) => {
@@ -122,7 +124,7 @@ export default function NewDocumentPage({ setTitle }) {
             </div>
             <ButtonsSection>
                 <Buttons path="" additional_styles="bg-primary" onClick={saveChanges}>Save changes</Buttons>
-                <Buttons path="" additional_styles="text-error">Cancel</Buttons>
+                <Buttons path="" additional_styles="text-error" onClick={router.back}>Cancel</Buttons>
             </ButtonsSection>
             <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
                 <p>{Message}</p>
