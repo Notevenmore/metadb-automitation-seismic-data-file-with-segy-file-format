@@ -180,7 +180,7 @@ const routing_list = [
 	},
 	{
 		name: "Bibliography",
-		link: "",
+		link: "/bibliography",
 		icon: "/icons/info.svg",
 	},
 ];
