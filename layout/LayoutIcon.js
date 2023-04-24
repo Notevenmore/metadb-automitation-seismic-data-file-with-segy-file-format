@@ -10,7 +10,7 @@ export default function LayoutIcon({ children }) {
         <div className="h-screen overflow-hidden">
             <TopBar></TopBar>
             <SideBar></SideBar>
-            <div className="full-height h-full overflow-auto">
+            <div id="layout-icon" className="full-height h-full overflow-auto">
                 {children}
                 {/* <Footer></Footer> */}
             </div>
