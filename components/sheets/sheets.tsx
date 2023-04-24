@@ -17,6 +17,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
 
     const init = useCallback(async () => {
         if (props.existingID) {
+            console.log(props.existingID)
             setsheetID(props.existingID)
             setSkipInitialization(true)
             return;
@@ -80,6 +81,8 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                     setErrorMessage(response.response)
                 }
             }).catch(error => { throw error })
+
+            // FIXME this type is not currently used, remove if unused later. 2
             if (props.type === "update") {
                 setLoadingMsg(`Fetching from database`)
                 delay(3000)
@@ -140,16 +143,35 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
             } else if (props.type === "review") {
                 try {
                     console.log("first")
-                    setLoadingMsg("Appending read data to the spreadsheet")
+                    setLoadingMsg("Appending OCR data to the spreadsheet")
                     let data = props.data, final = []
                     console.log(data)
                     if (!data) {
                         throw new Error("Data not found. Make sure you correctly passed the data into the component.")
                     }
 
+                    // TODO finish this new workflow
                     // ---| NEW WORKFLOW |---
 
-                    
+                    await fetch('http://localhost:5050/appendToSheets2', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            form_type: props.form_type,
+                            spreadsheetID: sheetID,
+                            data: JSON.stringify(data)
+                        })
+                    }).then(response => {
+                        return response.json()
+                    }).then(response => {
+                        if (response.status !== 200) {
+                            sethasError(true)
+                            setErrorMessage(response.response)
+                            console.log(response)
+                        }
+                    }).catch(error => { throw error })
                     
                     // ---| OLD WORKFLOW |---
 
