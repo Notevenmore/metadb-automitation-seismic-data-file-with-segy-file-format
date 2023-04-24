@@ -199,7 +199,7 @@ const uploadImage = async (imageBase64Str: string) => {
     return { status: "success", body: { ...JSON.parse(result) } };
   } catch (e) {
     console.log(e);
-    return { status: "failed", body: null }
+    return { status: "failed", body: e }
   }
 }
 
@@ -218,7 +218,7 @@ const fetchDocumentSummary = (async (docId: string) => {
     return { status: "success", body: { ...JSON.parse(result) } };
   } catch (e) {
     console.log(e);
-    return { status: "failed", body: null };
+    return { status: "failed", body: e };
   }
 });
 
@@ -272,6 +272,11 @@ export default function MatchingGuided() {
     onPageChange();
   }, [pageNo]);
 
+  useEffect(() => {
+    console.log(imageUrl)
+  }, [imageUrl])
+
+
 
   useEffect(() => {
     const init = async () => {
@@ -285,29 +290,26 @@ export default function MatchingGuided() {
           const imageBase64Str = await toBase64(file);
           const uploadResponse = await uploadImage(imageBase64Str);
           if (uploadResponse.status === "failed") {
-            setError("Upload image failed, please try again or contact administrator/maintainer if the problem still persists");
-            return;
+            throw new Error(`Upload image failed, please try again or contact administrator/maintainer if the problem still persists. ${uploadResponse.body}`);
           }
           const { doc_id: docId } = uploadResponse.body;
           setDocId(docId);
           setImageUrl(_ => generateImageUrl(docId, pageNo));
           const summaryResponse = await fetchDocumentSummary(docId);
           if (summaryResponse.status !== "success") {
-            throw new Error("Something happened with the OCR service, please contact administrator and/or maintainer")
+            throw new Error(`Something happened with the OCR service, please contact administrator and/or maintainer. ${summaryResponse.body}`)
           }
 
           setTotalPageNo(summaryResponse.body.page_count);
-          dispatch(setDocumentSummary(summaryResponse))
-          // TODO:
-          // - change data type to be dynamic later 
+          dispatch(setDocumentSummary({...summaryResponse, document_id: docId}))
+          // TODO change data type to be dynamic later 
           setLoading("Getting appropriate properties for data type printed well report")
           const row_names = await fetch('http://localhost:5050/getHeaders', {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
             },
-            // TODO:
-            // - change form_type to be dynamic later
+            // TODO change form_type to be dynamic later
             body: JSON.stringify({
               form_type: "printed_well_report"
             })
