@@ -458,8 +458,6 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
           const _pairs = autoFillResponse.body?.pairs;
           if (!_pairs) return;
           const pairs: Map<string, string> = new Map(Object.entries(_pairs));
-          // console.log(`pairs`);
-          // console.log(pairs);
           setPairs(pairs, pageNo);
         }
       }
@@ -501,32 +499,23 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
           indexes = indexes.concat(i);
         }
       }
-      console.log("indexes");
-      console.log(indexes);
       let newTable = [...table];
       for (const index of indexes) {
         const cpair = newTable[index];
         if (!cpair) return state;
         const newPair = { ...cpair, value: pair.get(cpair.key) } as TableRow;
-        console.log("newPair");
-        console.log(newPair);
         newTable = [...newTable.slice(0, index), newPair, ...newTable.slice(index + 1)]
       }
-      console.log("newTable");
-      console.log(newTable);
       return [...state.slice(0, pageNo - 1), newTable, ...state.slice(pageNo)];
     });
   });
 
   useEffect(() => {
     localStorage.setItem('reviewData', JSON.stringify(state))
-    console.log(localStorage.getItem('reviewData'))
   }, [state])
   
 
   const toRowComponent = (data: TableRow) => { 
-    console.log("row data");
-    console.log(data); 
     return (
     <div key={data.id}>
       <HeaderDivider />
