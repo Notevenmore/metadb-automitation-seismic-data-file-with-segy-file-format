@@ -19,11 +19,11 @@ export default function UploadFileReview({ setTitle }) {
     const [detail, setDetail] = useState("bbb");
     const [ReviewData, setReviewData] = useState([])
     const [ImageReview, setImageReview] = useState("")
-    const [Message, setMessage] = useState()
+    const [Message, setMessage] = useState({ message: "", color: "" })
     const [PageNo, setPageNo] = useState(0)
     const [ImageURL, setImageURL] = useState("")
     const [error, setError] = useState("")
-    const [spreadsheetIDs, setspreadsheetIDs] = useState({})
+    const [spreadsheetID, setspreadsheetID] = useState("")
     const [loading, setloading] = useState("")
 
     const router = useRouter()
@@ -153,7 +153,8 @@ export default function UploadFileReview({ setTitle }) {
         setImageReview(ImageURL)
     }
 
-    const saveWorkspace = (e) => {
+    // TODO save to db instead of localstorage later on
+    const saveWorkspace = async (e, redirect = false) => {
         e.preventDefault()
         // let counter = 0, name = ""
         // while (true) {
@@ -168,15 +169,65 @@ export default function UploadFileReview({ setTitle }) {
         // }
         // let workspaces = JSON.parse(localStorage.getItem("workspaces"))
         // workspaces.push({ "name": name })
-        console.log("first")
+        // console.log("first")
         // localStorage.setItem("new_workspace_from_uploaded_file", ReviewData)
-        setMessage("Workspace successfully saved.")
+        try {
+            setMessage({ message: "Saving workspace... Please don't close this page or click anything", color: "blue" })
+            console.log(spreadsheetID)
+            if (!spreadsheetID) {
+                setMessage({ message: "Spreadsheet not yet initialized. Please wait for a moment.", color: "red" })
+                return
+            }
+            const spreadsheet_data = await fetch(`http://127.0.0.1:5050/getRows`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    form_type: String(router.query.form_type),
+                    spreadsheetID: spreadsheetID
+                })
+            }).then(response => {
+                return response.json()
+            }).then(response => {
+                console.log(response)
+                if (response.status !== 200) {
+                    throw response.response
+                }
+                return response
+            }).catch(err => { throw err })
+
+            console.log(spreadsheet_data.response[0])
+            let final = []
+            for (let idx_row = 1; idx_row < spreadsheet_data.response.length; idx_row++) {
+                let row = {}
+                console.log(idx_row)
+                spreadsheet_data.response[0].forEach((header, idx_col) => {
+                    row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] || ""
+                });
+                console.log(row)
+                final.push(row)
+            }
+            localStorage.setItem("ocr_data", JSON.stringify(final))
+
+            setMessage({ message: "Workspace successfully saved.", color: "blue" })
+
+            if (redirect) {
+                router.push("/")
+            }
+        } catch (error) {
+            setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${error}`, color: "red" })
+            throw error
+        }
     }
 
     useEffect(() => {
         console.log(PageNo)
     }, [PageNo])
 
+    useEffect(() => {
+        console.log(spreadsheetID)
+    }, [spreadsheetID])
 
     return ((error) ? (
         <div className="w-full h-full flex flex-col p-10 space-y-4">
@@ -240,11 +291,27 @@ export default function UploadFileReview({ setTitle }) {
                     />
                 </HeaderInput>
                 <HeaderDivider />
-                <HeaderStatic label1={"Data type"} content={"Well data"} />
-                <HeaderDivider />
+                {/* <HeaderStatic label1={"Data type"} content={"Well data"} /> */}
+                <HeaderInput label1={"Data type"}>
+                    <Input
+                        // type="dropdown"
+                        type="text"
+                        name={"dataType"}
+                        defaultValue={router.query.form_type.replace(/\_/g, " ")}
+                        // placeholder={"Seismic data"}
+                        // dropdown_items={["Well"]}
+                        // required={true}
+                        additional_styles="w-full"
+                        additional_styles_input="font-semibold capitalize"
+                        disabled
+                    // onChange={(e) => setDetail(e.target.name)}
+                    // withSearch
+                    />
+                </HeaderInput>
+                {/* <HeaderDivider />
                 <HeaderStatic label1={"Data classification"} content={"Report"} />
                 <HeaderDivider />
-                <HeaderStatic label1={"Data sub-classification"} content={"Printed"} />
+                <HeaderStatic label1={"Data sub-classification"} content={"Printed"} /> */}
             </HeaderTable>
             <div className="pt-3">
                 <Table
@@ -262,7 +329,11 @@ export default function UploadFileReview({ setTitle }) {
                                 <div className="flex flex-col items-center justify-center space-y-2 h-full">
                                     <div className="w-5 h-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
                                     <p>{loading}</p>
-                                </div>) : (<Sheets type={"review"} form_type={"printed_well_report"} data={ReviewData} />)}
+                                </div>) : (
+                                // TODO change to dynamic later
+                                // FINISHED TODO
+                                <Sheets type={"review"} form_type={router.query.form_type} data={ReviewData} getSpreadsheetID={setspreadsheetID} />
+                            )}
                         </div>]
                     ]}
                     additional_styles='overflow-hidden'
@@ -270,7 +341,7 @@ export default function UploadFileReview({ setTitle }) {
                 />
             </div>
             {ImageReview ?
-                <div className="pt-3">
+                <div className="pt-3 bg-">
                     <Table
                         header={[<div className="flex justify-between items-center"><p>Data</p><Buttons button_description="Hide image" additional_styles="bg-white" path="" onClick={(e) => { setImageReview("") }} /></div>]}
                         content={[
@@ -293,19 +364,19 @@ export default function UploadFileReview({ setTitle }) {
                 </div>
             ) : null}
             <ButtonsSection>
-                <Buttons path="" additional_styles="bg-primary" onClick={saveWorkspace}>Save changes</Buttons>
-                <Buttons path="" additional_styles="bg-primary" onClick={(e) => { router.push("/") }}>Save and exit</Buttons>
+                <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={saveWorkspace} disabled={!spreadsheetID || Message.message ? true : false}>Save changes</Buttons>
+                <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={(e) => { saveWorkspace(e, redirect = true) }} disabled={!spreadsheetID || Message.message ? true : false}>Save and exit</Buttons>
                 {/* <Buttons path="" additional_styles="text-error">Cancel</Buttons> */}
             </ButtonsSection>
-            <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
-                <p>{Message}</p>
-                <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage("") }}>
+            {console.log(Message.color)}
+            <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${Message.color || "blue"}-500 text-white px-3 rounded-lg py-2 transition-transform ${Message.message ? "" : "-translate-y-20"}`}>
+                <p>{Message.message}</p>
+                <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={(e) => { e.preventDefault(); setMessage({ message: "", color: "orange" }) }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </Buttons>
             </div>
         </Container>
-    )
-    );
+    ));
 }

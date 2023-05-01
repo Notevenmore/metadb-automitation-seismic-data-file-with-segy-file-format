@@ -239,6 +239,7 @@ export default function MatchingGuided() {
   const [totalPageNo, setTotalPageNo] = useState<number>(1);
   const [docId, _setDocId] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [formType, setformType] = useState<string>("")
 
   // utility states
   const [loading, setLoading] = useState<string>("");
@@ -276,7 +277,11 @@ export default function MatchingGuided() {
     console.log(imageUrl)
   }, [imageUrl])
 
-
+  useEffect(() => {
+    if (router.query.form_type) {
+      setformType(String(router.query.form_type))
+    }
+  }, [router])
 
   useEffect(() => {
     const init = async () => {
@@ -301,23 +306,23 @@ export default function MatchingGuided() {
           }
 
           setTotalPageNo(summaryResponse.body.page_count);
-          dispatch(setDocumentSummary({...summaryResponse, document_id: docId}))
-          // TODO change data type to be dynamic later 
-          setLoading("Getting appropriate properties for data type printed well report")
+          dispatch(setDocumentSummary({ ...summaryResponse, document_id: docId }))
+          setLoading(`Getting appropriate properties for data type ${router.query.form_type}`)
           const row_names = await fetch('http://localhost:5050/getHeaders', {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
             },
             // TODO change form_type to be dynamic later
+            // FINISHED
             body: JSON.stringify({
-              form_type: "printed_well_report"
+              form_type: router.query?.form_type || "basin"
             })
           }).then(response => {
             return response.json()
           }).catch(error => { throw error })
 
-          setLoading("Setting appropriate properties for data type printed well report")
+          setLoading(`Getting appropriate properties for data type ${router.query.form_type}`)
           let temp_obj = {}
           for (let idx = 0; idx < summaryResponse.body.page_count; idx++) {
             let temp = []
@@ -445,7 +450,7 @@ export default function MatchingGuided() {
       ) : null}
       <div className="flex items-center justify-center w-full my-4">
         {/* @ts-ignore */}
-        <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold" />
+        <Buttons button_description="View on sheets" path="/upload_file/review" query={{ form_type: formType }} additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold" disabled={formType ? false : true} />
       </div>
       <ButtonsSection>
         {/* @ts-ignore */}
@@ -453,7 +458,7 @@ export default function MatchingGuided() {
         {/* @ts-ignore */}
         {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
-      <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all z-40 ${message ? "" : "-translate-y-20"}`}>
+      <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all z-40 ${message ? "" : "-translate-y-20"}`}>
         <p>{message}</p>
         {/* @ts-ignore */}
         <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage("") }}>
