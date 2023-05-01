@@ -4,7 +4,8 @@ interface IframeProps extends React.ComponentProps<"iframe"> {
     existingID: any,
     type: any,
     form_type: any,
-    data: any
+    data: any,
+    getSpreadsheetID: any
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
@@ -37,6 +38,11 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
         const makeTemp = await fetch('http://localhost:5050/createSpreadsheet')
         const spreadsheetID = await makeTemp.json()
         setsheetID(spreadsheetID.response)
+        try {
+            props.getSpreadsheetID(spreadsheetID.response)
+        } catch (error) {
+            console.log("hehe boi")
+        }
         setSkipInitialization(false)
     }, [])
 
@@ -172,7 +178,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                             console.log(response)
                         }
                     }).catch(error => { throw error })
-                    
+
                     // ---| OLD WORKFLOW |---
 
                     // if (props.form_type !== "bibliography"){
