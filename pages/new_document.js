@@ -13,11 +13,59 @@ export default function NewDocumentPage({ setTitle }) {
     setTitle("New document")
     const router = useRouter()
     const [detail, setDetail] = useState("bbb");
-    const [Message, setMessage] = useState("")
-    const saveChanges = (e) => {
+    const [Message, setMessage] = useState({ message: "", color: "" })
+    const [dataType, setdataType] = useState()
+    const [spreadsheetID, setspreadsheetID] = useState()
+
+    const saveChanges = async (e) => {
         e.preventDefault()
-        setMessage("Workspace successfully saved.")
+        try {
+            setMessage({ message: "Saving workspace... Please don't leave this page or click anything.", color: "blue" })
+            const spreadsheet_data = await fetch("http://www.localhost:5050/getRows", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    form_type: dataType,
+                    spreadsheetID: spreadsheetID
+                })
+            }).then(response => {
+                return response.json()
+            }).then(response => {
+                console.log(response)
+                if (response.status !== 200) {
+                    throw response.response
+                }
+                return response
+            }).catch(err => { throw err })
+
+            let final = []
+            for (let idx_row = 1; idx_row < spreadsheet_data.response.length; idx_row++) {
+                let row = {}
+                console.log(idx_row)
+                spreadsheet_data.response[0].forEach((header, idx_col) => {
+                    row[header] = spreadsheet_data?.response[idx_row][idx_col] || ""
+                });
+                console.log(row)
+                final.push(row)
+            }
+
+            if (dataType === "printed_well_report") {
+                localStorage.setItem("new_pwr", JSON.stringify(final))
+            } else if (dataType === "bibliography") {
+                localStorage.setItem("new_bibliography", JSON.stringify(final))
+            }
+            setMessage({ message: "Workspace successfully saved.", color: "blue" })
+        } catch (error) {
+            setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${error}`, color: "red" })
+        }
     }
+
+    useEffect(() => {
+        setdataType(String(router.query.form_type))
+    }, [router])
+
     return (
         <Container additional_class="full-height relative">
             <Container.Title back>
@@ -72,18 +120,21 @@ export default function NewDocumentPage({ setTitle }) {
                 <HeaderDivider />
                 <HeaderInput label1={"Data type"}>
                     <Input
-                        type="dropdown"
+                        // type="dropdown"
+                        type="text"
                         name={"dataType"}
-                        placeholder={"Seismic data"}
-                        dropdown_items={["Well"]}
-                        required={true}
+                        defaultValue={router.query.form_type.replace(/\_/g, " ")}
+                        // placeholder={"Seismic data"}
+                        // dropdown_items={["Well"]}
+                        // required={true}
                         additional_styles="w-full"
-                        additional_styles_input="font-semibold"
-                        onChange={(e) => setDetail(e.target.name)}
-                        withSearch
+                        additional_styles_input="font-semibold capitalize"
+                        disabled
+                    // onChange={(e) => setDetail(e.target.name)}
+                    // withSearch
                     />
                 </HeaderInput>
-                <HeaderDivider />
+                {/* <HeaderDivider />
                 <HeaderInput label1={"Data classification"}>
                     <Input
                         type="dropdown"
@@ -110,13 +161,22 @@ export default function NewDocumentPage({ setTitle }) {
                         onChange={(e) => setDetail(e.target.name)}
                         withSearch
                     />
-                </HeaderInput>
+                </HeaderInput> */}
             </HeaderTable>
             <div className="pt-3">
                 <TableComponent
                     header={["Data"]}
                     content={[
-                        [<div className="h-[750px]"><Sheets form_type={"printed_well_report"} type="new" /></div>]
+                        [
+                            (dataType) ? (
+                                <div className="h-[750px]"><Sheets form_type={dataType} type="new" getSpreadsheetID={setspreadsheetID} /></div>
+                            ) : (
+                                <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
+                                    <div className="animate-spin border-4 border-t-transparent border-gray-500/[.7] rounded-full w-14 h-14"></div>
+                                    <p className="text-xl font-semibold text-gray-500">Waiting for initialization process to finish</p>
+                                </div>
+                            )
+                        ]
                     ]}
                     additional_styles='overflow-hidden'
                     additional_styles_row='p-0'
@@ -126,9 +186,9 @@ export default function NewDocumentPage({ setTitle }) {
                 <Buttons path="" additional_styles="bg-primary" onClick={saveChanges}>Save changes</Buttons>
                 <Buttons path="" additional_styles="text-error" onClick={router.back}>Cancel</Buttons>
             </ButtonsSection>
-            <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
-                <p>{Message}</p>
-                <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage("") }}>
+            <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${Message.color || "blue"}-500 text-white px-3 rounded-lg py-2 transition-all ${Message.message ? "" : "-translate-y-20"}`}>
+                <p>{Message.message}</p>
+                <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage({ message: "", color: "" }) }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
