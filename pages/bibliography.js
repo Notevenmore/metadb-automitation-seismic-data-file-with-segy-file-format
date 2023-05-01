@@ -25,12 +25,12 @@ const Bibliography = ({ setTitle }) => {
 
     let table_data = [
         {
-            No: 1, Name: "Laporan Data 2023", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Bibliography", AFE: "2893728901", action:
+            No: 1, Name: "Bibliography Report Final", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Bibliography", AFE: "4719274818", action:
                 <div className="flex flex-row gap-x-1 items-center">
                     <Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-                    {/* <Link title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'Laporan Data 2023')}> */}
+                    {/* <Link title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'Bibliography Report Final')}> */}
                     <Link title="Edit workspace" href={{
-                        pathname: `/edit/${get_workspace_name("Laporan Data 2023")}`,
+                        pathname: `/edit/${get_workspace_name("Bibliography Report Final")}`,
                         query: {
                             form_type: "bibliography"
                         }
@@ -41,22 +41,16 @@ const Bibliography = ({ setTitle }) => {
                 </div>
         },
         {
-            No: 2, Name: "Workspace 2", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Bibliography", AFE: "2022010201", action:
-                <div className="flex flex-row gap-x-1 items-center">
-                    <Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-                    {/* <Link title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'Workspace 2')}> */}
-                    <Link title="Edit workspace" href={""} className="">
-                        <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-                    </Link>
-                    <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-                </div>
-        },
-        {
-            No: 3, Name: "New workspace from uploaded file", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Bibliography", AFE: "2023032801", action:
+            No: 2, Name: "New Document", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Bibliography", AFE: "5920182732", action:
                 <div className="flex flex-row gap-x-1 items-center">
                     <Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
                     {/* <Link title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'New workspace from uploaded file')}> */}
-                    <Link title="Edit workspace" href={""} className="">
+                    <Link title="Edit workspace" href={{
+                        pathname: `/edit/${get_workspace_name("New Document")}`,
+                        query: {
+                            form_type: "bibliography"
+                        }
+                    }} className="">
                         <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
                     </Link>
                     <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
