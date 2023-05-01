@@ -38,7 +38,7 @@ export default function UploadFileReview({ setTitle }) {
         // ---| NEW WORKFLOW |---
         const init = async () => {
             try {
-                setImageURL(_ => `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${document_summary.document_id}/${PageNo + 1}`)
+                setImageURL(_ => `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${document_summary?.document_id}/${PageNo + 1}`)
                 setloading(`Reformatting OCR data`)
                 let final = []
                 for (let idx = 0; idx < document_summary.body.page_count; idx++) {
@@ -120,7 +120,11 @@ export default function UploadFileReview({ setTitle }) {
                 setError(String(error))
             }
         }
-        init();
+        if (files.length < 1) {
+            router.push("/upload_file")
+        } else {
+            init();
+        }
 
         // ---| OLD WORKFLOW |---
         // const review_data = localStorage.getItem("reviewData")
@@ -134,7 +138,7 @@ export default function UploadFileReview({ setTitle }) {
     // }, [spreadsheetIDs])
 
     useEffect(() => {
-        setImageURL(_ => `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${document_summary.document_id}/${PageNo + 1}`)
+        setImageURL(_ => `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${document_summary?.document_id}/${PageNo + 1}`)
     }, [PageNo])
 
     // TODO fix the workflow to get the data from redux instead of local storage
@@ -279,7 +283,7 @@ export default function UploadFileReview({ setTitle }) {
                 </div>
                 :
                 null}
-            {(document_summary.body.page_count > 1) ? (
+            {(document_summary?.body.page_count > 1) ? (
                 <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full">
                     <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border">
                         <Buttons path="" title="Previous page" button_description="" additional_styles="bg-white border-2 p-3 hover:bg-gray-200" onClick={(e) => { e.preventDefault(); setPageNo(page_no => { return page_no - 1 }) }} disabled={PageNo <= 0 ? true : false} ><div className="w-5 h-5"><ChevronLeft /></div></Buttons>
