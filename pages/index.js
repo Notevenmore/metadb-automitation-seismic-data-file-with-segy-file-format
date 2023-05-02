@@ -108,7 +108,7 @@ const HomeSection = () => {
 								<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
 							</svg>
 						</Buttons>
-						<p>Select the data type for the new document:</p>
+						<p className="font-semibold">Select the data type for the new document:</p>
 						<form onSubmit={console.log("hooray")} className="space-y-3 flex flex-col items-center justify-center">
 							<Input
 								type="dropdown"
