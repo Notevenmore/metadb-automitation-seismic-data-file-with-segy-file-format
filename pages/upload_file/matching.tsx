@@ -329,7 +329,7 @@ export default function MatchingGuided() {
             row_names.response.forEach((row_name, index) => {
               temp.push({
                 id: index,
-                key: row_name,
+                key: row_name.toLowerCase(),
                 value: null,
               },)
             });
@@ -398,8 +398,8 @@ export default function MatchingGuided() {
         onClick={_ => clickRow(data.id)}
         className={"w-full"}
       >
-        <HeaderInput label1={(selectedRow === data.id ? "* " : "") + data.key}>
-          <HeaderRow>{data.value}</HeaderRow>
+        <HeaderInput label1={(selectedRow === data.id ? "* " : "") + data.key.replace(/\_/g, " ").split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}>
+          <HeaderRow title={data.value}>{data.value?.length > 20 ? data.value?.substring(0, 20) + "..." : data.value}</HeaderRow>
         </HeaderInput>
       </div>
     </div>
@@ -448,9 +448,9 @@ export default function MatchingGuided() {
           </div>
         </div>
       ) : null}
-      <div className="flex items-center justify-center w-full my-4">
+      <div className="flex items-center justify-center w-full py-4">
         {/* @ts-ignore */}
-        <Buttons button_description="View on sheets" path="/upload_file/review" query={{ form_type: formType }} additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold" disabled={formType ? false : true} />
+        <Buttons button_description="View on sheets" path="/upload_file/review" query={{ form_type: formType }} additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold" disabled={formType ? false : true} onClick={() => { dispatch(setReviewData(state)) }} />
       </div>
       <ButtonsSection>
         {/* @ts-ignore */}
