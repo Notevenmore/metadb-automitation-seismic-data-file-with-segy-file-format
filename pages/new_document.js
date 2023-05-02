@@ -182,10 +182,12 @@ export default function NewDocumentPage({ setTitle }) {
                     additional_styles_row='p-0'
                 />
             </div>
-            <ButtonsSection>
-                <Buttons path="" additional_styles="bg-primary" onClick={saveChanges}>Save changes</Buttons>
+            <div className="flex space-x-2 py-10">
+                <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={saveChanges}>Save changes</Buttons>
                 <Buttons path="" additional_styles="text-error" onClick={router.back}>Cancel</Buttons>
-            </ButtonsSection>
+            </div>
+            {/* <ButtonsSection className="pb-2 border-2 border-black">
+            </ButtonsSection> */}
             <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${Message.color || "blue"}-500 text-white px-3 rounded-lg py-2 transition-all ${Message.message ? "" : "-translate-y-20"}`}>
                 <p>{Message.message}</p>
                 <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage({ message: "", color: "" }) }}>
