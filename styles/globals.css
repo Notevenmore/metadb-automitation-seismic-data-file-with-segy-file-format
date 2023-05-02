@@ -85,7 +85,7 @@ a {
 
 
 .full-height {
-  height: calc(100vh - 60px)
+  height: calc(100vh - 55px)
 }
 .full-height-container {
   height: calc(100vh - 250px)
