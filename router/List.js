@@ -128,60 +128,60 @@ const routing_list = [
 	{
 		name: "Outcrop",
 		link: "",
-		icon: "/icons/info.svg",
+		icon: "/icons/outcrop.svg",
 	},
 	{
 		name: "Technical Report",
-		icon: "/icons/info.svg",
+		icon: "/icons/technical_report.svg",
 		child: [
 			{
 				name: "Printed Technical Report",
 				link: "",
-				icon: "/icons/info.svg",
+				icon: "/icons/technical_report.svg",
 			},
 			{
 				name: "Digital Technical Report",
 				link: "",
-				icon: "/icons/info.svg",
+				icon: "/icons/technical_report.svg",
 			},
 		],
 	},
 	{
 		name: "Maps and Technical Drawing",
-		icon: "/icons/info.svg",
+		icon: "/icons/maps.svg",
 		child: [
 			{
 				name: "Printed Maps and Technical Drawing",
 				link: "",
-				icon: "/icons/info.svg",
+				icon: "/icons/maps.svg",
 			},
 			{
 				name: "Digital Maps and Technical Drawing",
 				link: "",
-				icon: "/icons/info.svg",
+				icon: "/icons/maps.svg",
 			},
 		],
 	},
 	{
 		name: "Project File",
-		icon: "/icons/info.svg",
+		icon: "/icons/project_file.svg",
 		child: [
 			{
 				name: "Digital Project File",
 				link: "",
-				icon: "/icons/info.svg",
+				icon: "/icons/project_file.svg",
 			},
 			{
 				name: "Project File Stored in Media",
 				link: "",
-				icon: "/icons/info.svg",
+				icon: "/icons/project_file.svg",
 			},
 		],
 	},
 	{
 		name: "Bibliography",
 		link: "/bibliography",
-		icon: "/icons/info.svg",
+		icon: "/icons/bibliography.svg",
 	},
 ];
 export default routing_list;
