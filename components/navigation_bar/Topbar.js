@@ -11,6 +11,7 @@ import FloatDialog from "../float_dialog/float_dialog";
 import { logOut } from "../../store/userSlice";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import ProfilePic from "dummy-data/profile_pic"
 
 export default function TopBar(props) {
 	const user = useSelector((state) => state.user.user);
@@ -24,7 +25,8 @@ export default function TopBar(props) {
     ]}
     const [profileProps, setProfileProps] = useState({})
 	useEffect(() => {
-		setProfile(Mime(user.profile_picture))
+		// setProfile(Mime(user.profile_picture)) // TODO CHANGE TO NOT USE HARDCODED STRING LATER
+		setProfile(ProfilePic)
         setProfileProps({
             float_title: <>{user.first_name} {user.last_name} <br/> <span className="font-normal">{user.email}</span> <br/> <span className="font-normal">{user.role_name}</span></>
         })
@@ -47,12 +49,12 @@ export default function TopBar(props) {
                 <h1 className="text-xl font-bold">MetaDB</h1>
             </Link>
             <div className="flex items-center gap-x-3">
-                <img src="/icons/bell-outline.svg" className="w-[1rem]" alt="notification" />
-                <div className="border-l-[1.5px] border-slate-200 h-6"> </div>
+                {/* <img src="/icons/bell-outline.svg" className="w-[1rem]" alt="notification" /> */}
+                {/* <div className="border-l-[1.5px] border-slate-200 h-6"> </div> */}
                 <FloatDialog items={profileItem} className={`right-0 top-[50px]`} width="263px" {...profileProps}>
                     <RoundImage
                         source={profile?profile:"/images/unknown.jpg"}
-                        size={{ width: "1.5rem" }}
+                        size={{ width: "30px" }}
                     ></RoundImage>
                 </FloatDialog>
             </div>
