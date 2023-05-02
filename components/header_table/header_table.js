@@ -26,10 +26,10 @@ const HeaderDivider = () => {
     )
 }
 
-const HeaderRow = ({children}) => {
+const HeaderRow = ({children, ...props}) => {
     return (
         <div className="flex justify-center lg:items-center
-         lg:flex-row flex-col w-full py-[10px] lg:h-[55px]">
+         lg:flex-row flex-col w-full py-[10px] lg:h-[55px]" {...props}>
             <>{children}</>
         </div>
     )
