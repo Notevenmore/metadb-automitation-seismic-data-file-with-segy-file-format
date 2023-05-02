@@ -25,6 +25,7 @@ export default function UploadFileReview({ setTitle }) {
     const [error, setError] = useState("")
     const [spreadsheetID, setspreadsheetID] = useState("")
     const [loading, setloading] = useState("")
+    const [spreadsheetReady, setspreadsheetReady] = useState(false)
 
     const router = useRouter()
     const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
@@ -208,6 +209,7 @@ export default function UploadFileReview({ setTitle }) {
                 console.log(row)
                 final.push(row)
             }
+            if (final.length === 0) { final.push({}) }
             localStorage.setItem("ocr_data", JSON.stringify(final))
 
             setMessage({ message: "Workspace successfully saved.", color: "blue" })
@@ -220,14 +222,6 @@ export default function UploadFileReview({ setTitle }) {
             throw error
         }
     }
-
-    useEffect(() => {
-        console.log(PageNo)
-    }, [PageNo])
-
-    useEffect(() => {
-        console.log(spreadsheetID)
-    }, [spreadsheetID])
 
     return ((error) ? (
         <div className="w-full h-full flex flex-col p-10 space-y-4">
@@ -332,7 +326,7 @@ export default function UploadFileReview({ setTitle }) {
                                 </div>) : (
                                 // TODO change to dynamic later
                                 // FINISHED TODO
-                                <Sheets type={"review"} form_type={router.query.form_type} data={ReviewData} getSpreadsheetID={setspreadsheetID} />
+                                <Sheets type={"review"} form_type={router.query.form_type} data={ReviewData} getSpreadsheetID={setspreadsheetID} finishedInitializing={setspreadsheetReady} />
                             )}
                         </div>]
                     ]}
@@ -363,12 +357,13 @@ export default function UploadFileReview({ setTitle }) {
                     </div>
                 </div>
             ) : null}
-            <ButtonsSection>
-                <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={saveWorkspace} disabled={!spreadsheetID || Message.message ? true : false}>Save changes</Buttons>
-                <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={(e) => { saveWorkspace(e, redirect = true) }} disabled={!spreadsheetID || Message.message ? true : false}>Save and exit</Buttons>
-                {/* <Buttons path="" additional_styles="text-error">Cancel</Buttons> */}
-            </ButtonsSection>
-            {console.log(Message.color)}
+            <div className="flex space-x-3 py-4">
+                <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={saveWorkspace} disabled={!spreadsheetID || Message.message || !spreadsheetReady ? true : false}>Save changes</Buttons>
+                <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={(e) => { saveWorkspace(e, true) }} disabled={!spreadsheetID || Message.message || !spreadsheetReady ? true : false}>Save and exit</Buttons>
+            </div>
+            {/* <Buttons path="" additional_styles="text-error">Cancel</Buttons> */}
+            {/* <ButtonsSection>
+            </ButtonsSection> */}
             <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${Message.color || "blue"}-500 text-white px-3 rounded-lg py-2 transition-transform ${Message.message ? "" : "-translate-y-20"}`}>
                 <p>{Message.message}</p>
                 <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={(e) => { e.preventDefault(); setMessage({ message: "", color: "orange" }) }}>
