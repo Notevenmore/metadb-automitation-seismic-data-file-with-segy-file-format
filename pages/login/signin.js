@@ -104,13 +104,13 @@ export default function SignInPage({ setTitle }) {
                         additional_styles="space-y-1 text-[14px]"
                         additional_styles_input="bg-[#ededed]"
                     />
-                    <div className="flex flex-row justify-between items-center text-[12px]">
+                    {/* <div className="flex flex-row justify-between items-center text-[12px]">
                         <div className="flex flex-row gap-x-2 items-center">
                             <input type="checkbox" name="rememberMe" />
                             <div>Remember me</div>
                         </div>
                         <div className="text-link">Forgot your password?</div>
-                    </div>
+                    </div> */}
                     <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${Error ? "" : "-translate-y-20"}`}>
                         <p>{Error}</p>
                         <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setError("") }}>
@@ -122,20 +122,20 @@ export default function SignInPage({ setTitle }) {
                     <div className="flex flex-col max-md:items-center gap-y-3">
                         <Buttons
                             path="" button_description="Sign In"
-                            additional_styles="px-12 py-1 mt-4 bg-primary"
+                            additional_styles="px-12 py-1 mt-4 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
                             onClick={handleSignIn}
                         />
-                        <div className="flex flex-row gap-x-1 text-[12px]">
+                        {/* <div className="flex flex-row gap-x-1 text-[12px]">
                             Don&apos;t have an account?
                             <Link href="/login/signup" className="text-link">Sign up now</Link>
-                        </div>
+                        </div> */}
                     </div>
                 </form>
             </div>
             <div className="w-[50%] px-[100px] flex flex-row justify-center">
                 <div className="min-w-[400px] space-y-3">
                     <Image src="/images/metadbpng.png" className="select-none pointer-events-none" alt="MetaDB logo" width={400} height={400} />
-                    <p className="text-center">&copy; Geodwipa Teknika Nusantara 2023</p>
+                    <p className="text-center">&copy; PT Geodwipa Teknika Nusantara</p>
                 </div>
             </div>
         </div>

@@ -37,7 +37,7 @@ export default function SideBar({ half }) {
 					key={router.name}></Item>
 			))}
 			<div className={`fixed bottom-0 h-[40px] ${iconCollapse? "hidden" :"w-[314px]"} flex items-center justify-center text-[12px] text-[#a3a3a3] bg-side_bar`}>
-				<div>© Geodwipa Teknika Nusantara 2023</div>
+				<div>&copy; PT Geodwipa Teknika Nusantara</div>
 			</div>
 		</div>
 	);

@@ -105,7 +105,9 @@ const Profile = ({ setTitle }) => {
 			<div className="space-y-5">
 				<div className="flex space-x-7">
 					<div className="flex flex-col items-center justify-center space-y-2">
-						<img src={Mime(user.profile_picture) || ProfilePic} className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full" />
+						{/* <img src={Mime(user.profile_picture) || ProfilePic} className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full" /> */}
+						{/* //TODO CHANGE THE LINE BELOW TO NOT USE HARDCODED PROFILE PICTURE STRING */}
+						<img src={ProfilePic} className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full" />
 						<FloatDialog items={
 							{
 								type: "",

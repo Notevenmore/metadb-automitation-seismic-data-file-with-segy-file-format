@@ -4,7 +4,9 @@ interface IframeProps extends React.ComponentProps<"iframe"> {
     existingID: any,
     type: any,
     form_type: any,
-    data: any
+    data: any,
+    getSpreadsheetID: any,
+    finishedInitializing: any
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
@@ -37,6 +39,9 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
         const makeTemp = await fetch('http://localhost:5050/createSpreadsheet')
         const spreadsheetID = await makeTemp.json()
         setsheetID(spreadsheetID.response)
+        try {
+            props.getSpreadsheetID(spreadsheetID.response)
+        } catch (error) { console.log("You are not supposed to be here") }
         setSkipInitialization(false)
     }, [])
 
@@ -172,7 +177,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                             console.log(response)
                         }
                     }).catch(error => { throw error })
-                    
+
                     // ---| OLD WORKFLOW |---
 
                     // if (props.form_type !== "bibliography"){
@@ -209,6 +214,9 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
             }
             setLoadingMsg("All done")
             setLoading(false)
+            try {
+                props.finishedInitializing(true)
+            } catch (error) { console.log("What are you still doing here") }
         }
         if (sheetID) {
             localStorage.setItem('spreadsheetID', sheetID)

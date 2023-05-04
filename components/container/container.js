@@ -1,9 +1,10 @@
 import { useRouter } from "next/router"
 import Image from "next/image"
+import { twMerge } from "tailwind-merge"
 
 export default function Container({children, additional_class, ...divProps}) {
     return(
-        <div className={`w-full flex flex-col p-10 ${additional_class}`} {...divProps}>
+        <div className={twMerge("w-full flex flex-col p-10", additional_class)} {...divProps}>
             {children}
         </div>
     )

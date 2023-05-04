@@ -12,16 +12,54 @@ const PrintedWellReport = ({ setTitle }) => {
     const router = useRouter()
     const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
     let selectedTableData = [[]];
-    
+
     const handleEditClick = (e, workspace_name) => {
         let final = workspace_name.toLocaleLowerCase().replace(/\s/g, '_')
         router.push(`/edit/${final}`)
     }
 
+    const get_workspace_name = (workspace_name) => {
+        let final = workspace_name.toLocaleLowerCase().replace(/\s/g, '_')
+        return final
+    }
+
     let table_data = [
-        { No: 1, Name: "Laporan Data 2023", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Printed well report", AFE: "2893728901", action: <div className="flex flex-row gap-x-1 items-center"><Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /><Button title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'Laporan Data 2023')}><Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></Button><Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></div> },
-        { No: 2, Name: "Workspace 2", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Printed well report", AFE: "2022010201", action: <div className="flex flex-row gap-x-1 items-center"><Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /><Button title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'Workspace 2')}><Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></Button><Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></div> },
-        { No: 3, Name: "New workspace from uploaded file", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Printed well report", AFE: "2023032801", action: <div className="flex flex-row gap-x-1 items-center"><Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /><Button title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'New workspace from uploaded file')}><Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></Button><Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></div> },
+        {
+            No: 1, Name: "PWR 2023 Report", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Printed well report", AFE: "2893728901",
+            action:
+                <div className="flex flex-row gap-x-1 items-center">
+                    <Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+                    {/* <Link title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'Laporan Data 2023')}> */}
+                    <Link title="Edit workspace" path="" className=""
+                        href={{
+                            pathname: `/edit/${get_workspace_name("PWR 2023 Report")}`,
+                            query: {
+                                form_type: "printed_well_report"
+                            }
+                        }}>
+                        <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+                    </Link>
+                    <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+                </div>
+        },
+        {
+            No: 2, Name: "New Document", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Printed well report", AFE: "2023032801",
+            action:
+                <div className="flex flex-row gap-x-1 items-center">
+                    <Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+                    {/* <Button title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'New workspace from uploaded file')}> */}
+                    <Link title="Edit workspace" path="" className=""
+                        href={{
+                            pathname: `/edit/${get_workspace_name("New Document")}`,
+                            query: {
+                                form_type: "printed_well_report"
+                            }
+                        }}>
+                        <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+                    </Link>
+                    <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+                </div>
+        },
     ]
     const [data, setData] = useState(table_data);
     const onSearch = (e) => {
