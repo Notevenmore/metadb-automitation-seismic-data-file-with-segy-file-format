@@ -258,7 +258,7 @@ export default function UploadFileReview({ setTitle }) {
                                 <div className="flex flex-col items-center justify-center space-y-2 h-full">
                                     <div className="w-5 h-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
                                     <p>{loading}</p>
-                                </div>) : (<Sheets type={"review"} form_type={"printed_well_report"} data={ReviewData} />)}
+                                </div>) : (<Sheets type={"review"} form_type={"bibliography"} data={ReviewData} />)}
                         </div>]
                     ]}
                     additional_styles='overflow-hidden'
