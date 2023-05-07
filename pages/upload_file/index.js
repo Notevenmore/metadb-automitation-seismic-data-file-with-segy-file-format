@@ -65,7 +65,8 @@ export default function UploadFilePage({ setTitle }) {
 		dispatch(storeFile(fileUpload))
 		// router.push('/upload_file/matching_guided');
 		// router.push('/upload_file/matching');
-		router.push('/upload_file/matching_auto');
+		// router.push('/upload_file/matching_auto');
+		router.push('/upload_file/matching_draggable');
 		// console.log("???")
 	}
 

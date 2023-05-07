@@ -743,16 +743,19 @@ export const SelectionBox = (({ bound }: SelectionBoxProps) => {
 })
 
 
-const useNaturalImageDim = (ref: MutableRefObject<null>) => {
+export const useNaturalImageDim = (ref: MutableRefObject<null>) => {
     const [ dim, setDim ] = useState([ 0, 0 ]);
     const [ check, setCheck ] = useState(false);
     function reload() {
         setCheck(t => !t);
     }
     useEffect(() => {
-        if (ref.current === null) { return }
         const element = (ref.current as unknown) as HTMLImageElement;
+        if (!element) return;
+        const width = element.naturalWidth;
+        const height = element.naturalHeight;
         setDim(_ => [ element.naturalWidth, element.naturalHeight ]);
+        console.log(`natural image dim called: ${width}, ${height}`);
     }, [ check ]);
 
     return { dim, reload };
