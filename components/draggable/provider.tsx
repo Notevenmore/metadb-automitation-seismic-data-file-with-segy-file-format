@@ -1,6 +1,7 @@
 import { Dispatch, PropsWithChildren, createContext, useEffect, useReducer } from "react";
 import { DraggableAct, DraggableAction, DraggableState, INITIAL_DRAGGABLE_STATE } from "./types";
 import { draggableReducer } from "./reducer";
+import { useScrollOffset } from "../../pages/components/highlight_viewer";
 
 export type DraggableContextProps = {
     state: DraggableState,
@@ -14,13 +15,15 @@ export const DraggableContext = createContext<DraggableContextProps>({
 
 export const DraggableProvider = ({ children }: PropsWithChildren<{}>) => {
     const [ state, dispatch ] = useReducer(draggableReducer, INITIAL_DRAGGABLE_STATE);
+    const offset = useScrollOffset();
 
     useEffect(() => {
         function onMouseMove(event: MouseEvent) {
+            const [xOffset, yOffset] = offset;
             dispatch({
                 act: DraggableAct.SET_MOUSE_POSITION,
-                x: event.clientX,
-                y: event.clientY
+                x: event.clientX + xOffset,
+                y: event.clientY + yOffset
             });
         }
 
@@ -46,7 +49,7 @@ export const DraggableProvider = ({ children }: PropsWithChildren<{}>) => {
             document.removeEventListener('mousedown', onMouseDown);
             document.removeEventListener('mouseup', onMouseUp);
         }
-    }, []);
+    }, [offset]);
 
     return (
         <DraggableContext.Provider value={{ state, dispatch }}>

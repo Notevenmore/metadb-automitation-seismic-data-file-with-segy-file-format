@@ -669,14 +669,27 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
                 {state[ pageNo - 1 ]?.map(toRowComponent)}
                 <HeaderDivider />
               </HeaderTable>
-              <div>
+              <div
+                  style={{
+                    outline: "1px solid green",
+                  }}
+              >
                 <Draggables />
                 {/* eslint-disable-next-line @next/next/no-img-element  */}
-                <img src={imageBase64Str} alt="" className="object-contain m-auto" ref={imageRef} onLoad={() => {
-                  naturalReload();
-                  actualReload();
-                  console.log("reloaded");
-                }} />
+                <img
+                  src={imageBase64Str}
+                  alt=""
+                  className="object-contain m-auto"
+                  ref={imageRef}
+                  style={{
+                    outline: "1px solid purple",
+                    margin: "0px"
+                  }}
+                  onLoad={() => {
+                    naturalReload();
+                    actualReload();
+                    console.log("reloaded");
+                  }} />
               </div>
             </div>
             <ButtonsSection>
