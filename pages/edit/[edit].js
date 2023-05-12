@@ -32,15 +32,21 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
         if (!IsSaved) return (e.returnValue = warningText);
         return;
     };
+
+    // This function handles navigation away from the current page by checking whether unsaved changes are present and displaying a warning dialog if necessary
     const handleBrowseAway = (url, { shallow }) => {
         if (!IsSaved) {
+            // If there are unsaved changes, prompt the user with a warning dialog
             if (url === router.asPath || !window.confirm(warningText)) {
+                // Emit a routeChangeError event and throw an error to prevent navigation away from the page
                 router.events.emit('routeChangeError');
                 throw 'routeChange aborted.';
             }
         }
+        // If there are no unsaved changes, allow navigation away from the page
         return;
     };
+
     const newBibliography = {
         ppdm_guid: '1',
         publisher: 'Indonesian Petroleum Association (IPA)',
@@ -51,54 +57,70 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
         document_type: 'proceeding',
         data_store_name: 'https://google.com/'
     }
-    const append_data = async (form_type) => {
-        const data = await fetch(`http://127.0.0.1:9090/api/v1/${form_type}`, {
+
+    const upload_data_new = async (form_type, new_data) => {
+        const data = await fetch(`http://localhost:9090/api/v1/${form_type}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: newBibliography
-        }).then(response => {
-            return response.json()
+            body: JSON.stringify({new_data})
+        // }).then(response => {
+        //     return response.json()
         }).then(response => {
             console.log(response)
             return response
         }).catch(err => { throw err })
-        await setData(data)
+        // await setData(data)
     }
 
+    
+    // This function retrieves data from a server API based on the form_type parameter, and updates the state with the retrieved data
     const get_data = async (form_type) => {
-        const data = await fetch(`http://127.0.0.1:9090/api/v1/${form_type}`, {
+
+        // Make an HTTP GET request to the server API
+        const data = await fetch(`http://localhost:9090/api/v1/${form_type}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
             },
-        }).then(response => {
+        })
+        .then(response => {
+            // Parse the response into JSON format
             return response.json()
-        }).then(response => {
-            console.log(response)
-            return response
-        }).catch(err => { throw err })
-        await setData(data)
+        })
+        .then(response => {
+            // Log the response to the console for debugging purposes
+            console.log(response);
+            // Return the response data
+            return response;
+        })
+        .catch(err => { 
+            // If there is an error, throw it
+            throw err;
+        });
+
+        // Set the state data using the retrieved data
+        await setData(data);
     }
 
+
     // TODO TEMPORARY WORKFLOW FOR DEMO, CHANGE LATER TO USE DATABASE
+    // This useEffect hook sets up the initial data for the workspace based on the workspace name and form type
     useEffect(() => {
         const init_data = async () => {
             try {
                 // setting the workspace data
                 const workspace_name_space = workspace_name.replace(/\_/g, ' ')
                 let workspace_names
+                // Get the list of workspace names from local storage based on the form type
                 if (router?.query?.form_type === "printed_well_report") {
                     workspace_names = JSON.parse(localStorage.getItem("pwr")) || pwr
-
                 } else if (router?.query?.form_type === "bibliography") {
                     workspace_names = JSON.parse(localStorage.getItem("bibliography")) || bibliography
                 }
-                // console.log(workspace_names, typeof (workspace_names))
-                // console.log(typeof ([1, 2, 3, 4]))
-                // console.log([{ 1: 1 }, { 1: 1 }])
-                // [1, 2, 3, 4].some(a => { console.log(a) })
+                
+                // Check if the current workspace name is in the list of workspace names
                 workspace_names.some((name) => {
                     console.log(workspace_name_space, name)
                     if (workspace_name_space.toLowerCase() === name.Name.toLowerCase()) {
@@ -106,14 +128,16 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
                         return true
                     }
                 });
+                console.log(workspace_names)
 
-                // getting and setting the data
+                // Get the data for the current workspace from local storage
                 let data
                 if (workspace_name === "new_document") {
                     data = JSON.parse(localStorage.getItem("ocr_data"))
                 } else {
                     data = JSON.parse(localStorage.getItem(workspace_name))
                     if (!data) {
+                        // If there is no data for the workspace, use the default data for the form type
                         if (router.query.form_type === "printed_well_report") {
                             data = pwr_data
                         } else if (router.query.form_type === "bibliography") {
@@ -123,17 +147,20 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
                     console.log(data)
                 }
 
+                // Set the data and workspace name in state
                 setData(data)
                 setWorkspaceName(workspace_name.replace(/\_/g, ' '))
 
             } catch (error) {
+                // Handle any errors that occur during initialization
                 setMessage({ message: String(error), color: "red" })
                 console.log(error)
             }
         }
+        // Call init_data to set up the workspace data
         init_data();
     }, [])
-
+    
     useEffect(() => {
         console.log(Data.length)
     }, [Data])
@@ -166,14 +193,21 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
         };
     }, [IsSaved])
 
+    // TODO change to POST request to backend
+    // This function handles the saving of the document/workspace
     const saveDocument = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         try {
+            // Check if spreadsheetId is available
             if (!spreadsheetId) {
-                setMessage({ message: "Failed to get spreadsheet information, please reload this page. Changes will not be saved", color: "red" })
-                return
+                setMessage({ message: "Failed to get spreadsheet information, please reload this page. Changes will not be saved", color: "red" });
+                return;
             }
-            setMessage({ message: "Saving workspace... Please don't leave this page or click anything", color: "blue" })
+
+            // Set saving message
+            setMessage({ message: "Saving workspace... Please don't leave this page or click anything", color: "blue" });
+
+            // Fetch spreadsheet data from the server
             const spreadsheet_data = await fetch("http://localhost:5050/getRows", {
                 method: "POST",
                 headers: {
@@ -183,41 +217,56 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
                     form_type: router.query.form_type,
                     spreadsheetID: spreadsheetId
                 })
-            }).then(response => {
-                return response.json()
-            }).then(response => {
+            })
+            .then(response => {
+                return response.json();
+            })
+            .then(response => {
+                // Handle non-200 response status
                 if (response.status !== 200) {
-                    throw response.response
+                    throw response.response;
                 }
-                return response
-            }).catch(err => { throw err })
+                return response;
+            })
+            .catch(err => { throw err; });
 
-            let final = []
+            // Prepare the final data to be saved
+            let final = [];
             for (let idx_row = 1; idx_row < spreadsheet_data.response.length; idx_row++) {
-                let row = {}
-                console.log(idx_row)
+                let row = {};
+                console.log(idx_row);
                 spreadsheet_data.response[0].forEach((header, idx_col) => {
-                    row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] || ""
+                    row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] || "";
                 });
-                console.log(row)
-                final.push(row)
+                console.log(row);
+                final.push(row);
             }
 
+            final.forEach((row) => {
+                console.log(row);
+                upload_data_new("bibliography", row);
+            })
+
+            // Save the data based on the workspace_name and form_type
             if (workspace_name === "new_document") {
-                localStorage.setItem("ocr_data", JSON.stringify(final))
+                localStorage.setItem("ocr_data", JSON.stringify(final));
             } else {
                 if (router.query.form_type === "printed_well_report") {
-                    localStorage.setItem("pwr_2023_report", JSON.stringify(final))
+                    localStorage.setItem("pwr_2023_report", JSON.stringify(final));
                 } else if (router.query.form_type === "bibliography") {
-                    localStorage.setItem("bibliography_report_final", JSON.stringify(final))
+                    localStorage.setItem("bibliography_report_final", JSON.stringify(final));
                 }
             }
-            setIsSaved(true)
-            setMessage({ message: "Workspace successfully saved", color: "blue" })
+
+            // Set IsSaved to true and display success message
+            setIsSaved(true);
+            setMessage({ message: "Workspace successfully saved", color: "blue" });
         } catch (error) {
-            setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${String(error)}`, color: "red" })
+            // Handle error and display error message
+            setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${String(error)}`, color: "red" });
         }
     }
+
 
     return (
         (Data.length >= 1) ? (
