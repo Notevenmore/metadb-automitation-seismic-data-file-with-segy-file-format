@@ -492,6 +492,18 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
       if (words) {
         setDropDownOptions(_ => words);
       }
+
+      const dragDataResponse = await fetchDraggableData(docId, pageNo);
+      if (dragDataResponse.body === null) return;
+      const dragDataResponseBody = dragDataResponse.body;
+      const newDragData: DraggableData[] = dragDataResponseBody.map(it => {
+        const bound: Tuple4<number> = [it.bound[0] - 5, it.bound[1] - 5, it.bound[2] + 5, it.bound[3] + 5];
+        const width = Math.abs(bound[0] - bound[2]);
+        const height = Math.abs(bound[1] - bound[3]);
+        return {word: it.word, dim: [width, height], initialPos: [bound[1], bound[0]], src: generateDragImageSrc(docId, pageNo, bound)};
+      });
+      setDragData(newDragData);
+
     }
     onPageChange();
   }, [ pageNo ]);
@@ -530,8 +542,6 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
         const dragDataResponse = await fetchDraggableData(docId, pageNo);
         if (dragDataResponse.body === null) return;
         const dragDataResponseBody = dragDataResponse.body;
-        console.log("drag body");
-        console.log(dragDataResponseBody);
         const newDragData: DraggableData[] = dragDataResponseBody.map(it => {
           const bound: Tuple4<number> = [it.bound[0] - 5, it.bound[1] - 5, it.bound[2] + 5, it.bound[3] + 5];
           const width = Math.abs(bound[0] - bound[2]);

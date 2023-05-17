@@ -64,7 +64,7 @@ export function DraggableBox({
                     top: `${item?.y ?? 0}px`,
                     left: `${item?.x ?? 0}px`,
                     border: "1px solid blue",
-                    // ...(!item?.holding ? ({transition: "all 300ms ease-out"}) : ({}))
+                    ...(!item?.holding ? ({transition: "all 300ms ease-out"}) : ({}))
                     
                 }}>
                     {children}

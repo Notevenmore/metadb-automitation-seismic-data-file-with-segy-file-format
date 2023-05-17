@@ -224,6 +224,7 @@ const actor = {
         const newItem = {
             ...oldItem,
             holding: true,
+            canHold: false,
             moveStart: [oldItem.y, oldItem.x],
             mouseD: [
                 Math.abs(state.mousePosition[0] - oldItem.y),
@@ -268,6 +269,9 @@ const actor = {
             ...newState,
             draggableItems: newDraggableItems
         };
+        newState = draggableReducer(newState, {
+            act: DraggableAct.CLEAR_ALL_DRAG_ITEM_CAN_HOLD
+        });
         newState = draggableReducer(newState, {
             act: DraggableAct.CLEAR_ALL_DRAG_ITEM_HOLDING
         });
