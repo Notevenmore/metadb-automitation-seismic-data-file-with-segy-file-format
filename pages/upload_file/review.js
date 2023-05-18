@@ -291,7 +291,7 @@ export default function UploadFileReview({ setTitle }) {
                         // type="dropdown"
                         type="text"
                         name={"dataType"}
-                        defaultValue={router.query.form_type.replace(/\_/g, " ")}
+                        defaultValue={router.query.form_type?.replace(/\_/g, " ") || "basin"}
                         // placeholder={"Seismic data"}
                         // dropdown_items={["Well"]}
                         // required={true}
@@ -349,10 +349,10 @@ export default function UploadFileReview({ setTitle }) {
                 :
                 null}
             {(document_summary?.body.page_count > 1) ? (
-                <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full">
-                    <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border">
+                <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
+                    <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
                         <Buttons path="" title="Previous page" button_description="" additional_styles="bg-white border-2 p-3 hover:bg-gray-200" onClick={(e) => { e.preventDefault(); setPageNo(page_no => { return page_no - 1 }) }} disabled={PageNo <= 0 ? true : false} ><div className="w-5 h-5"><ChevronLeft /></div></Buttons>
-                        <Buttons path="" title="" button_description="" additional_styles="bg-white border-2 p-3 hover:bg-white cursor-default"><p className="w-5 h-5">{PageNo + 1}</p></Buttons>
+                        <div title="Page number" className="bg-white border-2 p-3 cursor-default select-none rounded-lg text-center"><p className="w-5 h-5">{PageNo + 1}</p></div>
                         <Buttons path="" title="Next page" button_description="" additional_styles="bg-white border-2 p-3 hover:bg-gray-200" onClick={(e) => { e.preventDefault(); setPageNo(page_no => { return page_no + 1 }) }} disabled={PageNo >= document_summary.body.page_count - 1 ? true : false}><div className="w-5 h-5"><ChevronRight /></div></Buttons>
                     </div>
                 </div>
