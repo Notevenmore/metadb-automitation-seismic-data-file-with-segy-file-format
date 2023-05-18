@@ -372,6 +372,7 @@ export default function MatchingGuided() {
       const cpair = final[pageNo - 1].find((pair) => pair.id === id);
       const newPair = { ...cpair, value };
       final[pageNo - 1] = [...final[pageNo - 1].slice(0, index), newPair, ...final[pageNo - 1].slice(index + 1)]
+      console.log(final)
       return { ...final };
     });
 
@@ -429,20 +430,22 @@ export default function MatchingGuided() {
       <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
         <HeaderTable>
           {state[pageNo - 1]?.map(toRowComponent)}
-          <HeaderDivider />
+          {/* <HeaderDivider /> */}
         </HeaderTable>
-        <ImageEditor boundsObserver={boundsObserver} imageUrl={generateImageUrl(docId, pageNo)} />
+        <div className="h-[calc(100vh-55px)] sticky top-0 grid grid-cols-1 rounded-lg overflow-clip">
+          <ImageEditor boundsObserver={boundsObserver} imageUrl={generateImageUrl(docId, pageNo)} />
+        </div>
       </div>
       {(totalPageNo > 1) ? (
-        <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full">
-          <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border">
+        <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
+          <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
             {/* {Array.from({ length: totalPageNo }, (item, index) =>
           <Buttons path={} title="" button_description="" additional_styles="" key={index} />
         )} */}
             {/* @ts-ignore */}
             <Buttons path="" title="Previous page" button_description="" additional_styles="bg-white border-2 p-3 hover:bg-gray-200" onClick={prevPage} disabled={pageNo > 1 ? false : true} ><div className="w-5 h-5"><ChevronLeft /></div></Buttons>
             {/* @ts-ignore */}
-            <Buttons path="" title="" button_description="" additional_styles="bg-white border-2 p-3 hover:bg-white cursor-default"><p className="w-5 h-5">{pageNo}</p></Buttons>
+            <div path="" title="" button_description="" className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg"><p className="w-5 h-5">{pageNo}</p></div>
             {/* @ts-ignore */}
             <Buttons path="" title="Next page" button_description="" additional_styles="bg-white border-2 p-3 hover:bg-gray-200" onClick={nextPage} disabled={pageNo >= totalPageNo ? true : false}><div className="w-5 h-5"><ChevronRight /></div></Buttons>
           </div>
