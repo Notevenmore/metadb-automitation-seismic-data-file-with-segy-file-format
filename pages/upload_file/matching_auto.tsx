@@ -537,6 +537,9 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
     </div>
   ) };
 
+  // TODO HAVE NOT BEEN INTEGRATED YET
+  // TODO INTEGRATE THIS WORKFLOW TO THE MAIN APP. 
+
   return (
     Loading ?
       <div className="w-full h-full flex flex-col items-center justify-center space-y-3">

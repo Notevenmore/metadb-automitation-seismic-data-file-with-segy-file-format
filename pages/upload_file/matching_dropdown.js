@@ -127,7 +127,7 @@ const uploadImage = async (imageBase64Str) => {
     return { status: "success", body: { ...JSON.parse(result) } };
   } catch (e) {
     console.log(e);
-    return { status: "failed", body: null}
+    return { status: "failed", body: null }
   }
 }
 
@@ -166,7 +166,7 @@ const fetchDocumentSummary = (async (docId) => {
       requestOptions
     );
     const result = await response.text();
-    return { status: "success", body: { ...JSON.parse(result)}};
+    return { status: "success", body: { ...JSON.parse(result) } };
   } catch (e) {
     console.log(e);
     return { status: "failed", body: null };
@@ -382,7 +382,7 @@ export default function MatchReview({ setTitle }) {
   useEffect(() => {
     localStorage.setItem("reviewUploadedImage", imageBase64Str)
   }, [imageBase64Str])
-  
+
 
 
   const handleUploadButtonClick = (_) => {
@@ -429,7 +429,7 @@ export default function MatchReview({ setTitle }) {
     localStorage.setItem('reviewData', JSON.stringify(state))
     console.log(localStorage.getItem('reviewData'))
   }, [state])
-  
+
 
   const removePair = (id) => {
     setState((state) => {
@@ -496,6 +496,8 @@ export default function MatchReview({ setTitle }) {
     </div>
   );
 
+  // TODO FIX THIS WORKFLOW TO INCLUDE MULTIPLE PAGES AND INTERACTIVE DOCUMENT VIEWER
+  
   return (
     Loading ?
       <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
@@ -542,8 +544,8 @@ export default function MatchReview({ setTitle }) {
             Cancel
           </Buttons> */}
           <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" />
-          <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage}/>
-          <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage}/>
+          <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} />
+          <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} />
         </ButtonsSection>
         <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
           <p>{Message}</p>
