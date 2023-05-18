@@ -41,8 +41,34 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
         }
         return;
     };
+    const newBibliography = {
+        ppdm_guid: '1',
+        publisher: 'Indonesian Petroleum Association (IPA)',
+        document_title: 'The Occurence of Hydrocarbon in Overpressured Reservoirs of the Baram Delta (Offshore Sarawak, Malaysia)',
+        issue: "Fifth",
+        author_id: "G.Schaar",
+        publication_date: '01/06/1976',
+        document_type: 'proceeding',
+        data_store_name: 'https://google.com/'
+    }
+    const append_data = async (form_type) => {
+        const data = await fetch(`http://127.0.0.1:9090/api/v1/${form_type}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: newBibliography
+        }).then(response => {
+            return response.json()
+        }).then(response => {
+            console.log(response)
+            return response
+        }).catch(err => { throw err })
+        await setData(data)
+    }
+
     const get_data = async (form_type) => {
-        const data = await fetch(`http://127.0.0.1:8080/api/v1/${form_type}`, {
+        const data = await fetch(`http://127.0.0.1:9090/api/v1/${form_type}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
