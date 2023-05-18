@@ -59,7 +59,7 @@ export default function UploadFilePage({ setTitle }) {
 	setTitle("Upload file")
 	const router = useRouter();
 	const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
-	const additional_styles_label = "w-[20%]";
+	const additional_styles_label = "w-[20%] font-semibold";
 	const [fileUpload, setFileUpload] = useState([]);
 	const [previousSelectedMethod, setpreviousSelectedMethod] = useState()
 	// const [DataType, setDataType] = useState()
@@ -272,7 +272,7 @@ export default function UploadFilePage({ setTitle }) {
 				<div className="flex flex-row gap-x-3 pt-3 pb-16">
 					<Buttons
 						type="submit"
-						path={(fileUpload.length >= 1 && UplSettings.DataType && UplSettings.FileFormat && UplSettings.Method) ? UplSettings.Method === "dropdown" ? '/upload_file/matching_dropdown' : UplSettings.Method === "highlight" ? '/upload_file/matching_highlight' : UplSettings.Method === "dragdrop" ? '/upload_file/matching_dragdrop' : '/upload_file/matching_auto' : ''}
+						path={(fileUpload.length >= 1 && UplSettings.DataType && UplSettings.FileFormat && UplSettings.Method) ? UplSettings.Method === "dropdown" ? '/upload_file/matching_dropdown' : UplSettings.Method === "highlight" ? '/upload_file/matching_highlight' : UplSettings.Method === "dragdrop" ? '/upload_file/matching_draggable' : '/upload_file/matching_auto' : ''}
 						query={
 							{ form_type: datatypes[UplSettings.DataType] }
 						}
