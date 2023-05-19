@@ -45,7 +45,7 @@ export default function UploadFileReview({ setTitle }) {
                 for (let idx = 0; idx < document_summary.body.page_count; idx++) {
                     let row = {}
                     Object.values(review_data[idx]).map((item) => {
-                        row[item.key] = item.value
+                        row[item.key.toLowerCase()] = item.value
                     })
                     final.push(row)
                 }
