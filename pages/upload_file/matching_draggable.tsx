@@ -477,6 +477,7 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
   const files: FileList = useSelector((state) => state.general.file)
   const router = useRouter()
   const dispatch = useDispatch()
+  const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
 
   const setDocId = ((newDocId: string) => {
     if (docId === null) {
@@ -594,7 +595,7 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
             return response.json()
           }).catch(error => { throw error })
 
-          setLoading(`Getting appropriate properties for data type ${router.query.form_type}`)
+          setLoading(`Setting appropriate properties for data type ${router.query.form_type}`)
           let temp_obj = []
           for (let idx = 0; idx < summaryResponse.body.page_count; idx++) {
             let temp = []
@@ -608,16 +609,16 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
             temp_obj.push(temp)
           }
           setState(temp_obj)
-          setLoading(null);
-
-
+          setLoading("");
         } catch (error) {
           setError(String(error))
         }
       }
       router.events.emit("routeChangeComplete")
       setLoading("")
-      setMessage("Make sure you have inputted all of the data correctly before proceeding to the next step (viewing the data in spreadsheet form).")
+      setTimeout(() => {
+        setMessage("Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.")
+      }, 3000)
     }
     init()
   }, [files])
@@ -625,8 +626,6 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
   useEffect(() => {
     localStorage.setItem("reviewUploadedImage", imageBase64Str)
   }, [imageBase64Str])
-
-
 
   const setValueForId = (id: number, pageNo: number, value: string) => {
     setState((state) => {
@@ -664,16 +663,15 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
     });
   });
 
-  useEffect(() => {
-    localStorage.setItem('reviewData', JSON.stringify(state))
-  }, [state])
-
+  // useEffect(() => {
+  //   localStorage.setItem('reviewData', JSON.stringify(state))
+  // }, [state])
 
   const toRowComponent = (data: TableRow) => {
     return (
       <div key={data.id}>
         <HeaderDivider />
-        <HeaderInput label1={data.key}>
+        <HeaderInput label1={data.key.replace(/\_/g, " ").split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}>
           <DroppableBox onDrop={drop => setValueForId(data.id, pageNo, `${data.value.trim()} ${drop.trim()}`.trim())}>
             <Input
               value={data.value}
@@ -743,11 +741,16 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
       ) : (
         <DraggableProvider>
           <Container additional_class="full-height relative">
-            <Container.Title>Data Matching</Container.Title>
+            <Container.Title>
+              <div className="-space-y-2">
+                <p className="capitalize text-sm font-normal">{path_query}</p>
+                <p>Data Matching</p>
+              </div>
+            </Container.Title>
             <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
               <HeaderTable>
                 {state[pageNo - 1]?.map(toRowComponent)}
-                <HeaderDivider />
+                {/* <HeaderDivider /> */}
               </HeaderTable>
               <div
                 // style={{
