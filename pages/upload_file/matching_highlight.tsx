@@ -322,7 +322,7 @@ export default function MatchingGuided() {
             return response.json()
           }).catch(error => { throw error })
 
-          setLoading(`Getting appropriate properties for data type ${router.query.form_type}`)
+          setLoading(`Setting appropriate properties for data type ${router.query.form_type}`)
           let temp_obj = {}
           for (let idx = 0; idx < summaryResponse.body.page_count; idx++) {
             let temp = []
@@ -343,7 +343,9 @@ export default function MatchingGuided() {
       }
       router.events.emit("routeChangeComplete");
       setLoading(null);
-      setMessage("Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.")
+      setTimeout(() => {
+        setMessage("Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.")
+      }, 3000)
     };
     init();
   }, []);
@@ -432,9 +434,9 @@ export default function MatchingGuided() {
           {state[pageNo - 1]?.map(toRowComponent)}
           {/* <HeaderDivider /> */}
         </HeaderTable>
-        <div className="h-[calc(100vh-55px)] sticky top-0 grid grid-cols-1 rounded-lg overflow-clip">
-          <ImageEditor boundsObserver={boundsObserver} imageUrl={generateImageUrl(docId, pageNo)} />
-        </div>
+        <ImageEditor boundsObserver={boundsObserver} imageUrl={generateImageUrl(docId, pageNo)} />
+        {/* <div className="h-[calc(100vh-55px)] sticky top-0 grid grid-cols-1 rounded-lg overflow-clip">
+        </div> */}
       </div>
       {(totalPageNo > 1) ? (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
