@@ -8,10 +8,15 @@ import HeaderTable, {
   ButtonsSection,
   HeaderInput,
 } from "../../components/header_table/header_table";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setDocumentSummary, setReviewData } from "../../store/generalSlice";
 import { useRouter } from "next/router";
 import { PropsWithChildren } from "react";
 import { ReactNode } from "react";
+import { ImageEditor, Tuple4 } from "../components/highlight_viewer";
+import ChevronLeft from '../../public/icons/chevron-left.svg'
+import ChevronRight from '../../public/icons/chevron-right.svg'
+import Highlight from 'react-highlight'
 
 interface FullButtonProps {
   onClick: () => void
@@ -204,7 +209,7 @@ const fetchDocumentSummary = (async (docId: string): Promise<DocumentSummaryResp
       requestOptions
     );
     const result = await response.text();
-    return { status: "success", body: { ...JSON.parse(result)}};
+    return { status: "success", body: { ...JSON.parse(result) } };
   } catch (e) {
     console.log(e);
     return { status: "failed", body: null };
@@ -384,7 +389,8 @@ const INITIAL_STATE: State = [
 
 export default function MatchReview({ setTitle }: MatchReviewProps) {
   setTitle("Upload File - Data Matching")
-  const [state, setState] = useState<State>(INITIAL_STATE);
+  // const [state, setState] = useState<State>([INITIAL_STATE]);
+  const [state, setState] = useState<State>([]);
   const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
   const [imageBase64Str, setImageBase64Str] = useState("");
   const [docId, _setDocId] = useState<string | null>(null);
@@ -392,9 +398,15 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState("")
   const [Message, setMessage] = useState("")
+  const [formType, setformType] = useState<string>("")
+  const [error, setError] = useState<string>("")
+
   // @ts-ignore
   const files: FileList = useSelector((state) => state.general.file)
+
   const router = useRouter()
+  const dispatch = useDispatch()
+  const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
 
   const setDocId = ((newDocId: string) => {
     if (docId === null) {
@@ -428,6 +440,15 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
   });
 
   useEffect(() => {
+    if (router.query.form_type) {
+      setformType(String(router.query.form_type))
+    }
+  }, [router])
+
+  const delay = delay_amount_ms =>
+    new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
+
+  useEffect(() => {
     const init = async () => {
       router.events.emit("routeChangeStart")
       setLoading("Reading data... Please wait for a moment")
@@ -435,44 +456,121 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
         router.push("/upload_file")
         return
       } else {
-        const file = files[0];
-        if (!file) return;
+        try {
+          const file = files[0];
+          if (!file) {
+            throw "No file was uploaded. Please try again by clicking the button below to re-upload your document."
+          };
 
-        const imageBase64Str = await toBase64(file);
-        const uploadResponse = await uploadImage(imageBase64Str);
-        if (uploadResponse.body === null) return;
-        const { doc_id: docId } = uploadResponse.body;
+          const imageBase64Str = await toBase64(file);
+          setLoading("Uploading document...")
+          const uploadResponse = await uploadImage(imageBase64Str);
+          if (uploadResponse.body === null) {
+            throw "Something went wrong with the OCR service. Response body returned null on file upload."
+          };
+          const { doc_id: docId } = uploadResponse.body;
 
-        const summaryResponse = await fetchDocumentSummary(docId);
-        const pageCount = summaryResponse.body?.page_count;
-        if (pageCount === undefined) return;
-        setTotalPageNo(_ => pageCount);
-        setDocId(docId);
-        const scrapeResponse = await postScrapeAnnotate(docId, pageNo);
-        const words = scrapeResponse.body?.words;
-        if (words === undefined) return;
-        setImageBase64Str((_) => generateImageUrl(docId, pageNo));
-        setDropDownOptions((_) => words);
-        for (let pageNo = 1; pageNo <= pageCount; pageNo++) {
-          const autoFillResponse = await fetchAutoFill(docId, pageNo);
-          const _pairs = autoFillResponse.body?.pairs;
-          if (!_pairs) return;
-          const pairs: Map<string, string> = new Map(Object.entries(_pairs));
-          setPairs(pairs, pageNo);
+          setLoading("Getting uploaded document's summary...")
+          const summaryResponse = await fetchDocumentSummary(docId);
+          const pageCount = summaryResponse.body?.page_count;
+          if (pageCount === undefined) {
+            throw "Something went wrong with the OCR service. Response body returned null on document summary."
+          };
+          setTotalPageNo(_ => pageCount);
+          dispatch(setDocumentSummary({ ...summaryResponse, document_id: docId }))
+          setDocId(docId);
+          setLoading("Reading and populating data...")
+          const scrapeResponse = await postScrapeAnnotate(docId, pageNo);
+          const words = scrapeResponse.body?.words;
+          if (words === undefined) {
+            throw "Something went wrong with the OCR service. Response body returned null on word scraping."
+          };
+          setImageBase64Str((_) => generateImageUrl(docId, pageNo));
+          setDropDownOptions((_) => words);
+
+          setLoading(`Getting appropriate properties for data type ${router.query.form_type}`)
+          const row_names = await fetch('http://localhost:5050/getHeaders', {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            // TODO change form_type to be dynamic later
+            // FINISHED
+            body: JSON.stringify({
+              form_type: router.query?.form_type || "basin"
+            })
+          }).then(response => {
+            return response.json()
+          }).catch(error => { throw error })
+
+          setLoading(`Setting appropriate properties for data type ${router.query.form_type}`)
+          let temp_obj = []
+          for (let idx = 0; idx < summaryResponse.body.page_count; idx++) {
+            let temp = []
+            row_names.response.forEach((row_name, index) => {
+              temp.push({
+                id: index,
+                key: row_name,
+                value: "",
+              },)
+            });
+            temp_obj.push(temp)
+          }
+          setState(temp_obj)
+
+          // setLoading("Predicting matches, this may take a while...")
+          // for (let pageNo = 1; pageNo <= pageCount; pageNo++) {
+          //   const autoFillResponse = await fetchAutoFill(docId, pageNo);
+          //   const _pairs = autoFillResponse.body?.pairs;
+          //   console.log(_pairs)
+          //   if (!_pairs) {
+          //     throw "Something went wrong while generating data pairs. autoFillResponse returned null."
+          //   };
+          //   const pairs: Map<string, string> = new Map(Object.entries(_pairs));
+          //   setPairs(pairs, pageNo);
+          // }
+          setLoading("Awaiting state update...")
+          // continue to the useeffect hook directly below this one
+        } catch (error) {
+          setError(String(error))
         }
       }
-      router.events.emit("routeChangeComplete")
-      setLoading("")
     }
     init()
-    setMessage("Make sure you have inputted all of the data correctly before proceeding to the next step (viewing the data in spreadsheet form).")
   }, [files])
 
+  // continue here to ensure that the state has been updated based on the 
+  // requested data type before proceeding to do any matching prediction tasks
   useEffect(() => {
-    localStorage.setItem("reviewUploadedImage", imageBase64Str)
-  }, [imageBase64Str])
-  
+    if (state?.length > 0 && Loading === "Awaiting state update...") {
+      const predict_matches = async () => {
+        try {
+          for (let pageNo = 1; pageNo <= totalPageNo; pageNo++) {
+            setLoading(`Predicting matches for page ${pageNo}, this may take a while...`)
+            const autoFillResponse = await fetchAutoFill(docId, pageNo);
+            const _pairs = autoFillResponse.body?.pairs;
+            console.log(_pairs)
+            if (!_pairs) {
+              throw "Something went wrong while generating data pairs. autoFillResponse returned null."
+            };
+            const pairs: Map<string, string> = new Map(Object.entries(_pairs));
+            setPairs(pairs, pageNo);
+          }
+          setLoading("")
+          setTimeout(() => {
+            setMessage("Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.")
+          }, 3000)
+        } catch (error) {
+          setError(String(error))
+        }
+      }
+      predict_matches()
+    }
+  }, [state, Loading])
 
+  // useEffect(() => {
+  //   localStorage.setItem("reviewUploadedImage", imageBase64Str)
+  // }, [imageBase64Str])
 
   const setValueForId = (id: number, pageNo: number, value: string) => {
     setState((state) => {
@@ -489,6 +587,8 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
   const setPairs = ((pair: Map<string, string>, pageNo: number) => {
     setState((state) => {
       const keys = Array.from(pair.keys());
+      // convert all keys to lowercase to match backend (database) // nevermind failed miserably
+      // const keys = Array.from(pair.keys()).map(key => { return key.toLowerCase() })
       const table = state[pageNo - 1];
       if (!table) return state;
       let indexes: number[] = [];
@@ -510,69 +610,122 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
     });
   });
 
-  useEffect(() => {
-    localStorage.setItem('reviewData', JSON.stringify(state))
-  }, [state])
-  
+  const saveChanges = (e) => {
+    e.preventDefault()
+    let final = []
+    setMessage("Loading... please wait")
+    try {
+      for (let page = 0; page < state.length; page++) {
+        // convert all keys to lowercase to match database
+        const temp_obj = Object.fromEntries(
+          Object.entries(state[page]).map(([k, v]) => [k.toLowerCase(), v])
+        );
+        final.push(temp_obj)
+      }
+    } catch (error) {
+      setMessage("Something happened while sending the data to the next page. Please try again later or contact maintainer if the problem persists.")
+      return
+    }
+    setMessage("")
+    dispatch(setReviewData(final))
+    localStorage.setItem('hello_world', JSON.stringify(final))
+    router.push({
+      pathname: "/upload_file/review",
+      query: { form_type: formType }
+    })
+  }
 
-  const toRowComponent = (data: TableRow) => { 
+  const toRowComponent = (data: TableRow) => {
     return (
-    <div key={data.id}>
-      <HeaderDivider />
-      <HeaderInput label1={data.key}>
-        <Input
-          value={data.value}
-          type="dropdown"
-          name={"submissionType"}
-          placeholder={"Value"}
-          // @ts-ignore
-          dropdown_items={dropDownOptions}
-          required={true}
-          // @ts-ignore
-          additional_styles="w-full"
-          onChange={(e) => setValueForId(data.id, pageNo, e.target.value)}
-          withSearch
-        />
-      </HeaderInput>
-    </div>
-  ) };
+      <div key={data.id}>
+        <HeaderDivider />
+        <HeaderInput label1={data.key.toLowerCase().replace(/\_/g, " ").split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}>
+          <Input
+            value={data.value}
+            type="dropdown"
+            name={"submissionType"}
+            placeholder={"Value"}
+            // @ts-ignore
+            dropdown_items={dropDownOptions}
+            required={true}
+            // @ts-ignore
+            additional_styles="w-full"
+            onChange={(e) => setValueForId(data.id, pageNo, e.target.value)}
+            withSearch
+          />
+        </HeaderInput>
+      </div>
+    )
+  };
 
   // TODO HAVE NOT BEEN INTEGRATED YET
   // TODO INTEGRATE THIS WORKFLOW TO THE MAIN APP. 
+  // DONE
 
   return (
-    Loading ?
-      <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
-        <div className="animate-spin border-4 border-t-transparent border-gray-500/[.7] rounded-full w-14 h-14"></div>
-        <p className="text-xl font-semibold text-gray-500">{Loading}</p>
-      </div>
-      :
-      <Container additional_class="full-height relative">
-        <Container.Title>Data Matching</Container.Title>
-        <div className="grid grid-cols-2">
-          <HeaderTable>
-            {state[pageNo - 1]?.map(toRowComponent)}
-            <HeaderDivider />
-          </HeaderTable>
-          <img src={imageBase64Str} alt="" className="object-contain m-auto" />
+    (Loading) ?
+      (
+        <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
+          <div className="animate-spin border-4 border-t-transparent border-gray-500/[.7] rounded-full w-14 h-14"></div>
+          <p className="text-xl font-semibold text-gray-500">{Loading}</p>
         </div>
-        <ButtonsSection>
+      ) : (error) ? (
+        <div className="w-full h-full flex flex-col p-10 space-y-4">
+          <p className="font-bold text-lg text-red-500">Something happened. Please try again or contact administrator/maintainer if the problem still persists by giving them the information below:</p>
+          <Highlight className='html rounded-md border-2'>{error}</Highlight>
           {/* @ts-ignore */}
-          <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" />
-          {/* @ts-ignore */}
-          <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage}/>
-          {/* @ts-ignore */}
-          <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage}/>
-        </ButtonsSection>
-        <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
-          <p>{Message}</p>
-          {/* @ts-ignore */}
-          <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage("") }}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </Buttons>
+          <Buttons path="" button_description="Back" onClick={() => { router.back() }} />
         </div>
-      </Container>
+      ) : (
+        <Container additional_class="full-height relative">
+          <Container.Title>
+            <div className="-space-y-2">
+              <p className="capitalize text-sm font-normal">{path_query}</p>
+              <p>Data Matching</p>
+            </div>
+          </Container.Title>
+          <div className="grid grid-cols-2">
+            <HeaderTable>
+              {state[pageNo - 1]?.map(toRowComponent)}
+              {/* <HeaderDivider /> */}
+            </HeaderTable>
+            <ImageEditor boundsObserver={() => { }} imageUrl={imageBase64Str} />
+            {/* <img src={imageBase64Str} alt="" className="object-contain m-auto" /> */}
+          </div>
+          {(totalPageNo > 1) ? (
+            <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
+              <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
+                {/* @ts-ignore */}
+                <Buttons path="" title="Previous page" button_description="" additional_styles="bg-white border-2 p-3 hover:bg-gray-200" onClick={prevPage} disabled={pageNo > 1 ? false : true} ><div className="w-5 h-5"><ChevronLeft /></div></Buttons>
+                {/* @ts-ignore */}
+                <div path="" title="" button_description="" className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg"><p className="w-5 h-5">{pageNo}</p></div>
+                {/* @ts-ignore */}
+                <Buttons path="" title="Next page" button_description="" additional_styles="bg-white border-2 p-3 hover:bg-gray-200" onClick={nextPage} disabled={pageNo >= totalPageNo ? true : false}><div className="w-5 h-5"><ChevronRight /></div></Buttons>
+              </div>
+            </div>
+          ) : null}
+          <div className="flex items-center justify-center w-full py-4">
+            {/* @ts-ignore */}
+            <Buttons button_description="View on sheets" path="/upload_file/review" query={{ form_type: formType }} additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold" disabled={formType ? false : true} onClick={() => { dispatch(setReviewData(state)) }} />
+          </div>
+          <ButtonsSection>
+            {/* @ts-ignore */}
+            {/* <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" /> */}
+            {/* @ts-ignore */}
+            {/* <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} /> */}
+            {/* @ts-ignore */}
+            {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
+          </ButtonsSection>
+          <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
+            <p>{Message}</p>
+            {/* @ts-ignore */}
+            <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage("") }}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </Buttons>
+          </div>
+        </Container>
+      )
   );
 }
