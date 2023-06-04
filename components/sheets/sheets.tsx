@@ -149,11 +149,15 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                 try {
                     console.log("first")
                     setLoadingMsg("Appending OCR data to the spreadsheet")
-                    let data = props.data, final = []
+                    let data = props.data
                     console.log(data)
                     if (!data) {
                         throw new Error("Data not found. Make sure you correctly passed the data into the component.")
                     }
+                    // convert all keys to lowercase
+                    const final = Object.fromEntries(
+                        Object.entries(data).map(([k, v]) => [k.toLowerCase(), v])
+                    );
 
                     // TODO finish this new workflow
                     // ---| NEW WORKFLOW |---
@@ -166,7 +170,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({ ...props }) => {
                         body: JSON.stringify({
                             form_type: props.form_type,
                             spreadsheetID: sheetID,
-                            data: JSON.stringify(data)
+                            data: JSON.stringify(final)
                         })
                     }).then(response => {
                         return response.json()
