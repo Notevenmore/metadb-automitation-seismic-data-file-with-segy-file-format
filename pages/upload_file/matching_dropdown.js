@@ -600,7 +600,7 @@ export default function MatchReview({ setTitle }) {
         <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
           <HeaderTable>
             {state[pageNo - 1]?.map(toRowComponent)}
-            {/* <HeaderDivider /> */}
+            <HeaderDivider />
             {/* <HeaderRow>
             <FullButton onClick={addPair}>+</FullButton>
           </HeaderRow> */}
@@ -656,7 +656,7 @@ export default function MatchReview({ setTitle }) {
           <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} />
           <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
         </ButtonsSection>
-        <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-green-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
+        <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${Message ? "" : "-translate-y-20"}`}>
           <p>{Message}</p>
           <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage("") }}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
