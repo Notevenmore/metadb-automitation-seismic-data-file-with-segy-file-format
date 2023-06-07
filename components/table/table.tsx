@@ -3,8 +3,8 @@ import { useState, useEffect } from "react"
 
 
 const TableComponent = ({ header, content, with_checkbox = false, additional_styles = '',
-                         additional_styles_header='', additional_styles_row='', additional_styles_column='',
-                         setSelectedRows }) => {
+  additional_styles_header = '', additional_styles_row = '', additional_styles_column = '',
+  setSelectedRows, contentAlignWithHeader }) => {
   const [Selected, setSelected] = useState([])
   const tableData = {
     header: header,
@@ -49,29 +49,29 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
   }, [Selected])
 
   return (
-    <table 
-    className={
-      twMerge(
-        `table-fixed break-words overflow-x-scroll
+    <table
+      className={
+        twMerge(
+          `table-fixed break-words overflow-x-scroll
         border-separate border-spacing-0 border-2 border-solid border-black/20
         min-w-0 w-full rounded-lg text-[15px]`,
-        additional_styles
-      )
-    }>
+          additional_styles
+        )
+      }>
       <thead className="bg-gray-200">
         <tr className="text-left">
           {with_checkbox ?
-           <th className={twMerge("pl-[14px] pt-1 w-5", additional_styles_header)}>
-            <input type="checkbox" id="checkbox_all"
-             onClick={(e) => handleSelectAll(e)}
-            />
-           </th>
-          : null
+            <th className={twMerge("pl-[14px] pt-1 w-5", additional_styles_header)}>
+              <input type="checkbox" id="checkbox_all"
+                onClick={(e) => handleSelectAll(e)}
+              />
+            </th>
+            : null
           }
           {tableData.header.map((header, index) => {
             return (
-              <th key={index} 
-                  className={twMerge("pl-5 pr-2 py-2", additional_styles_header)}
+              <th key={index}
+                className={twMerge("pl-5 pr-2 py-2", additional_styles_header)}
               >
                 {header}
               </th>
@@ -83,38 +83,47 @@ const TableComponent = ({ header, content, with_checkbox = false, additional_sty
         {tableData.content.map((row, row_index) =>
           <tr key={row_index} id={'row_' + row_index} className="hover:bg-side_bar">
             {with_checkbox ?
-             <td className={twMerge("pl-[14px] pt-1 w-5 border-t-2 border-solid border-black/20", additional_styles_row)}>
-              <input id={'row_input_' + row_index} name="checkbox_row" type="checkbox"
-              onClick={
-                (e) => handleSelectRow(e, "row_input_" + row_index, "row_" + row_index)
-              }
-              />
-             </td>
-            : null
+              <td className={twMerge("pl-[14px] pt-1 w-5 border-t-2 border-solid border-black/20", additional_styles_row)}>
+                <input id={'row_input_' + row_index} name="checkbox_row" type="checkbox"
+                  onClick={
+                    (e) => handleSelectRow(e, "row_input_" + row_index, "row_" + row_index)
+                  }
+                />
+              </td>
+              : null
             }
-            {typeof row === 'object' && !Array.isArray(row) && row !== null ?
-              Object.values(row).map((column: any, column_index: number) => {
+            {contentAlignWithHeader ?
+              tableData.header.map(((header, idx) => {
                 return (
-                  <td key={column_index}
-                   className={
-                    twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)
-                  }>
-                    <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)} title={column}>
-                      {column}
+                  <td key={String(row) + header + idx}
+                    className={twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)}>
+                    <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)} title={row[header]}>
+                      {row[header]}
                     </div>
                   </td>
                 )
-              })
-              :
-              row.map((column: any, column_index: number) => {
-                return (
-                  <td key={column_index} className={twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)}>
-                    <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)} title={column}>
-                      {column}
-                    </div>
-                  </td>
-                )
-              })
+              }))
+              : typeof row === 'object' && !Array.isArray(row) && row !== null ?
+                Object.values(row).map((column: any, column_index: number) => {
+                  return (
+                    <td key={column_index}
+                      className={twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)}>
+                      <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)} title={column}>
+                        {column}
+                      </div>
+                    </td>
+                  )
+                })
+                :
+                row.map((column: any, column_index: number) => {
+                  return (
+                    <td key={column_index} className={twMerge("pl-5 pr-2 py-2 border-t-2 border-solid border-black/20", additional_styles_row)}>
+                      <div className={twMerge("whitespace-nowrap text-ellipsis overflow-hidden", additional_styles_column)} title={column}>
+                        {column}
+                      </div>
+                    </td>
+                  )
+                })
             }
           </tr>)}
       </tbody>
