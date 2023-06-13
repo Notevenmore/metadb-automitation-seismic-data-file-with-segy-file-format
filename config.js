@@ -10,7 +10,7 @@ export default {
 		view: "http://localhost:8080/api/v1/print-well-report/"
 	},
 	services: {
-		sheets: "http://localhost:5050/"
+		sheets: "http://localhost:5050"
 	}
 }
 
