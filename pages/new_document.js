@@ -242,18 +242,16 @@ export default function NewDocumentPage({ setTitle }) {
                         try {
                             let day, month, year, parts;
                             const input = spreadsheet_data?.response[idx_row][idx_col]
-                            const isAbbreviatedFormat = /^\d{2}-[A-Za-z]{3}-\d{4}$/.test(input);
-                            if (isAbbreviatedFormat) {
+                            if (input.includes("-")) {
                                 parts = input.split("-");
-                                day = parts[0];
-                                month = parts[1];
-                                year = parts[2];
-                            } else {
+                            } else if (input.trim().includes(" ")) {
                                 parts = input.split(" ");
-                                day = parts[0];
-                                month = parts[1];
-                                year = parts[2];
+                            } else {
+                                parts = input.split("/")
                             }
+                            day = parts[0];
+                            month = parts[1];
+                            year = parts[2];
                             const date = new Date(`${month} ${day}, ${year}`);
                             row[header.toLowerCase()] = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`
                         } catch (error) {
