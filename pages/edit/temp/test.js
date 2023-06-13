@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import config from '../../config'
+// import config from '../../config'
 
 const Test = () => {
     const [originaldata, setoriginaldata] = useState("ID of the current inseted data is: 32")
@@ -28,8 +28,8 @@ const Test = () => {
         "qc_status": "batzz",
         "checked_by_ba_id": "batzz"
     })
-    const [dateTest, setdateTest] = useState("2-Dec-2023")
-    const [originaldate, setoriginaldate] = useState("2-Dec-2023")
+    const [dateTest, setdateTest] = useState("12/11/2023")
+    const [originaldate, setoriginaldate] = useState("12/11/2023")
     const [changed, setchanged] = useState(false)
     const [easteregg, seteasteregg] = useState(false)
 
@@ -46,11 +46,11 @@ const Test = () => {
         let final = str.split(":")
         setdata(final)
         const input = dateTest;
-        const parts = input.split("-");
+        const parts = input.split("/");
         const day = parts[0];
         const month = parts[1];
         const year = parts[2];
-        const date = new Date(`${month} ${day}, ${year}`);
+        const date = new Date(`${month}-${day}-${year}`);
         const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
         console.log(formattedDate);
         const tests = null
