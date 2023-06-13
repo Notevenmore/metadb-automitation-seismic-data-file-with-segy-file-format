@@ -566,7 +566,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                         disabled={spreadsheetReady ? false : true}
                     />
                     <Button
-                        path="" button_description="Download document" onClick={downloadSpreadsheet}
+                        path="" button_description="Download workspace" onClick={downloadSpreadsheet}
                         additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
                         disabled={spreadsheetReady ? false : true}
                     />
