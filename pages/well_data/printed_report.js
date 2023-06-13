@@ -36,7 +36,7 @@ const PrintedWellReport = ({ setTitle }) => {
             // get workspaces 
             // TODO: could later be used as a dynamic route for multiple data types, 
             // meaning only need to change the fetch link and page title and it's good to go. 
-            await fetch("http://localhost:8080/api/v1/print-well-report-workspace-afe/", {
+            await fetch(`${config["printed_well_report"]["afe"]}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
