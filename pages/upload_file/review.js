@@ -287,7 +287,7 @@ export default function UploadFileReview({ setTitle }) {
         return { data: data, data_content: final, workspace_data: workspace_data[0] }
     }
 
-    const saveDocument = async (e) => {
+    const saveDocument = async (e, redirect = false) => {
         e.preventDefault();
         try {
             // Check if spreadsheetId is available
@@ -539,6 +539,9 @@ export default function UploadFileReview({ setTitle }) {
             //     }
             // }
             setMessage({ message: "Workspace successfully saved", color: "blue" });
+            if (redirect){
+                router.push("/")
+            }
         } catch (error) {
             // Handle error and display error message
             setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${String(error)}`, color: "red" });
