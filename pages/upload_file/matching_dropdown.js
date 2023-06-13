@@ -16,6 +16,7 @@ import { ImageEditor, Tuple4 } from "../components/highlight_viewer";
 import ChevronLeft from '../../public/icons/chevron-left.svg'
 import ChevronRight from '../../public/icons/chevron-right.svg'
 import Highlight from 'react-highlight'
+import config from "../../config";
 
 const FullButton = ({ children, onClick }) => {
   return (
@@ -402,7 +403,7 @@ export default function MatchReview({ setTitle }) {
           // setState((_) => initialState);
 
           setLoading(`Getting appropriate properties for data type ${router.query.form_type}`)
-          const row_names = await fetch('http://localhost:5050/getHeaders', {
+          const row_names = await fetch(`${config.services.sheets}/getHeaders`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"

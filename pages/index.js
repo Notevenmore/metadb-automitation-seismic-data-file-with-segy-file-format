@@ -8,7 +8,7 @@ import draft from "../dummy-data/draft";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Input from "../components/input_form/input";
-import config, { datatypes } from "./config";
+import config, { datatypes } from "../config";
 import { setUploadDocumentSettings } from "../store/generalSlice";
 
 

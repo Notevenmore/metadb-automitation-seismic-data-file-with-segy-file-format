@@ -10,6 +10,7 @@ import bibliography from "../../dummy-data/bibliography.json"
 import bibliography_data from "../../dummy-data/bibliography_data.json"
 import pwr from "../../dummy-data/pwr.json"
 import pwr_data from "../../dummy-data/pwr_1.json"
+import config from "../../config"
 
 const DocEditor = ({ spreadsheetID, workspace_name }) => {
     // note: workspaceName, workspace_name, workspace_names, and workspace_name_space is different
@@ -275,7 +276,7 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
             setMessage({ message: "Saving workspace... Please don't leave this page or click anything", color: "blue" });
 
             // Fetch spreadsheet data from the server
-            const spreadsheet_data = await fetch("http://localhost:5050/getRows", {
+            const spreadsheet_data = await fetch(`${config.services.sheets}/getRows`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"

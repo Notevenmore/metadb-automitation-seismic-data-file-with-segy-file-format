@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import ChevronLeft from '../../public/icons/chevron-left.svg'
 import ChevronRight from '../../public/icons/chevron-right.svg'
 import Highlight from 'react-highlight'
+import config from "../../config";
 
 interface TableRow {
   id: number,
@@ -308,7 +309,7 @@ export default function MatchingGuided() {
           setTotalPageNo(summaryResponse.body.page_count);
           dispatch(setDocumentSummary({ ...summaryResponse, document_id: docId }))
           setLoading(`Getting appropriate properties for data type ${router.query.form_type}`)
-          const row_names = await fetch('http://localhost:5050/getHeaders', {
+          const row_names = await fetch(`${config.services.sheets}/getHeaders`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"

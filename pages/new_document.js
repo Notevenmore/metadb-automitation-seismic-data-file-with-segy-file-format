@@ -9,7 +9,7 @@ import Sheets from "../components/sheets/sheets";
 import TableComponent from "../components/table/table";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-import config from "./config";
+import config from "../config";
 
 export default function NewDocumentPage({ setTitle }) {
     const router = useRouter()
@@ -174,7 +174,7 @@ export default function NewDocumentPage({ setTitle }) {
             const old_data = await init_data()
 
             // Fetch header from spreadsheet
-            const spreadsheet_header = await fetch("http://localhost:5050/getHeaders", {
+            const spreadsheet_header = await fetch(`${config.services.sheets}/getHeaders`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -193,7 +193,7 @@ export default function NewDocumentPage({ setTitle }) {
             })
 
             // Fetch spreadsheet data from the server
-            const spreadsheet_data = await fetch("http://localhost:5050/getRows", {
+            const spreadsheet_data = await fetch(`${config.services.sheets}/getRows`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"

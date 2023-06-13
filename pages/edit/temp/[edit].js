@@ -6,7 +6,7 @@ import Sheets from "../../../components/sheets/sheets"
 import TableComponent from "../../../components/table/table"
 import Input from "../../../components/input_form/input"
 import Container from "../../../components/container/container"
-import config from "../../config"
+import config from "../../../config"
 import Highlight from "react-highlight"
 
 const DocEditor = ({ workspace_name, setTitle }) => {
@@ -189,7 +189,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
             const old_data = await init_data()
 
             // Fetch header from spreadsheet
-            const spreadsheet_header = await fetch("http://localhost:5050/getHeaders", {
+            const spreadsheet_header = await fetch(`${config.services.sheets}/getHeaders`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -208,7 +208,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
             })
 
             // Fetch spreadsheet data from the server
-            const spreadsheet_data = await fetch("http://localhost:5050/getRows", {
+            const spreadsheet_data = await fetch(`${config.services.sheets}/getRows`, {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"
@@ -407,7 +407,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
             try {
                 setMessage({ message: "Downloading workspace as XLSX file, please wait...", color: "blue" });
                 if (spreadsheetId && router.query.form_type && workspaceData.afe_number) {
-                    const spreadsheet_download = await fetch("http://localhost:5050/downloadSheet", {
+                    const spreadsheet_download = await fetch(`${config.services.sheets}/downloadSheet`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -435,7 +435,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                             link.click();
                         })
                         .catch(console.error);
-                    await fetch('http://localhost:5050/deleteSpreadsheet', {
+                    await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"

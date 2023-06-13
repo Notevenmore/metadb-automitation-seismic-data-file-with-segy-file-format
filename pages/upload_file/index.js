@@ -7,7 +7,7 @@ import Container from "../../components/container/container.js";
 import Input from "../../components/input_form/input";
 import { storeFile, setUploadDocumentSettings } from "../../store/generalSlice";
 import Select from "../../public/icons/selection_tool.svg"
-import config, { datatypes } from "../config";
+import config, { datatypes } from "../../config";
 
 export default function UploadFilePage({ setTitle }) {
 	setTitle("Upload file")

@@ -6,7 +6,7 @@ import TableComponent from "../../components/table/table";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Button from "../../components/buttons/buttons";
-import config, { datatypes } from "../config";
+import config, { datatypes } from "../../config";
 import Highlight from "react-highlight";
 import { setUploadDocumentSettings } from "../../store/generalSlice";
 import { useDispatch } from "react-redux";
