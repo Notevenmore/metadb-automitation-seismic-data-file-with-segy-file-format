@@ -16,11 +16,10 @@ const DocEditor = ({ workspace_name, setTitle }) => {
     const [error, seterror] = useState("")
     const [Data, setData] = useState([-1])
     const [dataContentDetails, setdataContentDetails] = useState([-1])
-    const [ppdmGuid, setppdmGuid] = useState([])
     const [spreadsheetReady, setspreadsheetReady] = useState(false)
-    // TODO: change setworkspaceData flow to database
     const [workspaceData, setworkspaceData] = useState()
     const [spreadsheetId, setspreadsheetId] = useState()
+    const [triggerSave, settriggerSave] = useState(false)
 
     const warningText
         = 'You have unsaved changes - Are you sure you want to leave this page?'
@@ -33,7 +32,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
     };
 
     // This function handles navigation away from the current page by checking whether unsaved changes are present and displaying a warning dialog if necessary
-    const handleBrowseAway = (url, { shallow }) => {
+    const handleBrowseAway = (url) => {
         if (!IsSaved) {
             // If there are unsaved changes, prompt the user with a warning dialog
             if (url === router.asPath || !window.confirm(warningText)) {
@@ -46,223 +45,6 @@ const DocEditor = ({ workspace_name, setTitle }) => {
         return;
     };
 
-
-    const put_workspace = async (form_type, afe, workspace_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}-workspace-afe/${afe}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(workspace_data)
-        }).then(response => {
-            // Handle non-200 response status
-            if (response.status === 200) {
-                console.log(response);
-            }
-            else {
-                throw response;
-            }
-            return response;
-        }).catch(err => { throw err })
-    }
-
-    const post_workspace = async (form_type, workspace_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}-workspace-afe`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(workspace_data)
-        }).then(response => {
-            // Handle non-200 response status
-            if (response.status === 200) {
-                console.log(response);
-            }
-            else {
-                throw response;
-            }
-            return response;
-        }).catch(err => { throw err })
-    }
-
-    const upload_afeguid_new = async (form_type, afe, guid) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}-workspace`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "afe_number": afe,
-                "ppdm_guid": guid
-            })
-        }).then(response => {
-            // Handle non-200 response status
-            if (response.status === 200) {
-                console.log(response);
-            }
-            else {
-                throw response;
-            }
-            return response;
-        }).catch(err => { throw err })
-    }
-
-    const delete_data = async (form_type, data_id, new_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}/${data_id}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(response => {
-            console.log(response)
-            return response
-        }).catch(err => { throw err; })
-    }
-
-    const put_data = async (form_type, data_id, new_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}/${data_id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(new_data)
-            // }).then(response => {
-            //     return response.json()
-        }).then(response => {
-            console.log(response)
-            return response
-        }).catch(err => { throw err; })
-    }
-
-    const post_data = async (form_type, new_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(new_data)
-            // }).then(response => {
-            //     return response.json()
-        }).then(response => {
-            // Handle non-200 response status
-            if (response.status === 200) {
-                console.log(response);
-            }
-            else {
-                throw response;
-            }
-            return response;
-        }).catch(err => { throw err })
-    }
-
-
-    // This function retrieves data from a server API based on the form_type parameter, and updates the state with the retrieved data
-    const get_data = async (form_type) => {
-
-        // Make an HTTP GET request to the server API
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            },
-        })
-            .then(response => {
-                // Parse the response into JSON format
-                return response.json()
-            })
-            .then(response => {
-                // Log the response to the console for debugging purposes
-                console.log(response);
-                // Return the response data
-                return response;
-            })
-            .catch(err => {
-                // If there is an error, throw it
-                throw err;
-            });
-
-        // Set the state data using the retrieved data
-        await setData(data);
-    }
-
-    // This useEffect hook sets up the initial data for the workspace based on the workspace name and form type
-    useEffect(() => {
-        const init_data = async () => {
-            try {
-                // ----| OLD TEMPORARY WORKFLOW |----
-                // check github
-                // ----| NEW WORKFLOW |----
-                if (!router.query.workspace_data) {
-                    throw "Workspace data not found, please try again. Additionally, try opening other workspaces if the problem persists. If other workspaces behave the same, please contact maintainer."
-                }
-                const workspace_data = await fetch(`${config[router.query.form_type]["afe"]}${router.query.workspace_data}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw `Service returned with status ${res.status}; ${res.statusText}`
-                    }
-                    return res.json()
-                })
-
-                const data = await fetch(`${config[router.query.form_type]["workspace"]}${router.query.workspace_data}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw `Service returned with status ${res.status}; ${res.statusText}`
-                    }
-                    return res.json()
-                })
-
-                // if data is not null (workspace is not empty), then get every data details within the workspace.
-                // since the 'data' variable above only holds the ids of the data, along with the ppdm guid it's referencing
-                // to and the workspace afe number it's referencing to. 
-                let final = []
-                let ppdm_guids = []
-                if (data) {
-                    for (const ppdm_guid of data) {
-                        const data_details = await fetch(`${config[router.query.form_type]["view"]}${ppdm_guid.ppdm_guid}`, {
-                            method: "GET",
-                            headers: {
-                                "Content-Type": "application/json"
-                            }
-                        }).then(res => {
-                            if (res.status !== 200) {
-                                throw `Response returned with status code ${res.status}: ${res.statusText}`
-                            }
-                            return res.json()
-                        }).then(res => { return res })
-                        final.push(data_details[0])
-                        ppdm_guids.push(ppdm_guid.ppdm_guid)
-                    }
-                }
-
-                // Set the data and workspace name in state
-                setData(data ? data : [{}])
-                setdataContentDetails(data ? final : [{}])
-                setppdmGuid(ppdm_guids)
-                setworkspaceData(workspace_data[0])
-                setTitle(`${workspace_name} | ${router.query.form_type.split("_").map(x => { return x.charAt(0).toUpperCase() + x.slice(1) }).join(" ")} - Edit Workspace`)
-            } catch (error) {
-                // Handle any errors that occur during initialization
-                seterror(String(error))
-            }
-        }
-        // Call init_data to set up the workspace data
-        init_data();
-    }, [])
-
-    useEffect(() => {
-        console.log(dataContentDetails)
-        console.log(ppdmGuid)
-    }, [dataContentDetails, ppdmGuid])
-
-
     useEffect(() => {
         window.addEventListener('beforeunload', handleWindowClose);
         router.events.on('routeChangeStart', handleBrowseAway);
@@ -271,6 +53,80 @@ const DocEditor = ({ workspace_name, setTitle }) => {
             router.events.off('routeChangeStart', handleBrowseAway);
         };
     }, [IsSaved])
+
+    const init_data = async () => {
+        // ----| OLD TEMPORARY WORKFLOW |----
+        // check github
+        // ----| NEW WORKFLOW |----
+        if (!router.query.workspace_data) {
+            throw "Workspace data not found, please try again. Additionally, try opening other workspaces if the problem persists. If other workspaces behave the same, please contact maintainer."
+        }
+        const workspace_data = await fetch(`${config[router.query.form_type]["afe"]}${router.query.workspace_data}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(res => {
+            if (res.status !== 200) {
+                throw `Service returned with status ${res.status}; ${res.statusText}`
+            }
+            return res.json()
+        })
+
+        const data = await fetch(`${config[router.query.form_type]["workspace"]}${router.query.workspace_data}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(res => {
+            if (res.status !== 200) {
+                throw `Service returned with status ${res.status}; ${res.statusText}`
+            }
+            return res.json()
+        })
+
+        // if data is not null (workspace is not empty), then get every data details within the workspace.
+        // since the 'data' variable above only holds the ids of the data, along with the ppdm guid it's referencing
+        // to and the workspace afe number it's referencing to. 
+        let final = []
+        // let ppdm_guids = []
+        if (data) {
+            for (const pwr_id of data) {
+                const data_details = await fetch(`${config[router.query.form_type]["view"]}${pwr_id.pwr_id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }).then(res => {
+                    if (res.status !== 200) {
+                        throw `Response returned with status code ${res.status}: ${res.statusText}`
+                    }
+                    return res.json()
+                }).then(res => { return res })
+                final.push(data_details[0])
+            }
+        }
+        return { data: data, data_content: final, workspace_data: workspace_data[0] }
+    }
+
+    // This useEffect hook sets up the initial data for the workspace based on the workspace name and form type
+    useEffect(() => {
+        // Call init_data to set up the workspace data
+        const init_call = async () => {
+            try {
+                const initial_data = await init_data()
+                setData(initial_data.data ? initial_data.data : [{}])
+                setdataContentDetails(initial_data.data ? initial_data.data_content : [{}])
+                setworkspaceData(initial_data.workspace_data)
+                setTitle(`${workspace_name} | ${router.query.form_type.split("_").map(x => { return x.charAt(0).toUpperCase() + x.slice(1) }).join(" ")} - Edit Workspace`)
+
+            } catch (error) {
+                // Handle any errors that occur during initialization
+                seterror(String(error))
+            }
+        }
+        init_call()
+    }, [])
 
     // TODO change to POST and PUT request to backend
     // This function handles the saving of the document/workspace
@@ -284,7 +140,72 @@ const DocEditor = ({ workspace_name, setTitle }) => {
             }
 
             // Set saving message
-            setMessage({ message: "Saving workspace... Please don't leave this page or click anything", color: "blue" });
+            setMessage({ message: "Checking changes in workspace information... Please don't leave this page or click anything", color: "blue" });
+
+            // check for changes in the workspace data, if there are any then push the updates to the db
+            let workspace_data_changed = false
+            const old_workspace_data = await fetch(`${config[router.query.form_type]["afe"]}${workspaceData['afe_number']}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => {
+                if (res.status !== 200) {
+                    throw `Service returned with status ${res.status}; ${res.statusText}`
+                }
+                return res.json()
+            })
+
+            Object.keys(old_workspace_data[0]).some(key => {
+                if (old_workspace_data[0][key] !== workspaceData[key]) {
+                    workspace_data_changed = true
+                    return true
+                }
+            });
+
+            if (workspace_data_changed) {
+                setMessage({ message: "Saving workspace information... Please don't leave this page or click anything", color: "blue" });
+                await fetch(`${config[router.query.form_type]["afe"]}${workspaceData['afe_number']}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(workspaceData)
+                }).then(res => {
+                    if (res.status !== 200) {
+                        return res.text()
+                    }
+                }).then(res => {
+                    if (res.toLowerCase().includes("workspace_name_unique")) {
+                        throw `A workspace with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`
+                    } else {
+                        throw res || "Something happened while updating workspace information data. Please try again or contact maintainer if the problem persists."
+                    }
+                })
+            }
+
+            setMessage({ message: "Checking changes in workspace data... Please don't leave this page or click anything", color: "blue" });
+            // fetch original data from database
+            const old_data = await init_data()
+
+            // Fetch header from spreadsheet
+            const spreadsheet_header = await fetch("http://localhost:5050/getHeaders", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    form_type: router.query.form_type
+                })
+            }).then(response => {
+                return response.json();
+            }).then(response => {
+                // Handle non-200 response status
+                if (response.status !== 200) {
+                    throw response.response;
+                }
+                return response;
+            })
 
             // Fetch spreadsheet data from the server
             const spreadsheet_data = await fetch("http://localhost:5050/getRows", {
@@ -294,7 +215,8 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                 },
                 body: JSON.stringify({
                     form_type: router.query.form_type,
-                    spreadsheetID: spreadsheetId
+                    spreadsheetID: spreadsheetId,
+                    without_header: true
                 })
             }).then(response => {
                 return response.json();
@@ -306,25 +228,124 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                 return response;
             }).catch(err => { throw err; });
 
-            // Prepare the final data to be saved
-            // TODO: add comparison with previous data
-            let final = [];
-            let ppdm_guid_array = [];
-            for (let idx_row = 1; idx_row < spreadsheet_data.response.length; idx_row++) {
-                let row = {};
-                spreadsheet_data.response[0].forEach((header, idx_col) => {
-                    row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] || "";
+            setMessage({ message: "Saving workspace data... Please don't leave this page or click anything", color: "blue" });
+            var idx_row = 0
+            for (idx_row; idx_row < Math.max(spreadsheet_data.response.length, old_data.data_content.length); idx_row++) {
+                let row = {}
+                let changed = false
+                spreadsheet_header.response.forEach((header, idx_col) => {
+                    // try converting any string to integer if possible, if fails then just skip and append the raw string
+                    try {
+                        row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || "";
+                        if (row[header.toLowerCase()] === "") {
+                            throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
+                        }
+                    } catch (error) { }
+
+                    // try checking if the data is different. if index out of range it means that the size of the array of either
+                    // the old data has surpassed the new data, or vice versa, so skip the step. 
+                    try {
+                        if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header])) {
+                            changed = true
+                        }
+                    } catch (error) { }
+
+                    // convert date gotten from the database to appropriate format after the checking, to avoid 
+                    // misinterpretating different date formats as different values although the date is the same
+                    if (header.toLowerCase().includes("date")) {
+                        // try to convert, if the input is null then just pass
+                        try {
+                            const input = spreadsheet_data?.response[idx_row][idx_col]
+                            const parts = input.split("-");
+                            const day = parts[0];
+                            const month = parts[1];
+                            const year = parts[2];
+                            const date = new Date(`${month} ${day}, ${year}`);
+                            row[header.toLowerCase()] = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`
+                        } catch (error) {
+                            row[header.toLowerCase()] = ""
+                        }
+                    }
                 });
-                final.push(row);
-                ppdm_guid_array.push(row.ppdm_guid);
+                console.log(row, idx_row)
+                // if change in row is detected then update the data in the database
+                if (changed && idx_row < old_data.data_content.length - 1) {
+                    console.log("trying to PUT", idx_row)
+                    await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ id: old_data.data_content[idx_row]["id"], ...row })
+                    }).then(res => {
+                        if (res.status !== 200) {
+                            throw res.statusText || "Something happened while updating (PUT) a record which resulted in failure. Please contact maintainer."
+                        }
+                    })
+                } else {
+                    // else if current index is already beyond the length of original data or the new data
+                    if (idx_row > spreadsheet_data.response.length - 1 || idx_row > old_data.data_content.length - 1) {
+                        // if the new data length is shorter than the new data then the old data is deleted
+                        if (spreadsheet_data.response.length < old_data.data_content.length) {
+                            console.log("trying to DELETE", idx_row)
+                            await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
+                                method: "DELETE",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            }).then(res => {
+                                if (res.status !== 200) {
+                                    throw res.statusText || "Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. "
+                                }
+                            })
+                            console.log("success")
+                        }
+                        // else if the new data length is greater than the old data then there's a new row appended
+                        else if (spreadsheet_data.response.length > old_data.data_content.length) {
+                            console.log("trying to POST", idx_row)
+                            const upload = await fetch(`${config[router.query.form_type]["view"]}`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(row)
+                            }).then(res => {
+                                if (res.status !== 200) {
+                                    throw res.statusText || "Something happened while posting (POST) a record which resulted in a failure. Please contact maintainer."
+                                }
+                                return res.text()
+                            })
+                            console.log("success POSTING new record, appending to workspace...")
+                            let uploaded_id = upload.split(":")
+                            uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim())
+                            await fetch(`${config[router.query.form_type]["workspace"]}`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    afe_number: workspaceData.afe_number,
+                                    pwr_id: uploaded_id
+                                })
+                            }).then(res => {
+                                if (res.status !== 200) {
+                                    throw res.statusText || "Something happened while posting (POST) a record to the workspace table which resulted in a failure. Please contact maintainer."
+                                }
+                            })
+                            console.log("success")
+                        }
+                    }
+                }
             }
+
             // TODO: FINALIZE THIS WORKFLOW TO COMPARE PREVIOUS DATA WITH NEW DATA THEN DO THINGS BASED ON THE COMPARISON
             // TODO: you need to first check if there's any ppdm guid deleted, then check if there's any data that's changed. 
             // maybe compare with the data to get the ID of the things??
-            console.log(ppdm_guid_array)
-            if (final.length > dataContentDetails.length) {
-                
-            }
+
+            // console.log(ppdm_guid_array)
+            // if (final.length > dataContentDetails.length) {
+
+            // }
 
             // TODO: make workspace_data real-time update
             // const workspace_data_post = {
@@ -369,6 +390,74 @@ const DocEditor = ({ workspace_name, setTitle }) => {
         }
     }
 
+    const delay = delay_amount_ms =>
+        new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
+
+
+    // these two below are bound together basically
+    const downloadSpreadsheet = (e) => {
+        e.preventDefault()
+        setIsSaved(true)
+        settriggerSave(true)
+    }
+
+    useEffect(() => {
+        const saveDoc = async () => {
+            router.events.emit("routeChangeStart")
+            try {
+                setMessage({ message: "Downloading workspace as XLSX file, please wait...", color: "blue" });
+                if (spreadsheetId && router.query.form_type && workspaceData.afe_number) {
+                    const spreadsheet_download = await fetch("http://localhost:5050/downloadSheet", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            form_type: router.query.form_type,
+                            spreadsheetID: spreadsheetId,
+                            workspace_data: workspaceData
+                        })
+                    }).then(res => {
+                        return res.json()
+                    }).then(res => {
+                        if (res.status !== 200) {
+                            throw `Response returned with status code ${res.status}: ${res.response}`
+                        }
+                        return res
+                    })
+                    console.log(`new temp spreadsheet download: ${spreadsheet_download.response}`)
+                    await fetch(`https://docs.google.com/spreadsheets/d/${spreadsheet_download.response}/export?format=xlsx&id=${spreadsheet_download.response}`)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const link = document.createElement("a");
+                            link.href = URL.createObjectURL(blob);
+                            link.download = `${workspaceData.workspace_name}`;
+                            link.click();
+                        })
+                        .catch(console.error);
+                    await fetch('http://localhost:5050/deleteSpreadsheet', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ spreadsheetID: spreadsheet_download.response })
+                    }).catch(err => { console.log(err) })
+                    setMessage({ message: `Success. Workspace converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`, color: "blue" });
+                }
+            } catch (error) {
+                setMessage({ message: `${String(error)}`, color: "red" });
+            }
+            router.events.emit("routeChangeComplete")
+            settriggerSave(false)
+            setIsSaved(false)
+            await delay(3500)
+            setMessage({ message: "", color: "" });
+        }
+        if (triggerSave && IsSaved) {
+            saveDoc()
+        }
+    }, [triggerSave, IsSaved])
+
     // detect changes in the workspace data inputs
     const handleWorkspaceChange = (event) => {
         const { name, value } = event.target;
@@ -398,7 +487,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                 {/* TODO: find out what is workspaceName */}
                 <Input
                     name="workspace_name" type='text' placeholder='Workspace name'
-                    additional_styles_input='text-xl font-semibold p-3 capitalize'
+                    additional_styles_input='text-xl font-semibold p-3'
                     value={workspaceData?.workspace_name} onChange={handleWorkspaceChange}
                 />
                 <TableComponent additional_styles_column="overflow-visible" header={workspaceData?.kkks_name ? ["Header", ""] : ["Header"]} content={
@@ -472,7 +561,12 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                 </div>
                 <div className="flex space-x-2 w-full pt-5">
                     <Button
-                        path="" button_description="Save document" onClick={saveDocument}
+                        path="" button_description="Save workspace" onClick={saveDocument}
+                        additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
+                        disabled={spreadsheetReady ? false : true}
+                    />
+                    <Button
+                        path="" button_description="Download document" onClick={downloadSpreadsheet}
                         additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
                         disabled={spreadsheetReady ? false : true}
                     />
