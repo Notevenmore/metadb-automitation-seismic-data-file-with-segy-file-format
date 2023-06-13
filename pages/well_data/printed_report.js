@@ -6,7 +6,10 @@ import TableComponent from "../../components/table/table";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Button from "../../components/buttons/buttons";
-import { datatypes } from "../config";
+import config, { datatypes } from "../config";
+import Highlight from "react-highlight";
+import { setUploadDocumentSettings } from "../../store/generalSlice";
+import { useDispatch } from "react-redux";
 
 const PrintedWellReport = ({ setTitle }) => {
     const [data, setData] = useState([]);
@@ -20,114 +23,70 @@ const PrintedWellReport = ({ setTitle }) => {
         submission_type: "",
         afe_number: "",
     })
+    const [Message, setMessage] = useState({ message: "", color: "" })
 
     const router = useRouter()
+    const dispatch = useDispatch()
+
     const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
     let selectedTableData = [[]];
 
-    const handleEditClick = (e, workspace_name) => {
-        let final = workspace_name.toLocaleLowerCase().replace(/\s/g, '_')
-        router.push(`/edit/${final}`)
+    const init = async () => {
+        try {
+            // get workspaces 
+            // TODO: could later be used as a dynamic route for multiple data types, 
+            // meaning only need to change the fetch link and page title and it's good to go. 
+            await fetch("http://localhost:8080/api/v1/print-well-report-workspace-afe/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            }).then(res => {
+                if (res.status !== 200) {
+                    throw res.statusText
+                }
+                return res.json()
+            }).then(res => {
+                let final = []
+                res.forEach((workspace) => {
+                    final.push({
+                        Name: workspace.workspace_name,
+                        KKKS: workspace.kkks_name,
+                        "Working area": workspace.working_area,
+                        AFE: workspace.afe_number,
+                        Type: workspace.submission_type,
+                        Action:
+                            <div className="flex flex-row gap-x-4 items-center">
+                                <Button title="Download" additional_styles="px-3 hover:bg-green-300" className="flex" onClick={(e) => { downloadWorkspace(e, workspace.afe_number) }}>
+                                    <div className="w-[18px] h-[18px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><polyline points="86 110 128 152 170 110" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /><line x1="128" y1="40" x2="128" y2="152" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /><path d="M216,152v56a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V152" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /></svg>
+                                    </div>
+                                </Button>
+                                <Button title="Edit workspace"
+                                    additional_styles="px-3" className="flex"
+                                    path={`/edit/temp/${workspace.workspace_name}`}
+                                    query={{ form_type: "printed_well_report", workspace_data: workspace.afe_number }}
+                                >
+                                    <div className="w-[18px] h-[18px] flex items-center">
+                                        <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+                                    </div>
+                                </Button>
+                                <Button additional_styles="px-3 hover:bg-red-400" className="flex" title="Delete workspace" onClick={(e) => { deleteWorkspace(e, workspace.afe_number) }}>
+                                    <div className="w-[18px] h-[18px] flex items-center">
+                                        <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
+                                    </div>
+                                </Button>
+                            </div>
+                    })
+                });
+                setData(final)
+            })
+        } catch (error) {
+            seterror(String(error))
+        }
     }
 
-    // const get_workspace_name = (workspace_name) => {
-    //     let final = workspace_name.toLocaleLowerCase().replace(/\s/g, '_')
-    //     return final
-    // }
-
-    // let table_data = [
-    //     {
-    //         No: 1, Name: "PWR 2023 Report", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Printed well report", AFE: "2893728901",
-    //         action:
-    //             <div className="flex flex-row gap-x-1 items-center">
-    //                 <Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-    //                 {/* <Link title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'Laporan Data 2023')}> */}
-    //                 <Link title="Edit workspace" path="" className=""
-    //                     href={{
-    //                         pathname: `/edit/temp/${get_workspace_name("PWR 2023 Report")}`,
-    //                         query: {
-    //                             form_type: "printed_well_report"
-    //                         }
-    //                     }}>
-    //                     <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-    //                 </Link>
-    //                 <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-    //             </div>
-    //     },
-    //     {
-    //         No: 2, Name: "New Document", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Printed well report", AFE: "2023032801",
-    //         action:
-    //             <div className="flex flex-row gap-x-1 items-center">
-    //                 <Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-    //                 {/* <Button title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'New workspace from uploaded file')}> */}
-    //                 <Link title="Edit workspace" path="" className=""
-    //                     href={{
-    //                         pathname: `/edit/temp/${get_workspace_name("New Document")}`,
-    //                         query: {
-    //                             form_type: "printed_well_report"
-    //                         }
-    //                     }}>
-    //                     <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-    //                 </Link>
-    //                 <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-    //             </div>
-    //     },
-    // ]
     useEffect(() => {
-        const init = async () => {
-            try {
-                // get workspaces 
-                // TODO: could later be used as a dynamic route for multiple data types, 
-                // meaning only need to change the fetch link and page title and it's good to go. 
-                await fetch("http://localhost:8080/api/v1/print-well-report-workspace-afe/", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw res.statusText
-                    }
-                    return res.json()
-                }).then(res => {
-                    let final = []
-                    res.forEach((workspace, idx) => {
-                        final.push({
-                            Name: workspace.workspace_name,
-                            KKKS: workspace.kkks_name,
-                            "Working area": workspace.working_area,
-                            AFE: workspace.afe_number,
-                            Type: workspace.submission_type,
-                            Action:
-                                <div className="flex flex-row gap-x-4 items-center">
-                                    <Button title="Download" additional_styles="px-3 hover:bg-green-300" className="flex">
-                                        <div className="w-[18px] h-[18px]">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><polyline points="86 110 128 152 170 110" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /><line x1="128" y1="40" x2="128" y2="152" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /><path d="M216,152v56a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V152" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /></svg>
-                                        </div>
-                                    </Button>
-                                    <Button title="Edit workspace"
-                                        additional_styles="px-3" className="flex"
-                                        path={`/edit/temp/${workspace.workspace_name}`}
-                                        query={{ form_type: "printed_well_report", workspace_data: workspace.afe_number }}
-                                    >
-                                        <div className="w-[18px] h-[18px] flex items-center">
-                                            <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-                                        </div>
-                                    </Button>
-                                    <Button additional_styles="px-3 hover:bg-red-400" className="flex" title="Delete workspace">
-                                        <div className="w-[18px] h-[18px] flex items-center">
-                                            <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
-                                        </div>
-                                    </Button>
-                                </div>
-                        })
-                    });
-                    setData(final)
-                })
-            } catch (error) {
-                seterror(String(error))
-            }
-        }
         setTitle("Printed Well Report")
         init();
     }, [])
@@ -145,6 +104,79 @@ const PrintedWellReport = ({ setTitle }) => {
             setsearchData([-1])
         }
     };
+
+    const delay = delay_amount_ms =>
+        new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
+
+    const makenew = async (e) => {
+        e.preventDefault()
+        try {
+            settoggleOverlay(false)
+            setMessage({ message: "Creating a new workspace... Please don't leave this page or click anything", color: "blue" })
+            await fetch(`${config["printed_well_report"]["afe"]}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newWorkspace)
+            }).then(res => {
+                if (res.status === 200) {
+                    return res.statusText
+                } else {
+                    return res.text()
+                }
+            }).then(res => {
+                if (res.toLowerCase() === "ok") {
+                    return true
+                } else if (res.toLowerCase().includes("workspace_name_unique")) {
+                    throw `A workspace with the name "${newWorkspace.workspace_name}" already exists. Please choose a different name.`
+                } else if (res.toLowerCase().includes("afe_pk_error")) {
+                    throw `A workspace with AFE number ${newWorkspace.afe_number} already exists. Please choose a different AFE number.`
+                } else {
+                    throw res || "Something happened while updating workspace information data. Please try again or contact maintainer if the problem persists."
+                }
+            })
+            dispatch(setUploadDocumentSettings(newWorkspace))
+            setMessage({ message: "Success. Redirecting to the next page...", color: "blue" });
+            await delay(1000)
+            router.push({
+                pathname: "/new_document",
+                query: { form_type: "printed_well_report" }
+            })
+        } catch (error) {
+            // Handle error and display error message
+            setMessage({ message: String(error), color: "red" });
+        }
+    }
+
+    const deleteWorkspace = async (e, afe_number) => {
+        e.preventDefault()
+        try {
+            setMessage({ message: "Deleting workspace... Please don't leave this page or click anything", color: "blue" });
+            await fetch(`${config["printed_well_report"]["afe"]}${afe_number}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => {
+                if (res.status !== 200) {
+                    throw `Response returned with status code ${res.status}: ${res.statusText}`
+                }
+            })
+            setMessage({ message: "Success", color: "blue" });
+            init()
+            await delay(2000)
+            setMessage({ message: "", color: "" });
+            // router.reload(window.location.pathname)
+        } catch (error) {
+            setMessage({ message: String(error), color: "red" });
+        }
+    }
+
+    const downloadWorkspace = async (e, afe_number) => {
+        e.preventDefault()
+
+    }
 
     return (
         <Container>
@@ -177,9 +209,13 @@ const PrintedWellReport = ({ setTitle }) => {
                 </div>
             </Container.Title>
             <TableComponent
-                header={searchData[0] !== -1 ? searchData.length === 0 ? ["Workspace not found"] : ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : data.length !== 0 ? ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : ["Loading..."]}
-                content={searchData[0] !== -1 ? searchData.length === 0 ? [{ "Workspace not found": "No workspaces with such name" }] : searchData : data.length === 0 ? [{ "Loading...": "Getting workspace list..." }] : data} setSelectedRows={selectedTableData} with_checkbox contentAlignWithHeader additional_styles="mb-20" />
-            {error ? <p className="text-xl font-bold">{error}</p> : null}
+                header={searchData[0] !== -1 ? searchData.length === 0 ? ["Workspace not found"] : ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : data.length !== 0 ? ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : error ? ["Connection error"] : ["Loading..."]}
+                content={searchData[0] !== -1 ? searchData.length === 0 ? [{ "Workspace not found": "No workspaces with such name" }] : searchData : data.length === 0 ? error ? [{ "Connection error": "Error getting workspace list. Please try again or contact maintainer if the problem persists by giving them the information below" }] : [{ "Loading...": "Getting workspace list..." }] : data} 
+                setSelectedRows={selectedTableData} 
+                // with_checkbox 
+                contentAlignWithHeader 
+                additional_styles="mb-20" />
+            {error ? <Highlight className='html rounded-md border-2'>{error}</Highlight> : null}
             <Button className="shadow-black/10 shadow-lg drop-shadow-lg hover:w-[205px] w-[60px] h-[60px] border rounded-full fixed bottom-9 right-12 bg-gray-200 flex items-center transition-all overflow-hidden outline-none"
                 onClick={(e) => { e.preventDefault; settoggleOverlay(true) }}
             >
@@ -208,7 +244,7 @@ const PrintedWellReport = ({ setTitle }) => {
                                     type="text"
                                     name={"workingArea"}
                                     placeholder={"Workspace name"}
-                                    value={newWorkspace.kkks_name}
+                                    value={newWorkspace.workspace_name}
                                     required={true}
                                     additional_styles="w-full"
                                     autoComplete="off"
@@ -223,7 +259,7 @@ const PrintedWellReport = ({ setTitle }) => {
                                     required={true}
                                     additional_styles="w-full"
                                     autoComplete="off"
-                                    onChange={(e) => setnewWorkspace({ ...newWorkspace, afe_number: e.target.value })}
+                                    onChange={(e) => setnewWorkspace({ ...newWorkspace, afe_number: parseInt(e.target.value) })}
                                 />
                                 <p>KKKS name</p>
                                 <Input
@@ -266,10 +302,9 @@ const PrintedWellReport = ({ setTitle }) => {
                                 <Button
                                     type="submit"
                                     button_description="Confirm"
-                                    path="/new_document"
-                                    query={{ form_type: "printed_well_report" }}
                                     disabled={Object.values(newWorkspace).some(x => { return x === null || x === "" }) ? true : false}
                                     additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
+                                    onClick={makenew}
                                 />
                                 <Button
                                     button_description="Cancel"
@@ -279,6 +314,19 @@ const PrintedWellReport = ({ setTitle }) => {
                         </form>
                     </div>
                 </div>
+            </div>
+            <div className={`flex items-center space-x-2 fixed top-5 left-[50%]
+                 translate-x-[-50%] bg-${Message.color || "blue"}-500 text-white
+                 px-3 rounded-lg py-2 transition-all ${Message.message ? "" : "-translate-y-20"}`}>
+                <p>{Message.message}</p>
+                <Button
+                    additional_styles="px-1 py-1 text-black" path=""
+                    onClick={(e) => { e.preventDefault(); setMessage({ message: "", color: "" }) }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </Button>
             </div>
         </Container>
     )
