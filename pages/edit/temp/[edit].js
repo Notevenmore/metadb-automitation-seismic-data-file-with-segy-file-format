@@ -267,7 +267,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                             day = parts[0];
                             month = parts[1];
                             year = parts[2];
-                            const date = new Date(`${month} ${day}, ${year}`);
+                            const date = new Date(`${month}-${day}-${year}`);
                             row[header.toLowerCase()] = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`
                         } catch (error) {
                             row[header.toLowerCase()] = ""
