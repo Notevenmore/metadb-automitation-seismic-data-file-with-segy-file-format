@@ -8,6 +8,7 @@ interface InputProps extends React.ComponentProps<"input"> {
     dropdown_items: [];
     additional_styles_label: "";
     additional_styles_input: "";
+    additional_styles_input_dropdown: "";
     additional_styles_menu_container: "";
     additional_styles: "";
     withSearch: boolean,
@@ -17,6 +18,7 @@ interface InputProps extends React.ComponentProps<"input"> {
 const Input: React.FunctionComponent<InputProps> = ({
     label = "none", label_loc = "none", type, dropdown_items = [],
     additional_styles_label = '', additional_styles_input = '',
+    additional_styles_input_dropdown = '',
     additional_styles_menu_container = '', additional_styles = '',
     setSelectedItem, withSearch, ...inputProps }) => {
     const [Selected, setSelected] = useState()
@@ -104,7 +106,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                                 (e as any).target.parentElement.parentElement.focus();
                                 handleUnfocus
                             }}
-                            className='truncate max-w-[80%] bg-transparent outline-none cursor-default select-none' defaultValue={"Select an Item"} readOnly {...inputProps} />
+                            className={twMerge("truncate w-[90%] bg-transparent outline-none cursor-default select-none placeholder:text-gray-500", additional_styles_input_dropdown)} defaultValue={"Select an Item"} readOnly {...inputProps} />
                         <Arrow className="w-2.5 rotate-90" />
                     </div>
                     <div className={twMerge(`${DoSearch ? "block" : "hidden"} group-focus:block active:block z-[50] absolute bg-gray-200 shadow-md mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`, additional_styles_menu_container)}>
