@@ -1,14 +1,17 @@
 export default {
-    bibliography: {
-        workspace: "http://localhost:9090/api/v1/bibliography-workspace/",
-        afe: "http://localhost:9090/api/v1/bibliography-workspace-afe/",
-        view: "http://localhost:9090/api/v1/bibliography/"
-    },
-    printed_well_report: {
-        workspace: "http://localhost:8080/api/v1/print-well-report-workspace/",
-        afe: "http://localhost:8080/api/v1/print-well-report-workspace-afe/",
-        view: "http://localhost:8080/api/v1/print-well-report/"
-    }
+	bibliography: {
+		workspace: "http://localhost:9090/api/v1/bibliography-workspace/",
+		afe: "http://localhost:9090/api/v1/bibliography-workspace-afe/",
+		view: "http://localhost:9090/api/v1/bibliography/"
+	},
+	printed_well_report: {
+		workspace: "http://localhost:8080/api/v1/print-well-report-workspace/",
+		afe: "http://localhost:8080/api/v1/print-well-report-workspace-afe/",
+		view: "http://localhost:8080/api/v1/print-well-report/"
+	},
+	services: {
+		sheets: "http://localhost:5050/"
+	}
 }
 
 export const datatypes = {
@@ -48,7 +51,6 @@ export const datatypes = {
 	"Digital Well Seismic Profile": "digital_well_seismic_profile",
 	"Well Seismic Profile Stored In Media": "well_seismic_profile_stored_in_media",
 	"Well Sample": "well_sample",
-
 	"Well Core Sample": "well_core_sample",
 	"Outcrop Sample": "outcrop_sample",
 	"Printed Technical Report": "printed_technical_report",
