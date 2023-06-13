@@ -28,8 +28,8 @@ const Test = () => {
         "qc_status": "batzz",
         "checked_by_ba_id": "batzz"
     })
-    const [dateTest, setdateTest] = useState("12/11/2023")
-    const [originaldate, setoriginaldate] = useState("12/11/2023")
+    const [dateTest, setdateTest] = useState("29 December 2023")
+    const [originaldate, setoriginaldate] = useState("29 December 2023")
     const [changed, setchanged] = useState(false)
     const [easteregg, seteasteregg] = useState(false)
 
@@ -46,7 +46,7 @@ const Test = () => {
         let final = str.split(":")
         setdata(final)
         const input = dateTest;
-        const parts = input.split("/");
+        const parts = input.split(" ");
         const day = parts[0];
         const month = parts[1];
         const year = parts[2];
