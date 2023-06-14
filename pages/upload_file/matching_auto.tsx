@@ -561,6 +561,8 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
           setTimeout(() => {
             setMessage("Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.")
           }, 3000)
+          await delay(5000)
+          setMessage("")
         } catch (error) {
           setError(String(error))
         }

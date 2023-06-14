@@ -529,6 +529,9 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
     }
   }, [router])
 
+  const delay = delay_amount_ms =>
+    new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
+
   useEffect(() => {
     const init = async () => {
       router.events.emit("routeChangeStart")
@@ -620,6 +623,8 @@ export default function MatchReview({ setTitle }: MatchReviewProps) {
       setTimeout(() => {
         setMessage("Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.")
       }, 3000)
+      await delay(5000)
+      setMessage("")
     }
     init()
   }, [files])
