@@ -266,7 +266,7 @@ export default function UploadFilePage({ setTitle }) {
 						name={"fileFormat"}
 						placeholder={"Select a file format"}
 						value={UplSettings.FileFormat}
-						dropdown_items={["Image", "PDF", "PPTX", "CSV", "LAS", "SEGY"]}
+						dropdown_items={["Image", "PDF", "PPTX", "CSV", "LAS"]}
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
