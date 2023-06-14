@@ -71,7 +71,7 @@ export default function NewDocumentPage({ setTitle }) {
         // check github
         // ----| NEW WORKFLOW |----
         if (!workspaceData.afe_number) {
-            throw "Workspace data not found, please try again. Additionally, try opening other workspaces if the problem persists. If other workspaces behave the same, please contact maintainer."
+            throw "Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer."
         }
         const workspace_data = await fetch(`${config[router.query.form_type]["afe"]}${workspaceData.afe_number}`, {
             method: "GET",
@@ -135,9 +135,9 @@ export default function NewDocumentPage({ setTitle }) {
             }
 
             // Set saving message
-            setMessage({ message: "Checking changes in workspace information... Please don't leave this page or click anything", color: "blue" });
+            setMessage({ message: "Checking changes in record information... Please don't leave this page or click anything", color: "blue" });
 
-            // check for changes in the workspace data, if there are any then push the updates to the db
+            // check for changes in the record data, if there are any then push the updates to the db
             let workspace_data_changed = false
             const old_workspace_data = await fetch(`${config[router.query.form_type]["afe"]}${workspaceData['afe_number']}`, {
                 method: "GET",
@@ -159,7 +159,7 @@ export default function NewDocumentPage({ setTitle }) {
             });
 
             if (workspace_data_changed) {
-                setMessage({ message: "Saving workspace information... Please don't leave this page or click anything", color: "blue" });
+                setMessage({ message: "Saving record information... Please don't leave this page or click anything", color: "blue" });
                 await fetch(`${config[router.query.form_type]["afe"]}${workspaceData['afe_number']}`, {
                     method: "PUT",
                     headers: {
@@ -173,7 +173,7 @@ export default function NewDocumentPage({ setTitle }) {
                 })
             }
 
-            setMessage({ message: "Checking changes in workspace data... Please don't leave this page or click anything", color: "blue" });
+            setMessage({ message: "Checking changes in record data... Please don't leave this page or click anything", color: "blue" });
             // fetch original data from database
             const old_data = await init_data()
 
@@ -217,136 +217,159 @@ export default function NewDocumentPage({ setTitle }) {
                 return response;
             }).catch(err => { throw err; });
 
-            setMessage({ message: "Saving workspace data... Please don't leave this page or click anything", color: "blue" });
+            setMessage({ message: "Saving record data... Please don't leave this page or click anything", color: "blue" });
             var idx_row = 0
-            for (idx_row; idx_row < Math.max(spreadsheet_data.response.length, old_data.data_content.length); idx_row++) {
-                let row = {}
-                let changed = false
-                spreadsheet_header.response.forEach((header, idx_col) => {
-                    // try converting any string to integer if possible, if fails then just skip and append the raw string
-                    try {
-                        row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || "";
-                        if (row[header.toLowerCase()] === "") {
-                            throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
-                        }
-                    } catch (error) { }
-
-                    // try checking if the data is different. if index out of range it means that the size of the array of either
-                    // the old data has surpassed the new data, or vice versa, so skip the step. 
-                    try {
-                        if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header])) {
-                            changed = true
-                        }
-                    } catch (error) { }
-
-                    // convert date gotten from the database to appropriate format after the checking, to avoid 
-                    // misinterpretating different date formats as different values although the date is the same
-                    if (header.toLowerCase().includes("date")) {
-                        // try to convert, if the input is null then just pass
+            if (spreadsheet_data.response) {
+                for (idx_row; idx_row < Math.max(spreadsheet_data.response.length, old_data.data_content.length); idx_row++) {
+                    let row = {}
+                    let changed = false
+                    spreadsheet_header.response.forEach((header, idx_col) => {
+                        // try converting any string to integer if possible, if fails then just skip and append the raw string
                         try {
-                            let day, month, year, parts;
-                            const input = spreadsheet_data?.response[idx_row][idx_col]
-                            if (input.includes("-")) {
-                                parts = input.split("-");
-                            } else if (input.trim().includes(" ")) {
-                                parts = input.split(" ");
-                            } else {
-                                parts = input.split("/")
+                            row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
+                            // if (row[header.toLowerCase()] === "") {
+                            //     throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
+                            // }
+                        } catch (error) { }
+
+                        // try checking if the data is different. if index out of range it means that the size of the array of either
+                        // the old data has surpassed the new data, or vice versa, so skip the step. 
+                        try {
+                            if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header])) {
+                                changed = true
                             }
-                            day = parts[0];
-                            month = parts[1];
-                            year = parts[2];
-                            const date = new Date(`${month}-${day}-${year}`);
-                            row[header.toLowerCase()] = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`
-                        } catch (error) {
-                            row[header.toLowerCase()] = ""
-                        }
-                    }
-                });
-                console.log(row, idx_row)
-                // if change in row is detected then update the data in the database
-                if (changed && idx_row < old_data.data_content.length - 1) {
-                    console.log("trying to PUT", idx_row)
-                    await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ id: old_data.data_content[idx_row]["id"], ...row })
-                    }).then(res => {
-                        if (res.status !== 200) {
-                            throw res.statusText || "Something happened while updating (PUT) a record which resulted in failure. Please contact maintainer."
-                        }
-                    })
-                } else {
-                    // else if current index is already beyond the length of original data or the new data
-                    if (idx_row > spreadsheet_data.response.length - 1 || idx_row > old_data.data_content.length - 1) {
-                        // if the new data length is shorter than the new data then the old data is deleted
-                        if (spreadsheet_data.response.length < old_data.data_content.length) {
-                            console.log("trying to DELETE", idx_row)
-                            await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
-                                method: "DELETE",
-                                headers: {
-                                    "Content-Type": "application/json"
+                        } catch (error) { }
+
+                        // convert date gotten from the database to appropriate format after the checking, to avoid 
+                        // misinterpretating different date formats as different values although the date is the same
+                        if (header.toLowerCase().includes("date")) {
+                            // try to convert, if the input is null then just pass
+                            try {
+                                let day, month, year, parts;
+                                const input = spreadsheet_data?.response[idx_row][idx_col]
+                                if (input.includes("-")) {
+                                    parts = input.split("-");
+                                } else if (input.trim().includes(" ")) {
+                                    parts = input.split(" ");
+                                } else {
+                                    parts = input.split("/")
                                 }
-                            }).then(res => {
-                                if (res.status !== 200) {
-                                    throw res.statusText || "Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. "
-                                }
-                            })
-                            console.log("success")
+                                day = parts[0];
+                                month = parts[1];
+                                year = parts[2];
+                                const date = new Date(`${month}-${day}-${year}`);
+                                row[header.toLowerCase()] = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`
+                            } catch (error) {
+                                row[header.toLowerCase()] = null
+                            }
                         }
-                        // else if the new data length is greater than the old data then there's a new row appended
-                        else if (spreadsheet_data.response.length > old_data.data_content.length) {
-                            console.log("trying to POST", idx_row)
-                            const upload = await fetch(`${config[router.query.form_type]["view"]}`, {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify(row)
-                            }).then(res => {
-                                if (res.status !== 200) {
-                                    throw res.statusText || "Something happened while posting (POST) a record which resulted in a failure. Please contact maintainer."
-                                }
-                                return res.text()
-                            })
-                            console.log("success POSTING new record, appending to workspace...")
-                            let uploaded_id = upload.split(":")
-                            uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim())
-                            await fetch(`${config[router.query.form_type]["workspace"]}`, {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({
-                                    afe_number: workspaceData.afe_number,
-                                    pwr_id: uploaded_id
+                    });
+                    console.log(row, idx_row)
+                    // if change in row is detected then update the data in the database
+                    if (changed && idx_row < old_data.data_content.length - 1) {
+                        console.log("trying to PUT", idx_row)
+                        await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ id: old_data.data_content[idx_row]["id"], ...row })
+                        }).then(res => {
+                            if (res.status !== 200) {
+                                throw res.statusText || "Something happened while updating (PUT) a record which resulted in failure. Please contact maintainer."
+                            }
+                        })
+                    } else {
+                        // else if current index is already beyond the length of original data or the new data
+                        if (idx_row > spreadsheet_data.response.length - 1 || idx_row > old_data.data_content.length - 1) {
+                            // if the new data length is shorter than the new data then the old data is deleted
+                            if (spreadsheet_data.response.length < old_data.data_content.length) {
+                                console.log("trying to DELETE", idx_row)
+                                await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
+                                    method: "DELETE",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    }
+                                }).then(res => {
+                                    if (res.status !== 200) {
+                                        throw res.statusText || "Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. "
+                                    }
                                 })
-                            }).then(res => {
-                                if (res.status !== 200) {
-                                    throw res.statusText || "Something happened while posting (POST) a record to the workspace table which resulted in a failure. Please contact maintainer."
-                                }
-                            })
-                            console.log("success")
+                                console.log("success")
+                            }
+                            // else if the new data length is greater than the old data then there's a new row appended
+                            else if (spreadsheet_data.response.length > old_data.data_content.length) {
+                                console.log("trying to POST", idx_row)
+                                const upload = await fetch(`${config[router.query.form_type]["view"]}`, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify(row)
+                                }).then(res => {
+                                    if (res.status !== 200) {
+                                        throw res.statusText || "Something happened while posting (POST) a record which resulted in a failure. Please contact maintainer."
+                                    }
+                                    return res.text()
+                                })
+                                console.log("success POSTING new record, appending to record...")
+                                let uploaded_id = upload.split(":")
+                                uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim())
+                                await fetch(`${config[router.query.form_type]["workspace"]}`, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        afe_number: workspaceData.afe_number,
+                                        pwr_id: uploaded_id
+                                    })
+                                }).then(res => {
+                                    if (res.status !== 200) {
+                                        throw res.statusText || "Something happened while posting (POST) a record to the record table which resulted in a failure. Please contact maintainer."
+                                    }
+                                })
+                                console.log("success")
+                            }
                         }
                     }
                 }
+            } else {
+                if (old_data.data_content.length > 0) {
+                    old_data.data_content.forEach(async (record, idx_row_del) => {
+                        console.log("trying to DELETE", idx_row_del)
+                        await fetch(`${config[router.query.form_type]["view"]}${record["id"]}`, {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(res => {
+                            if (res.status !== 200) {
+                                throw res.statusText || "Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. "
+                            }
+                        })
+                        console.log("success")
+                    });
+                }
             }
-            setMessage({ message: "Workspace successfully saved", color: "blue" });
+            setMessage({ message: "Record successfully saved", color: "blue" });
             router.events.emit("routeChangeComplete")
             await delay(3000)
             setMessage({ message: "", color: "" });
         } catch (error) {
             // Handle error and display error message
-            setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${String(error)}`, color: "red" });
+            setMessage({ message: `Failed to save record. Please try again. Additional error message: ${String(error)}`, color: "red" });
         }
         router.events.emit("routeChangeComplete")
     }
 
     useEffect(() => {
-        if (upload_document_settings?.afe_number) {
-            setworkspaceData(upload_document_settings)
+        if (!router.query.form_type) {
+            router.push("/")
+        } else {
+            if (upload_document_settings?.afe_number) {
+                setworkspaceData(upload_document_settings)
+            }
         }
         setTitle("New document")
     }, [])
@@ -354,19 +377,20 @@ export default function NewDocumentPage({ setTitle }) {
     return ((workspaceData) ? (
         <Container additional_class="full-height relative">
             <Container.Title back>
-                <Input
+                {/* <Input
                     type={"text"}
                     value={workspaceData.workspace_name}
                     placeholder="Workspace name"
                     onChange={(e) => { setworkspaceData({ ...workspaceData, workspace_name: e.target.value }) }}
-                />
+                /> */}
+                <p>New record</p>
             </Container.Title>
             <HeaderTable>
                 <HeaderInput label1={"Nama KKKS"} label2={"(KKKS Name)"}>
                     <Input
                         type="text"
                         name={"workingArea"}
-                        placeholder={"Geodwipa Teknika Nusantara"}
+                        placeholder={"Input KKKS name"}
                         required={true}
                         additional_styles="w-full"
                         value={workspaceData.kkks_name}
@@ -378,7 +402,7 @@ export default function NewDocumentPage({ setTitle }) {
                     <Input
                         type="text"
                         name={"workingArea"}
-                        placeholder={"Pulau Geodwipa"}
+                        placeholder={"Input working area"}
                         required={true}
                         additional_styles="w-full"
                         value={workspaceData.working_area}
@@ -484,7 +508,7 @@ export default function NewDocumentPage({ setTitle }) {
             </ButtonsSection> */}
             <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${Message.color || "blue"}-500 text-white px-3 rounded-lg py-2 transition-all ${Message.message ? "" : "-translate-y-20"}`}>
                 <p>{Message.message}</p>
-                <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setMessage({ message: "", color: "" }) }}>
+                <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={(e) => { e.preventDefault(); setMessage({ message: "", color: "" }) }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
