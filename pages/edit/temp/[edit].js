@@ -248,7 +248,12 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                         // a try catch was put here to avoid new data being undefined if its length is shorter than old data
                         try {
                             if (!row[header.toLowerCase()]) {
-                                row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
+                                // row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
+                                if (header.toLowerCase().includes("page")) {
+                                    row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
+                                } else {
+                                    row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] || null;
+                                }
                                 if (row[header.toLowerCase()] === "") {
                                     throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
                                 }
