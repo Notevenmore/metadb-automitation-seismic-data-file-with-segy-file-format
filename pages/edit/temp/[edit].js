@@ -180,7 +180,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                     },
                     body: JSON.stringify(workspaceData)
                 }).then(res => Promise.all(
-                    [res.status, res.status !== 200 ? res.text() : res.json()]
+                    [res.status, res.text()]
                 )).then(([status, res]) => {
                     if (status !== 200) {
                         if (res.toLowerCase().includes("workspace_name_unique")) {
