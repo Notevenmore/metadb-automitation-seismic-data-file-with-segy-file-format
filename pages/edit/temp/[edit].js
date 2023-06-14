@@ -179,15 +179,15 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify(workspaceData)
-                }).then(res => {
-                    if (res.status !== 200) {
-                        return res.text()
-                    }
-                }).then(res => {
-                    if (res.toLowerCase().includes("workspace_name_unique")) {
-                        throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`
-                    } else {
-                        throw res || "Something happened while updating record information data. Please try again or contact maintainer if the problem persists."
+                }).then(res => Promise.all(
+                    [res.status, res.status !== 200 ? res.text() : res.json()]
+                )).then(([status, res]) => {
+                    if (status !== 200) {
+                        if (res.toLowerCase().includes("workspace_name_unique")) {
+                            throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`
+                        } else {
+                            throw res || "Something happened while updating record information data. Please try again or contact maintainer if the problem persists."
+                        }
                     }
                 })
             }

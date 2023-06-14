@@ -337,15 +337,15 @@ export default function UploadFileReview({ setTitle }) {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify(workspaceData)
-                }).then(res => {
-                    if (res.status !== 200) {
-                        return res.text()
-                    }
-                }).then(res => {
-                    if (res.toLowerCase().includes("workspace_name_unique")) {
-                        throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`
-                    } else {
-                        throw res || "Something happened while updating record information data. Please try again or contact maintainer if the problem persists."
+                }).then(res => Promise.all(
+                    [res.status, res.status !== 200 ? res.text() : res.json()]
+                )).then(([status, res]) => {
+                    if (status !== 200) {
+                        if (res.toLowerCase().includes("workspace_name_unique")) {
+                            throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`
+                        } else {
+                            throw res || "Something happened while updating record information data. Please try again or contact maintainer if the problem persists."
+                        }
                     }
                 })
             }
@@ -568,11 +568,11 @@ export default function UploadFileReview({ setTitle }) {
                         <p>Review</p>
                     </div>
                 </Container.Title>
-                <section className="-mt-5 mb-5 space-y-2">
+                {/* <section className="-mt-5 mb-5 space-y-2">
                     <p className="font-bold">Review</p>
-                    {/* <h1 className="font-bold text-[36px]">Lorem ipsum laporan 2008</h1> */}
-                    {/* <Input type={"text"} additional_styles_input="text-xl py-3 px-3 font-bold placeholder:italic" value={workspaceData.workspace_name} placeholder="Workspace name" onChange={(e) => setworkspaceData({ ...workspaceData, workspace_name: e.target.value })} /> */}
-                </section>
+                    <h1 className="font-bold text-[36px]">Lorem ipsum laporan 2008</h1>
+                    <Input type={"text"} additional_styles_input="text-xl py-3 px-3 font-bold placeholder:italic" value={workspaceData.workspace_name} placeholder="Workspace name" onChange={(e) => setworkspaceData({ ...workspaceData, workspace_name: e.target.value })} />
+                </section> */}
                 <HeaderTable>
                     <HeaderInput label1={"Nama KKKS"} label2={"(KKKS Name)"}>
                         <Input
