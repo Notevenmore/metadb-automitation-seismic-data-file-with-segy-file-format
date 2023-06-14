@@ -130,8 +130,11 @@ const DocEditor = ({ workspace_name, setTitle }) => {
 
     // TODO change to POST and PUT request to backend
     // This function handles the saving of the document/workspace
-    const saveDocument = async (e) => {
-        e.preventDefault();
+    const saveDocument = async (e = false) => {
+        if (e) {
+            e.preventDefault();
+        }
+        router.events.emit("routeChangeStart")
         try {
             // Check if spreadsheetId is available
             if (!spreadsheetId) {
@@ -390,11 +393,16 @@ const DocEditor = ({ workspace_name, setTitle }) => {
 
             // Set IsSaved to true and display success message
             setIsSaved(true);
+            settriggerSave("")
             setMessage({ message: "Workspace successfully saved", color: "blue" });
+            router.events.emit("routeChangeComplete")
+            await delay(3000)
+            setMessage({ message: "", color: "" });
         } catch (error) {
             // Handle error and display error message
             setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${String(error)}`, color: "red" });
         }
+        router.events.emit("routeChangeComplete")
     }
 
     const delay = delay_amount_ms =>
@@ -405,63 +413,68 @@ const DocEditor = ({ workspace_name, setTitle }) => {
     const downloadSpreadsheet = (e) => {
         e.preventDefault()
         setIsSaved(true)
-        settriggerSave(true)
+        settriggerSave("download")
+    }
+
+    const downloadWorkspace = async () => {
+        router.events.emit("routeChangeStart")
+        try {
+            setMessage({ message: "Downloading workspace as XLSX file, please wait...", color: "blue" });
+            if (spreadsheetId && router.query.form_type && workspaceData.afe_number) {
+                const spreadsheet_download = await fetch(`${config.services.sheets}/downloadSheet`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        form_type: router.query.form_type,
+                        spreadsheetID: spreadsheetId,
+                        workspace_data: workspaceData
+                    })
+                }).then(res => {
+                    return res.json()
+                }).then(res => {
+                    if (res.status !== 200) {
+                        throw `Response returned with status code ${res.status}: ${res.response}`
+                    }
+                    return res
+                })
+                console.log(`new temp spreadsheet download: ${spreadsheet_download.response}`)
+                await fetch(`https://docs.google.com/spreadsheets/d/${spreadsheet_download.response}/export?format=xlsx&id=${spreadsheet_download.response}`)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const link = document.createElement("a");
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `${workspaceData.workspace_name}`;
+                        link.click();
+                    })
+                    .catch(console.error);
+                await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ spreadsheetID: spreadsheet_download.response })
+                }).catch(err => { console.log(err) })
+                setMessage({ message: `Success. Workspace converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`, color: "blue" });
+            }
+        } catch (error) {
+            setMessage({ message: `${String(error)}`, color: "red" });
+        }
+        router.events.emit("routeChangeComplete")
+        settriggerSave("")
+        setIsSaved(false)
+        await delay(3500)
+        setMessage({ message: "", color: "" });
     }
 
     useEffect(() => {
-        const saveDoc = async () => {
-            router.events.emit("routeChangeStart")
-            try {
-                setMessage({ message: "Downloading workspace as XLSX file, please wait...", color: "blue" });
-                if (spreadsheetId && router.query.form_type && workspaceData.afe_number) {
-                    const spreadsheet_download = await fetch(`${config.services.sheets}/downloadSheet`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            form_type: router.query.form_type,
-                            spreadsheetID: spreadsheetId,
-                            workspace_data: workspaceData
-                        })
-                    }).then(res => {
-                        return res.json()
-                    }).then(res => {
-                        if (res.status !== 200) {
-                            throw `Response returned with status code ${res.status}: ${res.response}`
-                        }
-                        return res
-                    })
-                    console.log(`new temp spreadsheet download: ${spreadsheet_download.response}`)
-                    await fetch(`https://docs.google.com/spreadsheets/d/${spreadsheet_download.response}/export?format=xlsx&id=${spreadsheet_download.response}`)
-                        .then(response => response.blob())
-                        .then(blob => {
-                            const link = document.createElement("a");
-                            link.href = URL.createObjectURL(blob);
-                            link.download = `${workspaceData.workspace_name}`;
-                            link.click();
-                        })
-                        .catch(console.error);
-                    await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ spreadsheetID: spreadsheet_download.response })
-                    }).catch(err => { console.log(err) })
-                    setMessage({ message: `Success. Workspace converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`, color: "blue" });
-                }
-            } catch (error) {
-                setMessage({ message: `${String(error)}`, color: "red" });
-            }
-            router.events.emit("routeChangeComplete")
-            settriggerSave(false)
-            setIsSaved(false)
-            await delay(3500)
-            setMessage({ message: "", color: "" });
-        }
         if (triggerSave && IsSaved) {
-            saveDoc()
+            if (triggerSave === "download") {
+                downloadWorkspace()
+            } else if (triggerSave === "save") {
+                saveDocument()
+            }
         }
     }, [triggerSave, IsSaved])
 
@@ -568,14 +581,14 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                 </div>
                 <div className="flex space-x-2 w-full pt-5">
                     <Button
-                        path="" button_description="Save workspace" onClick={saveDocument}
+                        path="" button_description="Save workspace" onClick={(e) => { e.preventDefault(); setIsSaved(true); settriggerSave("save") }}
                         additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
-                        disabled={spreadsheetReady ? false : true}
+                        disabled={!spreadsheetReady || Message.message ? true : false}
                     />
                     <Button
-                        path="" button_description="Download workspace" onClick={downloadSpreadsheet}
+                        path="" button_description="Download workspace" onClick={(e) => { e.preventDefault(); setIsSaved(true); settriggerSave("download") }}
                         additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
-                        disabled={spreadsheetReady ? false : true}
+                        disabled={!spreadsheetReady || Message.message ? true : false}
                     />
                 </div>
                 <div className={`flex items-center space-x-2 fixed top-5 left-[50%]

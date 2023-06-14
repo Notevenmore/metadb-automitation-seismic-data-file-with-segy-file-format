@@ -110,6 +110,7 @@ const PrintedWellReport = ({ setTitle }) => {
 
     const makenew = async (e) => {
         e.preventDefault()
+        router.events.emit("routeChangeStart")
         try {
             settoggleOverlay(false)
             setMessage({ message: "Creating a new workspace... Please don't leave this page or click anything", color: "blue" })
@@ -138,7 +139,8 @@ const PrintedWellReport = ({ setTitle }) => {
             })
             dispatch(setUploadDocumentSettings(newWorkspace))
             setMessage({ message: "Success. Redirecting to the next page...", color: "blue" });
-            await delay(1000)
+            router.events.emit("routeChangeComplete")
+            await delay(1500)
             router.push({
                 pathname: "/new_document",
                 query: { form_type: "printed_well_report" }
@@ -147,10 +149,12 @@ const PrintedWellReport = ({ setTitle }) => {
             // Handle error and display error message
             setMessage({ message: String(error), color: "red" });
         }
+        router.events.emit("routeChangeComplete")
     }
 
     const deleteWorkspace = async (e, afe_number) => {
         e.preventDefault()
+        router.events.emit("routeChangeStart")
         try {
             setMessage({ message: "Deleting workspace... Please don't leave this page or click anything", color: "blue" });
             await fetch(`${config["printed_well_report"]["afe"]}${afe_number}`, {
@@ -165,17 +169,34 @@ const PrintedWellReport = ({ setTitle }) => {
             })
             setMessage({ message: "Success", color: "blue" });
             init()
+            router.events.emit("routeChangeComplete")
             await delay(2000)
             setMessage({ message: "", color: "" });
             // router.reload(window.location.pathname)
         } catch (error) {
             setMessage({ message: String(error), color: "red" });
         }
+        router.events.emit("routeChangeComplete")
     }
 
     const downloadWorkspace = async (e, afe_number) => {
         e.preventDefault()
 
+    }
+
+    const reset = (element = false) => {
+        if (element) {
+            const comparator = document.getElementById("overlay")
+            if (element !== comparator) { return }
+        }
+        settoggleOverlay(false)
+        setnewWorkspace({
+            workspace_name: "",
+            kkks_name: "",
+            working_area: "",
+            afe_number: 0,
+            submission_type: ""
+        })
     }
 
     return (
@@ -210,10 +231,10 @@ const PrintedWellReport = ({ setTitle }) => {
             </Container.Title>
             <TableComponent
                 header={searchData[0] !== -1 ? searchData.length === 0 ? ["Workspace not found"] : ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : data.length !== 0 ? ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : error ? ["Connection error"] : ["Loading..."]}
-                content={searchData[0] !== -1 ? searchData.length === 0 ? [{ "Workspace not found": "No workspaces with such name" }] : searchData : data.length === 0 ? error ? [{ "Connection error": "Error getting workspace list. Please try again or contact maintainer if the problem persists by giving them the information below" }] : [{ "Loading...": "Getting workspace list..." }] : data} 
-                setSelectedRows={selectedTableData} 
+                content={searchData[0] !== -1 ? searchData.length === 0 ? [{ "Workspace not found": "No workspaces with such name" }] : searchData : data.length === 0 ? error ? [{ "Connection error": "Error getting workspace list. Please try again or contact maintainer if the problem persists by giving them the information below" }] : [{ "Loading...": "Getting workspace list..." }] : data}
+                setSelectedRows={selectedTableData}
                 // with_checkbox 
-                contentAlignWithHeader 
+                contentAlignWithHeader
                 additional_styles="mb-20" />
             {error ? <Highlight className='html rounded-md border-2'>{error}</Highlight> : null}
             <Button className="shadow-black/10 shadow-lg drop-shadow-lg hover:w-[205px] w-[60px] h-[60px] border rounded-full fixed bottom-9 right-12 bg-gray-200 flex items-center transition-all overflow-hidden outline-none"
@@ -226,10 +247,13 @@ const PrintedWellReport = ({ setTitle }) => {
                     <p className="whitespace-nowrap font-bold">New workspace</p>
                 </div>
             </Button>
-            <div className={`fixed w-screen h-screen bg-black/[.5] top-0 left-0 ${toggleOverlay ? "opacity-100 visible" : "opacity-0 invisible"} transition-all`}>
-                <div className="flex items-center justify-center w-full h-full">
+            <div
+                className={`fixed w-screen h-screen bg-black/[.5] top-0 left-0 ${toggleOverlay ? "opacity-100 visible" : "opacity-0 invisible"} transition-all`}
+                onClick={(e) => { e.preventDefault(); reset(e.target) }}
+            >
+                <div id="overlay" className="flex items-center justify-center w-full h-full">
                     <div className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${toggleOverlay ? "" : "-translate-y-10 opacity-0"} transition-all`}>
-                        <Button path="" additional_styles="absolute top-2 right-2 px-1 py-1 text-black" title="Cancel" onClick={(e) => { e.preventDefault(); settoggleOverlay(false); setnewWorkspace({ workspace_name: "", kkks_name: "", working_area: "", afe_number: "", submission_type: "" }) }}>
+                        <Button path="" additional_styles="absolute top-2 right-2 px-1 py-1 text-black" title="Cancel" onClick={(e) => { e.preventDefault(); reset() }}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -308,7 +332,7 @@ const PrintedWellReport = ({ setTitle }) => {
                                 />
                                 <Button
                                     button_description="Cancel"
-                                    onClick={(e) => { e.preventDefault(); settoggleOverlay(false); setnewWorkspace({ workspace_name: "", kkks_name: "", working_area: "", afe_number: "", submission_type: "" }) }}
+                                    onClick={(e) => { e.preventDefault(); reset() }}
                                 />
                             </div>
                         </form>

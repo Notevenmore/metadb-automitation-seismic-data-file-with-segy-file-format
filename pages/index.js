@@ -45,6 +45,7 @@ const HomeSection = () => {
 	const makenew = async (e) => {
 		e.preventDefault()
 		if (dataType) {
+			router.events.emit("routeChangeStart")
 			try {
 				settoggleOverlay(false)
 				setMessage({ message: "Creating a new workspace... Please don't leave this page or click anything", color: "blue" });
@@ -73,7 +74,8 @@ const HomeSection = () => {
 				})
 				dispatch(setUploadDocumentSettings(newWorkspace))
 				setMessage({ message: "Success. Redirecting to the next page...", color: "blue" });
-				await delay(1000)
+				router.events.emit("routeChangeComplete")
+				await delay(1500)
 				router.push({
 					pathname: "/new_document",
 					query: { form_type: datatypes[dataType] }
@@ -82,8 +84,26 @@ const HomeSection = () => {
 				// Handle error and display error message
 				setMessage({ message: String(error), color: "red" });
 			}
+			router.events.emit("routeChangeComplete")
 		}
 	}
+
+	const reset = (element = false) => {
+		if (element) {
+			const comparator = document.getElementById("overlay")
+			if (element !== comparator) { return }
+		}
+		settoggleOverlay(false)
+		setdataType("")
+		setnewWorkspace({
+			workspace_name: "",
+			kkks_name: "",
+			working_area: "",
+			afe_number: 0,
+			submission_type: ""
+		})
+	}
+
 	return (
 		<section className="flex flex-col justify-center items-center w-full h-full" onDragEnter={(e) => handleDrag(e)}>
 			<section className="flex flex-col justify-around w-[944px] h-[426px] items-center">
@@ -109,10 +129,13 @@ const HomeSection = () => {
 					{/* <Buttons path={"/database"} button_description="Connect with database"></Buttons> */}
 				</section>
 			</section>
-			<div className={`fixed w-screen h-screen bg-black/[.5] top-0 left-0 ${toggleOverlay ? "opacity-100 visible" : "opacity-0 invisible"} transition-all`}>
-				<div className="flex items-center justify-center w-full h-full">
+			<div
+				className={`fixed w-screen h-screen bg-black/[.5] top-0 left-0 ${toggleOverlay ? "opacity-100 visible" : "opacity-0 invisible"} transition-all`}
+				onClick={(e) => { e.preventDefault(); reset(e.target) }}
+			>
+				<div id="overlay" className="flex items-center justify-center w-full h-full">
 					<div className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${toggleOverlay ? "" : "-translate-y-10 opacity-0"} transition-all`}>
-						<Buttons path="" additional_styles="absolute top-2 right-2 px-1 py-1 text-black" title="Cancel" onClick={(e) => { e.preventDefault(); settoggleOverlay(false); setdataType(""); setnewWorkspace({ workspace_name: "", kkks_name: "", working_area: "", afe_number: 0, submission_type: "" }) }}>
+						<Buttons path="" additional_styles="absolute top-2 right-2 px-1 py-1 text-black" title="Cancel" onClick={(e) => { e.preventDefault(); reset() }}>
 							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
 								<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
 							</svg>
@@ -203,7 +226,7 @@ const HomeSection = () => {
 								/>
 								<Buttons
 									button_description="Cancel"
-									onClick={(e) => { e.preventDefault(); settoggleOverlay(false); setdataType(""); setnewWorkspace({ workspace_name: "", kkks_name: "", working_area: "", afe_number: 0, submission_type: "" }) }}
+									onClick={(e) => { e.preventDefault(); reset() }}
 								/>
 							</div>
 						</form>

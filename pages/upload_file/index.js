@@ -81,8 +81,12 @@ export default function UploadFilePage({ setTitle }) {
 	const delay = delay_amount_ms =>
 		new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
 
-	const proceed = async (e, submit = false) => {
+	const proceed = async (e, submit = false, element = false) => {
 		e.preventDefault()
+		if (element) {
+			const comparator = document.getElementById("overlay")
+			if (e.target !== comparator) { return }
+		}
 		settoggleOverlay(false)
 		if (submit) {
 			setMessage({ message: "Creating a new workspace... Please don't leave this page or click anything", color: "blue" });
@@ -97,10 +101,10 @@ export default function UploadFilePage({ setTitle }) {
 				},
 				body: JSON.stringify({
 					"afe_number": parseInt(UplSettings.afe_number),
-                    "workspace_name": UplSettings.workspace_name,
-                    "kkks_name": UplSettings.kkks_name,
-                    "working_area": UplSettings.working_area,
-                    "submission_type": UplSettings.submission_type
+					"workspace_name": UplSettings.workspace_name,
+					"kkks_name": UplSettings.kkks_name,
+					"working_area": UplSettings.working_area,
+					"submission_type": UplSettings.submission_type
 				})
 			}).then(res => {
 				if (res.status !== 200) {
@@ -330,10 +334,13 @@ export default function UploadFilePage({ setTitle }) {
 					<Buttons type="submit" button_description="Cancel" path="" onClick={router.back} />
 				</div>
 			</form>
-			<div className={`fixed w-screen h-screen flex items-center justify-center bg-black/[.5] top-0 left-0 ${toggleOverlay ? "opacity-100 visible" : "opacity-0 invisible"} transition-all`}>
-				<div className="flex items-center justify-center w-[50%] h-full">
+			<div
+				className={`fixed w-screen h-screen flex items-center justify-center bg-black/[.5] top-0 left-0 ${toggleOverlay ? "opacity-100 visible" : "opacity-0 invisible"} transition-all`}
+				onClick={(e) => { proceed(e, false, true) }}
+			>
+				<div id="overlay" className="flex items-center justify-center w-[50%] h-full">
 					<div className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${toggleOverlay ? "" : "-translate-y-10 opacity-0"} transition-all`}>
-						<Buttons path="" additional_styles="absolute top-2 right-2 px-1 py-1 text-black" title="Cancel" onClick={(e) => { e.preventDefault(); settoggleOverlay(false); setnewWorkspace({ workspace_name: "", kkks_name: "", working_area: "", afe_number: "", submission_type: "" }) }}>
+						<Buttons path="" additional_styles="absolute top-2 right-2 px-1 py-1 text-black" title="Cancel" onClick={proceed}>
 							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
 								<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
 							</svg>

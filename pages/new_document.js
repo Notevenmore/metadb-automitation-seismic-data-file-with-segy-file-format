@@ -121,8 +121,12 @@ export default function NewDocumentPage({ setTitle }) {
         return { data: data, data_content: final, workspace_data: workspace_data[0] }
     }
 
+    const delay = delay_amount_ms =>
+        new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
+
     const saveDocument = async (e) => {
         e.preventDefault();
+        router.events.emit("routeChangeStart")
         try {
             // Check if spreadsheetId is available
             if (!spreadsheetID) {
@@ -330,10 +334,14 @@ export default function NewDocumentPage({ setTitle }) {
                 }
             }
             setMessage({ message: "Workspace successfully saved", color: "blue" });
+            router.events.emit("routeChangeComplete")
+            await delay(3000)
+            setMessage({ message: "", color: "" });
         } catch (error) {
             // Handle error and display error message
             setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${String(error)}`, color: "red" });
         }
+        router.events.emit("routeChangeComplete")
     }
 
     useEffect(() => {
@@ -469,8 +477,8 @@ export default function NewDocumentPage({ setTitle }) {
                 />
             </div>
             <div className="flex space-x-2 py-10">
-                <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={saveDocument}>Save changes</Buttons>
-                <Buttons path="" additional_styles="text-error" onClick={router.back}>Cancel</Buttons>
+                <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={saveDocument} disabled={Message.message ? true : false}>Save changes</Buttons>
+                <Buttons path="" additional_styles="text-error" onClick={router.back} disabled={Message.message ? true : false}>Cancel</Buttons>
             </div>
             {/* <ButtonsSection className="pb-2 border-2 border-black">
             </ButtonsSection> */}

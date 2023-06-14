@@ -287,8 +287,12 @@ export default function UploadFileReview({ setTitle }) {
         return { data: data, data_content: final, workspace_data: workspace_data[0] }
     }
 
+    const delay = delay_amount_ms =>
+        new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
+
     const saveDocument = async (e, redirect = false) => {
         e.preventDefault();
+        router.events.emit("routeChangeStart")
         try {
             // Check if spreadsheetId is available
             if (!spreadsheetID) {
@@ -539,13 +543,21 @@ export default function UploadFileReview({ setTitle }) {
             //     }
             // }
             setMessage({ message: "Workspace successfully saved", color: "blue" });
-            if (redirect){
+            router.events.emit("routeChangeComplete")
+            if (redirect) {
+                await delay(1000)
+                setMessage({ message: "Redirecting to homepage...", color: "blue" });
+                await delay(1000)
                 router.push("/")
+            } else {
+                await delay(3000)
+                setMessage({ message: "", color: "" });
             }
         } catch (error) {
             // Handle error and display error message
             setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${String(error)}`, color: "red" });
         }
+        router.events.emit("routeChangeComplete")
     }
 
     return ((error) ? (
