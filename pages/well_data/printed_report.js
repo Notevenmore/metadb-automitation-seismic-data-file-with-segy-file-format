@@ -96,7 +96,13 @@ const PrintedWellReport = ({ setTitle }) => {
         const name = e.target.value.toLocaleLowerCase();
         let temp = data;
         temp = temp.filter((item) => {
-            return item.Name.toLocaleLowerCase().includes(name);
+            return (
+                item.Name.toLocaleLowerCase().includes(name) ||
+                item.KKKS.toLocaleLowerCase().includes(name) ||
+                item["Working area"].toLocaleLowerCase().includes(name) ||
+                String(item.AFE).toLocaleLowerCase().includes(name) ||
+                item.Type.toLocaleLowerCase().includes(name)
+            );
         });
         if (name) {
             setsearchData(temp);
@@ -216,7 +222,7 @@ const PrintedWellReport = ({ setTitle }) => {
                             additional_styles="flex flex-col items-center justify-center"
                             onChange={(e) => onSearch(e)}
                             autoComplete="off"
-                            placeholder="Search workspace name"
+                            placeholder="Search"
                         />
                         <Image
                             src="/icons/magnify.svg"
@@ -230,8 +236,8 @@ const PrintedWellReport = ({ setTitle }) => {
                 </div>
             </Container.Title>
             <TableComponent
-                header={searchData[0] !== -1 ? searchData.length === 0 ? ["Workspace not found"] : ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : data.length !== 0 ? ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : error ? ["Connection error"] : ["Loading..."]}
-                content={searchData[0] !== -1 ? searchData.length === 0 ? [{ "Workspace not found": "No workspaces with such name" }] : searchData : data.length === 0 ? error ? [{ "Connection error": "Error getting workspace list. Please try again or contact maintainer if the problem persists by giving them the information below" }] : [{ "Loading...": "Getting workspace list..." }] : data}
+                header={searchData[0] !== -1 ? searchData.length === 0 ? ["Search did not return any result"] : ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : data.length !== 0 ? ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : error ? ["Connection error"] : ["Loading..."]}
+                content={searchData[0] !== -1 ? searchData.length === 0 ? [{ "Search did not return any result": "No workspaces found with such attributes" }] : searchData : data.length === 0 ? error ? [{ "Connection error": "Error getting workspace list. Please try again or contact maintainer if the problem persists by giving them the information below" }] : [{ "Loading...": "Getting workspace list..." }] : data}
                 setSelectedRows={selectedTableData}
                 // with_checkbox 
                 contentAlignWithHeader
