@@ -237,7 +237,7 @@ export default function UploadFileReview({ setTitle }) {
         // check github
         // ----| NEW WORKFLOW |----
         if (!workspaceData.afe_number) {
-            throw "Workspace data not found, please try again. Additionally, try opening other workspaces if the problem persists. If other workspaces behave the same, please contact maintainer."
+            throw "Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer."
         }
         const workspace_data = await fetch(`${config[router.query.form_type]["afe"]}${workspaceData.afe_number}`, {
             method: "GET",
@@ -301,7 +301,7 @@ export default function UploadFileReview({ setTitle }) {
             }
 
             // Set saving message
-            setMessage({ message: "Checking changes in workspace information... Please don't leave this page or click anything", color: "blue" });
+            setMessage({ message: "Checking changes in record information... Please don't leave this page or click anything", color: "blue" });
 
             // check for changes in the workspace data, if there are any then push the updates to the db
             let workspace_data_changed = false
@@ -325,7 +325,7 @@ export default function UploadFileReview({ setTitle }) {
             });
 
             if (workspace_data_changed) {
-                setMessage({ message: "Saving workspace information... Please don't leave this page or click anything", color: "blue" });
+                setMessage({ message: "Saving record information... Please don't leave this page or click anything", color: "blue" });
                 await fetch(`${config[router.query.form_type]["afe"]}${workspaceData['afe_number']}`, {
                     method: "PUT",
                     headers: {
@@ -339,7 +339,7 @@ export default function UploadFileReview({ setTitle }) {
                 })
             }
 
-            setMessage({ message: "Checking changes in workspace data... Please don't leave this page or click anything", color: "blue" });
+            setMessage({ message: "Checking changes in record data... Please don't leave this page or click anything", color: "blue" });
             // fetch original data from database
             const old_data = await init_data()
 
@@ -383,7 +383,7 @@ export default function UploadFileReview({ setTitle }) {
                 return response;
             }).catch(err => { throw err; });
 
-            setMessage({ message: "Saving workspace data... Please don't leave this page or click anything", color: "blue" });
+            setMessage({ message: "Saving record data... Please don't leave this page or click anything", color: "blue" });
             var idx_row = 0
             for (idx_row; idx_row < Math.max(spreadsheet_data.response.length, old_data.data_content.length); idx_row++) {
                 let row = {}
@@ -391,7 +391,7 @@ export default function UploadFileReview({ setTitle }) {
                 spreadsheet_header.response.forEach((header, idx_col) => {
                     // try converting any string to integer if possible, if fails then just skip and append the raw string
                     try {
-                        row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || "";
+                        row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
                         if (row[header.toLowerCase()] === "") {
                             throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
                         }
@@ -477,7 +477,7 @@ export default function UploadFileReview({ setTitle }) {
                                 }
                                 return res.text()
                             })
-                            console.log("success POSTING new record, appending to workspace...")
+                            console.log("success POSTING new record, appending to record...")
                             let uploaded_id = upload.split(":")
                             uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim())
                             await fetch(`${config[router.query.form_type]["workspace"]}`, {
@@ -491,7 +491,7 @@ export default function UploadFileReview({ setTitle }) {
                                 })
                             }).then(res => {
                                 if (res.status !== 200) {
-                                    throw res.statusText || "Something happened while posting (POST) a record to the workspace table which resulted in a failure. Please contact maintainer."
+                                    throw res.statusText || "Something happened while posting (POST) a record to the record table which resulted in a failure. Please contact maintainer."
                                 }
                             })
                             console.log("success")
@@ -542,7 +542,7 @@ export default function UploadFileReview({ setTitle }) {
             //         });
             //     }
             // }
-            setMessage({ message: "Workspace successfully saved", color: "blue" });
+            setMessage({ message: "Record successfully saved", color: "blue" });
             router.events.emit("routeChangeComplete")
             if (redirect) {
                 await delay(1000)
@@ -555,7 +555,7 @@ export default function UploadFileReview({ setTitle }) {
             }
         } catch (error) {
             // Handle error and display error message
-            setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${String(error)}`, color: "red" });
+            setMessage({ message: `Failed to save record. Please try again. Additional error message: ${String(error)}`, color: "red" });
         }
         router.events.emit("routeChangeComplete")
     }
@@ -577,16 +577,16 @@ export default function UploadFileReview({ setTitle }) {
                     </div>
                 </Container.Title>
                 <section className="-mt-5 mb-5 space-y-2">
-                    <p className="font-bold">Name</p>
+                    <p className="font-bold">Review</p>
                     {/* <h1 className="font-bold text-[36px]">Lorem ipsum laporan 2008</h1> */}
-                    <Input type={"text"} additional_styles_input="text-xl py-3 px-3 font-bold placeholder:italic" value={workspaceData.workspace_name} placeholder="Workspace name" onChange={(e) => setworkspaceData({ ...workspaceData, workspace_name: e.target.value })} />
+                    {/* <Input type={"text"} additional_styles_input="text-xl py-3 px-3 font-bold placeholder:italic" value={workspaceData.workspace_name} placeholder="Workspace name" onChange={(e) => setworkspaceData({ ...workspaceData, workspace_name: e.target.value })} /> */}
                 </section>
                 <HeaderTable>
                     <HeaderInput label1={"Nama KKKS"} label2={"(KKKS Name)"}>
                         <Input
                             type="text"
                             name={"workingArea"}
-                            placeholder={"Geodwipa Teknika Nusantara"}
+                            placeholder={"Input KKKS name"}
                             value={workspaceData.kkks_name}
                             required={true}
                             additional_styles="w-full"
@@ -598,7 +598,7 @@ export default function UploadFileReview({ setTitle }) {
                         <Input
                             type="text"
                             name={"workingArea"}
-                            placeholder={"Pulau Geodwipa"}
+                            placeholder={"Input working area"}
                             value={workspaceData.working_area}
                             required={true}
                             additional_styles="w-full"
@@ -628,7 +628,6 @@ export default function UploadFileReview({ setTitle }) {
                             name={"AFE_Number"}
                             value={workspaceData.afe_number}
                             additional_styles="w-full"
-                            onChange={(e) => setworkspaceData({ ...workspaceData, afe_number: e.target.value })}
                             disabled
                         />
                     </HeaderInput>

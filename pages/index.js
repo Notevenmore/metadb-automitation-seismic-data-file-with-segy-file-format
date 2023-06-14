@@ -48,7 +48,7 @@ const HomeSection = () => {
 			router.events.emit("routeChangeStart")
 			try {
 				settoggleOverlay(false)
-				setMessage({ message: "Creating a new workspace... Please don't leave this page or click anything", color: "blue" });
+				setMessage({ message: "Creating a new record... Please don't leave this page or click anything", color: "blue" });
 				await fetch(`${config[datatypes[dataType]]["afe"]}`, {
 					method: "POST",
 					headers: {
@@ -65,11 +65,11 @@ const HomeSection = () => {
 					if (res.toLowerCase() === "ok") {
 						return true
 					} else if (res.toLowerCase().includes("workspace_name_unique")) {
-						throw `A workspace with the name "${newWorkspace.workspace_name}" already exists. Please choose a different name.`
+						throw `A record with the name "${newWorkspace.workspace_name}" already exists. Please choose a different name.`
 					} else if (res.toLowerCase().includes("afe_pk_error")) {
-						throw `A workspace with AFE number ${newWorkspace.afe_number} already exists. Please choose a different AFE number.`
+						throw `A record with AFE number ${newWorkspace.afe_number} already exists. Please choose a different AFE number.`
 					} else {
-						throw res || "Something happened while updating workspace information data. Please try again or contact maintainer if the problem persists."
+						throw res || "Something happened while updating record information data. Please try again or contact maintainer if the problem persists."
 					}
 				})
 				dispatch(setUploadDocumentSettings(newWorkspace))
@@ -124,7 +124,7 @@ const HomeSection = () => {
 					<Divider additional_styles={"w-[284px]"}></Divider>
 				</section>
 				<section className="flex flex-row gap-x-3">
-					<Buttons path="" button_description="Make a new workspace" onClick={(e) => { e.preventDefault(); settoggleOverlay(true) }}></Buttons>
+					<Buttons path="" button_description="Make a new record" onClick={(e) => { e.preventDefault(); settoggleOverlay(true) }}></Buttons>
 					{/* <Buttons path={"/drafts"} button_description="View drafts"></Buttons> */}
 					{/* <Buttons path={"/database"} button_description="Connect with database"></Buttons> */}
 				</section>
@@ -140,11 +140,11 @@ const HomeSection = () => {
 								<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
 							</svg>
 						</Buttons>
-						<h1 className="font-bold text-3xl">New workspace</h1>
+						<h1 className="font-bold text-3xl">New record</h1>
 						<hr />
-						<p className="font-semibold">Select the appropriate configuration for the new workspace:</p>
+						<p className="font-semibold">Select the appropriate configuration for the new record:</p>
 						<form onSubmit={console.log("hooray")} className="space-y-3 flex flex-col items-center justify-center">
-							<div className="w-full space-y-1 border-2 p-2 rounded-lg">
+							<div className="w-full space-y-2 border-2 p-2 rounded-lg">
 								<p>Data type</p>
 								<Input
 									type="dropdown"
@@ -157,7 +157,7 @@ const HomeSection = () => {
 									onChange={(e) => setdataType(e.target.value)}
 									withSearch
 								/>
-								<p>Workspace name</p>
+								{/* <p>Workspace name</p>
 								<Input
 									type="text"
 									name={"workingArea"}
@@ -167,7 +167,7 @@ const HomeSection = () => {
 									additional_styles="w-full"
 									autoComplete="off"
 									onChange={(e) => setnewWorkspace({ ...newWorkspace, workspace_name: e.target.value })}
-								/>
+								/> */}
 								<p>AFE number</p>
 								<Input
 									type="number"
@@ -177,13 +177,13 @@ const HomeSection = () => {
 									required={true}
 									additional_styles="w-full"
 									autoComplete="off"
-									onChange={(e) => setnewWorkspace({ ...newWorkspace, afe_number: parseInt(e.target.value) })}
+									onChange={(e) => setnewWorkspace({ ...newWorkspace, afe_number: parseInt(e.target.value), workspace_name: `record_${e.target.value}` })}
 								/>
 								<p>KKKS name</p>
 								<Input
 									type="text"
 									name={"kkksName"}
-									placeholder={"Geodwipa Teknika Nusantara"}
+									placeholder={"Input KKKS name"}
 									value={newWorkspace.kkks_name}
 									required={true}
 									additional_styles="w-full"
@@ -194,7 +194,7 @@ const HomeSection = () => {
 								<Input
 									type="text"
 									name={"workingArea"}
-									placeholder={"Pulau Geodwipa"}
+									placeholder={"Input working area"}
 									value={newWorkspace.working_area}
 									required={true}
 									additional_styles="w-full"

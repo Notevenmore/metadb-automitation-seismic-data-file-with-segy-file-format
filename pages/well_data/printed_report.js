@@ -50,7 +50,7 @@ const PrintedWellReport = ({ setTitle }) => {
                 let final = []
                 res.forEach((workspace) => {
                     final.push({
-                        Name: workspace.workspace_name,
+                        // Name: workspace.workspace_name,
                         KKKS: workspace.kkks_name,
                         "Working area": workspace.working_area,
                         AFE: workspace.afe_number,
@@ -62,7 +62,7 @@ const PrintedWellReport = ({ setTitle }) => {
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><polyline points="86 110 128 152 170 110" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /><line x1="128" y1="40" x2="128" y2="152" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /><path d="M216,152v56a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V152" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /></svg>
                                     </div>
                                 </Button> */}
-                                <Button title="Edit workspace"
+                                <Button title="Edit record"
                                     additional_styles="px-3" className="flex"
                                     path={`/edit/temp/${workspace.workspace_name}`}
                                     query={{ form_type: "printed_well_report", workspace_data: workspace.afe_number }}
@@ -71,7 +71,7 @@ const PrintedWellReport = ({ setTitle }) => {
                                         <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
                                     </div>
                                 </Button>
-                                <Button additional_styles="px-3 hover:bg-red-400" className="flex" title="Delete workspace" onClick={(e) => { deleteWorkspace(e, workspace.afe_number) }}>
+                                <Button additional_styles="px-3 hover:bg-red-400" className="flex" title="Delete record" onClick={(e) => { deleteWorkspace(e, workspace.afe_number) }}>
                                     <div className="w-[18px] h-[18px] flex items-center">
                                         <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
                                     </div>
@@ -97,7 +97,7 @@ const PrintedWellReport = ({ setTitle }) => {
         let temp = data;
         temp = temp.filter((item) => {
             return (
-                item.Name.toLocaleLowerCase().includes(name) ||
+                // item.Name.toLocaleLowerCase().includes(name) ||
                 item.KKKS.toLocaleLowerCase().includes(name) ||
                 item["Working area"].toLocaleLowerCase().includes(name) ||
                 String(item.AFE).toLocaleLowerCase().includes(name) ||
@@ -119,7 +119,7 @@ const PrintedWellReport = ({ setTitle }) => {
         router.events.emit("routeChangeStart")
         try {
             settoggleOverlay(false)
-            setMessage({ message: "Creating a new workspace... Please don't leave this page or click anything", color: "blue" })
+            setMessage({ message: "Creating a new record... Please don't leave this page or click anything", color: "blue" })
             await fetch(`${config["printed_well_report"]["afe"]}`, {
                 method: "POST",
                 headers: {
@@ -136,11 +136,11 @@ const PrintedWellReport = ({ setTitle }) => {
                 if (res.toLowerCase() === "ok") {
                     return true
                 } else if (res.toLowerCase().includes("workspace_name_unique")) {
-                    throw `A workspace with the name "${newWorkspace.workspace_name}" already exists. Please choose a different name.`
+                    throw `A record with the name "${newWorkspace.workspace_name}" already exists. Please choose a different name.`
                 } else if (res.toLowerCase().includes("afe_pk_error")) {
-                    throw `A workspace with AFE number ${newWorkspace.afe_number} already exists. Please choose a different AFE number.`
+                    throw `A record with AFE number ${newWorkspace.afe_number} already exists. Please choose a different AFE number.`
                 } else {
-                    throw res || "Something happened while updating workspace information data. Please try again or contact maintainer if the problem persists."
+                    throw res || "Something happened while updating record information data. Please try again or contact maintainer if the problem persists."
                 }
             })
             dispatch(setUploadDocumentSettings(newWorkspace))
@@ -162,7 +162,7 @@ const PrintedWellReport = ({ setTitle }) => {
         e.preventDefault()
         router.events.emit("routeChangeStart")
         try {
-            setMessage({ message: "Deleting workspace... Please don't leave this page or click anything", color: "blue" });
+            setMessage({ message: "Deleting record... Please don't leave this page or click anything", color: "blue" });
             await fetch(`${config["printed_well_report"]["afe"]}${afe_number}`, {
                 method: "DELETE",
                 headers: {
@@ -236,21 +236,21 @@ const PrintedWellReport = ({ setTitle }) => {
                 </div>
             </Container.Title>
             <TableComponent
-                header={searchData[0] !== -1 ? searchData.length === 0 ? ["Search did not return any result"] : ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : data.length !== 0 ? ["Name", "KKKS", "Working area", "Type", "AFE", "Action"] : error ? ["Connection error"] : ["Loading..."]}
-                content={searchData[0] !== -1 ? searchData.length === 0 ? [{ "Search did not return any result": "No workspaces found with such attributes" }] : searchData : data.length === 0 ? error ? [{ "Connection error": "Error getting workspace list. Please try again or contact maintainer if the problem persists by giving them the information below" }] : [{ "Loading...": "Getting workspace list..." }] : data}
+                header={searchData[0] !== -1 ? searchData.length === 0 ? ["Search did not return any result"] : ["AFE", "KKKS", "Working area", "Type", "Action"] : data.length !== 0 ? ["AFE", "KKKS", "Working area", "Type", "Action"] : error ? ["Connection error"] : ["Loading..."]}
+                content={searchData[0] !== -1 ? searchData.length === 0 ? [{ "Search did not return any result": "No records found with such attributes" }] : searchData : data.length === 0 ? error ? [{ "Connection error": "Error getting record list. Please try again or contact maintainer if the problem persists by giving them the information below" }] : [{ "Loading...": "Getting record list..." }] : data}
                 setSelectedRows={selectedTableData}
                 // with_checkbox 
                 contentAlignWithHeader
                 additional_styles="mb-20" />
             {error ? <Highlight className='html rounded-md border-2'>{error}</Highlight> : null}
-            <Button className="shadow-black/10 shadow-lg drop-shadow-lg hover:w-[205px] w-[60px] h-[60px] border rounded-full fixed bottom-9 right-12 bg-gray-200 flex items-center transition-all overflow-hidden outline-none"
+            <Button className="shadow-black/10 shadow-lg drop-shadow-lg hover:w-[170px] w-[60px] h-[60px] border rounded-full fixed bottom-9 right-12 bg-gray-200 flex items-center transition-all overflow-hidden outline-none"
                 onClick={(e) => { e.preventDefault; settoggleOverlay(true) }}
             >
                 <div className="flex items-center justify-center space-x-5 pl-[16px]">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <p className="whitespace-nowrap font-bold">New workspace</p>
+                    <p className="whitespace-nowrap font-bold">New record</p>
                 </div>
             </Button>
             <div
@@ -264,12 +264,12 @@ const PrintedWellReport = ({ setTitle }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </Button>
-                        <h1 className="font-bold text-3xl">New workspace</h1>
+                        <h1 className="font-bold text-3xl">New record</h1>
                         <hr />
-                        <p className="font-semibold">Select the appropriate configuration for the new workspace:</p>
+                        <p className="font-semibold">Select the appropriate configuration for the new record:</p>
                         <form onSubmit={console.log("hooray")} className="space-y-3 flex flex-col items-center justify-center">
                             <div className="w-full space-y-2 border-2 p-2 rounded-lg">
-                                <p>Workspace name</p>
+                                {/* <p>Workspace name</p>
                                 <Input
                                     type="text"
                                     name={"workingArea"}
@@ -279,23 +279,23 @@ const PrintedWellReport = ({ setTitle }) => {
                                     additional_styles="w-full"
                                     autoComplete="off"
                                     onChange={(e) => setnewWorkspace({ ...newWorkspace, workspace_name: e.target.value })}
-                                />
+                                /> */}
                                 <p>AFE number</p>
                                 <Input
                                     type="number"
                                     name={"AFE_Number"}
-                                    placeholder={"1945"}
+                                    placeholder={"Input AFE number"}
                                     value={newWorkspace.afe_number}
                                     required={true}
                                     additional_styles="w-full"
                                     autoComplete="off"
-                                    onChange={(e) => setnewWorkspace({ ...newWorkspace, afe_number: parseInt(e.target.value) })}
+                                    onChange={(e) => setnewWorkspace({ ...newWorkspace, afe_number: parseInt(e.target.value), workspace_name: `record_${e.target.value}` })}
                                 />
                                 <p>KKKS name</p>
                                 <Input
                                     type="text"
                                     name={"kkksName"}
-                                    placeholder={"Geodwipa Teknika Nusantara"}
+                                    placeholder={"Input KKKS name"}
                                     value={newWorkspace.kkks_name}
                                     required={true}
                                     additional_styles="w-full"
@@ -306,7 +306,7 @@ const PrintedWellReport = ({ setTitle }) => {
                                 <Input
                                     type="text"
                                     name={"workingArea"}
-                                    placeholder={"Pulau Geodwipa"}
+                                    placeholder={"Input working area"}
                                     value={newWorkspace.working_area}
                                     required={true}
                                     additional_styles="w-full"

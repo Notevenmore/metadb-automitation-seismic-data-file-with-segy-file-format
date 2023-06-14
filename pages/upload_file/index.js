@@ -89,7 +89,7 @@ export default function UploadFilePage({ setTitle }) {
 		}
 		settoggleOverlay(false)
 		if (submit) {
-			setMessage({ message: "Creating a new workspace... Please don't leave this page or click anything", color: "blue" });
+			setMessage({ message: "Creating a new record... Please don't leave this page or click anything", color: "blue" });
 			if (fileUpload.length < 1 || Object.values(UplSettings).some(x => { return x === null || x === "" })) {
 				setError("Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.")
 				return false
@@ -108,12 +108,12 @@ export default function UploadFilePage({ setTitle }) {
 				})
 			}).then(res => {
 				if (res.status !== 200) {
-					throw "Failed to POST new workspace. Please try again."
+					throw "Failed to POST new record. Please try again."
 				}
 				return res.text()
 			})
 			if (post_workspace === "OK") {
-				setMessage({ message: "Success. A new workspace has been created. Redirecting to the next page...", color: "blue" });
+				setMessage({ message: "Success. A new record has been created. Redirecting to the next page...", color: "blue" });
 				await delay(1000)
 				router.push({
 					pathname: UplSettings.Method === "dropdown" ? '/upload_file/matching_dropdown' : UplSettings.Method === "highlight" ? '/upload_file/matching_highlight' : UplSettings.Method === "dragdrop" ? '/upload_file/matching_draggable' : '/upload_file/matching_auto',
@@ -122,7 +122,7 @@ export default function UploadFilePage({ setTitle }) {
 					}
 				})
 			} else {
-				setMessage({ message: "Failed to create a new workspace. Please try again or contact maintainer if the problem persists.", color: "red" });
+				setMessage({ message: "Failed to create a new record. Please try again or contact maintainer if the problem persists.", color: "red" });
 			}
 		}
 	}
@@ -167,16 +167,16 @@ export default function UploadFilePage({ setTitle }) {
 										</svg>
 									</Buttons>
 								</div>}
-							<p className="text-sm text-black/70 text-center pt-2">*Supported file formats: JPG, PNG, PDF, PPTX, CSV, XLSX, LAS, or SEGY</p>
+							<p className="text-sm text-black/70 text-center pt-2">*Supported file formats: JPG, PNG, PDF, PPTX, CSV, XLSX, or LAS</p>
 						</div>
 						<input type="file" className="hidden" ref={fileUploadRef} onChange={(e) => changeFile(e)} />
 
 					</div>
 				</div>
 				{/* <div className="border border-b-[#7a7a7a] w-full lg:w-[95%]"></div> */}
-				<h2 className="text-xl font-bold py-3">Input the correct settings for the uploaded file and the new workspace</h2>
+				<h2 className="text-xl font-bold py-3">Input the correct settings for the uploaded file and the new record</h2>
 				<div className="w-[100%] lg:w-[80%] flex flex-col gap-y-3">
-					<Input
+					{/* <Input
 						label="Workspace name"
 						label_loc="beside"
 						type="text"
@@ -188,26 +188,26 @@ export default function UploadFilePage({ setTitle }) {
 						additional_styles_label={additional_styles_label}
 						autoComplete="off"
 						onChange={(e) => setUplSettings({ ...UplSettings, workspace_name: e.target.value })}
-					/>
+					/> */}
 					<Input
 						label="AFE number"
 						label_loc="beside"
 						type="number"
 						name={"AFE_Number"}
-						placeholder={"1945"}
+						placeholder={"Input AFE number"}
 						value={UplSettings.afe_number}
 						required={true}
 						additional_styles="w-full"
 						additional_styles_label={additional_styles_label}
 						autoComplete="off"
-						onChange={(e) => setUplSettings({ ...UplSettings, afe_number: e.target.value })}
+						onChange={(e) => setUplSettings({ ...UplSettings, afe_number: e.target.value, workspace_name: `record_${e.target.value}` })}
 					/>
 					<Input
 						label="KKKS name"
 						label_loc="beside"
 						type="text"
 						name={"kkksName"}
-						placeholder={"Geodwipa Teknika Nusantara"}
+						placeholder={"Input KKKS name"}
 						value={UplSettings.kkks_name}
 						required={true}
 						additional_styles="w-full"
@@ -220,7 +220,7 @@ export default function UploadFilePage({ setTitle }) {
 						label_loc="beside"
 						type="text"
 						name={"workingArea"}
-						placeholder={"Pulau Geodwipa"}
+						placeholder={"Input working area"}
 						value={UplSettings.working_area}
 						required={true}
 						additional_styles="w-full"
@@ -347,7 +347,7 @@ export default function UploadFilePage({ setTitle }) {
 						</Buttons>
 						<h1 className="font-bold text-3xl">Re-check the inputted data</h1>
 						<hr />
-						<p>Do you want to proceed? Make sure you have re-checked all the inputs especially the ones for the new workspace. <strong>You won't be able to change AFE number and Data Type after the workspace has been created.</strong></p>
+						<p>Do you want to proceed? Make sure you have re-checked all the inputs especially the ones for the new record. <strong>You won't be able to change AFE number and Data Type after the new record has been created.</strong></p>
 						<section className="flex w-full items-center justify-center space-x-2">
 							<Buttons onClick={(e) => { proceed(e, true) }} additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold">Proceed</Buttons>
 							<Buttons onClick={proceed}>Cancel</Buttons>
