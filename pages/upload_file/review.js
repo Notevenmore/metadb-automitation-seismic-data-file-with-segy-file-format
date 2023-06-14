@@ -233,9 +233,6 @@ export default function UploadFileReview({ setTitle }) {
     // }
 
     const init_data = async () => {
-        // ----| OLD TEMPORARY WORKFLOW |----
-        // check github
-        // ----| NEW WORKFLOW |----
         if (!workspaceData.afe_number) {
             throw "Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer."
         }
@@ -244,11 +241,13 @@ export default function UploadFileReview({ setTitle }) {
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then(res => {
-            if (res.status !== 200) {
-                throw `Service returned with status ${res.status}; ${res.statusText}`
+        }).then(res => Promise.all(
+            [res.status, res.status !== 200 ? res.text() : res.json()]
+        )).then(([status, res]) => {
+            if (status !== 200) {
+                throw `Service returned with status ${status}: ${res}`
             }
-            return res.json()
+            return res
         })
 
         const data = await fetch(`${config[router.query.form_type]["workspace"]}${workspaceData.afe_number}`, {
@@ -256,11 +255,13 @@ export default function UploadFileReview({ setTitle }) {
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then(res => {
-            if (res.status !== 200) {
-                throw `Service returned with status ${res.status}; ${res.statusText}`
+        }).then(res => Promise.all(
+            [res.status, res.status !== 200 ? res.text() : res.json()]
+        )).then(([status, res]) => {
+            if (status !== 200) {
+                throw `Service returned with status ${status}: ${res}`
             }
-            return res.json()
+            return res
         })
 
         // if data is not null (workspace is not empty), then get every data details within the workspace.
@@ -275,12 +276,14 @@ export default function UploadFileReview({ setTitle }) {
                     headers: {
                         "Content-Type": "application/json"
                     }
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw `Response returned with status code ${res.status}: ${res.statusText}`
+                }).then(res => Promise.all(
+                    [res.status, res.status !== 200 ? res.text() : res.json()]
+                )).then(([status, res]) => {
+                    if (status !== 200) {
+                        throw `Service returned with status ${status}: ${res}`
                     }
-                    return res.json()
-                }).then(res => { return res })
+                    return res
+                })
                 final.push(data_details[0])
             }
         }
@@ -310,11 +313,13 @@ export default function UploadFileReview({ setTitle }) {
                 headers: {
                     "Content-Type": "application/json"
                 }
-            }).then(res => {
-                if (res.status !== 200) {
-                    throw `Service returned with status ${res.status}; ${res.statusText}`
+            }).then(res => Promise.all(
+                [res.status, res.status !== 200 ? res.text() : res.json()]
+            )).then(([status, res]) => {
+                if (status !== 200) {
+                    throw `Service returned with status ${status}: ${res}`
                 }
-                return res.json()
+                return res
             })
 
             Object.keys(old_workspace_data[0]).some(key => {
@@ -334,7 +339,13 @@ export default function UploadFileReview({ setTitle }) {
                     body: JSON.stringify(workspaceData)
                 }).then(res => {
                     if (res.status !== 200) {
-                        throw `Service returned with status ${res.status}; ${res.statusText}`
+                        return res.text()
+                    }
+                }).then(res => {
+                    if (res.toLowerCase().includes("workspace_name_unique")) {
+                        throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`
+                    } else {
+                        throw res || "Something happened while updating record information data. Please try again or contact maintainer if the problem persists."
                     }
                 })
             }
@@ -385,163 +396,144 @@ export default function UploadFileReview({ setTitle }) {
 
             setMessage({ message: "Saving record data... Please don't leave this page or click anything", color: "blue" });
             var idx_row = 0
-            for (idx_row; idx_row < Math.max(spreadsheet_data.response.length, old_data.data_content.length); idx_row++) {
-                let row = {}
-                let changed = false
-                spreadsheet_header.response.forEach((header, idx_col) => {
-                    // try converting any string to integer if possible, if fails then just skip and append the raw string
-                    try {
-                        row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
-                        if (row[header.toLowerCase()] === "") {
-                            throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
-                        }
-                    } catch (error) { }
-
-                    // try checking if the data is different. if index out of range it means that the size of the array of either
-                    // the old data has surpassed the new data, or vice versa, so skip the step. 
-                    try {
-                        if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header])) {
-                            changed = true
-                        }
-                    } catch (error) { }
-
-                    // convert date gotten from the database to appropriate format after the checking, to avoid 
-                    // misinterpretating different date formats as different values although the date is the same
-                    if (header.toLowerCase().includes("date")) {
-                        // try to convert, if the input is null then just pass
+            console.log(spreadsheet_data)
+            if (spreadsheet_data.response) {
+                for (idx_row; idx_row < Math.max(spreadsheet_data.response.length, old_data.data_content.length); idx_row++) {
+                    let row = {}
+                    let changed = false
+                    spreadsheet_header.response.forEach((header, idx_col) => {
+                        // try converting any string to integer if possible, if fails then just skip and append the raw string
+                        // a try catch was put here to avoid new data being undefined if its length is shorter than old data
                         try {
-                            let day, month, year, parts;
-                            const input = spreadsheet_data?.response[idx_row][idx_col]
-                            if (input.includes("-")) {
-                                parts = input.split("-");
-                            } else if (input.trim().includes(" ")) {
-                                parts = input.split(" ");
-                            } else {
-                                parts = input.split("/")
+                            if (!row[header.toLowerCase()]) {
+                                row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
+                                if (row[header.toLowerCase()] === "") {
+                                    throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
+                                }
                             }
-                            day = parts[0];
-                            month = parts[1];
-                            year = parts[2];
-                            const date = new Date(`${month}-${day}-${year}`);
-                            row[header.toLowerCase()] = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`
-                        } catch (error) {
-                            row[header.toLowerCase()] = ""
-                        }
-                    }
-                });
-                console.log(row, idx_row)
-                // if change in row is detected then update the data in the database
-                if (changed && idx_row < old_data.data_content.length - 1) {
-                    console.log("trying to PUT", idx_row)
-                    await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ id: old_data.data_content[idx_row]["id"], ...row })
-                    }).then(res => {
-                        if (res.status !== 200) {
-                            throw res.statusText || "Something happened while updating (PUT) a record which resulted in failure. Please contact maintainer."
-                        }
-                    })
-                } else {
-                    // else if current index is already beyond the length of original data or the new data
-                    if (idx_row > spreadsheet_data.response.length - 1 || idx_row > old_data.data_content.length - 1) {
-                        // if the new data length is shorter than the new data then the old data is deleted
-                        if (spreadsheet_data.response.length < old_data.data_content.length) {
-                            console.log("trying to DELETE", idx_row)
-                            await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
-                                method: "DELETE",
-                                headers: {
-                                    "Content-Type": "application/json"
+                        } catch (error) { }
+
+                        // try checking if the data is different. if index out of range it means that the size of the array of either
+                        // the old data has surpassed the new data, or vice versa, so skip the step. 
+                        // a try catch was put here to avoid old data being undefined if its length is shorter than new data
+                        try {
+                            if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null)) {
+                                changed = true
+                            }
+                        } catch (error) { }
+
+                        // convert date gotten from the database to appropriate format after the checking, to avoid 
+                        // misinterpretating different date formats as different values although the date is the same
+                        if (header.toLowerCase().includes("date") && row[header.toLowerCase()]) {
+                            // try to convert, if the input is null then just pass
+                            try {
+                                let day, month, year, parts;
+                                const input = spreadsheet_data?.response[idx_row][idx_col]
+                                if (input.includes("-")) {
+                                    parts = input.split("-");
+                                } else if (input.trim().includes(" ")) {
+                                    parts = input.split(" ");
+                                } else {
+                                    parts = input.split("/")
                                 }
-                            }).then(res => {
-                                if (res.status !== 200) {
-                                    throw res.statusText || "Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. "
-                                }
-                            })
-                            console.log("success")
+                                day = parts[0];
+                                month = parts[1];
+                                year = parts[2];
+                                const date = new Date(`${month}-${day}-${year}`);
+                                row[header.toLowerCase()] = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`
+                            } catch (error) {
+                                row[header.toLowerCase()] = null
+                            }
                         }
-                        // else if the new data length is greater than the old data then there's a new row appended
-                        else if (spreadsheet_data.response.length > old_data.data_content.length) {
-                            console.log("trying to POST", idx_row)
-                            const upload = await fetch(`${config[router.query.form_type]["view"]}`, {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify(row)
-                            }).then(res => {
-                                if (res.status !== 200) {
-                                    throw res.statusText || "Something happened while posting (POST) a record which resulted in a failure. Please contact maintainer."
-                                }
-                                return res.text()
-                            })
-                            console.log("success POSTING new record, appending to record...")
-                            let uploaded_id = upload.split(":")
-                            uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim())
-                            await fetch(`${config[router.query.form_type]["workspace"]}`, {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({
-                                    afe_number: workspaceData.afe_number,
-                                    pwr_id: uploaded_id
+                    });
+                    console.log(row, idx_row, idx_row < old_data.data_content.length - 1)
+                    // if change in row is detected then update the data in the database
+                    if (changed && idx_row <= old_data.data_content.length - 1 && JSON.stringify(row) !== '{}') {
+                        console.log("trying to PUT", idx_row)
+                        await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ id: old_data.data_content[idx_row]["id"], ...row })
+                        }).then(res => {
+                            if (res.status !== 200) {
+                                throw res.statusText || "Something happened while updating (PUT) a record which resulted in failure. Please contact maintainer."
+                            }
+                        })
+                    } else {
+                        // else if current index is already beyond the length of original data or the new data
+                        if (idx_row > spreadsheet_data.response.length - 1 || idx_row > old_data.data_content.length - 1) {
+                            // if the new data length is shorter than the new data then the old data is deleted
+                            if (spreadsheet_data.response.length < old_data.data_content.length) {
+                                console.log("trying to DELETE", idx_row)
+                                await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
+                                    method: "DELETE",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    }
+                                }).then(res => {
+                                    if (res.status !== 200) {
+                                        throw res.statusText || "Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. "
+                                    }
                                 })
-                            }).then(res => {
-                                if (res.status !== 200) {
-                                    throw res.statusText || "Something happened while posting (POST) a record to the record table which resulted in a failure. Please contact maintainer."
-                                }
-                            })
-                            console.log("success")
+                                console.log("success")
+                            }
+                            // else if the new data length is greater than the old data then there's a new row appended
+                            else if (spreadsheet_data.response.length > old_data.data_content.length) {
+                                console.log("trying to POST", idx_row)
+                                const upload = await fetch(`${config[router.query.form_type]["view"]}`, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify(row)
+                                }).then(res => {
+                                    if (res.status !== 200) {
+                                        throw res.statusText || "Something happened while posting (POST) a record which resulted in a failure. Please contact maintainer."
+                                    }
+                                    return res.text()
+                                })
+                                console.log("success POSTING new record, appending to record...")
+                                let uploaded_id = upload.split(":")
+                                uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim())
+                                await fetch(`${config[router.query.form_type]["workspace"]}`, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        afe_number: workspaceData.afe_number,
+                                        pwr_id: uploaded_id
+                                    })
+                                }).then(res => {
+                                    if (res.status !== 200) {
+                                        throw res.statusText || "Something happened while posting (POST) a record to the record table which resulted in a failure. Please contact maintainer."
+                                    }
+                                })
+                                console.log("success")
+                            }
                         }
                     }
                 }
+            } else {
+                if (old_data.data_content.length > 0) {
+                    old_data.data_content.forEach(async (record, idx_row_del) => {
+                        console.log("trying to DELETE", idx_row_del)
+                        await fetch(`${config[router.query.form_type]["view"]}${record["id"]}`, {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        }).then(res => {
+                            if (res.status !== 200) {
+                                throw res.statusText || "Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. "
+                            }
+                        })
+                        console.log("success")
+                    });
+                }
             }
-
-            // TODO: FINALIZE THIS WORKFLOW TO COMPARE PREVIOUS DATA WITH NEW DATA THEN DO THINGS BASED ON THE COMPARISON
-            // TODO: you need to first check if there's any ppdm guid deleted, then check if there's any data that's changed. 
-            // maybe compare with the data to get the ID of the things??
-
-            // console.log(ppdm_guid_array)
-            // if (final.length > dataContentDetails.length) {
-
-            // }
-
-            // TODO: make workspace_data real-time update
-            // const workspace_data_post = {
-            //     "afe_number": parseInt(workspaceData.AFE),
-            //     "workspace_name": workspace_name,
-            //     "kkks_name": workspaceData.KKS,
-            //     "working_area": workspaceData.wilayah_kerja,
-            //     "submission_type": workspaceData.submission,
-            //     "data_type": router.query.form_type
-            // }
-
-            // const { data_type, afe_number, ...workspace_data_put } = Object.assign(workspace_data_post);
-            // console.log(workspace_data_put);
-
-            // Save the data based on the workspace_name and form_type
-            // if (workspace_name === "new_document") {
-            //     localStorage.setItem("ocr_data", JSON.stringify(final));
-            // } else {
-            //     if (router.query.form_type === "printed_well_report") {
-            //         localStorage.setItem("pwr_2023_report", JSON.stringify(final));
-            //     } else if (router.query.form_type === "bibliography") {
-            //         // localStorage.setItem("bibliography_report_final", JSON.stringify(final));
-            //         final.forEach((row) => {
-            //             post_data("bibliography", row).catch(
-            //                 (err) => put_data("bibliography", row.ppdm_guid, row));
-            //         })
-            //         post_workspace("bibliography", workspace_data_post).catch(
-            //             (err) => put_workspace("bibliography", workspace_name, workspace_data_put)
-            //         );
-            //         ppdm_guid_array.forEach((ppdm_guid) => {
-            //             upload_afeguid_new("bibliography", parseInt(workspaceData.AFE), ppdm_guid);
-            //         });
-            //     }
-            // }
             setMessage({ message: "Record successfully saved", color: "blue" });
             router.events.emit("routeChangeComplete")
             if (redirect) {

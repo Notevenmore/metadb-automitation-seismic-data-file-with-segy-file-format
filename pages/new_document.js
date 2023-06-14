@@ -67,9 +67,6 @@ export default function NewDocumentPage({ setTitle }) {
     // }
 
     const init_data = async () => {
-        // ----| OLD TEMPORARY WORKFLOW |----
-        // check github
-        // ----| NEW WORKFLOW |----
         if (!workspaceData.afe_number) {
             throw "Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer."
         }
@@ -78,11 +75,13 @@ export default function NewDocumentPage({ setTitle }) {
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then(res => {
-            if (res.status !== 200) {
-                throw `Service returned with status ${res.status}; ${res.statusText}`
+        }).then(res => Promise.all(
+            [res.status, res.status !== 200 ? res.text() : res.json()]
+        )).then(([status, res]) => {
+            if (status !== 200) {
+                throw `Service returned with status ${status}: ${res}`
             }
-            return res.json()
+            return res
         })
 
         const data = await fetch(`${config[router.query.form_type]["workspace"]}${workspaceData.afe_number}`, {
@@ -90,11 +89,13 @@ export default function NewDocumentPage({ setTitle }) {
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then(res => {
-            if (res.status !== 200) {
-                throw `Service returned with status ${res.status}; ${res.statusText}`
+        }).then(res => Promise.all(
+            [res.status, res.status !== 200 ? res.text() : res.json()]
+        )).then(([status, res]) => {
+            if (status !== 200) {
+                throw `Service returned with status ${status}: ${res}`
             }
-            return res.json()
+            return res
         })
 
         // if data is not null (workspace is not empty), then get every data details within the workspace.
@@ -109,12 +110,14 @@ export default function NewDocumentPage({ setTitle }) {
                     headers: {
                         "Content-Type": "application/json"
                     }
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw `Response returned with status code ${res.status}: ${res.statusText}`
+                }).then(res => Promise.all(
+                    [res.status, res.status !== 200 ? res.text() : res.json()]
+                )).then(([status, res]) => {
+                    if (status !== 200) {
+                        throw `Service returned with status ${status}: ${res}`
                     }
-                    return res.json()
-                }).then(res => { return res })
+                    return res
+                })
                 final.push(data_details[0])
             }
         }
@@ -137,18 +140,20 @@ export default function NewDocumentPage({ setTitle }) {
             // Set saving message
             setMessage({ message: "Checking changes in record information... Please don't leave this page or click anything", color: "blue" });
 
-            // check for changes in the record data, if there are any then push the updates to the db
+            // check for changes in the workspace data, if there are any then push the updates to the db
             let workspace_data_changed = false
             const old_workspace_data = await fetch(`${config[router.query.form_type]["afe"]}${workspaceData['afe_number']}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
                 }
-            }).then(res => {
-                if (res.status !== 200) {
-                    throw `Service returned with status ${res.status}; ${res.statusText}`
+            }).then(res => Promise.all(
+                [res.status, res.status !== 200 ? res.text() : res.json()]
+            )).then(([status, res]) => {
+                if (status !== 200) {
+                    throw `Service returned with status ${status}: ${res}`
                 }
-                return res.json()
+                return res
             })
 
             Object.keys(old_workspace_data[0]).some(key => {
@@ -168,7 +173,13 @@ export default function NewDocumentPage({ setTitle }) {
                     body: JSON.stringify(workspaceData)
                 }).then(res => {
                     if (res.status !== 200) {
-                        throw `Service returned with status ${res.status}; ${res.statusText}`
+                        return res.text()
+                    }
+                }).then(res => {
+                    if (res.toLowerCase().includes("workspace_name_unique")) {
+                        throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`
+                    } else {
+                        throw res || "Something happened while updating record information data. Please try again or contact maintainer if the problem persists."
                     }
                 })
             }
@@ -219,30 +230,35 @@ export default function NewDocumentPage({ setTitle }) {
 
             setMessage({ message: "Saving record data... Please don't leave this page or click anything", color: "blue" });
             var idx_row = 0
+            console.log(spreadsheet_data)
             if (spreadsheet_data.response) {
                 for (idx_row; idx_row < Math.max(spreadsheet_data.response.length, old_data.data_content.length); idx_row++) {
                     let row = {}
                     let changed = false
                     spreadsheet_header.response.forEach((header, idx_col) => {
                         // try converting any string to integer if possible, if fails then just skip and append the raw string
+                        // a try catch was put here to avoid new data being undefined if its length is shorter than old data
                         try {
-                            row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
-                            // if (row[header.toLowerCase()] === "") {
-                            //     throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
-                            // }
+                            if (!row[header.toLowerCase()]) {
+                                row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
+                                if (row[header.toLowerCase()] === "") {
+                                    throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
+                                }
+                            }
                         } catch (error) { }
 
                         // try checking if the data is different. if index out of range it means that the size of the array of either
                         // the old data has surpassed the new data, or vice versa, so skip the step. 
+                        // a try catch was put here to avoid old data being undefined if its length is shorter than new data
                         try {
-                            if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header])) {
+                            if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null)) {
                                 changed = true
                             }
                         } catch (error) { }
 
                         // convert date gotten from the database to appropriate format after the checking, to avoid 
                         // misinterpretating different date formats as different values although the date is the same
-                        if (header.toLowerCase().includes("date")) {
+                        if (header.toLowerCase().includes("date") && row[header.toLowerCase()]) {
                             // try to convert, if the input is null then just pass
                             try {
                                 let day, month, year, parts;
@@ -264,9 +280,9 @@ export default function NewDocumentPage({ setTitle }) {
                             }
                         }
                     });
-                    console.log(row, idx_row)
+                    console.log(row, idx_row, idx_row < old_data.data_content.length - 1)
                     // if change in row is detected then update the data in the database
-                    if (changed && idx_row < old_data.data_content.length - 1) {
+                    if (changed && idx_row <= old_data.data_content.length - 1 && JSON.stringify(row) !== '{}') {
                         console.log("trying to PUT", idx_row)
                         await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
                             method: "PUT",
