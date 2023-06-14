@@ -55,9 +55,6 @@ const DocEditor = ({ workspace_name, setTitle }) => {
     }, [IsSaved])
 
     const init_data = async () => {
-        // ----| OLD TEMPORARY WORKFLOW |----
-        // check github
-        // ----| NEW WORKFLOW |----
         if (!router.query.workspace_data) {
             throw "Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer."
         }
@@ -66,11 +63,13 @@ const DocEditor = ({ workspace_name, setTitle }) => {
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then(res => {
-            if (res.status !== 200) {
-                throw `Service returned with status ${res.status}; ${res.statusText}`
+        }).then(res => Promise.all(
+            [res.status, res.status !== 200 ? res.text() : res.json()]
+        )).then(([status, res]) => {
+            if (status !== 200) {
+                throw `Service returned with status ${status}: ${res}`
             }
-            return res.json()
+            return res
         })
 
         const data = await fetch(`${config[router.query.form_type]["workspace"]}${router.query.workspace_data}`, {
@@ -78,11 +77,13 @@ const DocEditor = ({ workspace_name, setTitle }) => {
             headers: {
                 "Content-Type": "application/json"
             }
-        }).then(res => {
-            if (res.status !== 200) {
-                throw `Service returned with status ${res.status}; ${res.statusText}`
+        }).then(res => Promise.all(
+            [res.status, res.status !== 200 ? res.text() : res.json()]
+        )).then(([status, res]) => {
+            if (status !== 200) {
+                throw `Service returned with status ${status}: ${res}`
             }
-            return res.json()
+            return res
         })
 
         // if data is not null (workspace is not empty), then get every data details within the workspace.
@@ -97,12 +98,14 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                     headers: {
                         "Content-Type": "application/json"
                     }
-                }).then(res => {
-                    if (res.status !== 200) {
-                        throw `Response returned with status code ${res.status}: ${res.statusText}`
+                }).then(res => Promise.all(
+                    [res.status, res.status !== 200 ? res.text() : res.json()]
+                )).then(([status, res]) => {
+                    if (status !== 200) {
+                        throw `Service returned with status ${status}: ${res}`
                     }
-                    return res.json()
-                }).then(res => { return res })
+                    return res
+                })
                 final.push(data_details[0])
             }
         }
@@ -152,11 +155,13 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                 headers: {
                     "Content-Type": "application/json"
                 }
-            }).then(res => {
-                if (res.status !== 200) {
-                    throw `Service returned with status ${res.status}; ${res.statusText}`
+            }).then(res => Promise.all(
+                [res.status, res.status !== 200 ? res.text() : res.json()]
+            )).then(([status, res]) => {
+                if (status !== 200) {
+                    throw `Service returned with status ${status}: ${res}`
                 }
-                return res.json()
+                return res
             })
 
             Object.keys(old_workspace_data[0]).some(key => {
@@ -240,24 +245,28 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                     let changed = false
                     spreadsheet_header.response.forEach((header, idx_col) => {
                         // try converting any string to integer if possible, if fails then just skip and append the raw string
+                        // a try catch was put here to avoid new data being undefined if its length is shorter than old data
                         try {
-                            row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
-                            if (row[header.toLowerCase()] === "") {
-                                throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
+                            if (!row[header.toLowerCase()]) {
+                                row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
+                                if (row[header.toLowerCase()] === "") {
+                                    throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
+                                }
                             }
                         } catch (error) { }
 
                         // try checking if the data is different. if index out of range it means that the size of the array of either
                         // the old data has surpassed the new data, or vice versa, so skip the step. 
+                        // a try catch was put here to avoid old data being undefined if its length is shorter than new data
                         try {
-                            if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header])) {
+                            if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null)) {
                                 changed = true
                             }
                         } catch (error) { }
 
                         // convert date gotten from the database to appropriate format after the checking, to avoid 
                         // misinterpretating different date formats as different values although the date is the same
-                        if (header.toLowerCase().includes("date")) {
+                        if (header.toLowerCase().includes("date") && row[header.toLowerCase()]) {
                             // try to convert, if the input is null then just pass
                             try {
                                 let day, month, year, parts;
@@ -275,13 +284,13 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                                 const date = new Date(`${month}-${day}-${year}`);
                                 row[header.toLowerCase()] = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`
                             } catch (error) {
-                                row[header.toLowerCase()] = ""
+                                row[header.toLowerCase()] = null
                             }
                         }
                     });
-                    console.log(row, idx_row)
+                    console.log(row, idx_row, idx_row < old_data.data_content.length - 1)
                     // if change in row is detected then update the data in the database
-                    if (changed && idx_row < old_data.data_content.length - 1) {
+                    if (changed && idx_row <= old_data.data_content.length - 1 && JSON.stringify(row) !== '{}') {
                         console.log("trying to PUT", idx_row)
                         await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
                             method: "PUT",
@@ -368,52 +377,8 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                 }
             }
 
-            // TODO: FINALIZE THIS WORKFLOW TO COMPARE PREVIOUS DATA WITH NEW DATA THEN DO THINGS BASED ON THE COMPARISON
-            // TODO: you need to first check if there's any ppdm guid deleted, then check if there's any data that's changed. 
-            // maybe compare with the data to get the ID of the things??
-
-            // console.log(ppdm_guid_array)
-            // if (final.length > dataContentDetails.length) {
-
-            // }
-
-            // TODO: make workspace_data real-time update
-            // const workspace_data_post = {
-            //     "afe_number": parseInt(workspaceData.AFE),
-            //     "workspace_name": workspace_name,
-            //     "kkks_name": workspaceData.KKS,
-            //     "working_area": workspaceData.wilayah_kerja,
-            //     "submission_type": workspaceData.submission,
-            //     "data_type": router.query.form_type
-            // }
-
-            // const { data_type, afe_number, ...workspace_data_put } = Object.assign(workspace_data_post);
-            // console.log(workspace_data_put);
-
-            // Save the data based on the workspace_name and form_type
-            // if (workspace_name === "new_document") {
-            //     localStorage.setItem("ocr_data", JSON.stringify(final));
-            // } else {
-            //     if (router.query.form_type === "printed_well_report") {
-            //         localStorage.setItem("pwr_2023_report", JSON.stringify(final));
-            //     } else if (router.query.form_type === "bibliography") {
-            //         // localStorage.setItem("bibliography_report_final", JSON.stringify(final));
-            //         final.forEach((row) => {
-            //             post_data("bibliography", row).catch(
-            //                 (err) => put_data("bibliography", row.ppdm_guid, row));
-            //         })
-            //         post_workspace("bibliography", workspace_data_post).catch(
-            //             (err) => put_workspace("bibliography", workspace_name, workspace_data_put)
-            //         );
-            //         ppdm_guid_array.forEach((ppdm_guid) => {
-            //             upload_afeguid_new("bibliography", parseInt(workspaceData.AFE), ppdm_guid);
-            //         });
-            //     }
-            // }
-
             // Set IsSaved to true and display success message
             setIsSaved(true);
-            settriggerSave("")
             setMessage({ message: "Record successfully saved", color: "blue" });
             router.events.emit("routeChangeComplete")
             await delay(3000)
@@ -423,6 +388,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
             setMessage({ message: `Failed to save record. Please try again. Additional error message: ${String(error)}`, color: "red" });
         }
         router.events.emit("routeChangeComplete")
+        settriggerSave("")
     }
 
     const delay = delay_amount_ms =>
@@ -455,7 +421,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                     return res.json()
                 }).then(res => {
                     if (res.status !== 200) {
-                        throw `Response returned with status code ${res.status}: ${res.response}`
+                        throw `Service returned with status code ${res.status}: ${res.response}`
                     }
                     return res
                 })
@@ -477,15 +443,15 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                     body: JSON.stringify({ spreadsheetID: spreadsheet_download.response })
                 }).catch(err => { console.log(err) })
                 setMessage({ message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`, color: "blue" });
+                setIsSaved(false)
+                await delay(3500)
+                setMessage({ message: "", color: "" });
             }
         } catch (error) {
             setMessage({ message: `${String(error)}`, color: "red" });
         }
         router.events.emit("routeChangeComplete")
         settriggerSave("")
-        setIsSaved(false)
-        await delay(3500)
-        setMessage({ message: "", color: "" });
     }
 
     useEffect(() => {
