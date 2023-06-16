@@ -1,6 +1,7 @@
 import { twMerge } from "tailwind-merge";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const items_notification = {
 	type: "notification",
@@ -61,10 +62,11 @@ const FloatDialog = ({ children, float_title, items = null, onClick = null, widt
 };
 
 const FloatSection = ({ content, index, toggleDialog }) => {
+	const router = useRouter()
 	return (
 		<section>
 			{index !== 0 && <Divider></Divider>}
-			<Link href={`${content.link ? content.link : ""}`}>
+			<Link href={`${content.link ? content.link : router.asPath}`}>
 				<section
 					className="my-[12px] px-[12px]"
 					onClick={(e) => {
