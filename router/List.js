@@ -98,7 +98,7 @@ const routing_list = [
 			},
 			{
 				name: "Printed Well Report",
-				link: "/well_data/printed_report",
+				link: "/datatype/printed_well_report",
 				icon: "/icons/well_data.svg",
 			},
 			{
@@ -180,7 +180,7 @@ const routing_list = [
 	},
 	{
 		name: "Bibliography",
-		link: "/bibliography",
+		link: "/datatype/bibliography",
 		icon: "/icons/bibliography.svg",
 	},
 ];
