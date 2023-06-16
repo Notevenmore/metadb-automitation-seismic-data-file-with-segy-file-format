@@ -13,7 +13,10 @@ import { setUploadDocumentSettings } from "../store/generalSlice";
 
 
 export default function HomePage({ setTitle }) {
-	setTitle("Home")
+	useEffect(() => {
+		setTitle("Home")
+	}, [])
+
 	// if the search state is true change the view of the home page
 	const searches = useSelector((state) => state.search.search);
 	return <>{!searches ? <HomeSection /> : <SearchResult />}</>;
