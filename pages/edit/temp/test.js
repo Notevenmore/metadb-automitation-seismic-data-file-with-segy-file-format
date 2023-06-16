@@ -32,7 +32,8 @@ const Test = () => {
     const [originaldate, setoriginaldate] = useState("29 December 2023")
     const [changed, setchanged] = useState(false)
     const [easteregg, seteasteregg] = useState(false)
-    const [hehe, sethehe] = useState({ hello: 1 })
+    const key = "helloworld"
+    const [hehe, sethehe] = useState({ hello: 1, [key]: 2, ["hi dunia" + 5 * 3]: 3 })
 
     const reseteverything = (e) => {
         e.preventDefault()
