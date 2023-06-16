@@ -81,9 +81,11 @@ export default function SearchWidget() {
 						additional_styles_input="bg-transparent text-black text-[14.5px] indent-5 flex-1"
 					/>
 					<div
-						className="flex flex-row items-center text-[11px] text-[#939393]"
-						onClick={() => setExpandSearch(true)}>
-						<div>Expand</div>
+						className="select-none cursor-pointer flex items-center text-[11px] text-[#939393] bg-transparent hover:bg-gray-200 px-2 py-1 transition-all rounded-md"
+						title="Expand"
+						onClick={() => setExpandSearch(true)}
+					>
+						<p>Expand</p>
 						<Image
 							alt="icon"
 							src="/icons/chevron-down.svg"
@@ -203,7 +205,7 @@ export default function SearchWidget() {
 							additional_styles="py-1 w-[160px] justify-center bg-searchbg"
 						/>
 					</div>
-					<div className="absolute bottom-0 right-0">
+					<div title="Collapse" className="absolute bottom-0 right-0 px-1.5 py-1 cursor-pointer hover:bg-gray-200 rounded-md transition-all">
 						<Image
 							alt="icon"
 							src="/icons/chevron-double-up.svg"
