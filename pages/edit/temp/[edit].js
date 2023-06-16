@@ -92,8 +92,8 @@ const DocEditor = ({ workspace_name, setTitle }) => {
         let final = []
         // let ppdm_guids = []
         if (data) {
-            for (const pwr_id of data) {
-                const data_details = await fetch(`${config[router.query.form_type]["view"]}${pwr_id.pwr_id}`, {
+            for (const datatype_record_id of data) {
+                const data_details = await fetch(`${config[router.query.form_type]["view"]}${datatype_record_id[config[router.query.form_type]["workspace_holder_key"]]}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
@@ -351,7 +351,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                                     },
                                     body: JSON.stringify({
                                         afe_number: workspaceData.afe_number,
-                                        pwr_id: uploaded_id
+                                        [config[router.query.form_type]["workspace_holder_key"]]: uploaded_id
                                     })
                                 }).then(res => {
                                     if (res.status !== 200) {
@@ -399,14 +399,6 @@ const DocEditor = ({ workspace_name, setTitle }) => {
     const delay = delay_amount_ms =>
         new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
 
-
-    // these two below are bound together basically
-    const downloadSpreadsheet = (e) => {
-        e.preventDefault()
-        setIsSaved(true)
-        settriggerSave("download")
-    }
-
     const downloadWorkspace = async () => {
         router.events.emit("routeChangeStart")
         try {
@@ -449,6 +441,7 @@ const DocEditor = ({ workspace_name, setTitle }) => {
                 }).catch(err => { console.log(err) })
                 setMessage({ message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`, color: "blue" });
                 setIsSaved(false)
+                router.events.emit("routeChangeComplete")
                 await delay(3500)
                 setMessage({ message: "", color: "" });
             }
