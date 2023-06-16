@@ -27,6 +27,7 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
 
     const router = useRouter()
     const dispatch = useDispatch()
+    
 
     const path_query = "Home" + router.asPath.replace(/\//g, " > ").replace(/\_/g, " ")
     let selectedTableData = [[]];
