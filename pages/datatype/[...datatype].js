@@ -75,7 +75,7 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
                                         <Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
                                     </div>
                                 </Button>
-                                <Button  additional_styles="px-3 hover:bg-red-400" className="flex" title="Delete record" onClick={(e) => { deleteWorkspace(e, workspace.afe_number) }}>
+                                <Button additional_styles="px-3 hover:bg-red-400" className="flex" title="Delete record" onClick={(e) => { deleteWorkspace(e, workspace.afe_number) }}>
                                     <div className="w-[18px] h-[18px] flex items-center">
                                         <Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" />
                                     </div>
@@ -126,7 +126,7 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
         try {
             settoggleOverlay(false)
             setMessage({ message: "Creating a new record... Please don't leave this page or click anything", color: "blue" })
-            await fetch(`${config[router.query.datatype]["afe"]}`, {
+            await fetch(`${config[datatype]["afe"]}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -217,7 +217,7 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
                 <div className="flex flex-row items-center justify-between">
                     <div>
                         <p className="text-sm font-normal capitalize">{path_query}</p>
-                        <p className="capitalize">{router.query.datatype?.split("_").join(" ")}</p>
+                        <p className="capitalize">{datatype.split("_").join(" ")}</p>
                     </div>
                     <div className="w-[80%] lg:w-[40%] relative">
                         <Input
@@ -249,7 +249,7 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
                 contentAlignWithHeader
                 additional_styles="mb-20" />
             {error ? <Highlight className='html rounded-md border-2'>{error}</Highlight> : null}
-            <Button path={router.asPath} className="shadow-black/10 shadow-lg drop-shadow-lg hover:w-[170px] w-[60px] h-[60px] border rounded-full fixed bottom-9 right-12 bg-gray-200 flex items-center transition-all overflow-hidden outline-none"
+            <Button className="shadow-black/10 shadow-lg drop-shadow-lg hover:w-[170px] w-[60px] h-[60px] border rounded-full fixed bottom-9 right-12 bg-gray-200 flex items-center transition-all overflow-hidden outline-none"
                 onClick={(e) => { e.preventDefault; settoggleOverlay(true) }}
             >
                 <div className="flex items-center justify-center space-x-5 pl-[16px]">
@@ -369,8 +369,9 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
 }
 
 export async function getServerSideProps(context) {
+    const datatype = context.params.datatype
     return {
-        props: { datatype: context.params.datatype }, // will be passed to the page component as props
+        props: { datatype: datatype[datatype.length - 1] }, // will be passed to the page component as props
     }
 }
 
