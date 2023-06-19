@@ -22,6 +22,7 @@ const Input: React.FunctionComponent<InputProps> = ({
     additional_styles_menu_container = '', additional_styles = '',
     setSelectedItem, withSearch, ...inputProps }) => {
     const [Selected, setSelected] = useState()
+    const [clicked, setclicked] = useState(false)
     const [CurrentlyFocused, setCurrentlyFocused] = useState<Element>()
     const [DoSearch, setDoSearch] = useState<Element>()
     const selectorRef = useRef()
@@ -58,6 +59,7 @@ const Input: React.FunctionComponent<InputProps> = ({
         }
         // forcefully trigger onChange event to make onChange on parent component works
         if (Selected) {
+            console.log("reached")
             const selector = (selectorRef.current as any)
             const lastValue = selector.value
             selector.value = Selected;
@@ -68,7 +70,7 @@ const Input: React.FunctionComponent<InputProps> = ({
             }
             selector.dispatchEvent(event);
         }
-    }, [Selected])
+    }, [Selected, clicked])
 
     return (
         <div className={twMerge(
@@ -100,13 +102,16 @@ const Input: React.FunctionComponent<InputProps> = ({
                         outline-none px-2 py-1.5 w-full
                       hover:bg-gray-300 focus:bg-gray-300 focus:outline-[2px]
                       focus:outline-gray-400 transition-all`, additional_styles_input)}>
-                        <input ref={selectorRef} id='selected_item'
+                        <input
+                            type='text'
+                            ref={selectorRef}
+                            id='selected_item'
                             onClick={(e) => {
                                 e.preventDefault();
                                 (e as any).target.parentElement.parentElement.focus();
                                 handleUnfocus
                             }}
-                            className={twMerge("truncate w-[90%] bg-transparent outline-none cursor-default select-none placeholder:text-gray-500", additional_styles_input_dropdown)} defaultValue={"Select an Item"} readOnly {...inputProps} />
+                            className={twMerge("truncate w-[90%] bg-transparent outline-none cursor-default select-none placeholder:text-gray-500", additional_styles_input_dropdown)} value={Selected || "Select an item"} readOnly {...inputProps} />
                         <Arrow className="w-2.5 rotate-90" />
                     </div>
                     <div className={twMerge(`${DoSearch ? "block" : "hidden"} group-focus:block active:block z-[50] absolute bg-gray-200 shadow-md mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`, additional_styles_menu_container)}>
@@ -116,10 +121,10 @@ const Input: React.FunctionComponent<InputProps> = ({
                             null}
                         <ul className='list-none max-h-[230px]'>
                             {SearchData.length > 0 ? SearchData.map((item, index) => {
-                                return (<li key={index} className='hover:bg-gray-300 py-1 px-2 transition-all' onClick={e => { setSelected(item); (document.activeElement as HTMLElement).blur() }}>{item}</li>)
+                                return (<li key={index} className='hover:bg-gray-300 py-1 px-2 transition-all' onClick={e => { setclicked(!clicked); setSelected(item); (document.activeElement as HTMLElement).blur() }}>{item}</li>)
                             }) :
                                 dropdown_items.map((item, index) => {
-                                    return (<li key={index} className='hover:bg-gray-300 py-1 px-2 transition-all' onClick={e => { setSelected(item); (document.activeElement as HTMLElement).blur() }}>{item}</li>)
+                                    return (<li key={index} className='hover:bg-gray-300 py-1 px-2 transition-all' onClick={e => { setclicked(!clicked); setSelected(item); (document.activeElement as HTMLElement).blur() }}>{item}</li>)
                                 })}
                         </ul>
                     </div>
