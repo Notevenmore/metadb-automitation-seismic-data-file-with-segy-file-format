@@ -27,7 +27,7 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
 
     const router = useRouter()
     const dispatch = useDispatch()
-    
+
 
     const path_query = "Home" + router.asPath.replace(/\//g, " > ").replace(/\_/g, " ")
     let selectedTableData = [[]];
@@ -96,11 +96,12 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
         setTitle(datatype.split("_").map(word => { return word.charAt(0).toUpperCase() + word.slice(1) }).join(" "))
         setData([])
         seterror("")
+        reset_search()
         init();
     }, [datatype])
 
     const onSearch = (e) => {
-        const name = e.target.value.toLocaleLowerCase();
+        const name = e.target.value.toLowerCase();
         let temp = data;
         temp = temp.filter((item) => {
             return (
@@ -181,6 +182,7 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
                 }
             })
             setMessage({ message: "Success", color: "blue" });
+            reset_search()
             init()
             router.events.emit("routeChangeComplete")
             await delay(2000)
@@ -212,6 +214,12 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
         })
     }
 
+    const reset_search = () => {
+        const search_input = document.getElementById("search_bar")
+        search_input.value = ""
+        setsearchData([-1])
+    }
+
     return (
         <Container>
             <Container.Title>
@@ -222,6 +230,7 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
                     </div>
                     <div className="w-[80%] lg:w-[40%] relative">
                         <Input
+                            id="search_bar"
                             label=""
                             type="text"
                             name="search"
@@ -274,7 +283,7 @@ const PrintedWellReport = ({ datatype, setTitle }) => {
                         <h1 className="font-bold text-3xl">New record</h1>
                         <hr />
                         <p className="font-semibold">Select the appropriate configuration for the new record:</p>
-                        <form onSubmit={console.log("hooray")} className="space-y-3 flex flex-col items-center justify-center">
+                        <form className="space-y-3 flex flex-col items-center justify-center">
                             <div className="w-full space-y-2 border-2 p-2 rounded-lg">
                                 {/* <p>Workspace name</p>
                                 <Input
