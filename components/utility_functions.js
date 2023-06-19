@@ -206,10 +206,20 @@ const saveDocument = async (e, router, config, spreadsheetId, workspaceData, set
                             }
                         }
                     }
-                    if (!changed && row[header.toLowerCase()].replace(/[^\x00-\x7F]/g, "") !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null)) {
+                    if (!changed && (row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, "") || null) !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null)) {
                         changed = true
                     }
                 } catch (error) { }
+
+
+                // DEBUGGING FOR DATES SMH
+
+                // if (header.toLowerCase().includes("date")) {
+                //     console.log(row[header.toLowerCase()], old_data.data_content[idx_row][header.toLowerCase()])
+                //     console.log(changed && (row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, "") || null) !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null))
+                //     console.log(row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, "") || null, (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null))
+                // }
+
 
                 // convert date gotten from the database to appropriate format after the checking, to avoid 
                 // misinterpretating different date formats as different values although the date is the same
