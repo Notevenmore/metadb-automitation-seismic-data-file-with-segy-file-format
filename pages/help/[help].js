@@ -18,7 +18,7 @@ const Documentation = (props) => {
       <p className='font-bold'>Testing playground (for now):</p>
       <Input type='text' />
       <TableComponent header={[
-        <div className="flex justify-between items-center">
+        <div key={1212} className="flex justify-between items-center">
           <p>Hello this is table with button on the right side (for reviewing document)</p>
           <div className='flex space-x-2'>
             <Buttons path={props.path} button_description="Show preview below" additional_styles='bg-gray-100' />
@@ -30,7 +30,7 @@ const Documentation = (props) => {
         ['this table content'],
         ['this table content'],
         [
-          <div>
+          <div key={2323}>
             <p>this table content with img</p>
             <img src='https://m.media-amazon.com/images/I/61YtCpbZ0SL.jpg' className='w-56' />
           </div>

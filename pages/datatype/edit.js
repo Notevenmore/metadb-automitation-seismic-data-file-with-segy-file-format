@@ -45,13 +45,13 @@ const DocEditor = ({ spreadsheetID }) => {
             <Input type='text' placeholder='Document title' additional_styles_input='text-xl font-semibold p-3' defaultValue={'Laporan Data 2023'} />
             <TableComponent additional_styles_column="overflow-visible" header={["Header", ""]} content={
                 [
-                    [<div className="flex space-x-2"><p>Nama KKKS</p><p className="text-gray-400">(KKKS Name)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" />],
-                    [<div className="flex space-x-2"><p>Nama wilayah kerja</p><p className="text-gray-400">(Working area)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" />],
-                    [<div className="flex space-x-2"><p>Jenis penyerahan data</p><p className="text-gray-400">(Submission type)</p></div>, <Input type={"dropdown"} dropdown_items={["Quarterly", "Relinquishment", "Termination", "Spec New", "Spec Ext", "Spec Term", "Joint Study", "DIPA"]} />],
-                    [<div className="flex space-x-2"><p>Nomor AFE</p><p className="text-gray-400">(AFE number)</p></div>, <Input type={"number"} defaultValue='1' />],
-                    [<p className="font-bold">Data type</p>, <Input type={"dropdown"} dropdown_items={["Well data"]} />],
-                    [<p className="font-bold">Data classification</p>, <Input type={"dropdown"} dropdown_items={["Report"]} />],
-                    [<p className="font-bold">Data sub-classification</p>, <Input type={"dropdown"} dropdown_items={["Printed"]} />]
+                    [<div key={2} className="flex space-x-2"><p>Nama KKKS</p><p className="text-gray-400">(KKKS Name)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" />],
+                    [<div key={3} className="flex space-x-2"><p>Nama wilayah kerja</p><p className="text-gray-400">(Working area)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" />],
+                    [<div key={4} className="flex space-x-2"><p>Jenis penyerahan data</p><p className="text-gray-400">(Submission type)</p></div>, <Input type={"dropdown"} dropdown_items={["Quarterly", "Relinquishment", "Termination", "Spec New", "Spec Ext", "Spec Term", "Joint Study", "DIPA"]} />],
+                    [<div key={5} className="flex space-x-2"><p>Nomor AFE</p><p className="text-gray-400">(AFE number)</p></div>, <Input type={"number"} defaultValue='1' />],
+                    [<p key={7} className="font-bold">Data type</p>, <Input type={"dropdown"} dropdown_items={["Well data"]} />],
+                    [<p key={8} className="font-bold">Data classification</p>, <Input type={"dropdown"} dropdown_items={["Report"]} />],
+                    [<p key={9} className="font-bold">Data sub-classification</p>, <Input type={"dropdown"} dropdown_items={["Printed"]} />]
                 ]
             } />
             <div className="h-full">

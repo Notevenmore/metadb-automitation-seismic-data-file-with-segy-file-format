@@ -68,13 +68,13 @@ const DocEditor = ({ spreadsheetID }) => {
             <Input type='text' placeholder='Document title' additional_styles_input='text-xl font-semibold p-3' />
             <TableComponent additional_styles_column="overflow-visible" header={["Header", ""]} content={
                 [
-                    [<div className="flex space-x-2"><p>Nama KKKS</p><p className="text-gray-400">(KKKS Name)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" readOnly />],
-                    [<div className="flex space-x-2"><p>Nama wilayah kerja</p><p className="text-gray-400">(Working area)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" readOnly />],
-                    [<div className="flex space-x-2"><p>Jenis penyerahan data</p><p className="text-gray-400">(Submission type)</p></div>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />],
-                    [<div className="flex space-x-2"><p>Nomor AFE</p><p className="text-gray-400">(AFE number)</p></div>, <Input type={"number"} defaultValue='1' />],
-                    [<p className="font-bold">Data type</p>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />],
-                    [<p className="font-bold">Data classification</p>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />],
-                    [<p className="font-bold">Data sub-classification</p>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />]
+                    [<div key={2} className="flex space-x-2"><p>Nama KKKS</p><p className="text-gray-400">(KKKS Name)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" readOnly />],
+                    [<div key={3} className="flex space-x-2"><p>Nama wilayah kerja</p><p className="text-gray-400">(Working area)</p></div>, <Input type={"text"} defaultValue="Geodwipa Teknika Nusantara" readOnly />],
+                    [<div key={4} className="flex space-x-2"><p>Jenis penyerahan data</p><p className="text-gray-400">(Submission type)</p></div>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />],
+                    [<div key={5} className="flex space-x-2"><p>Nomor AFE</p><p className="text-gray-400">(AFE number)</p></div>, <Input type={"number"} defaultValue='1' />],
+                    [<p key={7} className="font-bold">Data type</p>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />],
+                    [<p key={8} className="font-bold">Data classification</p>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />],
+                    [<p key={9} className="font-bold">Data sub-classification</p>, <Input type={"dropdown"} dropdown_items={[1, 2, 3]} />]
                 ]
             } />
             {/* <div className="border-2 rounded-md min-h-full">
@@ -88,7 +88,7 @@ const DocEditor = ({ spreadsheetID }) => {
                     </div>
                 ]} content={[
                     [<div className="h-[750px]"><Sheets type='new' form_type='basin' /></div>]
-                ]} additional_styles_row='p-0' additional_styles="overflow-hidden"/>
+                ]} additional_styles_row='p-0' additional_styles="overflow-hidden" />
             </div>
             <div className="flex space-x-2 w-full">
                 <Button path="" button_description="Save document" onClick={(e) => { e.preventDefault(); setIsSaved(true) }} />

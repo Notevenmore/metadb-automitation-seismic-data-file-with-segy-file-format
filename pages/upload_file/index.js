@@ -331,7 +331,7 @@ export default function UploadFilePage({ setTitle }) {
 						</Buttons>
 						<h1 className="font-bold text-3xl">Re-check the inputted data</h1>
 						<hr />
-						<p>Do you want to proceed? Make sure you have re-checked all the inputs especially the ones for the new record. <strong>You won't be able to change AFE number and Data Type after the new record has been created.</strong></p>
+						<p>Do you want to proceed? Make sure you have re-checked all the inputs especially the ones for the new record. <strong>You won&quot;t be able to change AFE number and Data Type after the new record has been created.</strong></p>
 						<section className="flex w-full items-center justify-center space-x-2">
 							<Buttons onClick={(e) => { proceed(e, true) }} additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold">Proceed</Buttons>
 							<Buttons onClick={proceed}>Cancel</Buttons>

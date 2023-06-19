@@ -18,8 +18,8 @@ export default function ProfileDialogPage() {
         Each object should have a section_title property and a section_content property, both of which are strings.<br/>
         onClick: an optional function that will be called when the dialog box is clicked. <br/>
          If this prop is not provided, the dialog box will open and close when clicked. <br/>
-        width: an optional string specifying the width of the floating dialog box. The default value is "340px". <br/> 
-        The component uses React's useState hook to keep track of whether the dialog box is currently shown.<br/>
+        width: an optional string specifying the width of the floating dialog box. The default value is &apos;340px&apos;. <br/> 
+        The component uses React&quot;s useState hook to keep track of whether the dialog box is currently shown.<br/>
          When the handleClick function is called &#40;either by clicking on the children element or by calling the <br/>
           onClick prop&#41;, it toggles the value of show in state, which causes the floating dialog box to be <br/>
            rendered or hidden accordingly.
@@ -124,7 +124,7 @@ border-[2px] border-solid border-black h-[490px]">
       </CodeSnippet>
       <div className="flex justify-center items-center
        border-[2px] border-solid border-black h-[490px]">
-        <PopupDialog/>
+        {/* <PopupDialog/> */}
       </div>
     </section>
   )    
@@ -145,7 +145,7 @@ border-solid border-black h-[490px]">
       </CodeSnippet>
       
       <div className="flex border-[2px] border-solid border-black h-[490px]">
-        <PopupDialog/>
+        {/* <PopupDialog/> */}
       </div>
     </section>
   )
@@ -166,7 +166,7 @@ border-[2px] border-solid border-black h-[490px]">
       </CodeSnippet>
       
       <div className="flex justify-end items-end border-[2px] border-solid border-black h-[490px]">
-        <PopupDialog/>
+        {/* <PopupDialog/> */}
       </div>
     </section>
   )

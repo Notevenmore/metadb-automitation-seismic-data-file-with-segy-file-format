@@ -48,15 +48,15 @@ const HeaderSection = () => {
            If this prop is not provided, the dialog box will open and close when clicked.</li>
           <li className="pt-1"><BoldCode>`width`: </BoldCode>
            an optional string specifying the width of the floating dialog box.
-           The default value is "340px".</li>
+           The default value is &quot;340px&quot;.</li>
           <li className="pt-1"><BoldCode>`className`: </BoldCode>
             an optional string specifying additional className
             (especially the <BoldCode>`top`|`bottom`|`left`|`right`</BoldCode> attribute)
             distance relative to the reference element <BoldCode>`children`</BoldCode> of the floating dialog box.
-            The default value is "0px".</li>
+            The default value is &quot;0px&quot;.</li>
       </ul>
       <p>
-        The component uses React's <BoldCode>`useState`</BoldCode> hook to keep track of whether the dialog box is currently
+        The component uses React&apos;s <BoldCode>`useState`</BoldCode> hook to keep track of whether the dialog box is currently
       shown. When the <BoldCode>`handleClick`</BoldCode> function is called (either by clicking on the children element or
       by calling the <BoldCode>`onClick`</BoldCode> prop), it toggles the value of <BoldCode>`show`</BoldCode> in state,
       which causes the floating dialog box to be rendered or hidden accordingly.
