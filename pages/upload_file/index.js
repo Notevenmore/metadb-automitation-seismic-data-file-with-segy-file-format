@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -14,7 +13,6 @@ export default function UploadFilePage({ setTitle }) {
 	const path_query = "Home" + router.pathname.replace(/\//g, " > ").replace(/\_/g, " ")
 	const additional_styles_label = "w-[20%] font-semibold";
 	const [fileUpload, setFileUpload] = useState([]);
-	const [Error, setError] = useState("")
 	const [UplSettings, setUplSettings] = useState({
 		workspace_name: "",
 		kkks_name: "",
@@ -61,19 +59,9 @@ export default function UploadFilePage({ setTitle }) {
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		// if (fileUpload.length < 1 || !UplSettings.DataType || !UplSettings.DataClassification || !UplSettings.DataSubClass || !UplSettings.FileFormat ) {
-		// if (fileUpload.length < 1 || Object.values(UplSettings).some(x => { return x === null || x === "" })) {
-		// 	setError("Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.")
-		// 	return false
-		// }
 		dispatch(storeFile(fileUpload))
 		dispatch(setUploadDocumentSettings(UplSettings))
 		settoggleOverlay(true)
-		// router.push('/upload_file/matching_guided');
-		// router.push('/upload_file/matching');
-		// router.push('/upload_file/matching_auto');
-		// router.push('/upload_file/matching_draggable');
-		// console.log("???")
 		return true
 	}
 
@@ -155,9 +143,6 @@ export default function UploadFilePage({ setTitle }) {
 			<form
 				className="flex flex-col items-center justify-center gap-y-4 w-full"
 				onSubmit={(e) => { handleSubmit(); console.log("aaa") }}>
-				{/* <div className="flex flex-col items-center gap-y-1">
-					
-				</div> */}
 				<div className="border-dashed border-2 border-black/30 rounded-lg p-10 flex space-x-3 items-center w-[80%] bg-searchbg/[.5]">
 					<svg className="w-16 h-16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
 						<path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -185,22 +170,8 @@ export default function UploadFilePage({ setTitle }) {
 
 					</div>
 				</div>
-				{/* <div className="border border-b-[#7a7a7a] w-full lg:w-[95%]"></div> */}
 				<h2 className="text-xl font-bold py-3">Input the correct settings for the uploaded file and the new record</h2>
 				<div className="w-[100%] lg:w-[80%] flex flex-col gap-y-3">
-					{/* <Input
-						label="Workspace name"
-						label_loc="beside"
-						type="text"
-						name={"workingArea"}
-						placeholder={"Workspace name"}
-						value={UplSettings.workspace_name}
-						required={true}
-						additional_styles="w-full"
-						additional_styles_label={additional_styles_label}
-						autoComplete="off"
-						onChange={(e) => setUplSettings({ ...UplSettings, workspace_name: e.target.value })}
-					/> */}
 					<Input
 						label="AFE number"
 						label_loc="beside"
@@ -375,7 +346,6 @@ export default function UploadFilePage({ setTitle }) {
 					onDragLeave={(e) => handleDrag(e)}
 					onDragOver={(e) => handleDrag(e)}
 					onDrop={(e) => handleDrop(e)}>
-					{/* <p className="text-4xl font-bold">Drop your file here</p> */}
 					<div className="border-dashed border-4 border-black/30 rounded-lg p-10 flex flex-col justify-center space-y-3 items-center w-[80%] bg-searchbg/[.5] h-[550px]">
 						<div className="w-full text-center">
 							<p className="text-4xl font-bold">Drop your file here</p>
@@ -386,14 +356,6 @@ export default function UploadFilePage({ setTitle }) {
 					</div>
 				</div>
 			)}
-			{/* <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${Error ? "" : "-translate-y-20"}`}>
-				<p>{Error}</p>
-				<Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setError("") }}>
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-						<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-					</svg>
-				</Buttons>
-			</div> */}
 			<div className={`flex items-center space-x-2 fixed top-5 left-[50%]
                  translate-x-[-50%] bg-${Message.color || "blue"}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${Message.message ? "" : "-translate-y-20"}`}>
