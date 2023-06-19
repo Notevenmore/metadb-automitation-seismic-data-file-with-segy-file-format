@@ -334,14 +334,14 @@ export default function UploadFilePage({ setTitle }) {
 				<div className="flex flex-row gap-x-3 pt-3 pb-16">
 					<Buttons
 						type="submit"
-						path={(fileUpload.length <= 1 && Object.values(UplSettings).some(x => { return x === null || x === "" })) ? UplSettings.Method === "dropdown" ? '/upload_file/matching_dropdown' : UplSettings.Method === "highlight" ? '/upload_file/matching_highlight' : UplSettings.Method === "dragdrop" ? '/upload_file/matching_draggable' : '/upload_file/matching_auto' : ''}
+						path={(fileUpload.length <= 1 || Object.values(UplSettings).some(x => { return x === null || x === "" })) ? UplSettings.Method === "dropdown" ? '/upload_file/matching_dropdown' : UplSettings.Method === "highlight" ? '/upload_file/matching_highlight' : UplSettings.Method === "dragdrop" ? '/upload_file/matching_draggable' : '/upload_file/matching_auto' : ''}
 						query={
 							{ form_type: datatypes[UplSettings.DataType] }
 						}
 						button_description="Upload and process file"
 						additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
 						onClick={handleSubmit}
-						disabled={(fileUpload.length <= 1 && Object.values(UplSettings).some(x => { return x === null || x === "" })) ? true : false}
+						disabled={(fileUpload.length < 1 || Object.values(UplSettings).some(x => { return x === null || x === "" })) ? true : false}
 					/>
 					<Buttons type="submit" button_description="Cancel" path="" onClick={router.back} />
 				</div>
@@ -386,14 +386,14 @@ export default function UploadFilePage({ setTitle }) {
 					</div>
 				</div>
 			)}
-			<div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${Error ? "" : "-translate-y-20"}`}>
+			{/* <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${Error ? "" : "-translate-y-20"}`}>
 				<p>{Error}</p>
 				<Buttons additional_styles="px-1 py-1 text-black" path="" onClick={() => { setError("") }}>
 					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
 						<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
 					</svg>
 				</Buttons>
-			</div>
+			</div> */}
 			<div className={`flex items-center space-x-2 fixed top-5 left-[50%]
                  translate-x-[-50%] bg-${Message.color || "blue"}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${Message.message ? "" : "-translate-y-20"}`}>
