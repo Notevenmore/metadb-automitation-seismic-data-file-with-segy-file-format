@@ -45,7 +45,7 @@ export default function TopBar(props) {
                 {/* <BSP className="w-[60px]" onClick={props.handleClick}/> */}
                 {/* <img src={GTN} className='w-5 h-5'/> */}
                 {/* <Image src={GTN} width={115} height={50}/> */}
-                <Image src={MetaDB} width={30} height={50}/>
+                <Image src={MetaDB} width={30} height={50} alt="MetaDB Logo"/>
                 <h1 className="text-xl font-bold">MetaDB</h1>
             </Link>
             <div className="flex items-center gap-x-3">
