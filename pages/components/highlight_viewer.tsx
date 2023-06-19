@@ -1,8 +1,8 @@
 import { Context, createContext, Dispatch, MutableRefObject, PropsWithChildren, ReactNode, useContext, useEffect, useReducer, useRef, useState } from "react";
 // import { useMouseDown, useMouseWithin } from "./custom-hook";
 
-export type Tuple4<T> = [ T, T, T, T ];
-export type Tuple2<T> = [ T, T ];
+export type Tuple4<T> = [T, T, T, T];
+export type Tuple2<T> = [T, T];
 
 /**
  *  * |----------------| STATE & ACTION TYPES |----------------|
@@ -100,7 +100,7 @@ type ImageEditorAction =
 
 export type ImageEditorContextType = { state: ImageEditorState, dispatch: Dispatch<ImageEditorAction> };
 
-interface ImageEditorProviderProps { 
+interface ImageEditorProviderProps {
     boundsObserver?: (bounds: Tuple4<number>[]) => void,
 }
 
@@ -123,7 +123,7 @@ function imageEditorReducer(state: ImageEditorState, action: ImageEditorAction):
             if (state.selectorState.stateType !== SelectorStateType.COMPLETE) return state;
             return {
                 ...state,
-                selectorState: { stateType: SelectorStateType.FIRST_BOUND, bounds: [ 0, 0, 0, 0 ] },
+                selectorState: { stateType: SelectorStateType.FIRST_BOUND, bounds: [0, 0, 0, 0] },
                 selectedNavbarButton: NavbarButton.SELECT_BUTTON
             };
 
@@ -132,7 +132,7 @@ function imageEditorReducer(state: ImageEditorState, action: ImageEditorAction):
             if (state.selectorState.stateType !== SelectorStateType.FIRST_BOUND) return state;
             return {
                 ...state,
-                selectorState: { ...state.selectorState, bounds: [ ...action.bounds, ...action.bounds ] }
+                selectorState: { ...state.selectorState, bounds: [...action.bounds, ...action.bounds] }
             };
 
         case SelectorActionType.SELECT_BOUND_START:
@@ -144,21 +144,21 @@ function imageEditorReducer(state: ImageEditorState, action: ImageEditorAction):
 
         case SelectorActionType.SELECTING_BOUND_END:
             if (state.selectorState.stateType !== SelectorStateType.SECOND_BOUND) return state;
-            const [ x1, y1 ] = state.selectorState.bounds;
+            const [x1, y1] = state.selectorState.bounds;
             return {
                 ...state,
-                selectorState: { ...state.selectorState, bounds: [ x1, y1, ...action.bounds ] }
+                selectorState: { ...state.selectorState, bounds: [x1, y1, ...action.bounds] }
             };
 
         case SelectorActionType.SELECT_BOUND_END:
             if (state.selectorState.stateType !== SelectorStateType.SECOND_BOUND) return state;
-            const [ fx1, fy1, fx2, fy2 ] = state.selectorState.bounds;
+            const [fx1, fy1, fx2, fy2] = state.selectorState.bounds;
             return {
                 ...state,
                 selectedNavbarButton: NavbarButton.MOVE_BUTTON,
                 selectorState: { stateType: SelectorStateType.COMPLETE },
                 // bounds: [ ...state.bounds, [ fx1, fy1, fx2, fy2 ] ]
-                bounds: [ [ fx1, fy1, fx2, fy2 ] ]
+                bounds: [[fx1, fy1, fx2, fy2]]
             };
         case ImageEditorActionType.SET_SCALE:
             return {
@@ -167,11 +167,11 @@ function imageEditorReducer(state: ImageEditorState, action: ImageEditorAction):
             };
 
         case ImageEditorActionType.SET_MOUSE_POS_RELATIVE_TO_IMAGE:
-            const relX = Math.ceil((action.mousePos[ 0 ] - state.translate[ 0 ]) / (state.scale));
-            const relY = Math.ceil((action.mousePos[ 1 ] - state.translate[ 1 ]) / (state.scale));
+            const relX = Math.ceil((action.mousePos[0] - state.translate[0]) / (state.scale));
+            const relY = Math.ceil((action.mousePos[1] - state.translate[1]) / (state.scale));
             return {
                 ...state,
-                mousePositionRelativeToImage: [ relX, relY ]
+                mousePositionRelativeToImage: [relX, relY]
             };
 
         case ImageEditorActionType.SET_EDITOR_DIM:
@@ -183,7 +183,7 @@ function imageEditorReducer(state: ImageEditorState, action: ImageEditorAction):
         case ImageEditorActionType.ADD_BOUND:
             return {
                 ...state,
-                bounds: [ ...state.bounds, action.bound ]
+                bounds: [...state.bounds, action.bound]
             };
         case ImageEditorActionType.CLEAR_BOUNDS:
             return {
@@ -199,12 +199,12 @@ function imageEditorReducer(state: ImageEditorState, action: ImageEditorAction):
 const initialImageEditorState: ImageEditorState = {
     selectedNavbarButton: NavbarButton.MOVE_BUTTON,
 
-    translate: [ 10, 60 ],
+    translate: [10, 60],
     scale: 1,
-    mousePositionRelativeToImage: [ 0, 0 ],
+    mousePositionRelativeToImage: [0, 0],
 
     selectorState: { stateType: SelectorStateType.COMPLETE },
-    editorDim: [ 0, 0 ],
+    editorDim: [0, 0],
     bounds: []
 };
 
@@ -214,15 +214,15 @@ export const ImageEditorContext = createContext<ImageEditorContextType>({
 });
 
 export const ImageEditorProvider = ({ children, boundsObserver }: PropsWithChildren<ImageEditorProviderProps>) => {
-    const [ state, dispatch ] = useReducer(imageEditorReducer, initialImageEditorState);
+    const [state, dispatch] = useReducer(imageEditorReducer, initialImageEditorState);
     const { bounds, mousePositionRelativeToImage } = state;
     useEffect(() => {
         if (boundsObserver) boundsObserver(bounds);
-    }, [ bounds ]);
+    }, [bounds]);
 
     useEffect(() => {
         // console.log(`mousePosition: ${mousePositionRelativeToImage}`);
-    }, [ mousePositionRelativeToImage ])
+    }, [mousePositionRelativeToImage])
 
     return (
         <ImageEditorContext.Provider value={{ state, dispatch }}>
@@ -265,7 +265,7 @@ export const useMouseWithin = (ref: MutableRefObject<null>) => {
     function onMouseMove(event: MouseEvent) {
         if (ref.current === null) { return }
         const element = (ref.current as unknown) as Node;
-        if (!element.contains(event.target as Node)) { 
+        if (!element.contains(event.target as Node)) {
             setWithin(_ => false);
             return;
         }
@@ -283,12 +283,12 @@ export const useMouseWithin = (ref: MutableRefObject<null>) => {
 }
 
 export const useElementOffset = (ref: MutableRefObject<null>) => {
-    const [ elementOffset, setElementOffset ] = useState([ 0, 0 ]);
+    const [elementOffset, setElementOffset] = useState([0, 0]);
     function calculateOffset() {
         if (ref.current === null) { return }
         const element = (ref.current as unknown) as HTMLElement;
         const { top, left } = element.getBoundingClientRect();
-        setElementOffset(_ => [ left, top ]);
+        setElementOffset(_ => [left, top]);
     }
     useEffect(() => {
         calculateOffset();
@@ -304,16 +304,16 @@ export const useElementOffset = (ref: MutableRefObject<null>) => {
 }
 
 export const useScrollOffset = () => {
-    const [ scrollOffset, setScrollOffset ] = useState([ 0, 0 ]);
-    
+    const [scrollOffset, setScrollOffset] = useState([0, 0]);
+
     function onScroll(_: Event) {
         const parent = document.getElementById("layout-icon");
-        setScrollOffset(_ => [ parent.scrollLeft, parent.scrollTop ]);;
+        setScrollOffset(_ => [parent.scrollLeft, parent.scrollTop]);;
     }
     useEffect(() => {
         const parent = document.getElementById("layout-icon");
         parent.addEventListener('scroll', onScroll);
-        setScrollOffset(_ => [ parent.scrollLeft, parent.scrollTop ]);
+        setScrollOffset(_ => [parent.scrollLeft, parent.scrollTop]);
         return () => {
             parent.removeEventListener('scroll', onScroll);
         }
@@ -322,11 +322,11 @@ export const useScrollOffset = () => {
 }
 
 const useInitialScrollOffset = () => {
-    const [ scrollOffset, setScrollOffset ] = useState([ 0, 0 ]);
+    const [scrollOffset, setScrollOffset] = useState([0, 0]);
 
     useEffect(() => {
         const parent = document.getElementById("layout-icon");
-        setScrollOffset(_ => [ parent.scrollLeft, parent.scrollTop ]);;
+        setScrollOffset(_ => [parent.scrollLeft, parent.scrollTop]);;
     }, []);
 
     return scrollOffset;
@@ -339,7 +339,7 @@ export const useScrolling = () => {
         if (document === null) { return }
         // left: 37, up: 38, right: 39, down: 40,
         // spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
-        var keys = {37: 1, 38: 1, 39: 1, 40: 1};
+        var keys = { 37: 1, 38: 1, 39: 1, 40: 1 };
 
         // @ts-ignore
         function preventDefault(e) {
@@ -360,9 +360,9 @@ export const useScrolling = () => {
         try {
             // @ts-ignore
             window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
-                get: function () { supportsPassive = true; } 
+                get: function () { supportsPassive = true; }
             }));
-        } catch(e) {}
+        } catch (e) { }
 
         var wheelOpt = supportsPassive ? { passive: false } : false;
         var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
@@ -379,7 +379,7 @@ export const useScrolling = () => {
         function enableScroll() {
             window.removeEventListener('DOMMouseScroll', preventDefault, false);
             // @ts-ignore
-            window.removeEventListener(wheelEvent, preventDefault, wheelOpt); 
+            window.removeEventListener(wheelEvent, preventDefault, wheelOpt);
             // @ts-ignore
             window.removeEventListener('touchmove', preventDefault, wheelOpt);
             window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
@@ -411,7 +411,7 @@ export const useScrollingValueWithin = (
     const { setScroll } = useScrolling();
     useEffect(() => {
         function onWheel(event: WheelEvent) {
-            if (!mouseWithin) { 
+            if (!mouseWithin) {
                 setScroll(_ => true);
                 return
             }
@@ -443,37 +443,37 @@ export const useScrollingValueWithin = (
             actionType: ImageEditorActionType.SET_SCALE,
             scale: value
         });
-    
-      return () => {
-      }
+
+        return () => {
+        }
     }, [value]);
 }
 
 export const useElementDim = (ref: MutableRefObject<null>) => {
-    const [ dim, setDim ] = useState<Tuple2<number>>([ 0, 0 ]);
+    const [dim, setDim] = useState<Tuple2<number>>([0, 0]);
     useEffect(() => {
         if (ref.current === null) { return }
         const element = (ref.current as unknown) as HTMLElement;
         const { width, height } = element.getBoundingClientRect();
-        setDim(_ => [ width, height ]);
-    }, [ ref ]);
+        setDim(_ => [width, height]);
+    }, [ref]);
     return dim;
 }
 
 
 export const useMousePosition = () => {
-    const [ mousePos, setMousePos ] = useState([ 0, 0 ]);
-    const [ finalPos, setFinalPos ] = useState([ 0, 0 ]);
+    const [mousePos, setMousePos] = useState([0, 0]);
+    const [finalPos, setFinalPos] = useState([0, 0]);
     const scrollOffset = useScrollOffset();
     function onMouseMove(event: MouseEvent) {
-        setMousePos(_ => [ event.clientX, event.clientY ]);
+        setMousePos(_ => [event.clientX, event.clientY]);
     }
 
     useEffect(() => {
-        const [ mX, mY ] = mousePos;
-        const [ soX, soY ] = scrollOffset;
-        setFinalPos(_ => [ mX + soX, mY + soY ]);
-    }, [ scrollOffset, mousePos ]);
+        const [mX, mY] = mousePos;
+        const [soX, soY] = scrollOffset;
+        setFinalPos(_ => [mX + soX, mY + soY]);
+    }, [scrollOffset, mousePos]);
     useEffect(() => {
         document.addEventListener('mousemove', onMouseMove);
         return () => {
@@ -488,16 +488,16 @@ export const useMousePositionRelativeTo = (ref: MutableRefObject<null>) => {
     const scrollOffset = useInitialScrollOffset();
     const elementOffset = useElementOffset(ref);
     const mousePos = useMousePosition();
-    const [ pos, setPos ] = useState<Tuple2<number>>([ 0, 0 ]);
+    const [pos, setPos] = useState<Tuple2<number>>([0, 0]);
 
     useEffect(() => {
-        const [ elX, elY ] = elementOffset;
-        const [ scX, scY ] = scrollOffset;
-        const [ mX, mY ] = mousePos;
+        const [elX, elY] = elementOffset;
+        const [scX, scY] = scrollOffset;
+        const [mX, mY] = mousePos;
         // console.log(`left: ${scX}`)
         // console.log(`top: ${scY}`)
-        setPos(_ => [ mX - elX + scX, mY - elY - scY]);
-    }, [ scrollOffset, mousePos, elementOffset ]);
+        setPos(_ => [mX - elX + scX, mY - elY - scY]);
+    }, [scrollOffset, mousePos, elementOffset]);
 
     return pos;
 };
@@ -505,26 +505,26 @@ export const useMousePositionRelativeTo = (ref: MutableRefObject<null>) => {
 export const useMouseDrag = () => {
     const mousePos = useMousePosition();
     const mouseDown = useMouseDown();
-    const [ origin, setOrigin ] = useState([ 0, 0 ]);
-    const [ offset, setOffset ] = useState([ 0, 0 ]);
-    const [ isDragging, setIsDragging ] = useState(false);
+    const [origin, setOrigin] = useState([0, 0]);
+    const [offset, setOffset] = useState([0, 0]);
+    const [isDragging, setIsDragging] = useState(false);
     useEffect(() => {
         if (mouseDown) {
-            setOffset(_ => [ 0, 0 ]);
+            setOffset(_ => [0, 0]);
             setOrigin(_ => mousePos);
             setIsDragging(_ => true);
         } else {
             setIsDragging(_ => false);
         }
-    }, [ mouseDown ]);
+    }, [mouseDown]);
 
     useEffect(() => {
         if (isDragging) {
-            const [ orX, orY ] = origin;
-            const [ mX, mY ] = mousePos;
-            setOffset(_ => [ mX - orX, mY - orY ]);
+            const [orX, orY] = origin;
+            const [mX, mY] = mousePos;
+            setOffset(_ => [mX - orX, mY - orY]);
         }
-    }, [ mousePos ]);
+    }, [mousePos]);
     return { isDragging, offset };
 }
 
@@ -533,7 +533,7 @@ export const useTranslateDraggable = (
     dragWithinRef: MutableRefObject<null>
 ) => {
     const { state: { translate, selectedNavbarButton }, dispatch } = useContext(context);
-    const [ lastTranslate, setLastTranslate ] = useState(translate);
+    const [lastTranslate, setLastTranslate] = useState(translate);
     const { isDragging, offset } = useMouseDrag();
     const mouseWithin = useMouseWithin(dragWithinRef);
 
@@ -548,18 +548,18 @@ export const useTranslateDraggable = (
     useEffect(() => {
         const enabled = selectedNavbarButton === NavbarButton.MOVE_BUTTON;
         if (enabled && mouseWithin && isDragging) {
-            const [ offX, offY ] = offset;
-            const [ orX, orY ] = lastTranslate;
-            setTranslate([ orX + offX, orY + offY ]);
+            const [offX, offY] = offset;
+            const [orX, orY] = lastTranslate;
+            setTranslate([orX + offX, orY + offY]);
         }
-    }, [ isDragging, selectedNavbarButton, offset ]);
+    }, [isDragging, selectedNavbarButton, offset]);
 
     // on Finished Dragging
     useEffect(() => {
         if (!isDragging) {
             setLastTranslate(_ => translate);
         }
-    }, [ isDragging ]);
+    }, [isDragging]);
 }
 
 export const useMousePositionRelative = (
@@ -573,7 +573,7 @@ export const useMousePositionRelative = (
             actionType: ImageEditorActionType.SET_MOUSE_POS_RELATIVE_TO_IMAGE,
             mousePos
         });
-    }, [ mousePos ]);
+    }, [mousePos]);
 }
 
 export const useEditorDim = (
@@ -587,7 +587,7 @@ export const useEditorDim = (
             actionType: ImageEditorActionType.SET_EDITOR_DIM,
             editorDim: editorDim
         });
-    }, [ editorDim ]);
+    }, [editorDim]);
 }
 
 export const useBoundingBox = (
@@ -632,7 +632,7 @@ export const useBoundingBox = (
         const drawing = selectorState.stateType === SelectorStateType.SECOND_BOUND;
         if (startDrawing && !mouseDown) {
             setDrawingFirstBound([relX, relY]);
-        }else if (startDrawing && mouseDown) {
+        } else if (startDrawing && mouseDown) {
             setFinishDrawingFirstBound()
         } else if (drawing && !mouseDown) {
             setDrawingSecondBound([relX, relY]);
@@ -652,11 +652,11 @@ interface NavbarButtonConfig {
 
 function Navbar() {
 
-    const [ buttonConfig, setButtonConfig ] = useState<NavbarButtonConfig[]>([]);
+    const [buttonConfig, setButtonConfig] = useState<NavbarButtonConfig[]>([]);
     const { state, dispatch } = useContext(ImageEditorContext);
     const {
         selectedNavbarButton,
-        editorDim: [ editorWidth ]
+        editorDim: [editorWidth]
     } = state;
     useEffect(() => {
         const newButtonConfig: NavbarButtonConfig[] = [
@@ -675,7 +675,7 @@ function Navbar() {
         ];
         setButtonConfig(_ => newButtonConfig)
 
-    }, [ selectedNavbarButton ]);
+    }, [selectedNavbarButton]);
 
     const buttonConfigToButton = (config: NavbarButtonConfig, index: number) => (
         <button
@@ -717,7 +717,7 @@ interface SelectionBoxProps {
 }
 
 export const SelectionBox = (({ bound }: SelectionBoxProps) => {
-    const [ x1, y1, x2, y2 ] = bound;
+    const [x1, y1, x2, y2] = bound;
     let fx = x1;
     let fy = y1;
     if (x1 > x2) {
@@ -744,8 +744,8 @@ export const SelectionBox = (({ bound }: SelectionBoxProps) => {
 
 
 export const useNaturalImageDim = (ref: MutableRefObject<null>) => {
-    const [ dim, setDim ] = useState([ 0, 0 ]);
-    const [ check, setCheck ] = useState(false);
+    const [dim, setDim] = useState([0, 0]);
+    const [check, setCheck] = useState(false);
     function reload() {
         setCheck(t => !t);
     }
@@ -754,9 +754,9 @@ export const useNaturalImageDim = (ref: MutableRefObject<null>) => {
         if (!element) return;
         const width = element.naturalWidth;
         const height = element.naturalHeight;
-        setDim(_ => [ element.naturalWidth, element.naturalHeight ]);
+        setDim(_ => [element.naturalWidth, element.naturalHeight]);
         console.log(`natural image dim called: ${width}, ${height}`);
-    }, [ check ]);
+    }, [check]);
 
     return { dim, reload };
 }
@@ -786,12 +786,12 @@ const ImageEditorView = ({ imageUrl }: ImageEditorViewProps) => {
         translate,
         selectedNavbarButton,
         selectorState,
-        editorDim: [ editorWidth, editorHeight ]
+        editorDim: [editorWidth, editorHeight]
     } = state;
 
     const mouseDown = useMouseDown();
     // imageUrl listener to clear bounds, whenever the imageUrl changes
-    const { dim: [ width, height ], reload } = useNaturalImageDim(imageRef);
+    const { dim: [width, height], reload } = useNaturalImageDim(imageRef);
     useEffect(() => {
         dispatch({
             actionType: ImageEditorActionType.CLEAR_BOUNDS
@@ -840,8 +840,8 @@ const ImageEditorView = ({ imageUrl }: ImageEditorViewProps) => {
                     transform: `scale(${scale})`,
                     transformOrigin: "top left",
                     position: "relative",
-                    left: `${translate[ 0 ]}px`,
-                    top: `${translate[ 1 ]}px`,
+                    left: `${translate[0]}px`,
+                    top: `${translate[1]}px`,
                     overflow: 'visible',
                     width: `${width}px`,
                     height: `${height}px`,
@@ -878,6 +878,16 @@ export const ImageEditor = ({ boundsObserver, imageUrl }: ImageEditorProps) => {
         </ImageEditorProvider>
     )
 }
+
+import React from 'react'
+
+const highlight_viewer = () => {
+    return (
+        <></>
+    )
+}
+
+export default highlight_viewer
 
 // export default function Index() {
 //     const doc_id: string = "c5fd3ac264d654b04b759f193a16254b8eb0c878a3f0de0f914aaf2cae3da47f";
