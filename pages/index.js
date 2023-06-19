@@ -146,7 +146,7 @@ const HomeSection = () => {
 						<h1 className="font-bold text-3xl">New record</h1>
 						<hr />
 						<p className="font-semibold">Select the appropriate configuration for the new record:</p>
-						<form onSubmit={console.log("hooray")} className="space-y-3 flex flex-col items-center justify-center">
+						<form className="space-y-3 flex flex-col items-center justify-center">
 							<div className="w-full space-y-2 border-2 p-2 rounded-lg">
 								<p>Data type</p>
 								<Input
