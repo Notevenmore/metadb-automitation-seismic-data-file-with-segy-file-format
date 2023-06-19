@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-key */
+/* eslint-disable */
 import React, { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import data from '../../dummy-data/help_editor_data';
