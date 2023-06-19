@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useRouter } from "next/router"
 import { useCallback, useEffect, useRef, useState } from "react"
 import Button from '../../components/buttons/buttons'

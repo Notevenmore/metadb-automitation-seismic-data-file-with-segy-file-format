@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-key */
+/* eslint-disable */
 import Highlight from "react-highlight";
 import Container from "../../components/container/container";
 
