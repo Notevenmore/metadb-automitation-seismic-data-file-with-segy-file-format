@@ -37,11 +37,9 @@ export default function UploadFileReview({ setTitle }) {
     const upload_document_settings = useSelector((state) => state.general.upload_document_settings)
 
     useEffect(() => {
-        setTitle("Review Uploaded Document")
+        setTitle("Review - Upload Document")
     }, [])
 
-
-    // TODO fix the workflow to get the data from redux instead of local storage
     useEffect(() => {
         // ---| NEW WORKFLOW |---
         const init = async () => {
@@ -56,8 +54,6 @@ export default function UploadFileReview({ setTitle }) {
                     })
                     final.push(row)
                 }
-                // const promisedsetReviewData = (newState) => new Promise(resolve => setReviewData(newState, resolve))
-                // await promisedsetReviewData(final).then(res => { console.log(res); return true })
                 setReviewData(final)
                 const workspace_data = {
                     "afe_number": parseInt(upload_document_settings.afe_number),
@@ -67,69 +63,6 @@ export default function UploadFileReview({ setTitle }) {
                     "submission_type": upload_document_settings.submission_type
                 }
                 setworkspaceData(workspace_data)
-
-                // get ID for each page if more than 1
-                // setloading(`Creating new spreadsheet`)
-                // const init_id = await fetch('http://localhost:5050/createSpreadsheet', {
-                //     method: "GET",
-                //     headers: {
-                //         "Content-Type": "application/json"
-                //     }
-                // }).then(response => {
-                //     return response.json()
-                // }).catch(e => { throw new Error(String(e)) })
-                // console.log(idx)
-                // console.log(init_id)
-                // console.log(review_data[idx])
-                // if (init_id.status !== 200) {
-                //     throw new Error("Something happened in the Sheets service. Please try again or contact maintainer if the problem still persists.")
-                // }
-                // // setting the ID to include in the object
-                // setspreadsheetIDs((ids) => {
-                //     let updated = ids
-                //     updated[idx] = init_id.response
-                //     return updated
-                // })
-                // setloading(`Updating spreadsheet for page ${idx + 1} to display proper data type: printed_well_report`)
-                // // updating the spreadsheet to display proper data type
-                // await fetch('http://localhost:5050/updateSpreadsheet/v2', {
-                //     method: "POST",
-                //     headers: {
-                //         "Content-Type": "application/json"
-                //     },
-                //     body: JSON.stringify({
-                //         type: "review",
-                //         form_type: "printed_well_report", // TODO change to dynamic later
-                //         spreadsheetID: init_id.response
-                //     })
-                // }).then(response => {
-                //     return response.json()
-                // }).then(response => {
-                //     if (response.status !== 200) {
-                //         throw new Error(`${response.status}: ${response.response}`)
-                //     }
-                // })
-
-                // setloading(`Appending OCR data for page ${idx + 1}`)
-                // // updating the spreadsheet based on the reviewed data (OCR)
-                // await fetch('http://localhost:5050/appendToSheets2', {
-                //     method: "POST",
-                //     headers: {
-                //         "Content-Type": "application/json"
-                //     },
-                //     body: JSON.stringify({
-                //         form_type: "printed_well_report", // TODO change to dynamic later
-                //         spreadsheetID: init_id.response,
-                //         data: JSON.stringify([final])
-                //     })
-                // }).then(response => {
-                //     return response.json()
-                // }).then(response => {
-                //     if (response.status !== 200) {
-                //         throw new Error(`${response.status}: ${response.response}`)
-                //     }
-                // })
-
                 setloading("")
             } catch (error) {
                 setloading("")
@@ -143,426 +76,15 @@ export default function UploadFileReview({ setTitle }) {
         }
 
         // ---| OLD WORKFLOW |---
-        // const review_data = localStorage.getItem("reviewData")
-        // if (review_data) {
-        //     setReviewData(review_data)
-        // }
+        // check github
     }, [])
-
-    // useEffect(() => {
-    //     console.log(spreadsheetIDs)
-    // }, [spreadsheetIDs])
 
     useEffect(() => {
         setImageURL(_ => `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${document_summary?.document_id}/${PageNo + 1}`)
     }, [PageNo])
 
-    // TODO fix the workflow to get the data from redux instead of local storage
-    const setImage = (e) => {
-        e.preventDefault()
-        // const uploaded_img = localStorage.getItem("reviewUploadedImage")
-        // if (uploaded_img) {
-        //     setImageReview(uploaded_img)
-        // } else {
-        //     setImageReview("Cannot find uploaded image. Please retry the process or see the original image by opening it directly from your computer.")
-        // }
-        setImageReview(ImageURL)
-    }
-
-    // TODO save to db instead of localstorage later on
-    // const saveWorkspace = async (e, redirect = false) => {
-    //     e.preventDefault()
-    //     // let counter = 0, name = ""
-    //     // while (true) {
-    //     //     const workspace_exist = localStorage.getItem("new_workspace_from_uploaded_file")
-    //     //     if (workspace_exist) {
-    //     //         counter = counter + 1
-    //     //     } else {
-    //     //         name = !counter ? "new_workspace_from_uploaded_file" : `new_workspace_from_uploaded_file_${counter}`
-    //     //         localStorage.setItem(name, ReviewData)
-    //     //         break
-    //     //     }
-    //     // }
-    //     // let workspaces = JSON.parse(localStorage.getItem("workspaces"))
-    //     // workspaces.push({ "name": name })
-    //     // console.log("first")
-    //     // localStorage.setItem("new_workspace_from_uploaded_file", ReviewData)
-    //     try {
-    //         setMessage({ message: "Saving workspace... Please don't close this page or click anything", color: "blue" })
-    //         console.log(spreadsheetID)
-    //         if (!spreadsheetID) {
-    //             setMessage({ message: "Spreadsheet not yet initialized. Please wait for a moment.", color: "red" })
-    //             return
-    //         }
-    //         const spreadsheet_data = await fetch(`http://127.0.0.1:5050/getRows`, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json"
-    //             },
-    //             body: JSON.stringify({
-    //                 form_type: String(router.query.form_type),
-    //                 spreadsheetID: spreadsheetID
-    //             })
-    //         }).then(response => {
-    //             return response.json()
-    //         }).then(response => {
-    //             console.log(response)
-    //             if (response.status !== 200) {
-    //                 throw response.response
-    //             }
-    //             return response
-    //         }).catch(err => { throw err })
-
-    //         console.log(spreadsheet_data.response[0])
-    //         let final = []
-    //         for (let idx_row = 1; idx_row < spreadsheet_data.response.length; idx_row++) {
-    //             let row = {}
-    //             console.log(idx_row)
-    //             spreadsheet_data.response[0].forEach((header, idx_col) => {
-    //                 row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] || ""
-    //             });
-    //             console.log(row)
-    //             final.push(row)
-    //         }
-    //         if (final.length === 0) { final.push({}) }
-    //         localStorage.setItem("ocr_data", JSON.stringify(final))
-
-    //         setMessage({ message: "Workspace successfully saved.", color: "blue" })
-
-    //         if (redirect) {
-    //             router.push("/")
-    //         }
-    //     } catch (error) {
-    //         setMessage({ message: `Failed to save workspace. Please try again. Additional error message: ${error}`, color: "red" })
-    //         throw error
-    //     }
-    // }
-
-    // const init_data = async () => {
-    //     if (!workspaceData.afe_number) {
-    //         throw "Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer."
-    //     }
-    //     const workspace_data = await fetch(`${config[router.query.form_type]["afe"]}${workspaceData.afe_number}`, {
-    //         method: "GET",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         }
-    //     }).then(res => Promise.all(
-    //         [res.status, res.status !== 200 ? res.text() : res.json()]
-    //     )).then(([status, res]) => {
-    //         if (status !== 200) {
-    //             throw `Service returned with status ${status}: ${res}`
-    //         }
-    //         return res
-    //     })
-
-    //     const data = await fetch(`${config[router.query.form_type]["workspace"]}${workspaceData.afe_number}`, {
-    //         method: "GET",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         }
-    //     }).then(res => Promise.all(
-    //         [res.status, res.status !== 200 ? res.text() : res.json()]
-    //     )).then(([status, res]) => {
-    //         if (status !== 200) {
-    //             throw `Service returned with status ${status}: ${res}`
-    //         }
-    //         return res
-    //     })
-
-    //     // if data is not null (workspace is not empty), then get every data details within the workspace.
-    //     // since the 'data' variable above only holds the ids of the data, along with the ppdm guid it's referencing
-    //     // to and the workspace afe number it's referencing to. 
-    //     let final = []
-    //     // let ppdm_guids = []
-    //     if (data) {
-    //         for (const pwr_id of data) {
-    //             const data_details = await fetch(`${config[router.query.form_type]["view"]}${pwr_id.pwr_id}`, {
-    //                 method: "GET",
-    //                 headers: {
-    //                     "Content-Type": "application/json"
-    //                 }
-    //             }).then(res => Promise.all(
-    //                 [res.status, res.status !== 200 ? res.text() : res.json()]
-    //             )).then(([status, res]) => {
-    //                 if (status !== 200) {
-    //                     throw `Service returned with status ${status}: ${res}`
-    //                 }
-    //                 return res
-    //             })
-    //             final.push(data_details[0])
-    //         }
-    //     }
-    //     return { data: data, data_content: final, workspace_data: workspace_data[0] }
-    // }
-
     const delay = delay_amount_ms =>
         new Promise(resolve => setTimeout(() => resolve("delay"), delay_amount_ms))
-
-    // const saveDocument = async (e, redirect = false) => {
-    //     e.preventDefault();
-    //     router.events.emit("routeChangeStart")
-    //     try {
-    //         // Check if spreadsheetId is available
-    //         if (!spreadsheetID) {
-    //             setMessage({ message: "Failed to get spreadsheet information, please reload this page. Changes will not be saved", color: "red" });
-    //             return;
-    //         }
-
-    //         // Set saving message
-    //         setMessage({ message: "Checking changes in record information... Please don't leave this page or click anything", color: "blue" });
-
-    //         // check for changes in the workspace data, if there are any then push the updates to the db
-    //         let workspace_data_changed = false
-    //         const old_workspace_data = await fetch(`${config[router.query.form_type]["afe"]}${workspaceData['afe_number']}`, {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-Type": "application/json"
-    //             }
-    //         }).then(res => Promise.all(
-    //             [res.status, res.status !== 200 ? res.text() : res.json()]
-    //         )).then(([status, res]) => {
-    //             if (status !== 200) {
-    //                 throw `Service returned with status ${status}: ${res}`
-    //             }
-    //             return res
-    //         })
-
-    //         Object.keys(old_workspace_data[0]).some(key => {
-    //             if (old_workspace_data[0][key] !== workspaceData[key]) {
-    //                 workspace_data_changed = true
-    //                 return true
-    //             }
-    //         });
-
-    //         if (workspace_data_changed) {
-    //             setMessage({ message: "Saving record information... Please don't leave this page or click anything", color: "blue" });
-    //             await fetch(`${config[router.query.form_type]["afe"]}${workspaceData['afe_number']}`, {
-    //                 method: "PUT",
-    //                 headers: {
-    //                     "Content-Type": "application/json"
-    //                 },
-    //                 body: JSON.stringify(workspaceData)
-    //             }).then(res => Promise.all(
-    //                 [res.status, res.text()]
-    //             )).then(([status, res]) => {
-    //                 if (status !== 200) {
-    //                     if (res.toLowerCase().includes("workspace_name_unique")) {
-    //                         throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`
-    //                     } else {
-    //                         throw res || "Something happened while updating record information data. Please try again or contact maintainer if the problem persists."
-    //                     }
-    //                 }
-    //             })
-    //         }
-
-    //         setMessage({ message: "Checking changes in record data... Please don't leave this page or click anything", color: "blue" });
-    //         // fetch original data from database
-    //         const old_data = await init_data()
-
-    //         // Fetch header from spreadsheet
-    //         const spreadsheet_header = await fetch(`${config.services.sheets}/getHeaders`, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json"
-    //             },
-    //             body: JSON.stringify({
-    //                 form_type: router.query.form_type
-    //             })
-    //         }).then(response => {
-    //             return response.json();
-    //         }).then(response => {
-    //             // Handle non-200 response status
-    //             if (response.status !== 200) {
-    //                 throw response.response;
-    //             }
-    //             return response;
-    //         })
-
-    //         // Fetch spreadsheet data from the server
-    //         const spreadsheet_data = await fetch(`${config.services.sheets}/getRows`, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-type": "application/json"
-    //             },
-    //             body: JSON.stringify({
-    //                 form_type: router.query.form_type,
-    //                 spreadsheetID: spreadsheetID,
-    //                 without_header: true
-    //             })
-    //         }).then(response => {
-    //             return response.json();
-    //         }).then(response => {
-    //             // Handle non-200 response status
-    //             if (response.status !== 200) {
-    //                 throw response.response;
-    //             }
-    //             return response;
-    //         }).catch(err => { throw err; });
-
-    //         setMessage({ message: "Saving record data... Please don't leave this page or click anything", color: "blue" });
-    //         var idx_row = 0
-    //         console.log(spreadsheet_data)
-    //         if (spreadsheet_data.response) {
-    //             for (idx_row; idx_row < Math.max(spreadsheet_data.response.length, old_data.data_content.length); idx_row++) {
-    //                 let row = {}
-    //                 let changed = false
-    //                 spreadsheet_header.response.forEach((header, idx_col) => {
-    //                     // try converting any string to integer if possible, if fails then just skip and append the raw string
-    //                     // a try catch was put here to avoid new data being undefined if its length is shorter than old data
-    //                     try {
-    //                         // TODO: TEMPORARY, CHANGE TO DETECT FROM DATABASE WHEN ENDPOINT HAS BEEN CREATED
-    //                         if (!row[header.toLowerCase()]) {
-    //                             // row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
-    //                             if (header.toLowerCase().includes("page")) {
-    //                                 row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
-    //                             } else {
-    //                                 row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] || null;
-    //                             }
-    //                             if (row[header.toLowerCase()] === "") {
-    //                                 throw "Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types."
-    //                             }
-    //                         }
-    //                     } catch (error) { }
-
-    //                     // try checking if the data is different. if index out of range it means that the size of the array of either
-    //                     // the old data has surpassed the new data, or vice versa, so skip the step. 
-    //                     // a try catch was put here to avoid old data being undefined if its length is shorter than new data
-    //                     try {
-    //                         if (!changed && row[header.toLowerCase()] !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null)) {
-    //                             changed = true
-    //                         }
-    //                     } catch (error) { }
-
-    //                     // convert date gotten from the database to appropriate format after the checking, to avoid 
-    //                     // misinterpretating different date formats as different values although the date is the same
-    //                     if (header.toLowerCase().includes("date") && row[header.toLowerCase()]) {
-    //                         // try to convert, if the input is null then just pass
-    //                         try {
-    //                             let day, month, year, parts;
-    //                             const input = spreadsheet_data?.response[idx_row][idx_col]
-    //                             if (input.includes("-")) {
-    //                                 parts = input.split("-");
-    //                             } else if (input.trim().includes(" ")) {
-    //                                 parts = input.split(" ");
-    //                             } else {
-    //                                 parts = input.split("/")
-    //                             }
-    //                             day = parts[0];
-    //                             month = parts[1];
-    //                             year = parts[2];
-    //                             const date = new Date(`${month}-${day}-${year}`);
-    //                             row[header.toLowerCase()] = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`
-    //                         } catch (error) {
-    //                             row[header.toLowerCase()] = null
-    //                         }
-    //                     }
-    //                 });
-    //                 console.log(row, idx_row, idx_row < old_data.data_content.length - 1)
-    //                 // if change in row is detected then update the data in the database
-    //                 if (changed && idx_row <= old_data.data_content.length - 1 && JSON.stringify(row) !== '{}') {
-    //                     console.log("trying to PUT", idx_row)
-    //                     await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
-    //                         method: "PUT",
-    //                         headers: {
-    //                             "Content-Type": "application/json"
-    //                         },
-    //                         body: JSON.stringify({ id: old_data.data_content[idx_row]["id"], ...row })
-    //                     }).then(res => {
-    //                         if (res.status !== 200) {
-    //                             throw res.statusText || "Something happened while updating (PUT) a record which resulted in failure. Please contact maintainer."
-    //                         }
-    //                     })
-    //                 } else {
-    //                     // else if current index is already beyond the length of original data or the new data
-    //                     if (idx_row > spreadsheet_data.response.length - 1 || idx_row > old_data.data_content.length - 1) {
-    //                         // if the new data length is shorter than the new data then the old data is deleted
-    //                         if (spreadsheet_data.response.length < old_data.data_content.length) {
-    //                             console.log("trying to DELETE", idx_row)
-    //                             await fetch(`${config[router.query.form_type]["view"]}${old_data.data_content[idx_row]["id"]}`, {
-    //                                 method: "DELETE",
-    //                                 headers: {
-    //                                     "Content-Type": "application/json"
-    //                                 }
-    //                             }).then(res => {
-    //                                 if (res.status !== 200) {
-    //                                     throw res.statusText || "Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. "
-    //                                 }
-    //                             })
-    //                             console.log("success")
-    //                         }
-    //                         // else if the new data length is greater than the old data then there's a new row appended
-    //                         else if (spreadsheet_data.response.length > old_data.data_content.length) {
-    //                             console.log("trying to POST", idx_row)
-    //                             const upload = await fetch(`${config[router.query.form_type]["view"]}`, {
-    //                                 method: "POST",
-    //                                 headers: {
-    //                                     "Content-Type": "application/json"
-    //                                 },
-    //                                 body: JSON.stringify(row)
-    //                             }).then(res => {
-    //                                 if (res.status !== 200) {
-    //                                     throw res.statusText || "Something happened while posting (POST) a record which resulted in a failure. Please contact maintainer."
-    //                                 }
-    //                                 return res.text()
-    //                             })
-    //                             console.log("success POSTING new record, appending to record...")
-    //                             let uploaded_id = upload.split(":")
-    //                             uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim())
-    //                             await fetch(`${config[router.query.form_type]["workspace"]}`, {
-    //                                 method: "POST",
-    //                                 headers: {
-    //                                     "Content-Type": "application/json"
-    //                                 },
-    //                                 body: JSON.stringify({
-    //                                     afe_number: workspaceData.afe_number,
-    //                                     pwr_id: uploaded_id
-    //                                 })
-    //                             }).then(res => {
-    //                                 if (res.status !== 200) {
-    //                                     throw res.statusText || "Something happened while posting (POST) a record to the record table which resulted in a failure. Please contact maintainer."
-    //                                 }
-    //                             })
-    //                             console.log("success")
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         } else {
-    //             if (old_data.data_content.length > 0) {
-    //                 old_data.data_content.forEach(async (record, idx_row_del) => {
-    //                     console.log("trying to DELETE", idx_row_del)
-    //                     await fetch(`${config[router.query.form_type]["view"]}${record["id"]}`, {
-    //                         method: "DELETE",
-    //                         headers: {
-    //                             "Content-Type": "application/json"
-    //                         }
-    //                     }).then(res => {
-    //                         if (res.status !== 200) {
-    //                             throw res.statusText || "Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. "
-    //                         }
-    //                     })
-    //                     console.log("success")
-    //                 });
-    //             }
-    //         }
-    //         setMessage({ message: "Record successfully saved", color: "blue" });
-    //         router.events.emit("routeChangeComplete")
-    //         if (redirect) {
-    //             await delay(1000)
-    //             setMessage({ message: "Redirecting to homepage...", color: "blue" });
-    //             await delay(1000)
-    //             router.push("/")
-    //         } else {
-    //             await delay(3000)
-    //             setMessage({ message: "", color: "" });
-    //         }
-    //     } catch (error) {
-    //         // Handle error and display error message
-    //         setMessage({ message: `Failed to save record. Please try again. Additional error message: ${String(error)}`, color: "red" });
-    //     }
-    //     router.events.emit("routeChangeComplete")
-    // }
 
     const saveDocumentHandler = async (e, redirect = false) => {
         router.events.emit("routeChangeStart")
@@ -587,11 +109,20 @@ export default function UploadFileReview({ setTitle }) {
         router.events.emit("routeChangeComplete")
     }
 
+    useEffect(() => {
+        if (spreadsheetReady) {
+            setTimeout(async () => {
+                setMessage({ message: "Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.", color: "blue" })
+                await delay(10000)
+                setMessage({ message: "", color: "" })
+            }, 3000);
+        }
+    }, [spreadsheetReady])
+
     return ((error) ? (
         <div className="w-full h-full flex flex-col p-10 space-y-4">
             <p className="font-bold text-lg text-red-500">Something happened. Please try again or contact administrator/maintainer if the problem still persists by giving them the information below:</p>
             <Highlight className='html rounded-md border-2'>{error}</Highlight>
-            {/* @ts-ignore */}
             <Buttons path="/" button_description="Go back home" />
         </div>
     ) : (workspaceData) ?
@@ -603,11 +134,6 @@ export default function UploadFileReview({ setTitle }) {
                         <p>Review</p>
                     </div>
                 </Container.Title>
-                {/* <section className="-mt-5 mb-5 space-y-2">
-                    <p className="font-bold">Review</p>
-                    <h1 className="font-bold text-[36px]">Lorem ipsum laporan 2008</h1>
-                    <Input type={"text"} additional_styles_input="text-xl py-3 px-3 font-bold placeholder:italic" value={workspaceData.workspace_name} placeholder="Workspace name" onChange={(e) => setworkspaceData({ ...workspaceData, workspace_name: e.target.value })} />
-                </section> */}
                 <HeaderTable>
                     <HeaderInput label1={"Nama KKKS"} label2={"(KKKS Name)"}>
                         <Input
@@ -677,7 +203,6 @@ export default function UploadFileReview({ setTitle }) {
                             {ImageReview ?
                                 <Buttons button_description="Hide image" additional_styles="bg-white" path="" onClick={(e) => { e.preventDefault(); setImageReview("") }} />
                                 :
-                                // <Buttons button_description="View uploaded picture below" additional_styles="bg-white" path="" onClick={(setImage)} />}
                                 <Buttons button_description="View uploaded picture below" additional_styles="bg-white" path="" onClick={(e) => { e.preventDefault(); setImageReview(ImageURL) }} />}
                         </div>]}
                         content={[
@@ -687,8 +212,6 @@ export default function UploadFileReview({ setTitle }) {
                                         <div className="w-5 h-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
                                         <p>{loading}</p>
                                     </div>) : (
-                                    // TODO change to dynamic later
-                                    // FINISHED TODO
                                     <Sheets type={"review"} form_type={router.query.form_type} data={ReviewData} getSpreadsheetID={setspreadsheetID} finishedInitializing={setspreadsheetReady} />
                                 )}
                             </div>]
@@ -702,7 +225,6 @@ export default function UploadFileReview({ setTitle }) {
                         <Table
                             header={[<div className="flex justify-between items-center"><p>Data</p><Buttons button_description="Hide image" additional_styles="bg-white" path="" onClick={(e) => { setImageReview("") }} /></div>]}
                             content={[
-                                // [<div className="h-max justify-center flex"><img src={ImageReview} className="h-max w-max" alt="Processed image preview" /></div>]
                                 [<ImageEditor boundsObserver={() => { }} imageUrl={ImageURL} />]
                             ]}
                             additional_styles='overflow-hidden'
@@ -724,9 +246,6 @@ export default function UploadFileReview({ setTitle }) {
                     <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={saveDocumentHandler} disabled={!spreadsheetID || Message.message || !spreadsheetReady ? true : false}>Save changes</Buttons>
                     <Buttons path="" additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold" onClick={(e) => { saveDocumentHandler(e, true) }} disabled={!spreadsheetID || Message.message || !spreadsheetReady ? true : false}>Save and exit</Buttons>
                 </div>
-                {/* <Buttons path="" additional_styles="text-error">Cancel</Buttons> */}
-                {/* <ButtonsSection>
-            </ButtonsSection> */}
                 <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${Message.color || "blue"}-500 text-white px-3 rounded-lg py-2 transition-transform ${Message.message ? "" : "-translate-y-20"}`}>
                     <p>{Message.message}</p>
                     <Buttons additional_styles="px-1 py-1 text-black" path="" onClick={(e) => { e.preventDefault(); setMessage({ message: "", color: "orange" }) }}>
