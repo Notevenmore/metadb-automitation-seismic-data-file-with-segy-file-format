@@ -11,22 +11,22 @@
 }
 
 @font-face {
-  font-family: "Mulish";
-  src: url(./fonts/Mulish-VariableFont_wght.ttf) format("truetype");
+  font-family: 'Mulish';
+  src: url(./fonts/Mulish-VariableFont_wght.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
   src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
-  src: local('Material Icons'),
-    local('MaterialIcons-Regular'),
+  src: local('Material Icons'), local('MaterialIcons-Regular'),
     url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
     url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
     url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
 }
 
-html, body {
+html,
+body {
   font-family: Mulish;
 }
 
@@ -34,7 +34,7 @@ html, body {
   font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;  /* Preferred icon size */
+  font-size: 24px; /* Preferred icon size */
   display: inline-block;
   line-height: 1;
   text-transform: none;
@@ -54,7 +54,6 @@ html, body {
   /* Support for IE. */
   font-feature-settings: 'liga';
 }
-
 
 /* html,
 body {
@@ -83,16 +82,15 @@ a {
   }
 } */
 
-
 .full-height {
-  height: calc(100vh - 55px)
+  height: calc(100vh - 55px);
 }
 .full-height-container {
-  height: calc(100vh - 250px)
+  height: calc(100vh - 250px);
 }
 
 .overflow-hidden {
- overflow: hidden;
+  overflow: hidden;
 }
 .overflow-auto {
   overflow: auto;
