@@ -123,8 +123,7 @@ const HomeSection = () => {
   return (
     <section
       className="flex flex-col justify-center items-center w-full h-full"
-      onDragEnter={e => handleDrag(e)}
-    >
+      onDragEnter={e => handleDrag(e)}>
       <section className="flex flex-col justify-around w-[944px] h-[426px] items-center">
         <FileIcon className="w-[114px] h-[132px]"></FileIcon>
         <h1 className="text-[24px] leading-[30px] font-semibold opacity-50 text-center">
@@ -135,8 +134,7 @@ const HomeSection = () => {
         <div className="flex justify-center">
           <Buttons
             path={'/upload_file'}
-            button_description="Choose file manually"
-          ></Buttons>
+            button_description="Choose file manually"></Buttons>
         </div>
         <p className="text-center opacity-50">
           The document to be uploaded must be in either JPG, PNG, PDF, PPTX,
@@ -154,8 +152,7 @@ const HomeSection = () => {
             onClick={e => {
               e.preventDefault();
               settoggleOverlay(true);
-            }}
-          ></Buttons>
+            }}></Buttons>
           {/* <Buttons path={"/drafts"} button_description="View drafts"></Buttons> */}
           {/* <Buttons path={"/database"} button_description="Connect with database"></Buttons> */}
         </section>
@@ -167,17 +164,14 @@ const HomeSection = () => {
         onClick={e => {
           e.preventDefault();
           reset(e.target);
-        }}
-      >
+        }}>
         <div
           id="overlay"
-          className="flex items-center justify-center w-full h-full"
-        >
+          className="flex items-center justify-center w-full h-full">
           <div
             className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${
               toggleOverlay ? '' : '-translate-y-10 opacity-0'
-            } transition-all`}
-          >
+            } transition-all`}>
             <Buttons
               path=""
               additional_styles="absolute top-2 right-2 px-1 py-1 text-black"
@@ -185,16 +179,14 @@ const HomeSection = () => {
               onClick={e => {
                 e.preventDefault();
                 reset();
-              }}
-            >
+              }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-5 h-5"
-              >
+                className="w-5 h-5">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -339,8 +331,7 @@ const HomeSection = () => {
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${
                    Message.message ? '' : '-translate-y-20'
-                 }`}
-      >
+                 }`}>
         <p>{Message.message}</p>
         <Buttons
           additional_styles="px-1 py-1 text-black"
@@ -348,16 +339,14 @@ const HomeSection = () => {
           onClick={e => {
             e.preventDefault();
             setMessage({message: '', color: ''});
-          }}
-        >
+          }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
-          >
+            className="w-5 h-5">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

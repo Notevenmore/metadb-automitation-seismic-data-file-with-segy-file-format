@@ -7,8 +7,7 @@ export default function Custom502() {
       <Error
         code="502"
         description="Network Error"
-        text="Uh-uh there's something wrong with the network connectivity."
-      ></Error>
+        text="Uh-uh there's something wrong with the network connectivity."></Error>
     </div>
   );
 }

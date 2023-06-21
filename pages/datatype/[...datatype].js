@@ -81,8 +81,7 @@ const PrintedWellReport = ({datatype, setTitle}) => {
                     query={{
                       form_type: datatype,
                       workspace_data: workspace.afe_number,
-                    }}
-                  >
+                    }}>
                     <div className="w-[18px] h-[18px] flex items-center">
                       <Image
                         src="/icons/pencil.svg"
@@ -99,8 +98,7 @@ const PrintedWellReport = ({datatype, setTitle}) => {
                     title="Delete record"
                     onClick={e => {
                       deleteWorkspace(e, workspace.afe_number);
-                    }}
-                  >
+                    }}>
                     <div className="w-[18px] h-[18px] flex items-center">
                       <Image
                         src="/icons/delete.svg"
@@ -352,8 +350,7 @@ const PrintedWellReport = ({datatype, setTitle}) => {
         onClick={e => {
           e.preventDefault;
           settoggleOverlay(true);
-        }}
-      >
+        }}>
         <div className="flex items-center justify-center space-x-5 pl-[16px]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -361,8 +358,7 @@ const PrintedWellReport = ({datatype, setTitle}) => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6"
-          >
+            className="w-6 h-6">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -379,17 +375,14 @@ const PrintedWellReport = ({datatype, setTitle}) => {
         onClick={e => {
           e.preventDefault();
           reset(e.target);
-        }}
-      >
+        }}>
         <div
           id="overlay"
-          className="flex items-center justify-center w-full h-full"
-        >
+          className="flex items-center justify-center w-full h-full">
           <div
             className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${
               toggleOverlay ? '' : '-translate-y-10 opacity-0'
-            } transition-all`}
-          >
+            } transition-all`}>
             <Button
               path=""
               additional_styles="absolute top-2 right-2 px-1 py-1 text-black"
@@ -397,16 +390,14 @@ const PrintedWellReport = ({datatype, setTitle}) => {
               onClick={e => {
                 e.preventDefault();
                 reset();
-              }}
-            >
+              }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-5 h-5"
-              >
+                className="w-5 h-5">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -539,8 +530,7 @@ const PrintedWellReport = ({datatype, setTitle}) => {
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${
                    Message.message ? '' : '-translate-y-20'
-                 }`}
-      >
+                 }`}>
         <p>{Message.message}</p>
         <Button
           additional_styles="px-1 py-1 text-black"
@@ -548,16 +538,14 @@ const PrintedWellReport = ({datatype, setTitle}) => {
           onClick={e => {
             e.preventDefault();
             setMessage({message: '', color: ''});
-          }}
-        >
+          }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
-          >
+            className="w-5 h-5">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

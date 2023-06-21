@@ -133,13 +133,11 @@ const Profile = ({setTitle}) => {
                 ],
               }}
               className={`top-[35px] shadow-lg`}
-              width="263px"
-            >
+              width="263px">
               <Buttons
                 button_description="Edit"
                 path=""
-                additional_styles="py-0.5 pl-1.5 pr-3 space-x-0 border bg-transparent border-float_dialog text-[14px]"
-              >
+                additional_styles="py-0.5 pl-1.5 pr-3 space-x-0 border bg-transparent border-float_dialog text-[14px]">
                 <Image
                   src="/icons/pencil.svg"
                   width={10}

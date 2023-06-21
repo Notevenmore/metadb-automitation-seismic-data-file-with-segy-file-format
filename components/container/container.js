@@ -6,8 +6,7 @@ export default function Container({children, additional_class, ...divProps}) {
   return (
     <div
       className={twMerge('w-full flex flex-col p-10', additional_class)}
-      {...divProps}
-    >
+      {...divProps}>
       {children}
     </div>
   );
@@ -28,8 +27,7 @@ function BackButton() {
   return (
     <div
       className="hover:bg-black/[0.15] rounded w-[50px] h-[50px] flex justify-center items-center"
-      onClick={() => router.back()}
-    >
+      onClick={() => router.back()}>
       <Image
         src="/icons/chevron-left.svg"
         alt="back icon"
@@ -44,8 +42,7 @@ Container.Subtitle = ({children, additional_class, tab = false}) => {
   return (
     <div
       className={`text-[12px] -mt-10 lg:text-[16px] mb-10 ${additional_class}`}
-      style={{marginLeft: tab && '73.5px'}}
-    >
+      style={{marginLeft: tab && '73.5px'}}>
       {children}
     </div>
   );

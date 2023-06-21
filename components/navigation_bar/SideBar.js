@@ -32,8 +32,7 @@ export default function SideBar({half}) {
                 ? '/icons/chevron-double-right.svg'
                 : '/icons/chevron-double-left.svg'
             }
-            collapse={iconCollapse}
-          ></Item>
+            collapse={iconCollapse}></Item>
         </div>
         {List.map(router => (
           <Item
@@ -43,15 +42,13 @@ export default function SideBar({half}) {
             link={router.link}
             collapse={iconCollapse}
             setCollapse={setIconCollapse}
-            key={router.name}
-          ></Item>
+            key={router.name}></Item>
         ))}
       </div>
       <div
         className={`min-h-[35px] ${
           iconCollapse ? 'hidden' : 'w-[314px]'
-        } flex items-center justify-center text-[12px] text-[#a3a3a3] bg-side_bar`}
-      >
+        } flex items-center justify-center text-[12px] text-[#a3a3a3] bg-side_bar`}>
         <div>&copy; PT Geodwipa Teknika Nusantara</div>
       </div>
     </div>

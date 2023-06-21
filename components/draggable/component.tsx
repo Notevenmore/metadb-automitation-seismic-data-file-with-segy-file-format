@@ -39,8 +39,7 @@ export function DraggableBox({
         height: '0px',
         width: '0px',
         position: 'relative',
-      }}
-    >
+      }}>
       <div
         draggable={false}
         onMouseEnter={() => {
@@ -68,8 +67,7 @@ export function DraggableBox({
           left: `${item?.x ?? 0}px`,
           border: '1px solid blue',
           ...(!item?.holding ? {transition: 'all 300ms ease-out'} : {}),
-        }}
-      >
+        }}>
         {children}
       </div>
     </div>
@@ -129,8 +127,7 @@ export function DroppableBox({
         height: 'fit-content',
         width: 'fit-content',
         display: 'inline-block',
-      }}
-    >
+      }}>
       {children}
       {isHolding ? (
         <div
@@ -143,8 +140,7 @@ export function DroppableBox({
             height: '100%',
             border: '1px solid red',
             top: 0,
-          }}
-        ></div>
+          }}></div>
       ) : (
         ''
       )}

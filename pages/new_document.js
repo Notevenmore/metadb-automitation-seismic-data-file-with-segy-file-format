@@ -117,8 +117,7 @@ export default function NewDocumentPage({setTitle}) {
         <HeaderDivider />
         <HeaderInput
           label1={'Jenis penyerahan data'}
-          label2={'(Submission Type)'}
-        >
+          label2={'(Submission Type)'}>
           <Input
             type="dropdown"
             name={'submissionType'}
@@ -202,16 +201,14 @@ export default function NewDocumentPage({setTitle}) {
           path=""
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           onClick={saveDocumentHandler}
-          disabled={Message.message || !spreadsheetReady ? true : false}
-        >
+          disabled={Message.message || !spreadsheetReady ? true : false}>
           Save changes
         </Buttons>
         <Buttons
           path=""
           additional_styles="text-error"
           onClick={router.back}
-          disabled={Message.message || !spreadsheetReady ? true : false}
-        >
+          disabled={Message.message || !spreadsheetReady ? true : false}>
           Cancel
         </Buttons>
       </div>
@@ -220,8 +217,7 @@ export default function NewDocumentPage({setTitle}) {
           Message.color || 'blue'
         }-500 text-white px-3 rounded-lg py-2 transition-all ${
           Message.message ? '' : '-translate-y-20'
-        }`}
-      >
+        }`}>
         <p>{Message.message}</p>
         <Buttons
           additional_styles="px-1 py-1 text-black"
@@ -229,16 +225,14 @@ export default function NewDocumentPage({setTitle}) {
           onClick={e => {
             e.preventDefault();
             setMessage({message: '', color: ''});
-          }}
-        >
+          }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
-          >
+            className="w-5 h-5">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

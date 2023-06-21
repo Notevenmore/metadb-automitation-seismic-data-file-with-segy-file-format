@@ -286,8 +286,7 @@ let demo_holder_3 = [[]]`}
               <div className="flex space-x-2">
                 <Buttons
                   path={'/button'}
-                  button_description="Buttons component"
-                >
+                  button_description="Buttons component">
                   <Well_sample_core className="w-4 h-4" />
                 </Buttons>
                 <Buttons path={'/table'} button_description="Table component">

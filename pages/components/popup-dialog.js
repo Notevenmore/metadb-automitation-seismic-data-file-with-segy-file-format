@@ -89,8 +89,7 @@ const CodeSnippet = ({children}) => {
       <Highlight
         className="html rounded-md
         border-solid border-neutral-300 border-1
-        break-words w-fit mb-[20px] shadow shadow-slate-400"
-      >
+        break-words w-fit mb-[20px] shadow shadow-slate-400">
         <>{children}</>
       </Highlight>
     </>
@@ -111,8 +110,7 @@ border-[2px] border-solid border-black h-[490px]">
       </CodeSnippet>
       <div
         className="flex justify-center items-center
-       border-[2px] border-solid border-black h-[490px]"
-      >
+       border-[2px] border-solid border-black h-[490px]">
         <PopupDialog />
       </div>
     </section>

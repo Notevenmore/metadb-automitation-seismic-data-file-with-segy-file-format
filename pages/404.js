@@ -8,8 +8,7 @@ export default function Custom404() {
       <Error
         code="404"
         description="Page not found"
-        text="the page you are trying to find doesn't exist"
-      ></Error>
+        text="the page you are trying to find doesn't exist"></Error>
     </div>
   );
 }

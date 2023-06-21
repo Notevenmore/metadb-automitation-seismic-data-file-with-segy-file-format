@@ -39,8 +39,7 @@ const FloatDialog = ({
             h-fit`,
             className,
           )}
-          style={{width: width}}
-        >
+          style={{width: width}}>
           {float_title && (
             <>
               <h2 className="text-[16px] font-bold my-[20px] px-[12px]">
@@ -85,8 +84,7 @@ const FloatSection = ({content, index, toggleDialog}) => {
           onClick={e => {
             if (content.handleClick) content.handleClick(e);
             toggleDialog();
-          }}
-        >
+          }}>
           <h2 className="text-[16px] font-semibold">{content.section_title}</h2>
           <p className="text-[13px] leading-[15px]">
             {content.section_content}
@@ -130,8 +128,7 @@ const NotificationIcon = () => {
     <img
       src="/icons/bell-outline.svg"
       alt="notif"
-      className="w-[19px] h-[24px]"
-    ></img>
+      className="w-[19px] h-[24px]"></img>
   );
 };
 
@@ -140,8 +137,7 @@ const ProfileIcon = () => {
     <img
       src="/images/unknown.jpg"
       alt="profile"
-      className="w-[26px] rounded-full"
-    ></img>
+      className="w-[26px] rounded-full"></img>
   );
 };
 
@@ -168,8 +164,7 @@ const Divider = ({additional_styles = null}) => {
       className={twMerge(
         `border-1 border-solid border-float_section_divider`,
         additional_styles,
-      )}
-    ></hr>
+      )}></hr>
   );
 };
 

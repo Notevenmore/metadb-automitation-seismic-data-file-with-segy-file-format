@@ -33,8 +33,7 @@ const FullButton = ({children, onClick}) => {
       transition-all 
       w-full 
       justify-center"
-      onClick={onClick}
-    >
+      onClick={onClick}>
       {children}
     </button>
   );
@@ -53,8 +52,7 @@ const HeaderRowWithGap = ({children}) => {
       py-[10px] 
       lg:h-[55px] 
       gap-1
-      "
-    >
+      ">
       <>{children}</>
     </div>
   );
@@ -73,8 +71,7 @@ const DeleteButton = ({children, onClick}) => (
   <>
     <button
       className="flex items-center space-x-2 px-5 py-2 rounded-lg bg-red-300 hover:bg-red-200 transition-all justify-center w-[4rem]"
-      onClick={onClick}
-    >
+      onClick={onClick}>
       {children}
     </button>
   </>
@@ -556,8 +553,7 @@ export default function MatchReview({setTitle}) {
           .replace(/\_/g, ' ')
           .split(' ')
           .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-          .join(' ')}
-      >
+          .join(' ')}>
         <Input
           value={data.value}
           type="dropdown"
@@ -668,8 +664,7 @@ export default function MatchReview({setTitle}) {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={prevPage}
-              disabled={pageNo > 1 ? false : true}
-            >
+              disabled={pageNo > 1 ? false : true}>
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
@@ -679,8 +674,7 @@ export default function MatchReview({setTitle}) {
               path=""
               title=""
               button_description=""
-              className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg"
-            >
+              className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
               <p className="w-5 h-5">{pageNo}</p>
             </div>
             {/* @ts-ignore */}
@@ -690,8 +684,7 @@ export default function MatchReview({setTitle}) {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={nextPage}
-              disabled={pageNo >= totalPageNo ? true : false}
-            >
+              disabled={pageNo >= totalPageNo ? true : false}>
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
@@ -737,24 +730,21 @@ export default function MatchReview({setTitle}) {
       <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
           Message ? '' : '-translate-y-20'
-        }`}
-      >
+        }`}>
         <p>{Message}</p>
         <Buttons
           additional_styles="px-1 py-1 text-black"
           path=""
           onClick={() => {
             setMessage('');
-          }}
-        >
+          }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
-          >
+            className="w-5 h-5">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

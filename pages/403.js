@@ -7,8 +7,7 @@ export default function Custom403() {
       <Error
         code="403"
         description="Permission problem"
-        text="you have no permission to this page"
-      ></Error>
+        text="you have no permission to this page"></Error>
     </div>
   );
 }

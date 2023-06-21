@@ -7,8 +7,7 @@ export default function Custom503() {
       <Error
         code="503"
         description="Server Error"
-        text="Uh-uh the server have an issue that is being investigated."
-      ></Error>
+        text="Uh-uh the server have an issue that is being investigated."></Error>
     </div>
   );
 }

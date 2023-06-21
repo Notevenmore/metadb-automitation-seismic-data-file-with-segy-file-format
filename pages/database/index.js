@@ -9,8 +9,7 @@ export default function Database() {
       <Container.Title back>Connect with database</Container.Title>
       <form
         className="flex flex-col items-center justify-center h-full w-full gap-y-3"
-        onSubmit={() => console.log('submit')}
-      >
+        onSubmit={() => console.log('submit')}>
         <div className="w-full text-[12px] lg:w-[710px] lg:text-[16px] flex flex-col gap-y-3">
           <Input
             label="Connection method"

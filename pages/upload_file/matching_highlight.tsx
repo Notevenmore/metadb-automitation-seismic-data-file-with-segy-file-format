@@ -438,8 +438,7 @@ export default function MatchingGuided() {
       className={
         (selectedRow === data.id ? 'text-red-500 underline' : '') +
         ' cursor-pointer'
-      }
-    >
+      }>
       <HeaderDivider />
       <div onClick={_ => clickRow(data.id)} className={'w-full'}>
         <HeaderInput
@@ -450,8 +449,7 @@ export default function MatchingGuided() {
               .split(' ')
               .map(s => s.charAt(0).toUpperCase() + s.substring(1))
               .join(' ')
-          }
-        >
+          }>
           <HeaderRow title={data.value}>
             {data.value?.length > 20
               ? data.value?.substring(0, 20) + '...'
@@ -517,8 +515,7 @@ export default function MatchingGuided() {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={prevPage}
-              disabled={pageNo > 1 ? false : true}
-            >
+              disabled={pageNo > 1 ? false : true}>
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
@@ -528,8 +525,7 @@ export default function MatchingGuided() {
               path=""
               title=""
               button_description=""
-              className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg"
-            >
+              className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
               <p className="w-5 h-5">{pageNo}</p>
             </div>
             {/* @ts-ignore */}
@@ -539,8 +535,7 @@ export default function MatchingGuided() {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={nextPage}
-              disabled={pageNo >= totalPageNo ? true : false}
-            >
+              disabled={pageNo >= totalPageNo ? true : false}>
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
@@ -570,8 +565,7 @@ export default function MatchingGuided() {
       <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all z-40 ${
           message ? '' : '-translate-y-20'
-        }`}
-      >
+        }`}>
         <p>{message}</p>
         {/* @ts-ignore */}
         <Buttons
@@ -579,16 +573,14 @@ export default function MatchingGuided() {
           path=""
           onClick={() => {
             setMessage('');
-          }}
-        >
+          }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
-          >
+            className="w-5 h-5">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -600,8 +592,7 @@ export default function MatchingGuided() {
       <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
           error ? '' : '-translate-y-20'
-        }`}
-      >
+        }`}>
         <p>{error}</p>
         {/* @ts-ignore */}
         <Buttons
@@ -609,16 +600,14 @@ export default function MatchingGuided() {
           path=""
           onClick={() => {
             setError('');
-          }}
-        >
+          }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
-          >
+            className="w-5 h-5">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

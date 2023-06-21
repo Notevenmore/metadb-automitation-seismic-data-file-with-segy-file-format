@@ -16,8 +16,7 @@ export default function LayoutCollapse({children}) {
     <div
       className={`${sideBar ? Styles.sideBarOpen : ''} ${
         Styles.halfSideBar
-      } h-screen overflow-hidden`}
-    >
+      } h-screen overflow-hidden`}>
       <TopBar handleClick={toggleNavBar}></TopBar>
       <div className="flex flex-row">
         <div className="flex flex-col max-w-xs flex-none">

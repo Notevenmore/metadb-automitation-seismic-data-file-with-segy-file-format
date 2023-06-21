@@ -52,8 +52,7 @@ const Bibliography = ({setTitle}) => {
                 form_type: 'bibliography',
               },
             }}
-            className=""
-          >
+            className="">
             <Image
               src="/icons/pencil.svg"
               width={50}
@@ -97,8 +96,7 @@ const Bibliography = ({setTitle}) => {
                 form_type: 'bibliography',
               },
             }}
-            className=""
-          >
+            className="">
             <Image
               src="/icons/pencil.svg"
               width={50}

@@ -74,8 +74,7 @@ export default function SignInPage({setTitle}) {
   return (
     <div
       className="h-screen flex flex-col-reverse my-10
-         md:flex-row md:my-0 items-center justify-center m-auto gap-y-5"
-    >
+         md:flex-row md:my-0 items-center justify-center m-auto gap-y-5">
       <div className="px-[50px] flex flex-col gap-y-6">
         <div id="title" className="max-md:text-center">
           <p className="text-[100px] leading-[100px] font-bold">MetaDB</p>
@@ -87,8 +86,7 @@ export default function SignInPage({setTitle}) {
         <div className="max-md:text-center text-[30px] font-bold">Sign in</div>
         <form
           className="flex flex-col gap-y-4 w-full md:pr-10"
-          autoComplete="off"
-        >
+          autoComplete="off">
           <Input
             label="Email"
             label_loc="above"
@@ -123,24 +121,21 @@ export default function SignInPage({setTitle}) {
           <div
             className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
               Error ? '' : '-translate-y-20'
-            }`}
-          >
+            }`}>
             <p>{Error}</p>
             <Buttons
               additional_styles="px-1 py-1 text-black"
               path=""
               onClick={() => {
                 setError('');
-              }}
-            >
+              }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-5 h-5"
-              >
+                className="w-5 h-5">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

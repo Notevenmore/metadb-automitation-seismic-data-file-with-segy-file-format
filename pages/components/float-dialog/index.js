@@ -121,8 +121,7 @@ const ExampleTitle = ({children}) => {
     <h3
       className="text-xl font-bold w-fit
      decoration-float_section_divider
-      underline underline-5 underline-offset-[10px] mb-[30px]"
-    >
+      underline underline-5 underline-offset-[10px] mb-[30px]">
       <>{children}</>
     </h3>
   );
@@ -135,8 +134,7 @@ const CodeSnippet = ({children}) => {
       <Highlight
         className="html rounded-md
         border-solid border-neutral-300 border-1
-        break-words w-fit mb-[20px] shadow shadow-slate-400"
-      >
+        break-words w-fit mb-[20px] shadow shadow-slate-400">
         <>{children}</>
       </Highlight>
     </>
@@ -265,8 +263,7 @@ const Example3 = ({className}) => {
       <div className="flex justify-end items-end border-[2px] border-solid border-black h-[490px]">
         <FloatDialog
           items={items_general}
-          className="bottom-[50px] right-[100px]"
-        >
+          className="bottom-[50px] right-[100px]">
           <p className="cursor-pointer">Let there be light!</p>
         </FloatDialog>
       </div>

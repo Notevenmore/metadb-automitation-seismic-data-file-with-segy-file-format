@@ -88,8 +88,7 @@ export default function SearchWidget() {
           <div
             className="select-none cursor-pointer flex items-center text-[11px] text-[#939393] bg-transparent hover:bg-gray-200 px-2 py-1 transition-all rounded-md"
             title="Expand"
-            onClick={() => setExpandSearch(true)}
-          >
+            onClick={() => setExpandSearch(true)}>
             <p>Expand</p>
             <Image
               alt="icon"
@@ -103,8 +102,7 @@ export default function SearchWidget() {
       ) : (
         <form
           className="relative flex flex-col gap-y-2 pb-2 w-full"
-          onSubmit={applyFilter}
-        >
+          onSubmit={applyFilter}>
           <div className="flex flex-row items-center relative w-full">
             <Image
               alt="icon"
@@ -221,8 +219,7 @@ export default function SearchWidget() {
           </div>
           <div
             title="Collapse"
-            className="absolute bottom-0 right-0 px-1.5 py-1 cursor-pointer hover:bg-gray-200 rounded-md transition-all"
-          >
+            className="absolute bottom-0 right-0 px-1.5 py-1 cursor-pointer hover:bg-gray-200 rounded-md transition-all">
             <Image
               alt="icon"
               src="/icons/chevron-double-up.svg"

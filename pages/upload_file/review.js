@@ -201,8 +201,7 @@ export default function UploadFileReview({setTitle}) {
         <HeaderDivider />
         <HeaderInput
           label1={'Jenis penyerahan data'}
-          label2={'(Submission Type)'}
-        >
+          label2={'(Submission Type)'}>
           <Input
             type="dropdown"
             name={'submissionType'}
@@ -343,16 +342,14 @@ export default function UploadFileReview({setTitle}) {
                   return page_no - 1;
                 });
               }}
-              disabled={PageNo <= 0 ? true : false}
-            >
+              disabled={PageNo <= 0 ? true : false}>
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
             </Buttons>
             <div
               title="Page number"
-              className="bg-white border-2 p-3 cursor-default select-none rounded-lg text-center"
-            >
+              className="bg-white border-2 p-3 cursor-default select-none rounded-lg text-center">
               <p className="w-5 h-5">{PageNo + 1}</p>
             </div>
             <Buttons
@@ -368,8 +365,7 @@ export default function UploadFileReview({setTitle}) {
               }}
               disabled={
                 PageNo >= document_summary.body.page_count - 1 ? true : false
-              }
-            >
+              }>
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
@@ -386,8 +382,7 @@ export default function UploadFileReview({setTitle}) {
             !spreadsheetID || Message.message || !spreadsheetReady
               ? true
               : false
-          }
-        >
+          }>
           Save changes
         </Buttons>
         <Buttons
@@ -400,8 +395,7 @@ export default function UploadFileReview({setTitle}) {
             !spreadsheetID || Message.message || !spreadsheetReady
               ? true
               : false
-          }
-        >
+          }>
           Save and exit
         </Buttons>
       </div>
@@ -410,8 +404,7 @@ export default function UploadFileReview({setTitle}) {
           Message.color || 'blue'
         }-500 text-white px-3 rounded-lg py-2 transition-transform ${
           Message.message ? '' : '-translate-y-20'
-        }`}
-      >
+        }`}>
         <p>{Message.message}</p>
         <Buttons
           additional_styles="px-1 py-1 text-black"
@@ -419,16 +412,14 @@ export default function UploadFileReview({setTitle}) {
           onClick={e => {
             e.preventDefault();
             setMessage({message: '', color: 'orange'});
-          }}
-        >
+          }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
-          >
+            className="w-5 h-5">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

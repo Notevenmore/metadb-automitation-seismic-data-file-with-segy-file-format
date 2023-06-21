@@ -14,8 +14,7 @@ export default function NewDocumentPageDatabase() {
   return (
     <Container
       additional_class="full-height relative"
-      onDragEnter={e => handleDrag(e)}
-    >
+      onDragEnter={e => handleDrag(e)}>
       <Container.Title>New document</Container.Title>
       <Input
         label="Name"
@@ -47,8 +46,7 @@ export default function NewDocumentPageDatabase() {
         <HeaderDivider />
         <HeaderInput
           label1={'Jenis penyerahan data'}
-          label2={'(Submission Type)'}
-        >
+          label2={'(Submission Type)'}>
           <Input
             type="dropdown"
             name={'submissionType'}

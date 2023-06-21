@@ -15,8 +15,7 @@ export default function BasinEditPage() {
   return (
     <Container
       additional_class="full-height relative"
-      onDragEnter={e => handleDrag(e)}
-    >
+      onDragEnter={e => handleDrag(e)}>
       <Container.Title back>Edit file</Container.Title>
       <div className="flex flex-wrap lg:items-center -mt-5 mb-3 lg:mb-[22px] gap-x-2">
         <p className="font-semibold min-w-[130px] mb-3">Currently editing:</p>
@@ -49,8 +48,7 @@ export default function BasinEditPage() {
         <HeaderDivider />
         <HeaderInput
           label1={'Jenis penyerahan data'}
-          label2={'(Submission Type)'}
-        >
+          label2={'(Submission Type)'}>
           <Input
             type="dropdown"
             name={'submissionType'}

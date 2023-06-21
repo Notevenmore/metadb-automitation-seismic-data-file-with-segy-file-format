@@ -67,8 +67,7 @@ const TableComponent = ({
         border-separate border-spacing-0 border-2 border-solid border-black/20
         min-w-0 w-full rounded-lg text-[15px]`,
         additional_styles,
-      )}
-    >
+      )}>
       <thead className="bg-gray-200">
         <tr className="text-left">
           {with_checkbox ? (
@@ -76,8 +75,7 @@ const TableComponent = ({
               className={twMerge(
                 'pl-[14px] pt-1 w-5',
                 additional_styles_header,
-              )}
-            >
+              )}>
               <input
                 type="checkbox"
                 id="checkbox_all"
@@ -89,8 +87,7 @@ const TableComponent = ({
             return (
               <th
                 key={index}
-                className={twMerge('pl-5 pr-2 py-2', additional_styles_header)}
-              >
+                className={twMerge('pl-5 pr-2 py-2', additional_styles_header)}>
                 {header}
               </th>
             );
@@ -102,15 +99,13 @@ const TableComponent = ({
           <tr
             key={row_index}
             id={'row_' + row_index}
-            className="hover:bg-side_bar"
-          >
+            className="hover:bg-side_bar">
             {with_checkbox ? (
               <td
                 className={twMerge(
                   'pl-[14px] pt-1 w-5 border-t-2 border-solid border-black/20',
                   additional_styles_row,
-                )}
-              >
+                )}>
                 <input
                   id={'row_input_' + row_index}
                   name="checkbox_row"
@@ -133,15 +128,13 @@ const TableComponent = ({
                       className={twMerge(
                         'pl-5 pr-2 py-2 border-t-2 border-solid border-black/20',
                         additional_styles_row,
-                      )}
-                    >
+                      )}>
                       <div
                         className={twMerge(
                           'whitespace-nowrap text-ellipsis overflow-hidden',
                           additional_styles_column,
                         )}
-                        title={row[header]}
-                      >
+                        title={row[header]}>
                         {row[header]}
                       </div>
                     </td>
@@ -155,15 +148,13 @@ const TableComponent = ({
                       className={twMerge(
                         'pl-5 pr-2 py-2 border-t-2 border-solid border-black/20',
                         additional_styles_row,
-                      )}
-                    >
+                      )}>
                       <div
                         className={twMerge(
                           'whitespace-nowrap text-ellipsis overflow-hidden',
                           additional_styles_column,
                         )}
-                        title={column}
-                      >
+                        title={column}>
                         {column}
                       </div>
                     </td>
@@ -176,15 +167,13 @@ const TableComponent = ({
                       className={twMerge(
                         'pl-5 pr-2 py-2 border-t-2 border-solid border-black/20',
                         additional_styles_row,
-                      )}
-                    >
+                      )}>
                       <div
                         className={twMerge(
                           'whitespace-nowrap text-ellipsis overflow-hidden',
                           additional_styles_column,
                         )}
-                        title={column}
-                      >
+                        title={column}>
                         {column}
                       </div>
                     </td>

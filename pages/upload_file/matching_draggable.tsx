@@ -44,8 +44,7 @@ const FullButton = ({
       transition-all 
       w-full 
       justify-center"
-      onClick={onClick}
-    >
+      onClick={onClick}>
       {children}
     </button>
   );
@@ -64,8 +63,7 @@ const HeaderRowWithGap = ({children}: PropsWithChildren<{}>) => {
       py-[10px] 
       lg:h-[55px] 
       gap-1
-      "
-    >
+      ">
       <>{children}</>
     </div>
   );
@@ -99,8 +97,7 @@ const DeleteButton = ({
   <>
     <button
       className="flex items-center space-x-2 px-5 py-2 rounded-lg bg-red-300 hover:bg-red-200 transition-all justify-center w-[4rem]"
-      onClick={onClick}
-    >
+      onClick={onClick}>
       {children}
     </button>
   </>
@@ -751,8 +748,7 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
             .replace(/\_/g, ' ')
             .split(' ')
             .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-            .join(' ')}
-        >
+            .join(' ')}>
           <DroppableBox
             onDrop={drop =>
               setValueForId(
@@ -760,8 +756,7 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
                 pageNo,
                 `${data.value.trim()} ${drop.trim()}`.trim(),
               )
-            }
-          >
+            }>
             <Input
               value={data.value}
               type="dropdown"
@@ -793,14 +788,12 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
             initialPos={[it.initialPos[0] * sh, it.initialPos[1] * sw]}
             snapToOrigin
             data={it.word}
-            key={it.initialPos[0] * 10000 + it.initialPos[1]}
-          >
+            key={it.initialPos[0] * 10000 + it.initialPos[1]}>
             <div
               style={{
                 width: `${it.dim[0] * sw}px`,
                 height: `${it.dim[1] * sh}px`,
-              }}
-            >
+              }}>
               {/* eslint-disable-next-line @next/next/no-img-element  */}
               <img
                 src={it.src}
@@ -861,8 +854,7 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
             // style={{
             //   outline: "2px solid green",
             // }}
-            className="h-[calc(100vh-55px)] rounded-lg border border-gray-300 sticky top-0"
-          >
+            className="h-[calc(100vh-55px)] rounded-lg border border-gray-300 sticky top-0">
             <Draggables />
             {/* eslint-disable-next-line @next/next/no-img-element  */}
             <img
@@ -892,8 +884,7 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
                 button_description=""
                 additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
                 onClick={prevPage}
-                disabled={pageNo > 1 ? false : true}
-              >
+                disabled={pageNo > 1 ? false : true}>
                 <div className="w-5 h-5">
                   <ChevronLeft />
                 </div>
@@ -903,8 +894,7 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
                 path=""
                 title=""
                 button_description=""
-                className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg"
-              >
+                className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
                 <p className="w-5 h-5">{pageNo}</p>
               </div>
               {/* @ts-ignore */}
@@ -914,8 +904,7 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
                 button_description=""
                 additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
                 onClick={nextPage}
-                disabled={pageNo >= totalPageNo ? true : false}
-              >
+                disabled={pageNo >= totalPageNo ? true : false}>
                 <div className="w-5 h-5">
                   <ChevronRight />
                 </div>
@@ -947,8 +936,7 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
         <div
           className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
             Message ? '' : '-translate-y-20'
-          }`}
-        >
+          }`}>
           <p>{Message}</p>
           {/* @ts-ignore */}
           <Buttons
@@ -956,16 +944,14 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
             path=""
             onClick={() => {
               setMessage('');
-            }}
-          >
+            }}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5"
-            >
+              className="w-5 h-5">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

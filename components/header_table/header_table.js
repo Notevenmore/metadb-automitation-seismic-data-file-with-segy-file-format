@@ -5,12 +5,10 @@ const HeaderTable = ({children}) => {
   return (
     <section
       className="border border-solid 
-        border-float_dialog rounded-md lg:pl-4 px-2"
-    >
+        border-float_dialog rounded-md lg:pl-4 px-2">
       <section
         className="font-bold py-2 bg-black/[.16]
-             lg:pl-4 pl-2 -mr-2 lg:-ml-4 -ml-2 rounded-t"
-      >
+             lg:pl-4 pl-2 -mr-2 lg:-ml-4 -ml-2 rounded-t">
         Header
       </section>
       <HeaderDivider />
@@ -33,8 +31,7 @@ const HeaderRow = ({children, ...props}) => {
     <div
       className="flex justify-center lg:items-center
          lg:flex-row flex-col w-full py-[10px] lg:h-[55px]"
-      {...props}
-    >
+      {...props}>
       <>{children}</>
     </div>
   );
@@ -45,8 +42,7 @@ const HeaderLabel = ({label1, label2}) => {
     <div
       className={
         'flex flex-wrap space-x-2 lg:min-w-[325px] mb-[7px] lg:my-[5px]'
-      }
-    >
+      }>
       {label2 ? (
         <>
           <label>{label1}</label>
@@ -91,8 +87,7 @@ const ButtonsSection = ({children, className = ''}) => {
         `flex flex-wrap gap-x-3 mt-10
             max-lg:justify-center items-center gap-y-3 max-lg:mt-5 h-5`,
         className,
-      )}
-    >
+      )}>
       <>{children}</>
     </section>
   );

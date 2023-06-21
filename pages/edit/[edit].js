@@ -568,8 +568,7 @@ const DocEditor = ({spreadsheetID, workspace_name}) => {
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${
                    Message.message ? '' : '-translate-y-20'
-                 }`}
-      >
+                 }`}>
         <p>{Message.message}</p>
         <Button
           additional_styles="px-1 py-1 text-black"
@@ -577,16 +576,14 @@ const DocEditor = ({spreadsheetID, workspace_name}) => {
           onClick={e => {
             e.preventDefault();
             setMessage({message: '', color: ''});
-          }}
-        >
+          }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
-          >
+            className="w-5 h-5">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -606,12 +603,10 @@ const DocEditor = ({spreadsheetID, workspace_name}) => {
     </Container>
   ) : (
     <div
-      className={`w-full h-full flex flex-col items-center justify-center space-y-3`}
-    >
+      className={`w-full h-full flex flex-col items-center justify-center space-y-3`}>
       <div
         className={`animate-spin border-4 border-t-transparent
-                 border-gray-500/[.7] rounded-full w-14 h-14`}
-      ></div>
+                 border-gray-500/[.7] rounded-full w-14 h-14`}></div>
       <p className="text-xl font-semibold text-gray-500">
         Getting data from database... Please wait
       </p>

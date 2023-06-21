@@ -110,8 +110,7 @@ export default function BokehPage({}) {
       </button>
       <button
         onClick={widgetTest}
-        className="border border-black p-3 w-[150px]"
-      >
+        className="border border-black p-3 w-[150px]">
         test widget
       </button>
       {/* <button onClick={vtkTest} className="border border-black p-3 w-[150px]">test vtk iframe</button>

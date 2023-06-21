@@ -22,8 +22,7 @@ export default function Item({icon, name, child, link, collapse, setCollapse}) {
           try {
             setCollapse(false);
           } catch (error) {}
-        }}
-      >
+        }}>
         <Child icon={icon} name={name} link={link} collapse={collapse}></Child>
       </div>
       {!collapse && child && toggleOpen && (
@@ -33,16 +32,14 @@ export default function Item({icon, name, child, link, collapse, setCollapse}) {
               key={item.name + index}
               onClick={() => {
                 setselected(item.name);
-              }}
-            >
+              }}>
               <Child
                 icon={item.icon}
                 name={item.name}
                 link={item.link}
                 collapse={collapse}
                 selected={selected}
-                setSelected={setselected}
-              ></Child>
+                setSelected={setselected}></Child>
             </div>
           ))}
         </div>
@@ -62,8 +59,7 @@ function Child({icon, name, link = '', collapse}) {
           })
             ? 'bg-[#dae0e5]'
             : ''
-        } relative transition-all`}
-      >
+        } relative transition-all`}>
         <div className="flex gap-x-4">
           <img src={icon} className="w-[.9rem] h-[22px]" alt="icon" />
           {!collapse && <div className="w-[200px]">{name}</div>}

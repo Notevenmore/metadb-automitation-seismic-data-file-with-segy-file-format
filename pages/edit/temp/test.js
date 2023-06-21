@@ -99,8 +99,7 @@ const Test = () => {
       <button
         disabled
         onClick={saveDoc}
-        className="p-2 border-black border-2 disabled:opacity-50"
-      >
+        className="p-2 border-black border-2 disabled:opacity-50">
         hehe u no touch touch this button no
       </button>
       {easteregg ? <p>keras kepala amat bang 😭</p> : null}
@@ -108,8 +107,7 @@ const Test = () => {
       <button
         onClick={convertDate}
         className="p-2 border-black border-2 disabled:opacity-50"
-        disabled={changed}
-      >
+        disabled={changed}>
         {changed
           ? 'press the button below to do it again'
           : 'but u can touch this one to convert the date above'}
@@ -117,8 +115,7 @@ const Test = () => {
       {changed ? (
         <button
           onClick={reseteverything}
-          className="p-2 border-black border-2 disabled:opacity-50"
-        >
+          className="p-2 border-black border-2 disabled:opacity-50">
           do it again yay
         </button>
       ) : null}

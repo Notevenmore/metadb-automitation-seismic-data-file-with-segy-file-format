@@ -69,12 +69,10 @@ export default function TopBar(props) {
           items={profileItem}
           className={`right-0 top-[50px]`}
           width="263px"
-          {...profileProps}
-        >
+          {...profileProps}>
           <RoundImage
             source={profile ? profile : '/images/unknown.jpg'}
-            size={{width: '30px'}}
-          ></RoundImage>
+            size={{width: '30px'}}></RoundImage>
         </FloatDialog>
       </div>
     </nav>

@@ -21,8 +21,7 @@ export default function SignUpPage({setTitle}) {
   return (
     <div
       className="md:h-screen flex flex-col-reverse my-10
-         md:flex-row md:my-0 items-center justify-center m-auto gap-y-5"
-    >
+         md:flex-row md:my-0 items-center justify-center m-auto gap-y-5">
       <div className="px-[50px] flex flex-col gap-y-6">
         <div id="title" className="max-md:text-center">
           <p className="text-[100px] leading-[100px] font-bold">MetaDB</p>

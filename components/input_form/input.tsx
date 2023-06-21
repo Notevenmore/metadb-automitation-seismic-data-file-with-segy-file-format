@@ -90,16 +90,14 @@ const Input: React.FunctionComponent<InputProps> = ({
             : ''
         }`,
         additional_styles,
-      )}
-    >
+      )}>
       <label
         className={twMerge(
           `${
             label.toLowerCase() !== 'none' ? 'block' : 'hidden'
           } w-[45%]  border-black`,
           additional_styles_label,
-        )}
-      >
+        )}>
         {label}
       </label>
       {type.toLowerCase() !== 'dropdown' ? (
@@ -122,8 +120,7 @@ const Input: React.FunctionComponent<InputProps> = ({
           onBlur={e => {
             setCurrentlyFocused(null);
             setDoSearch(null);
-          }}
-        >
+          }}>
           <div
             className={twMerge(
               `flex justify-between items-center rounded-md
@@ -132,8 +129,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                       hover:bg-gray-300 focus:bg-gray-300 focus:outline-[2px]
                       focus:outline-gray-400 transition-all`,
               additional_styles_input,
-            )}
-          >
+            )}>
             <input
               type="text"
               ref={selectorRef}
@@ -159,8 +155,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                 DoSearch ? 'block' : 'hidden'
               } group-focus:block active:block z-[50] absolute bg-gray-200 shadow-md mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
               additional_styles_menu_container,
-            )}
-          >
+            )}>
             {withSearch && dropdown_items.length > 0 ? (
               <input
                 className="sticky top-0 bg-inherit border border-b-gray-400/[.5] outline-none py-1 px-2 placeholder:italic w-full"
@@ -184,8 +179,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                           setclicked(!clicked);
                           setSelected(item);
                           (document.activeElement as HTMLElement).blur();
-                        }}
-                      >
+                        }}>
                         {item}
                       </li>
                     );
@@ -199,8 +193,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                           setclicked(!clicked);
                           setSelected(item);
                           (document.activeElement as HTMLElement).blur();
-                        }}
-                      >
+                        }}>
                         {item}
                       </li>
                     );

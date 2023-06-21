@@ -750,8 +750,7 @@ function Navbar() {
       className={`${
         config.selected ? 'bg-blue-500' : ''
       } rounded-md aspect-square text-white flex justify-center align-middle p-1`}
-      onClick={config.onClick}
-    >
+      onClick={config.onClick}>
       <img
         src={config.imgSrc}
         alt=""
@@ -769,16 +768,14 @@ function Navbar() {
         position: 'relative',
         width: '0px',
         height: '0px',
-      }}
-    >
+      }}>
       <div
         style={{
           position: 'absolute',
           width: `${editorWidth}px`,
           height: '45px',
         }}
-        className="bg-gray-800 h-10 flex align-middle p-2 gap-1"
-      >
+        className="bg-gray-800 h-10 flex align-middle p-2 gap-1">
         {buttonConfig.map(buttonConfigToButton)}
       </div>
     </div>
@@ -811,8 +808,7 @@ export const SelectionBox = ({bound}: SelectionBoxProps) => {
         height: `${height}px`,
         zIndex: '9',
         backgroundColor: 'rgba(89, 190, 233, 0.5)',
-      }}
-    ></div>
+      }}></div>
   );
 };
 
@@ -879,16 +875,14 @@ const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
           position: 'relative',
           width: '0px',
           height: '0px',
-        }}
-      >
+        }}>
         <div
           style={{
             position: 'absolute',
             boxShadow: '0px 0px 5px 1px inset',
             width: `${editorWidth}px`,
             height: `${editorHeight}px`,
-          }}
-        ></div>
+          }}></div>
       </div>
     </>
   );
@@ -913,8 +907,7 @@ const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
                 ? 'grabbing'
                 : 'grab'
               : 'default',
-        }}
-      >
+        }}>
         <Navbar />
         <InsetShadow />
         <div
@@ -929,8 +922,7 @@ const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
             width: `${width}px`,
             height: `${height}px`,
             boxShadow: '0px 0px 10px 1px',
-          }}
-        >
+          }}>
           <SelectingBox />
           {bounds.map(b => (
             <SelectionBox key={b.toString()} bound={b} />

@@ -255,8 +255,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
   return Loading ? (
     <div
       className="flex flex-col items-center justify-center space-y-2 h-full"
-      {...props}
-    >
+      {...props}>
       <div className="w-5 h-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
       <p>{LoadingMsg}</p>
     </div>
@@ -274,8 +273,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
       <iframe
         {...props}
         className="w-full h-full"
-        src={`https://docs.google.com/spreadsheets/d/${sheetID}?single=false&widget=false&headers=false&rm=embedded`}
-      ></iframe>
+        src={`https://docs.google.com/spreadsheets/d/${sheetID}?single=false&widget=false&headers=false&rm=embedded`}></iframe>
     </div>
   );
 };

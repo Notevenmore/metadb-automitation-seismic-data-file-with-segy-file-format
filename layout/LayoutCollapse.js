@@ -15,8 +15,7 @@ export default function LayoutCollapse({children}) {
     <div
       className={`${
         sideBar ? Styles.sideBarOpen : ''
-      } h-screen overflow-hidden`}
-    >
+      } h-screen overflow-hidden`}>
       <TopBar handleClick={toggleNavBar}></TopBar>
       <div className={`full-height ${Styles.sideBar}`}>
         <SideBar></SideBar>

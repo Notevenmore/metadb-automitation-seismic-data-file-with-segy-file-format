@@ -25,8 +25,7 @@ const PopupDialog = ({
   return (
     <aside
       className="flex flex-col justify-between w-[470px] h-[280px]
-         px-[26px] py-[24px] border-[1px] border-solid border-[#C9C9C9] rounded-[10px]"
-    >
+         px-[26px] py-[24px] border-[1px] border-solid border-[#C9C9C9] rounded-[10px]">
       <PopupTitle title={title}></PopupTitle>
       <Divider additional_styles={'-ml-[27px] w-[470px]'}></Divider>
       <p className="text-[16px] w-[397px] text-center">
