@@ -49,9 +49,9 @@ export default function SignInPage({setTitle}) {
         loginData.email,
       )
     ) {
-      setError('Please enter a valid email address');
-      router.events.emit('routeChangeComplete');
-      return;
+      // setError('Please enter a valid email address');
+      // router.events.emit('routeChangeComplete');
+      // return;
     }
     try {
       await getLogin(loginData.email, loginData.password).then(res => {

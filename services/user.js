@@ -1,13 +1,12 @@
 import axios from 'axios';
+import {setCookie} from 'nookies';
 
 export async function getLogin(email, password) {
+  const formData = new FormData();
+  formData.append('username', email);
+  formData.append('password', password);
   const result = axios
-    .get(`${process.env.NETX_PUBLIC_BACKEND_AUTH}/token`, {
-      headers: {
-        email: email,
-        password: password,
-      },
-    })
+    .post(`${process.env.NEXT_PUBLIC_BACKEND_AUTH}/token`, formData)
     .then(res => {
       console.log(res);
       if (!res.data) {
@@ -15,6 +14,11 @@ export async function getLogin(email, password) {
           'Incorrent credentials. Try again or use a different account if the problem still persists',
         );
       }
+
+      setCookie(null, 'user_data', JSON.stringify(res.data), {
+        maxAge: 9999999999,
+        path: '/',
+      });
       return {data: res, succeed: true};
     })
     .catch(err => {
