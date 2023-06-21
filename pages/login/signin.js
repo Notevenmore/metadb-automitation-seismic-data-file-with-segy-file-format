@@ -57,12 +57,12 @@ export default function SignInPage({setTitle}) {
       await getLogin(loginData.email, loginData.password).then(res => {
         const {succeed, data} = res;
         if (succeed) {
-          console.log(data.data);
+          // console.log(data.data);
           dispatch(setUser(data.data));
           router.push('/');
           return;
         }
-        console.log(data);
+        // console.log(data);
         return;
       });
     } catch (error) {

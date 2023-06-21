@@ -39,9 +39,9 @@ export default function TopBar(props) {
     setProfileProps({
       float_title: (
         <>
-          {user.first_name} {user.last_name} <br />{' '}
-          <span className="font-normal">{user.email}</span> <br />{' '}
-          <span className="font-normal">{user.role_name}</span>
+          {user.name} <br />{' '}
+          <span className="font-normal">{user.affiliation}</span> <br />{' '}
+          <span className="font-normal">{user.type}</span>
         </>
       ),
     });
