@@ -12,7 +12,7 @@ import pwr from '../../dummy-data/pwr.json';
 import pwr_data from '../../dummy-data/pwr_1.json';
 import config from '../../config';
 
-const DocEditor = ({spreadsheetID, workspace_name}) => {
+const DocEditor = ({spreadsheetID, workspace_name, config}) => {
   // note: workspaceName, workspace_name, workspace_names, and workspace_name_space is different
   const [IsSaved, setIsSaved] = useState(false);
   const [Message, setMessage] = useState({message: '', color: ''});
@@ -616,8 +616,12 @@ const DocEditor = ({spreadsheetID, workspace_name}) => {
 
 export async function getServerSideProps(context) {
   // console.log(context.params.edit)
+  const config = JSON.parse(process.env.ENDPOINTS);
   return {
-    props: {workspace_name: context.params.edit}, // will be passed to the page component as props
+    props: {
+      workspace_name: context.params.edit,
+      config: config,
+    }, // will be passed to the page component as props
   };
 }
 

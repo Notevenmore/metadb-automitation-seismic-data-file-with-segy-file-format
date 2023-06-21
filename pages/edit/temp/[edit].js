@@ -14,7 +14,7 @@ import {
   saveDocument,
 } from '../../../components/utility_functions';
 
-const DocEditor = ({workspace_name, setTitle}) => {
+const DocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
   const [Message, setMessage] = useState({message: '', color: ''});
   const [error, seterror] = useState('');
@@ -125,7 +125,7 @@ const DocEditor = ({workspace_name, setTitle}) => {
     } catch (error) {
       // Handle error and display error message
       setMessage({
-        message: `Failed to save record. Please try again. Additional error message: ${String(
+        message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
           error,
         )}`,
         color: 'red',
@@ -305,6 +305,7 @@ const DocEditor = ({workspace_name, setTitle}) => {
                       data={dataContentDetails}
                       finishedInitializing={setspreadsheetReady}
                       getSpreadsheetID={setspreadsheetId}
+                      config={config}
                     />
                   </div>,
                 ]
@@ -387,8 +388,12 @@ const DocEditor = ({workspace_name, setTitle}) => {
 };
 
 export async function getServerSideProps(context) {
+  const config = JSON.parse(process.env.ENDPOINTS);
   return {
-    props: {workspace_name: context.params.edit}, // will be passed to the page component as props
+    props: {
+      workspace_name: context.params.edit,
+      config: config,
+    }, // will be passed to the page component as props
   };
 }
 

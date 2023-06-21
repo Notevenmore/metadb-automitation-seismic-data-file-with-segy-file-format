@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export async function getLogin(email, password) {
   const result = axios
-    .get(`${process.env.backend_url}/users`, {
+    .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
       headers: {
         email: email,
         password: password,
@@ -28,7 +28,7 @@ export async function getLogin(email, password) {
 
 export async function getAllRoles() {
   const result = axios
-    .get(`${process.env.backend_url}/roles`)
+    .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/roles`)
     .then(res => {
       // console.log(res)
       return {data: res, succeed: true};

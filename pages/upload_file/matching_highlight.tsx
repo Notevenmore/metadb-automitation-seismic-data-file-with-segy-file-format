@@ -173,7 +173,7 @@ async function extractTextFromBounds(
 
   try {
     const response = await fetch(
-      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/scrape-bounds/${doc_id}/${page_no}`,
+      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/scrape-bounds/${doc_id}/${page_no}`,
       requestOptions,
     );
     const result = await response.text();
@@ -201,7 +201,7 @@ const uploadImage = async (imageBase64Str: string) => {
 
   try {
     const response = await fetch(
-      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
+      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
       requestOptions,
     );
     const result = await response.text();
@@ -220,7 +220,7 @@ const fetchDocumentSummary = async (docId: string) => {
 
   try {
     const response = await fetch(
-      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
+      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
       requestOptions,
     );
     const result = await response.text();
@@ -232,11 +232,11 @@ const fetchDocumentSummary = async (docId: string) => {
 };
 
 const generateImageUrl = (docId: string, page: number) => {
-  //  `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`
-  return `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`;
+  //  `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`
+  return `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`;
 };
 
-export default function MatchingGuided() {
+export default function MatchingGuided({config, setTitle}) {
   const doc_id: string =
     'c5fd3ac264d654b04b759f193a16254b8eb0c878a3f0de0f914aaf2cae3da47f';
   const page_no: number = 2;
@@ -297,6 +297,7 @@ export default function MatchingGuided() {
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
+    setTitle('Data Matching - Highlight');
     const init = async () => {
       router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
@@ -618,4 +619,11 @@ export default function MatchingGuided() {
       </div>
     </Container>
   );
+}
+
+export async function getServerSideProps(context) {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
 }
