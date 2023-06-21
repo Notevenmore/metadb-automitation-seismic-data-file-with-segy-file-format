@@ -134,7 +134,7 @@ const saveDocument = async (
     )
     .then(([status, res]) => {
       if (status !== 200) {
-        throw `Service returned with status ${status}: ${res}`;
+        throw `Service returned with status ${status} on record details GET: ${res}`;
       }
       return res;
     });
@@ -168,10 +168,7 @@ const saveDocument = async (
           if (res.toLowerCase().includes('workspace_name_unique')) {
             throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`;
           } else {
-            throw (
-              res ||
-              'Something happened while updating record information data. Please try again or contact maintainer if the problem persists.'
-            );
+            throw `Service returned with status ${status} on record details PUT: ${res}`;
           }
         }
       });
@@ -204,7 +201,7 @@ const saveDocument = async (
     .then(response => {
       // Handle non-200 response status
       if (response.status !== 200) {
-        throw response.response;
+        throw `Service returned with status ${response.status} on spreadsheet GET headers: ${response.response}`;
       }
       return response;
     });
@@ -227,7 +224,7 @@ const saveDocument = async (
     .then(response => {
       // Handle non-200 response status
       if (response.status !== 200) {
-        throw response.response;
+        throw `Service returned with status ${response.status} on spreadsheet GET rows: ${response.response}`;
       }
       return response;
     })
@@ -269,49 +266,6 @@ const saveDocument = async (
           }
         } catch (error) {}
 
-        // try checking if the data is different. if index out of range it means that the size of the array of either
-        // the old data has surpassed the new data, or vice versa, so skip the step.
-        // a try catch was put here to avoid old data being undefined if its length is shorter than new data
-        try {
-          if (header.toLowerCase().includes('date')) {
-            let old_date =
-              old_data.data_content[idx_row][header.toLowerCase()] ||
-              old_data.data_content[idx_row][header] ||
-              null;
-            if (old_date) {
-              old_date = new Date(old_date);
-              old_date = `${old_date.getDate().toString().padStart(2, '0')}-${(
-                old_date.getMonth() + 1
-              )
-                .toString()
-                .padStart(2, '0')}-${old_date.getFullYear()}`;
-              if (old_data.data_content[idx_row][header.toLowerCase()]) {
-                old_data.data_content[idx_row][header.toLowerCase()] = old_date;
-              } else {
-                old_data.data_content[idx_row][header] = old_date;
-              }
-            }
-          }
-          if (
-            !changed &&
-            (row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, '') ||
-              null) !==
-              (old_data.data_content[idx_row][header.toLowerCase()] ||
-                old_data.data_content[idx_row][header] ||
-                null)
-          ) {
-            changed = true;
-          }
-        } catch (error) {}
-
-        // DEBUGGING FOR DATES SMH
-
-        // if (header.toLowerCase().includes("date")) {
-        //     console.log(row[header.toLowerCase()], old_data.data_content[idx_row][header.toLowerCase()])
-        //     console.log(changed && (row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, "") || null) !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null))
-        //     console.log(row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, "") || null, (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null))
-        // }
-
         // convert date gotten from the database to appropriate format after the checking, to avoid
         // misinterpretating different date formats as different values although the date is the same
         if (
@@ -346,6 +300,49 @@ const saveDocument = async (
             row[header.toLowerCase()] = null;
           }
         }
+
+        // DEBUGGING FOR DATES SMH
+
+        // if (header.toLowerCase().includes("date")) {
+        //     console.log(row[header.toLowerCase()], old_data.data_content[idx_row][header.toLowerCase()])
+        //     console.log(changed && (row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, "") || null) !== (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null))
+        //     console.log(row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, "") || null, (old_data.data_content[idx_row][header.toLowerCase()] || old_data.data_content[idx_row][header] || null))
+        // }
+
+        // try checking if the data is different. if index out of range it means that the size of the array of either
+        // the old data has surpassed the new data, or vice versa, so skip the step.
+        // a try catch was put here to avoid old data being undefined if its length is shorter than new data
+        try {
+          if (header.toLowerCase().includes('date')) {
+            let old_date =
+              old_data.data_content[idx_row][header.toLowerCase()] ||
+              old_data.data_content[idx_row][header] ||
+              null;
+            if (old_date) {
+              old_date = new Date(old_date);
+              old_date = `${old_date.getDate().toString().padStart(2, '0')}/${(
+                old_date.getMonth() + 1
+              )
+                .toString()
+                .padStart(2, '0')}/${old_date.getFullYear()}`;
+              if (old_data.data_content[idx_row][header.toLowerCase()]) {
+                old_data.data_content[idx_row][header.toLowerCase()] = old_date;
+              } else {
+                old_data.data_content[idx_row][header] = old_date;
+              }
+            }
+          }
+          if (
+            !changed &&
+            (row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, '') ||
+              null) !==
+              (old_data.data_content[idx_row][header.toLowerCase()] ||
+                old_data.data_content[idx_row][header] ||
+                null)
+          ) {
+            changed = true;
+          }
+        } catch (error) {}
       });
       console.log(row, idx_row, idx_row < old_data.data_content.length - 1);
       // if change in row is detected then update the data in the database
@@ -369,14 +366,14 @@ const saveDocument = async (
               ...row,
             }),
           },
-        ).then(res => {
-          if (res.status !== 200) {
-            throw (
-              res.statusText ||
-              'Something happened while updating (PUT) a record which resulted in failure. Please contact maintainer.'
-            );
-          }
-        });
+        )
+          .then(res => Promise.all([res.status, res.text()]))
+          .then(([status, res]) => {
+            if (status !== 200) {
+              throw `Service returned with status ${status} on record PUT: ${res}`;
+            }
+          });
+        console.log('PUT succeeded');
       } else {
         // else if current index is already beyond the length of original data or the new data
         if (
@@ -396,15 +393,14 @@ const saveDocument = async (
                   'Content-Type': 'application/json',
                 },
               },
-            ).then(res => {
-              if (res.status !== 200) {
-                throw (
-                  res.statusText ||
-                  'Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. '
-                );
-              }
-            });
-            console.log('success');
+            )
+              .then(res => Promise.all([res.status, res.text()]))
+              .then(([status, res]) => {
+                if (status !== 200) {
+                  throw `Service returned with status ${status} on record DELETE: ${res}`;
+                }
+              });
+            console.log('DELETE succeeded');
           }
           // else if the new data length is greater than the old data then there's a new row appended
           else if (
@@ -420,15 +416,14 @@ const saveDocument = async (
                 },
                 body: JSON.stringify(row),
               },
-            ).then(res => {
-              if (res.status !== 200) {
-                throw (
-                  res.statusText ||
-                  'Something happened while posting (POST) a record which resulted in a failure. Please contact maintainer.'
-                );
-              }
-              return res.text();
-            });
+            )
+              .then(res => Promise.all([res.status, res.text()]))
+              .then(([status, res]) => {
+                if (status !== 200) {
+                  throw `Service returned with status ${status} on record POST: ${res}`;
+                }
+                return res;
+              });
             console.log('success POSTING new record, appending to record...');
             let uploaded_id = upload.split(':');
             uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim());
@@ -442,14 +437,13 @@ const saveDocument = async (
                 [config[router.query.form_type]['workspace_holder_key']]:
                   uploaded_id,
               }),
-            }).then(res => {
-              if (res.status !== 200) {
-                throw (
-                  res.statusText ||
-                  'Something happened while posting (POST) a record to the record table which resulted in a failure. Please contact maintainer.'
-                );
-              }
-            });
+            })
+              .then(res => Promise.all([res.status, res.text()]))
+              .then(([status, res]) => {
+                if (status !== 200) {
+                  throw `Service returned with status ${status} on append data to record POST: ${res}`;
+                }
+              });
             console.log('success');
           }
         }
@@ -467,15 +461,14 @@ const saveDocument = async (
               'Content-Type': 'application/json',
             },
           },
-        ).then(res => {
-          if (res.status !== 200) {
-            throw (
-              res.statusText ||
-              'Something happened while deleting (DELETE) a record which resulted in a failure. Please contact maintainer. '
-            );
-          }
-        });
-        console.log('success');
+        )
+          .then(res => Promise.all([res.status, res.text()]))
+          .then(([status, res]) => {
+            if (status !== 200) {
+              throw `Service returned with status ${status} on record DELETE: ${res}`;
+            }
+          });
+        console.log('DELETE succeeded');
       });
     }
   }
