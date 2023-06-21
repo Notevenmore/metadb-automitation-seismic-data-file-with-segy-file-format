@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import config from '../../config';
+// import config from '../../config';
 
 interface IframeProps extends React.ComponentProps<'iframe'> {
   existingID: any;
@@ -8,6 +8,7 @@ interface IframeProps extends React.ComponentProps<'iframe'> {
   data: any;
   getSpreadsheetID: any;
   finishedInitializing: any;
+  config: any
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
@@ -27,7 +28,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
     }
     const previousID = localStorage.getItem('spreadsheetID');
     if (previousID) {
-      await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
+      await fetch(`${props.config.services.sheets}/deleteSpreadsheet`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +40,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         throw error;
       });
     }
-    const makeTemp = await fetch(`${config.services.sheets}/createSpreadsheet`);
+    const makeTemp = await fetch(`${props.config.services.sheets}/createSpreadsheet`);
     const spreadsheetID = await makeTemp.json();
     setsheetID(spreadsheetID.response);
     try {
@@ -75,7 +76,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
       setLoadingMsg(
         `Initializing document form based on form type ${props.form_type}`,
       );
-      await fetch(`${config.services.sheets}/updateSpreadsheet/v2`, {
+      await fetch(`${props.config.services.sheets}/updateSpreadsheet/v2`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +120,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         data.some(item => {
           final.push({no: '-', ...item});
         });
-        await fetch(`${config.services.sheets}/appendToSheets2`, {
+        await fetch(`${props.config.services.sheets}/appendToSheets2`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -177,7 +178,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
           // TODO finish this new workflow
           // ---| NEW WORKFLOW |---
 
-          await fetch(`${config.services.sheets}/appendToSheets2`, {
+          await fetch(`${props.config.services.sheets}/appendToSheets2`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -277,5 +278,13 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
     </div>
   );
 };
+
+// export async function getServerSideProps(context) {
+//   const config = JSON.parse(process.env.ENDPOINTS);
+//   console.log(config)
+//   return {
+//     props: {config: config}, // will be passed to the page component as props
+//   };
+// }
 
 export default Sheets;
