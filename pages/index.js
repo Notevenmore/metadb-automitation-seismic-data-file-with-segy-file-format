@@ -11,17 +11,24 @@ import Input from '../components/input_form/input';
 import config, {datatypes} from '../config';
 import {setUploadDocumentSettings} from '../store/generalSlice';
 
-export default function HomePage({setTitle}) {
+export async function getServerSideProps(context) {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
+}
+
+export default function HomePage({setTitle, config}) {
   useEffect(() => {
     setTitle('Home');
   }, []);
 
   // if the search state is true change the view of the home page
   const searches = useSelector(state => state.search.search);
-  return <>{!searches ? <HomeSection /> : <SearchResult />}</>;
+  return <>{!searches ? <HomeSection config={config} /> : <SearchResult />}</>;
 }
 
-const HomeSection = () => {
+const HomeSection = ({config}) => {
   const [toggleOverlay, settoggleOverlay] = useState(false);
   const [dataType, setdataType] = useState('');
   const [newWorkspace, setnewWorkspace] = useState({
@@ -30,6 +37,7 @@ const HomeSection = () => {
     working_area: '',
     submission_type: '',
     afe_number: 0,
+    email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
   const [Message, setMessage] = useState({message: '', color: ''});
 

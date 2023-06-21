@@ -11,7 +11,7 @@ import Highlight from 'react-highlight';
 import {setUploadDocumentSettings} from '../../store/generalSlice';
 import {useDispatch} from 'react-redux';
 
-const PrintedWellReport = ({datatype, setTitle}) => {
+const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
   const [searchData, setsearchData] = useState([-1]); // for saving a backup when searching
   const [error, seterror] = useState('');
@@ -22,6 +22,7 @@ const PrintedWellReport = ({datatype, setTitle}) => {
     working_area: '',
     submission_type: '',
     afe_number: '',
+    email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
   const [Message, setMessage] = useState({message: '', color: ''});
 
@@ -560,8 +561,12 @@ const PrintedWellReport = ({datatype, setTitle}) => {
 
 export async function getServerSideProps(context) {
   const datatype = context.params.datatype;
+  const config = JSON.parse(process.env.ENDPOINTS);
   return {
-    props: {datatype: datatype[datatype.length - 1]}, // will be passed to the page component as props
+    props: {
+      datatype: datatype[datatype.length - 1],
+      config: config,
+    }, // will be passed to the page component as props
   };
 }
 
