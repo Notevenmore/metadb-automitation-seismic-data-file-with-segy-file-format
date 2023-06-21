@@ -1,32 +1,32 @@
 [
-    {
-        "ppdm_guid": "2541",
-        "publisher": "Indonesian Petroleum Association",
-        "document_title": "The Occurence of Hydrocarbon in Overpressured Reservoirs of the Baram Delta (Offshore Sarawak, Malaysia)",
-        "issue": "Ninth",
-        "author_id": "Gilbert Powell",
-        "publication_date": "10/9/1981",
-        "document_type": "Proceeding",
-        "data_store_name": "https://www.google.com"
-    },
-    {
-        "ppdm_guid": "9017",
-        "publisher": "Indonesian Petroleum Association",
-        "document_title": "Undefined",
-        "issue": "Fourth",
-        "author_id": "John Wick",
-        "publication_date": "9/1/2000",
-        "document_type": "Proceeding",
-        "data_store_name": "https://www.google.com"
-    },
-    {
-        "ppdm_guid": "8172",
-        "publisher": "Indonesian Petroleum Association",
-        "document_title": "Unknown",
-        "issue": "Sixth",
-        "author_id": "Frederick Scott",
-        "publication_date": "10/3/1998",
-        "document_type": "Proceeding",
-        "data_store_name": "https://www.google.com"
-    }
+  {
+    "ppdm_guid": "2541",
+    "publisher": "Indonesian Petroleum Association",
+    "document_title": "The Occurence of Hydrocarbon in Overpressured Reservoirs of the Baram Delta (Offshore Sarawak, Malaysia)",
+    "issue": "Ninth",
+    "author_id": "Gilbert Powell",
+    "publication_date": "10/9/1981",
+    "document_type": "Proceeding",
+    "data_store_name": "https://www.google.com"
+  },
+  {
+    "ppdm_guid": "9017",
+    "publisher": "Indonesian Petroleum Association",
+    "document_title": "Undefined",
+    "issue": "Fourth",
+    "author_id": "John Wick",
+    "publication_date": "9/1/2000",
+    "document_type": "Proceeding",
+    "data_store_name": "https://www.google.com"
+  },
+  {
+    "ppdm_guid": "8172",
+    "publisher": "Indonesian Petroleum Association",
+    "document_title": "Unknown",
+    "issue": "Sixth",
+    "author_id": "Frederick Scott",
+    "publication_date": "10/3/1998",
+    "document_type": "Proceeding",
+    "data_store_name": "https://www.google.com"
+  }
 ]

@@ -1,14 +1,17 @@
 # Sheet component
+
 ## Overview
-The component used to display things inside the database. Call it by importing in another file 
+
+The component used to display things inside the database. Call it by importing in another file
 
 ```js
-import Sheets from "../components/sheets/sheets.js"
+import Sheets from '../components/sheets/sheets.js';
 
-<Sheets />
+<Sheets />;
 ```
 
-## Parameters: 
+## Parameters:
+
 > <code>existingID: string</code>
 
 Used when the component does not need to be re-made again (such use case is when the page transitions from view document to edit document).

@@ -1,20 +1,20 @@
 [
-        {
-                "No": 1,
-                "Name": "PWR 2023 Report",
-                "KKS": "Geodwipa Teknika Nusantara",
-                "wilayah_kerja": "Jakarta",
-                "jenis": "Printed well report",
-                "AFE": "2893728901",
-                "submission": "Quarterly"
-        },
-        {
-                "No": 2,
-                "Name": "New Document",
-                "KKS": "Geodwipa Teknika Nusantara",
-                "wilayah_kerja": "Jakarta",
-                "jenis": "Printed well report",
-                "AFE": "2023032801",
-                "submission": "Quarterly"
-        }
+  {
+    "No": 1,
+    "Name": "PWR 2023 Report",
+    "KKS": "Geodwipa Teknika Nusantara",
+    "wilayah_kerja": "Jakarta",
+    "jenis": "Printed well report",
+    "AFE": "2893728901",
+    "submission": "Quarterly"
+  },
+  {
+    "No": 2,
+    "Name": "New Document",
+    "KKS": "Geodwipa Teknika Nusantara",
+    "wilayah_kerja": "Jakarta",
+    "jenis": "Printed well report",
+    "AFE": "2023032801",
+    "submission": "Quarterly"
+  }
 ]

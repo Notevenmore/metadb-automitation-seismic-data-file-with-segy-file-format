@@ -1,11 +1,11 @@
-import { useNProgress } from '@tanem/react-nprogress'
+import {useNProgress} from '@tanem/react-nprogress';
 
-const ProgressBar: React.FC<{ isRouteChanging: boolean }> = ({
+const ProgressBar: React.FC<{isRouteChanging: boolean}> = ({
   isRouteChanging,
 }) => {
-  const { animationDuration, isFinished, progress } = useNProgress({
+  const {animationDuration, isFinished, progress} = useNProgress({
     isAnimating: isRouteChanging,
-  })
+  });
 
   return (
     <>
@@ -38,7 +38,7 @@ const ProgressBar: React.FC<{ isRouteChanging: boolean }> = ({
         }
 
         .spinner {
-          animation: spinner 400ms linear  infinite ;
+          animation: spinner 400ms linear infinite;
           border-bottom: 3px solid transparent;
           border-left: 3px solid #29d;
           border-radius: 50%;
@@ -50,14 +50,13 @@ const ProgressBar: React.FC<{ isRouteChanging: boolean }> = ({
         }
       `}</style>
       <div className="container">
-        <div className="bar">
-        </div>
+        <div className="bar"></div>
         <div className="block fixed right-6 top-[80px] z-50">
-            <div className="spinner" />
+          <div className="spinner" />
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ProgressBar
+export default ProgressBar;
