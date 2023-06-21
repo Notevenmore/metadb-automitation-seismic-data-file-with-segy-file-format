@@ -65,7 +65,7 @@ const Profile = ({ setTitle }) => {
 		if (currentUser && user.profile_picture !== currentUser.profile_picture) {
 			router.events.emit('routeChangeStart');
 			console.log("start")
-			await fetch('http://localhost:8080/api/v1/users', {
+			await fetch('http://localhost:8006/api/v1/users', {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",

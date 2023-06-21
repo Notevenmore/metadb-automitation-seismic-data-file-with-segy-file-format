@@ -53,7 +53,7 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
 
 
     const put_workspace = async(form_type, afe, workspace_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}-workspace-afe/${afe}`, {
+        const data = await fetch(`http://localhost:8004/api/v1/${form_type}-workspace-afe/${afe}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -72,7 +72,7 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
     }
 
     const post_workspace = async(form_type, workspace_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}-workspace-afe`, {
+        const data = await fetch(`http://localhost:8004/api/v1/${form_type}-workspace-afe`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -91,7 +91,7 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
     }
 
     const upload_afeguid_new = async(form_type, afe, guid) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}-workspace`, {
+        const data = await fetch(`http://localhost:8004/api/v1/${form_type}-workspace`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -113,7 +113,7 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
     }
     
     const delete_data = async (form_type, data_id, new_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}/${data_id}`, {
+        const data = await fetch(`http://localhost:8004/api/v1/${form_type}/${data_id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -125,7 +125,7 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
     }
 
     const put_data = async (form_type, data_id, new_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}/${data_id}`, {
+        const data = await fetch(`http://localhost:8004/api/v1/${form_type}/${data_id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -140,7 +140,7 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
     }
 
     const post_data = async (form_type, new_data) => {
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}`, {
+        const data = await fetch(`http://localhost:8004/api/v1/${form_type}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -165,7 +165,7 @@ const DocEditor = ({ spreadsheetID, workspace_name }) => {
     const get_data = async (form_type) => {
 
         // Make an HTTP GET request to the server API
-        const data = await fetch(`http://localhost:9090/api/v1/${form_type}`, {
+        const data = await fetch(`http://localhost:8004/api/v1/${form_type}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
