@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export async function getLogin(email, password) {
   const result = axios
-    .get(`${process.env.backend_url}/users`, {
+    .get(`${process.env.NETX_PUBLIC_BACKEND_AUTH}/token`, {
       headers: {
         email: email,
         password: password,
