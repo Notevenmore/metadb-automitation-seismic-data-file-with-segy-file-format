@@ -7,6 +7,7 @@ import Input from '../../components/input_form/input';
 import {storeFile, setUploadDocumentSettings} from '../../store/generalSlice';
 import Select from '../../public/icons/selection_tool.svg';
 import config, {datatypes} from '../../config';
+import {checkAfe} from '../../components/utility_functions';
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -26,6 +27,8 @@ export default function UploadFilePage({config, setTitle}) {
   });
   const [toggleOverlay, settoggleOverlay] = useState(false);
   const [Message, setMessage] = useState({message: '', color: ''});
+  const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
+  const [afeExist, setafeExist] = useState(false);
 
   const fileUploadRef = useRef(null);
 
@@ -161,6 +164,56 @@ export default function UploadFilePage({config, setTitle}) {
     router.events.emit('routeChangeComplete');
   };
 
+  const handleAfeChange = async (e, focused) => {
+    e.preventDefault();
+    try {
+      if (focused) {
+        if (!UplSettings.DataType) {
+          setafeExist(false);
+          setpopupMessage({
+            message: 'Please select a data type first',
+            color: 'red',
+          });
+        }
+      } else {
+        setpopupMessage({message: '', color: ''});
+        if (!UplSettings.afe_number || !UplSettings.DataType) {
+          return;
+        }
+        // setpopupMessage({message: 'Checking...', color: 'green'});
+        const result = await checkAfe(
+          false,
+          config,
+          datatypes[UplSettings.DataType],
+          parseInt(e.target.value),
+        );
+        if (result !== 'null') {
+          setafeExist(true);
+          // setpopupMessage({message: 'AFE number available', color: 'green'});
+          // await delay(1000);
+          // setpopupMessage({message: '', color: ''});
+          setpopupMessage({
+            message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Please choose a different one`,
+            color: 'red',
+          });
+        } else {
+          setafeExist(false);
+          setpopupMessage({message: '', color: ''});
+        }
+      }
+    } catch (error) {
+      setMessage({
+        message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+          error,
+        )}`,
+        color: 'red',
+      });
+      setpopupMessage({message: 'Something went wrong', color: 'red'});
+      await delay(1000);
+      setpopupMessage({message: '', color: ''});
+    }
+  };
+
   useEffect(() => {
     setTitle('Upload file');
   }, []);
@@ -251,24 +304,96 @@ export default function UploadFilePage({config, setTitle}) {
         </h2>
         <div className="w-[100%] lg:w-[80%] flex flex-col gap-y-3">
           <Input
-            label="AFE number"
+            label="File format"
             label_loc="beside"
-            type="number"
-            name={'AFE_Number'}
-            placeholder={'Input AFE number'}
-            value={UplSettings.afe_number}
+            type="dropdown"
+            name={'fileFormat'}
+            placeholder={'Select a file format'}
+            value={UplSettings.FileFormat}
+            dropdown_items={['Image', 'PDF', 'PPTX', 'CSV', 'LAS']}
             required={true}
             additional_styles="w-full"
             additional_styles_label={additional_styles_label}
-            autoComplete="off"
             onChange={e =>
-              setUplSettings({
-                ...UplSettings,
-                afe_number: e.target.value,
-                workspace_name: `record_${e.target.value}`,
-              })
+              setUplSettings({...UplSettings, FileFormat: e.target.value})
             }
+            withSearch
           />
+          <Input
+            label="Data type"
+            label_loc="beside"
+            type="dropdown"
+            name={'dataType'}
+            placeholder={'Select a data type'}
+            value={UplSettings.DataType}
+            dropdown_items={Object.keys(datatypes)}
+            required={true}
+            additional_styles="w-full"
+            additional_styles_label={additional_styles_label}
+            onChange={e =>
+              setUplSettings({...UplSettings, DataType: e.target.value})
+            }
+            withSearch
+          />
+          <div className={`${popupMessage.message ? 'space-y-2' : ''}`}>
+            <Input
+              label="AFE number"
+              label_loc="beside"
+              type="number"
+              name={'AFE_Number'}
+              placeholder={'Input AFE number'}
+              value={UplSettings.afe_number}
+              required={true}
+              additional_styles="w-full"
+              additional_styles_label={additional_styles_label}
+              autoComplete="off"
+              onChange={e =>
+                setUplSettings({
+                  ...UplSettings,
+                  afe_number: e.target.value,
+                  workspace_name: `record_${e.target.value}`,
+                })
+              }
+              onFocus={e => handleAfeChange(e, true)}
+              onBlur={e => handleAfeChange(e, false)}
+              onClick={e => handleAfeChange(e, true)}
+            />
+            <div
+              className={`${
+                popupMessage.message
+                  ? 'p-1 max-h-[1000px] visible'
+                  : 'max-h-[0px] -translate-y-1'
+              } ${
+                popupMessage.color === 'red'
+                  ? 'border-2 border-red-500 bg-red-100'
+                  : ''
+              } text-sm w-full text-center transition-all pointer-events-none`}>
+              <p>{popupMessage.message}</p>
+            </div>
+            {/* <div
+              className={`${
+                popupMessage.message
+                  ? 'visible opacity-100'
+                  : 'invsible opacity-0 -translate-x-2'
+              } absolute ml-4 left-[100%] -translate-y-[50%] top-[50%] border-2 ${
+                popupMessage.color === 'red'
+                  ? 'bg-red-100 border-red-500'
+                  : 'bg-searchbg border-blue-500'
+              } w-[60%] z-[9999999] p-1 rounded-md pointer-events-none transition-all`}>
+              <p className="font-semibold text-sm">{popupMessage.message}</p>
+            </div>
+            <div
+              className={`${
+                popupMessage.message
+                  ? 'visible opacity-100'
+                  : 'invsible opacity-0 -translate-x-2'
+              } absolute ml-3 left-[100%] -translate-y-[50%] top-[50%] border-2 rotate-45 h-2 w-2 ${
+                popupMessage.color === 'red'
+                  ? 'bg-red-500 border-red-500'
+                  : 'bg-blue-500 border-blue-500'
+              } z-[9999998] transition-all`}
+            /> */}
+          </div>
           <Input
             label="KKKS name"
             label_loc="beside"
@@ -322,38 +447,6 @@ export default function UploadFilePage({config, setTitle}) {
             additional_styles_label={additional_styles_label}
             onChange={e =>
               setUplSettings({...UplSettings, submission_type: e.target.value})
-            }
-            withSearch
-          />
-          <Input
-            label="Data type"
-            label_loc="beside"
-            type="dropdown"
-            name={'dataType'}
-            placeholder={'Select a data type'}
-            value={UplSettings.DataType}
-            dropdown_items={Object.keys(datatypes)}
-            required={true}
-            additional_styles="w-full"
-            additional_styles_label={additional_styles_label}
-            onChange={e =>
-              setUplSettings({...UplSettings, DataType: e.target.value})
-            }
-            withSearch
-          />
-          <Input
-            label="File format"
-            label_loc="beside"
-            type="dropdown"
-            name={'fileFormat'}
-            placeholder={'Select a file format'}
-            value={UplSettings.FileFormat}
-            dropdown_items={['Image', 'PDF', 'PPTX', 'CSV', 'LAS']}
-            required={true}
-            additional_styles="w-full"
-            additional_styles_label={additional_styles_label}
-            onChange={e =>
-              setUplSettings({...UplSettings, FileFormat: e.target.value})
             }
             withSearch
           />

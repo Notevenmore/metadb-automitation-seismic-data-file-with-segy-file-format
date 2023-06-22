@@ -10,6 +10,7 @@ import config, {datatypes} from '../../config';
 import Highlight from 'react-highlight';
 import {setUploadDocumentSettings} from '../../store/generalSlice';
 import {useDispatch} from 'react-redux';
+import {checkAfe} from '../../components/utility_functions';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
@@ -25,6 +26,8 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
   const [Message, setMessage] = useState({message: '', color: ''});
+  const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
+  const [afeExist, setafeExist] = useState(false);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -189,7 +192,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           } else if (res.toLowerCase().includes('workspace_name_unique')) {
             throw `A record with the name "${newWorkspace.workspace_name}" already exists. Please choose a different name.`;
           } else if (res.toLowerCase().includes('afe_pk_error')) {
-            throw `A record with AFE number ${newWorkspace.afe_number} already exists. Please choose a different AFE number.`;
+            throw `A record with AFE number ${newWorkspace.afe_number} already exists. Please choose a different one.`;
           } else {
             throw (
               res ||
@@ -263,15 +266,60 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       workspace_name: '',
       kkks_name: '',
       working_area: '',
-      afe_number: 0,
+      afe_number: '',
       submission_type: '',
     });
+    setpopupMessage({message: '', color: ''});
   };
 
   const reset_search = () => {
     const search_input = document.getElementById('search_bar');
     search_input.value = '';
     setsearchData([-1]);
+  };
+
+  const handleAfeChange = async (e, focused) => {
+    e.preventDefault();
+    try {
+      if (focused) {
+      } else {
+        setpopupMessage({message: '', color: ''});
+        if (!newWorkspace.afe_number) {
+          return;
+        }
+        // setpopupMessage({message: 'Checking...', color: 'green'});
+        const result = await checkAfe(
+          false,
+          config,
+          datatype,
+          parseInt(e.target.value),
+        );
+        if (result !== 'null') {
+          setafeExist(true);
+          // setpopupMessage({message: 'AFE number available', color: 'green'});
+          // await delay(1000);
+          // setpopupMessage({message: '', color: ''});
+          setpopupMessage({
+            message:
+              'A record with the same AFE number already exists. Please choose a different one',
+            color: 'red',
+          });
+        } else {
+          setafeExist(false);
+          setpopupMessage({message: '', color: ''});
+        }
+      }
+    } catch (error) {
+      setMessage({
+        message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+          error,
+        )}`,
+        color: 'red',
+      });
+      setpopupMessage({message: 'Something went wrong', color: 'red'});
+      await delay(1000);
+      setpopupMessage({message: '', color: ''});
+    }
   };
 
   return (
@@ -425,22 +473,52 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                                     onChange={(e) => setnewWorkspace({ ...newWorkspace, workspace_name: e.target.value })}
                                 /> */}
                 <p>AFE number</p>
-                <Input
-                  type="number"
-                  name={'AFE_Number'}
-                  placeholder={'Input AFE number'}
-                  value={newWorkspace.afe_number}
-                  required={true}
-                  additional_styles="w-full"
-                  autoComplete="off"
-                  onChange={e =>
-                    setnewWorkspace({
-                      ...newWorkspace,
-                      afe_number: parseInt(e.target.value),
-                      workspace_name: `record_${e.target.value}`,
-                    })
-                  }
-                />
+                <div className="relative">
+                  <Input
+                    type="number"
+                    name={'AFE_Number'}
+                    placeholder={'Input AFE number'}
+                    value={newWorkspace.afe_number}
+                    required={true}
+                    additional_styles="w-full"
+                    autoComplete="off"
+                    onChange={e =>
+                      setnewWorkspace({
+                        ...newWorkspace,
+                        afe_number: parseInt(e.target.value),
+                        workspace_name: `record_${e.target.value}`,
+                      })
+                    }
+                    onFocus={e => handleAfeChange(e, true)}
+                    onBlur={e => handleAfeChange(e, false)}
+                    onClick={e => handleAfeChange(e, true)}
+                  />
+                  <div
+                    className={`${
+                      popupMessage.message
+                        ? 'visible opacity-100'
+                        : 'invsible opacity-0 -translate-x-2'
+                    } absolute ml-4 left-[100%] -translate-y-[50%] top-[50%] border-2 ${
+                      popupMessage.color === 'red'
+                        ? 'bg-red-100 border-red-500'
+                        : 'bg-searchbg border-blue-500'
+                    } w-[60%] z-[9999999] p-1 rounded-md pointer-events-none transition-all`}>
+                    <p className="font-semibold text-sm">
+                      {popupMessage.message}
+                    </p>
+                  </div>
+                  <div
+                    className={`${
+                      popupMessage.message
+                        ? 'visible opacity-100'
+                        : 'invsible opacity-0 -translate-x-2'
+                    } absolute ml-3 left-[100%] -translate-y-[50%] top-[50%] border-2 rotate-45 h-2 w-2 ${
+                      popupMessage.color === 'red'
+                        ? 'bg-red-500 border-red-500'
+                        : 'bg-blue-500 border-blue-500'
+                    } z-[9999998] transition-all`}
+                  />
+                </div>
                 <p>KKKS name</p>
                 <Input
                   type="text"
@@ -507,7 +585,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                   disabled={
                     Object.values(newWorkspace).some(x => {
                       return x === null || x === '';
-                    })
+                    }) || afeExist
                       ? true
                       : false
                   }
