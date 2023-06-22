@@ -5,7 +5,6 @@ import { parseCookies } from "nookies"
 import { useSelector } from "react-redux"
 
 function TokenExpired(err) {
-    console.log(err)
     const code = (err.response && err.response.status) ?? 400
     if(code === 401 || code === 402) {
         Router.push('/login/signin')
@@ -75,8 +74,9 @@ async function updateProfile (body) {
         return data
         console.log(data)
     } catch (err) {
-        console.log(err)
+        // console.log(err)
         TokenExpired(err)
+        throw err
     }
 }
 

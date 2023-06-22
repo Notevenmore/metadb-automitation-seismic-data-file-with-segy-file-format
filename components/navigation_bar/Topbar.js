@@ -33,7 +33,6 @@ export default function TopBar(props) {
   };
   const [profileProps, setProfileProps] = useState({});
   useEffect(() => {
-    setProfile(Mime(user.profile_picture)) // TODO CHANGE TO NOT USE HARDCODED STRING LATER
     // setProfile();
     setProfileProps({
       float_title: (
@@ -45,6 +44,9 @@ export default function TopBar(props) {
       ),
     });
   }, []);
+  useEffect(() => {
+    setProfile(Mime(user.profile_picture)); // TODO CHANGE TO NOT USE HARDCODED STRING LATER
+  }, [user]);
 
   const dispatch = useDispatch();
   const handleSignOut = () => {

@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Mime from 'dummy-data/mime';
 import ProfilePic from 'dummy-data/profile_pic';
 import {useRouter} from 'next/router';
+import {updateProfile} from '../services/admin';
 
 const Profile = ({setTitle}) => {
   setTitle('Profile');
@@ -23,9 +24,9 @@ const Profile = ({setTitle}) => {
   const [content, setContent] = useState([]);
   useEffect(() => {
     setContent([
-      ['Email', user.email],
+      ['Email', user.name],
       ['Date joined', moment(user.date_joined).format('DD - MM - YYYY')],
-      ['Role', user.role_name],
+      ['Role', user.type],
     ]);
   }, []);
 
@@ -47,7 +48,6 @@ const Profile = ({setTitle}) => {
               '',
             );
             setcurrentUser({...currentUser, profile_picture: final});
-            console.log(final);
           } else {
             alert('Please upload only image formatted file (JPG/PNG)');
             return;
@@ -67,30 +67,18 @@ const Profile = ({setTitle}) => {
     if (currentUser && user.profile_picture !== currentUser.profile_picture) {
       router.events.emit('routeChangeStart');
       console.log('start');
-      await fetch('http://localhost:8080/api/v1/users', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          id: currentUser.id,
+      await updateProfile({
+        userid: user.name,
+        profile_picture: currentUser.profile_picture,
+      }).then(
+        () => {
+          dispatch(setUser(currentUser));
+          console.log('complete');
         },
-        body: JSON.stringify({
-          First_Name: currentUser.first_name,
-          Last_Name: currentUser.last_name,
-          Email: currentUser.email,
-          Role_Name: currentUser.role_name,
-          Profile_Picture: currentUser.profile_picture,
-        }),
-      })
-        .then(res => {
-          if (res.status !== 200) {
-            console.log(res);
-          }
-        })
-        .catch(err => {
-          throw err;
-        });
-      dispatch(setUser(currentUser));
-      console.log('complete');
+        (err) => {
+          console.log(err);
+        },
+      );
       router.events.emit('routeChangeComplete');
     }
   };
@@ -112,9 +100,13 @@ const Profile = ({setTitle}) => {
           <div className="flex flex-col items-center justify-center space-y-2">
             {/* <img src={Mime(user.profile_picture) || ProfilePic} className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full" /> */}
             {/* //TODO CHANGE THE LINE BELOW TO NOT USE HARDCODED PROFILE PICTURE STRING */}
-            <img
-              src={ProfilePic}
+            <Image
+              src={user.profile_picture ? Mime(user.profile_picture) : ProfilePic}
+              alt="image"
+              width={500}
+              height={500}
               className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full"
+              priority
             />
             <FloatDialog
               items={{
