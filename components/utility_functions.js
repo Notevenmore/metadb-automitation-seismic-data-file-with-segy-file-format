@@ -541,8 +541,29 @@ const downloadWorkspace = async (
   }
 };
 
+const checkAfe = async (e, config, data_type, afe_number) => {
+  if (e) {
+    e.preventDefault();
+  }
+  const afe_exist = await fetch(`${config[data_type]['afe']}${afe_number}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(res => Promise.all([res.status, res.text()]))
+    .then(([status, res]) => {
+      if (status !== 200) {
+        throw `Service returned with status ${status}: ${res}`;
+      }
+      return res;
+    });
+  return afe_exist;
+};
+
 module.exports = {
   init_data,
   saveDocument,
   downloadWorkspace,
+  checkAfe,
 };
