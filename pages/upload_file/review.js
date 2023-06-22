@@ -21,7 +21,14 @@ import {ImageEditor} from '../components/highlight_viewer';
 import config from '../../config';
 import {saveDocument} from '../../components/utility_functions';
 
-export default function UploadFileReview({setTitle}) {
+export async function getServerSideProps(context) {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
+}
+
+export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
   const [ImageReview, setImageReview] = useState('');
   const [Message, setMessage] = useState({message: '', color: ''});
@@ -54,7 +61,7 @@ export default function UploadFileReview({setTitle}) {
       try {
         setImageURL(
           _ =>
-            `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${
+            `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${
               document_summary?.document_id
             }/${PageNo + 1}`,
         );
@@ -95,7 +102,7 @@ export default function UploadFileReview({setTitle}) {
   useEffect(() => {
     setImageURL(
       _ =>
-        `${process.env.OCR_SERVICE_URL}/ocr_service/v1/image/${
+        `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${
           document_summary?.document_id
         }/${PageNo + 1}`,
     );
@@ -130,7 +137,7 @@ export default function UploadFileReview({setTitle}) {
       }
     } catch (error) {
       setMessage({
-        message: `Failed to save record. Please try again. Additional error message: ${String(
+        message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
           error,
         )}`,
         color: 'red',
@@ -295,6 +302,7 @@ export default function UploadFileReview({setTitle}) {
                     data={ReviewData}
                     getSpreadsheetID={setspreadsheetID}
                     finishedInitializing={setspreadsheetReady}
+                    config={config}
                   />
                 )}
               </div>,

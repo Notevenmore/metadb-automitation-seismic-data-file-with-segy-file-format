@@ -89,6 +89,10 @@ const Test = () => {
     seteasteregg(true);
   };
 
+  useEffect(() => {
+    console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
+  }, []);
+
   return data ? (
     <div className="space-y-3">
       <p>
@@ -122,11 +126,44 @@ const Test = () => {
       <div>
         <p>{JSON.stringify(hehe)}</p>
         <p>{String(hehe['hehe'])}</p>
+        <p>
+          {JSON.stringify({
+            bibliography: {
+              workspace: 'http://localhost:8080/api/v1/bibliography-workspace/',
+              afe: 'http://localhost:8080/api/v1/bibliography-afe/',
+              view: 'http://localhost:8080/api/v1/bibliography/',
+              workspace_holder_key: 'bibliography_id',
+            },
+            printed_well_report: {
+              workspace:
+                'http://localhost:8080/api/v1/print-well-report-workspace/',
+              afe: 'http://localhost:8080/api/v1/print-well-report-workspace-afe/',
+              view: 'http://localhost:8080/api/v1/print-well-report/',
+              workspace_holder_key: 'print_well_report_id',
+            },
+            services: {sheets: 'http://localhost:5050'},
+          })}
+        </p>
       </div>
     </div>
   ) : (
     <p>hehe</p>
   );
 };
+
+export async function getServerSideProps(context) {
+  const url = JSON.stringify(process.env.ENDPOINTS);
+  const hello_h = JSON.parse(url);
+  console.log(hello_h);
+  console.log(typeof JSON.parse(hello_h));
+  // console.log('url link: ' + JSON.parse(url));
+  // console.log(typeof url);
+  // console.log(typeof JSON.parse(JSON.stringify(url)));
+  // console.log(typeof JSON.parse(url));
+  // console.log(JSON.stringify(url));
+  return {
+    props: {url: url}, // will be passed to the page component as props
+  };
+}
 
 export default Test;

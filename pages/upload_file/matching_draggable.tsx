@@ -162,7 +162,7 @@ const uploadImage = async (
 
   try {
     const response = await fetch(
-      `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/upload/base64`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/upload/base64`,
       requestOptions,
     );
     const result = await response.text();
@@ -195,7 +195,7 @@ const postScrapeAnnotate = async (
 
   try {
     const response = await fetch(
-      `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/scrape/${docId}/${page}`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/scrape/${docId}/${page}`,
       requestOptions,
     );
     const result = await response.text();
@@ -223,7 +223,7 @@ const fetchDocumentSummary = async (
 
   try {
     const response = await fetch(
-      `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/summary/${docId}`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/summary/${docId}`,
       requestOptions,
     );
     const result = await response.text();
@@ -251,7 +251,7 @@ const fetchAutoFill = async (
 
   try {
     const response = await fetch(
-      `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/auto/${docId}/${pageNo}`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/auto/${docId}/${pageNo}`,
       requestOptions,
     );
     const result = await response.text();
@@ -280,7 +280,7 @@ const fetchDraggableData = async (
 
   try {
     const response = await fetch(
-      `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/draggables/${docId}/${pageNo}`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/draggables/${docId}/${pageNo}`,
       requestOptions,
     );
     const result = await response.text();
@@ -291,7 +291,7 @@ const fetchDraggableData = async (
 };
 
 const generateImageUrl = (docId: string, page: number) => {
-  return `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/image/${docId}/${page}`;
+  return `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/image/${docId}/${page}`;
 };
 
 const generateDragImageSrc = (
@@ -299,11 +299,12 @@ const generateDragImageSrc = (
   pageNo: number,
   bound: Tuple4<number>,
 ) => {
-  return `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/crop/${docId}/${pageNo}/${bound[0]}/${bound[1]}/${bound[2]}/${bound[3]}`;
+  return `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/crop/${docId}/${pageNo}/${bound[0]}/${bound[1]}/${bound[2]}/${bound[3]}`;
 };
 
 interface MatchReviewProps {
   setTitle: (title: string) => void;
+  config: any;
 }
 
 interface TableRow {
@@ -467,8 +468,7 @@ type DraggableData = {
   word: string;
 };
 
-export default function MatchReview({setTitle}: MatchReviewProps) {
-  setTitle('Upload File - Data Matching');
+export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [state, setState] = useState<State>(INITIAL_STATE);
   const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
   const [imageBase64Str, setImageBase64Str] = useState('');
@@ -566,6 +566,7 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
+    setTitle('Data Matching - Drag and Drop');
     const init = async () => {
       router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
@@ -963,4 +964,11 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
       </Container>
     </DraggableProvider>
   );
+}
+
+export async function getServerSideProps(context) {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
 }

@@ -13,7 +13,14 @@ import {useSelector} from 'react-redux';
 import config from '../config';
 import {saveDocument} from '../components/utility_functions';
 
-export default function NewDocumentPage({setTitle}) {
+export async function getServerSideProps(context) {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
+}
+
+export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
   const [Message, setMessage] = useState({message: '', color: ''});
   const [spreadsheetID, setspreadsheetID] = useState();
@@ -180,6 +187,7 @@ export default function NewDocumentPage({setTitle}) {
                     type="new"
                     getSpreadsheetID={setspreadsheetID}
                     finishedInitializing={setspreadsheetReady}
+                    config={config}
                   />
                 </div>
               ) : (
