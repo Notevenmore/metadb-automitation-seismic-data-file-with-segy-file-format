@@ -59,6 +59,11 @@ export default function SignInPage({setTitle}) {
         if (succeed) {
           // console.log(data.data);
           dispatch(setUser(data.data));
+          if(data.data.type === "Administrator"){
+            router.push("/administrator", undefined, {shallow:true})
+            // router.reload("/administrator")
+            return;
+          }
           router.push('/');
           return;
         }
