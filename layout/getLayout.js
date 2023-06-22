@@ -3,6 +3,7 @@ import { setUser } from '../store/userSlice';
 import Blank from './Blank';
 import LayoutIcon from './LayoutIcon';
 import LayoutWidget from './LayoutWidget';
+import LayoutTop from './LayoutTop';
 
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
@@ -24,6 +25,7 @@ function checkAuth() {
       router.push('/login/signin');
       return;
     }
+    if(user.type === "Administrator")return
     handleProfile()
     // console.log(user.name)
   }, [user.name, router.events, useSelector(state => state.user.user.name)]);
@@ -42,4 +44,8 @@ function getLayoutWidget(page) {
   return <LayoutWidget>{page}</LayoutWidget>;
 }
 
-export {getLayoutBlank, getLayoutIcon, getLayoutWidget, checkAuth};
+function getLayoutTop(page) {
+  return <LayoutTop>{page}</LayoutTop>;
+}
+
+export {getLayoutBlank, getLayoutIcon, getLayoutWidget, checkAuth, getLayoutTop};
