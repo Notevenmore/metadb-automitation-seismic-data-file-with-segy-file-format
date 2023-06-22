@@ -26,6 +26,7 @@
     "mathjax-full": "^3.2.2",
     "moment": "^2.29.4",
     "next": "13.1.6",
+    "nookies": "^2.5.2",
     "nouislider": "^15.7.0",
     "nprogress": "^0.2.0",
     "proj4": "^2.8.1",
