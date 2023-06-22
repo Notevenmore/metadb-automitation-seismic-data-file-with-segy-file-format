@@ -11,7 +11,6 @@ import FloatDialog from '../float_dialog/float_dialog';
 import {logOut} from '../../store/userSlice';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
-import ProfilePic from 'dummy-data/profile_pic';
 
 export default function TopBar(props) {
   const user = useSelector(state => state.user.user);
@@ -34,8 +33,7 @@ export default function TopBar(props) {
   };
   const [profileProps, setProfileProps] = useState({});
   useEffect(() => {
-    // setProfile(Mime(user.profile_picture)) // TODO CHANGE TO NOT USE HARDCODED STRING LATER
-    setProfile(ProfilePic);
+    // setProfile();
     setProfileProps({
       float_title: (
         <>
@@ -46,6 +44,9 @@ export default function TopBar(props) {
       ),
     });
   }, []);
+  useEffect(() => {
+    setProfile(Mime(user.profile_picture)); // TODO CHANGE TO NOT USE HARDCODED STRING LATER
+  }, [user]);
 
   const dispatch = useDispatch();
   const handleSignOut = () => {

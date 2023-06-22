@@ -1,19 +1,33 @@
+import { getProfile } from '../services/admin';
+import { setUser } from '../store/userSlice';
 import Blank from './Blank';
 import LayoutIcon from './LayoutIcon';
 import LayoutWidget from './LayoutWidget';
 
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 function checkAuth() {
   const user = useSelector(state => state.user.user);
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const handleProfile = async () => {
+    const res = await getProfile(user.name)
+    // console.log(res, user.name)
+    dispatch(setUser(res))
+  }
+
   useEffect(() => {
     if (!user.name) {
       router.push('/login/signin');
+      return;
     }
-  }, [user, router.events, useSelector(state => state.user.user)]);
+    handleProfile()
+    // console.log(user.name)
+  }, [user.name, router.events, useSelector(state => state.user.user.name)]);
+
 }
 
 function getLayoutBlank(page) {
