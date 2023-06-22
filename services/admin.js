@@ -6,7 +6,7 @@ import { useSelector } from "react-redux"
 
 function TokenExpired(err) {
     console.log(err)
-    const code = err.response.status
+    const code = (err.response && err.response.status) ?? 400
     if(code === 401 || code === 402) {
         Router.push('/login/signin')
         // window.location.href = '/login/signin'
