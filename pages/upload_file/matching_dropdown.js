@@ -123,7 +123,7 @@ const uploadImage = async imageBase64Str => {
 
   try {
     const response = await fetch(
-      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
+      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
       requestOptions,
     );
     const result = await response.text();
@@ -146,7 +146,7 @@ const postScrapeAnnotate = async (docId, page) => {
 
   try {
     const response = await fetch(
-      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/scrape/${docId}/${page}`,
+      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/scrape/${docId}/${page}`,
       requestOptions,
     );
     const result = await response.text();
@@ -165,7 +165,7 @@ const fetchDocumentSummary = async docId => {
 
   try {
     const response = await fetch(
-      `${process.env.OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
+      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
       requestOptions,
     );
     const result = await response.text();
@@ -177,11 +177,10 @@ const fetchDocumentSummary = async docId => {
 };
 
 const generateImageUrl = (docId, page) => {
-  return `${process.env.OCR_SERVICE_URL}/ocr_service/v1/annotate/${docId}/${page}`;
+  return `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/annotate/${docId}/${page}`;
 };
 
-export default function MatchReview({setTitle}) {
-  setTitle('Upload File - Data Matching');
+export default function MatchReview({config, setTitle}) {
   const initialState = [
     {
       id: 0,
@@ -365,6 +364,7 @@ export default function MatchReview({setTitle}) {
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
+    setTitle('Data Matching - Dropdown');
     const init = async () => {
       router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
@@ -755,4 +755,11 @@ export default function MatchReview({setTitle}) {
       </div>
     </Container>
   );
+}
+
+export async function getServerSideProps(context) {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
 }

@@ -159,7 +159,7 @@ const uploadImage = async (
 
   try {
     const response = await fetch(
-      `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/upload/base64`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/upload/base64`,
       requestOptions,
     );
     const result = await response.text();
@@ -192,7 +192,7 @@ const postScrapeAnnotate = async (
 
   try {
     const response = await fetch(
-      `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/scrape/${docId}/${page}`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/scrape/${docId}/${page}`,
       requestOptions,
     );
     const result = await response.text();
@@ -220,7 +220,7 @@ const fetchDocumentSummary = async (
 
   try {
     const response = await fetch(
-      `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/summary/${docId}`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/summary/${docId}`,
       requestOptions,
     );
     const result = await response.text();
@@ -248,7 +248,7 @@ const fetchAutoFill = async (
 
   try {
     const response = await fetch(
-      `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/auto/${docId}/${pageNo}`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/auto/${docId}/${pageNo}`,
       requestOptions,
     );
     const result = await response.text();
@@ -260,11 +260,13 @@ const fetchAutoFill = async (
 };
 
 const generateImageUrl = (docId: string, page: number) => {
-  return `${process.env['OCR_SERVICE_URL']}/ocr_service/v1/annotate/${docId}/${page}`;
+  return `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/annotate/${docId}/${page}`;
 };
 
 interface MatchReviewProps {
   setTitle: (title: string) => void;
+  config: any;
+  NEXT_PUBLIC_OCR_SERVICE_URL: any;
 }
 
 interface TableRow {
@@ -405,8 +407,11 @@ const INITIAL_STATE: State = [
   WELL_SUMMARRY_TABLE_EMPTY,
 ];
 
-export default function MatchReview({setTitle}: MatchReviewProps) {
-  setTitle('Upload File - Data Matching');
+export default function MatchReview({
+  config,
+  NEXT_PUBLIC_OCR_SERVICE_URL,
+  setTitle,
+}: MatchReviewProps) {
   // const [state, setState] = useState<State>([INITIAL_STATE]);
   const [state, setState] = useState<State>([]);
   const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
@@ -468,6 +473,7 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
+    setTitle('Data Matching - Automatic');
     const init = async () => {
       router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
@@ -843,4 +849,15 @@ export default function MatchReview({setTitle}: MatchReviewProps) {
       </div>
     </Container>
   );
+}
+
+export async function getServerSideProps(context) {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  const NEXT_PUBLIC_OCR_SERVICE_URL = process.env.NEXT_PUBLIC_OCR_SERVICE_URL;
+  return {
+    props: {
+      config: config,
+      NEXT_PUBLIC_OCR_SERVICE_URL: NEXT_PUBLIC_OCR_SERVICE_URL,
+    }, // will be passed to the page component as props
+  };
 }

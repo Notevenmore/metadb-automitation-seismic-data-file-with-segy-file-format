@@ -8,7 +8,7 @@ import {storeFile, setUploadDocumentSettings} from '../../store/generalSlice';
 import Select from '../../public/icons/selection_tool.svg';
 import config, {datatypes} from '../../config';
 
-export default function UploadFilePage({setTitle}) {
+export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
@@ -111,6 +111,7 @@ export default function UploadFilePage({setTitle}) {
               kkks_name: UplSettings.kkks_name,
               working_area: UplSettings.working_area,
               submission_type: UplSettings.submission_type,
+              email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
             }),
           },
         ).then(res => {
@@ -629,4 +630,11 @@ export default function UploadFilePage({setTitle}) {
       </div>
     </Container>
   );
+}
+
+export async function getServerSideProps(context) {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
 }
