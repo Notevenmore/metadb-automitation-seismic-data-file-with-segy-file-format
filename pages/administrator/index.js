@@ -5,20 +5,20 @@ import {getProfiles, removeProfile} from '../../services/admin';
 import {useState} from 'react';
 import Link from 'next/link';
 import Input from '../../components/input_form/input';
-import {Delete, Visibility} from '@mui/icons-material';
 import Buttons from '../../components/buttons/buttons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
+import Image from 'next/image';
 
 AdministratorPage.getLayout = getLayoutTop;
 
 export default function AdministratorPage() {
   const [list, setList] = useState([]);
   const [filteredList, setFilteredList] = useState(list);
-  const user = useSelector(state => state.user.user)
+  const user = useSelector(state => state.user.user);
 
   const handleProfiles = async () => {
     const res = await getProfiles();
-	if(!res) return;
+    if (!res) return;
     const users = res.filter(item => item.userid !== 'admin');
     setList(users);
     setFilteredList(users);
@@ -51,7 +51,11 @@ export default function AdministratorPage() {
               onChange={e => handleSearch(e)}
             />
           </div>
-          <Buttons path="/administrator/add" additional_styles='bg-primary h-[32px]'>Add User</Buttons>
+          <Buttons
+            path="/administrator/add"
+            additional_styles="bg-primary h-[32px]">
+            Add User
+          </Buttons>
         </div>
         <div className="w-full h-auto border-gray-500 border-[1px] rounded-[5px] flex flex-col">
           <ItemRow>
@@ -62,14 +66,25 @@ export default function AdministratorPage() {
               <ItemRow key={index}>
                 <Item name={item.userid} />
                 <div className="w-full flex items-center gap-x-3">
-                    <Link href={`/administrator/${item.userid}`}>
-                      <Visibility fontSize="small" />
-                    </Link>
-                    <Delete
-                      fontSize="small"
-                      onClick={() => handleRemove(item.userid)}
-                      className="cursor-pointer"
+                  <Link href={`/administrator/${item.userid}`}>
+                    <Image
+                      src="/icons/visibility.svg"
+                      alt="image"
+                      width={100}
+                      height={100}
+                      className="w-[20px] h-[20px] cursor-pointer"
+                      priority
                     />
+                  </Link>
+                  <Image
+                    src="/icons/delete.svg"
+                    alt="image"
+                    width={100}
+                    height={100}
+                    className="w-[20px] h-[20px] cursor-pointer"
+                    priority
+                    onClick={() => handleRemove(item.userid)}
+                  />
                 </div>
               </ItemRow>
             ))}
