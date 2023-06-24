@@ -406,7 +406,7 @@ export default function UploadFilePage({config, setTitle}) {
                 UplSettings.DataType
                   ? setUplSettings({
                       ...UplSettings,
-                      afe_number: e.target.value,
+                      afe_number: parseInt(e.target.value),
                       workspace_name: `record_${e.target.value}`,
                     })
                   : null
