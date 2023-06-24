@@ -1,10 +1,10 @@
 .navItem:hover .navItemChevron {
-    opacity: 1;
-    transform: translateX(0);
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .navItemChevron {
-    transform: translateX(-2px);
-    transition: all .25s;
-    opacity: 0;
+  transform: translateX(-2px);
+  transition: all 0.25s;
+  opacity: 0;
 }

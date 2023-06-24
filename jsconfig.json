@@ -1,8 +1,8 @@
 {
-    "compilerOptions": {
-        "paths": {
-            "@/components/*": ["./components/*"],
-            "@/store/*": ["./store/*"]
-        }
+  "compilerOptions": {
+    "paths": {
+      "@/components/*": ["./components/*"],
+      "@/store/*": ["./store/*"]
     }
+  }
 }
