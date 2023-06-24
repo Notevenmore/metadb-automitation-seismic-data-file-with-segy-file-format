@@ -762,7 +762,9 @@ export default function MatchReview({config, setTitle}) {
           <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} />
           <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
-      <Toast setmessage={setMessage}>{Message.message}</Toast>
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
 
       {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${

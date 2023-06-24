@@ -751,7 +751,9 @@ export default function UploadFilePage({config, setTitle}) {
           </div>
         </div>
       )}
-      <Toast setmessage={setMessage}>{Message.message}</Toast>
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
     </Container>
   );
 }

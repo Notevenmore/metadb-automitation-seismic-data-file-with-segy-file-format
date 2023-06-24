@@ -351,7 +351,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           disabled={!spreadsheetReady || Message.message ? true : false}
         />
       </div>
-      <Toast setmessage={setMessage}>{Message.message}</Toast>
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
       {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%]
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white

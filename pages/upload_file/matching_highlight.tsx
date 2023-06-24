@@ -252,7 +252,7 @@ export default function MatchingGuided({config, setTitle}) {
 
   // utility states
   const [loading, setLoading] = useState<string>('');
-  const [message, setMessage] = useState<object>({
+  const [message, setMessage] = useState({
     message: '',
     color: '',
     show: false,
@@ -598,7 +598,9 @@ export default function MatchingGuided({config, setTitle}) {
         {/* @ts-ignore */}
         {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
-      <Toast setmessage={setMessage}>{message.message}</Toast>
+      <Toast message={message} setmessage={setMessage}>
+        {message.message}
+      </Toast>
       {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all z-40 ${
           message ? '' : '-translate-y-20'

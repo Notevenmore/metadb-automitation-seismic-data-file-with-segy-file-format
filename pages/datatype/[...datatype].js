@@ -609,7 +609,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           </div>
         </div>
       </div>
-      <Toast setmessage={setMessage}>{Message.message}</Toast>
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
 
       {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%]
