@@ -82,8 +82,10 @@ export default function UploadFileReview({setTitle, config}) {
           kkks_name: upload_document_settings.kkks_name,
           working_area: upload_document_settings.working_area,
           submission_type: upload_document_settings.submission_type,
+          email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
         };
-        setworkspaceData(workspace_data);
+        // setworkspaceData(workspace_data);
+        setworkspaceData(upload_document_settings);
         setloading('');
       } catch (error) {
         setloading('');
