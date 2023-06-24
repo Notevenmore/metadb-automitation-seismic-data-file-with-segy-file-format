@@ -8,13 +8,15 @@ import Input from '../../components/input_form/input';
 import Buttons from '../../components/buttons/buttons';
 import {useSelector} from 'react-redux';
 import Image from 'next/image';
+import Toast from '../../components/toast/toast';
 
 AdministratorPage.getLayout = getLayoutTop;
 
 export default function AdministratorPage() {
   const [list, setList] = useState([]);
   const [filteredList, setFilteredList] = useState(list);
-  const user = useSelector(state => state.user.user);
+
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
 
   const handleProfiles = async () => {
     const res = await getProfiles();
@@ -29,7 +31,23 @@ export default function AdministratorPage() {
   }, []);
 
   const handleRemove = async userId => {
-    await removeProfile(userId).then(() => handleProfiles());
+    await removeProfile(userId).then(
+      () => {
+        handleProfiles();
+        setMessage({
+          message: `${userId} acount successfully deleted.`,
+          color: 'blue',
+          show: true,
+        });
+      },
+      err => {
+        setMessage({
+          message: String(err),
+          color: 'red',
+          show: true,
+        });
+      },
+    );
   };
 
   const handleSearch = e => {
@@ -91,6 +109,9 @@ export default function AdministratorPage() {
           </div>
         </div>
       </div>
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
     </Container>
   );
 }
