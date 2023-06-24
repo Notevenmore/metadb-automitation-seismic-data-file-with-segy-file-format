@@ -127,7 +127,7 @@ export default function UploadFileReview({setTitle, config}) {
         setMessage({
           message: 'Record successfully saved',
           color: 'blue',
-          show: false,
+          show: true,
         });
         router.events.emit('routeChangeComplete');
         if (redirect) {
@@ -135,7 +135,7 @@ export default function UploadFileReview({setTitle, config}) {
           setMessage({
             message: 'Redirecting to homepage...',
             color: 'blue',
-            show: false,
+            show: true,
           });
           await delay(1000);
           router.push('/');
@@ -150,7 +150,7 @@ export default function UploadFileReview({setTitle, config}) {
           error,
         )}`,
         color: 'red',
-        show: false,
+        show: true,
       });
     }
     router.events.emit('routeChangeComplete');
@@ -163,7 +163,7 @@ export default function UploadFileReview({setTitle, config}) {
           message:
             'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
           color: 'blue',
-          show: false,
+          show: true,
         });
         await delay(10000);
         setMessage({message: '', color: '', show: false});
