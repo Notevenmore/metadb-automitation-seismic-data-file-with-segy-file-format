@@ -1,20 +1,20 @@
 export default {
-  bibliography: {
-    workspace: 'http://localhost:8080/api/v1/bibliography-workspace/',
-    afe: 'http://localhost:8080/api/v1/bibliography-afe/',
-    view: 'http://localhost:8080/api/v1/bibliography/',
-    workspace_holder_key: 'biblio_id',
-  },
-  printed_well_report: {
-    workspace: 'http://localhost:8080/api/v1/print-well-report-workspace/',
-    afe: 'http://localhost:8080/api/v1/print-well-report-workspace-afe/',
-    view: 'http://localhost:8080/api/v1/print-well-report/',
-    workspace_holder_key: 'pwr_id',
-  },
-  services: {
-    sheets: 'http://localhost:5050',
-  },
-};
+	bibliography: {
+		workspace: "http://localhost:8001/api/v1/bibliography-workspace/",
+		afe: "http://localhost:8001/api/v1/bibliography-afe/",
+		view: "http://localhost:8001/api/v1/bibliography/",
+		workspace_holder_key: "biblio_id"
+	},
+	printed_well_report: {
+		workspace: "http://localhost:8002/api/v1/print-well-report-workspace/",
+		afe: "http://localhost:8002/api/v1/print-well-report-workspace-afe/",
+		view: "http://localhost:8002/api/v1/print-well-report/",
+		workspace_holder_key: "pwr_id"
+	},
+	services: {
+		sheets: "http://localhost:8003"
+	}
+}
 
 export const datatypes = {
   Basin: 'basin',
