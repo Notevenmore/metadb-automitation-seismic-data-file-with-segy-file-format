@@ -15,6 +15,8 @@ import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
 import config from '../../config';
+import Input from '../../components/input_form/input';
+import TableComponent from '../../components/table/table';
 
 interface TableRow {
   id: number;
@@ -249,6 +251,7 @@ export default function MatchingGuided({config, setTitle}) {
   const [docId, _setDocId] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [formType, setformType] = useState<string>('');
+  const [data, setdata] = useState([]);
 
   // utility states
   const [loading, setLoading] = useState<string>('');
@@ -297,7 +300,7 @@ export default function MatchingGuided({config, setTitle}) {
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
-    setTitle('Data Matching - Highlight');
+    setTitle('Data Matching | Highlight');
     const init = async () => {
       router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
@@ -437,26 +440,54 @@ export default function MatchingGuided({config, setTitle}) {
     <div
       key={data.id}
       className={
-        (selectedRow === data.id ? 'text-red-500 underline' : '') +
-        ' cursor-pointer'
+        (selectedRow === data.id ? 'underline' : '') + ' cursor-pointer'
       }>
-      <HeaderDivider />
-      <div onClick={_ => clickRow(data.id)} className={'w-full'}>
-        <HeaderInput
-          label1={
-            (selectedRow === data.id ? '* ' : '') +
-            data.key
-              .replace(/\_/g, ' ')
-              .split(' ')
-              .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-              .join(' ')
-          }>
-          <HeaderRow title={data.value}>
-            {data.value?.length > 20
-              ? data.value?.substring(0, 20) + '...'
-              : data.value}
-          </HeaderRow>
-        </HeaderInput>
+      <HeaderDivider additional_styles="border-gray-300" />
+      <div
+        onClick={_ => clickRow(data.id)}
+        className={
+          (selectedRow === data.id ? 'underline' : '') +
+          ' w-full cursor-pointer py-2.5 grid grid-cols-[1fr_auto] items-center space-x-2'
+        }>
+        <Input
+          type="text"
+          label={data.key
+            .replace(/\_/g, ' ')
+            .split(' ')
+            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+            .join(' ')}
+          label_loc="beside"
+          value={data.value || ''}
+          title={data.value || ''}
+          placeholder="Highlighted text will show up here"
+          additional_styles_input="overflow-ellipsis placeholder:text-gray-400"
+          additional_styles_label={`${
+            selectedRow === data.id ? 'font-bold' : 'font-semibold'
+          } cursor-pointer`}
+          additional_styles="min-w-0 cursor-pointer"
+          onChange={e => setValueForId(data.id, e.target.value)}
+        />
+        <Buttons
+          additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
+          title="Reset input"
+          disabled={data.value ? false : true}
+          onClick={() => {
+            setValueForId(data.id, '');
+          }}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </Buttons>
       </div>
     </div>
   );
@@ -484,10 +515,10 @@ export default function MatchingGuided({config, setTitle}) {
     </div>
   ) : (
     <Container additional_class="full-height relative">
-      <Container.Title>
+      <Container.Title back>
         <div className="-space-y-2">
           <p className="capitalize text-sm font-normal">{path_query}</p>
-          <p>Data Matching</p>
+          <p>Data Matching - Highlight</p>
         </div>
       </Container.Title>
       {/* <div className="grid grid-cols-2 gap-14 border-[2px] rounded-lg p-2"> */}

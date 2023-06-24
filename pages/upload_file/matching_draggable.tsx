@@ -566,7 +566,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
-    setTitle('Data Matching - Drag and Drop');
+    setTitle('Data Matching | Drag and Drop');
     const init = async () => {
       router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
@@ -743,26 +743,28 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const toRowComponent = (data: TableRow) => {
     return (
       <div key={data.id}>
-        <HeaderDivider />
-        <HeaderInput
-          label1={data.key
-            .replace(/\_/g, ' ')
-            .split(' ')
-            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-            .join(' ')}>
+        <HeaderDivider additional_styles="border-gray-300" />
+        <div className="py-2.5 grid grid-cols-[1fr_auto] items-center space-x-2">
           <DroppableBox
             onDrop={drop =>
               setValueForId(
                 data.id,
                 pageNo,
-                `${data.value.trim()} ${drop.trim()}`.trim(),
+                // `${data.value.trim()} ${drop.trim()}`.trim(),
+                drop.trim(),
               )
             }>
             <Input
+              label={data.key
+                .replace(/\_/g, ' ')
+                .split(' ')
+                .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+                .join(' ')}
+              label_loc="beside"
               value={data.value}
               type="dropdown"
               name={'submissionType'}
-              placeholder={'Value'}
+              placeholder="Dropped items' text will show up here"
               // @ts-ignore
               dropdown_items={dropDownOptions}
               required={true}
@@ -772,7 +774,36 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               withSearch
             />
           </DroppableBox>
-        </HeaderInput>
+          <Buttons
+            additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
+            title="Reset input"
+            disabled={data.value ? false : true}
+            onClick={() => {
+              setValueForId(data.id, pageNo, '');
+            }}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </Buttons>
+        </div>
+        {/* <HeaderInput
+          label1={data.key
+            .replace(/\_/g, ' ')
+            .split(' ')
+            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+            .join(' ')}>
+          
+        </HeaderInput> */}
       </div>
     );
   };
@@ -840,10 +871,10 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   ) : (
     <DraggableProvider>
       <Container additional_class="full-height relative">
-        <Container.Title>
+        <Container.Title back>
           <div className="-space-y-2">
             <p className="capitalize text-sm font-normal">{path_query}</p>
-            <p>Data Matching</p>
+            <p>Data Matching - Drag and Drop</p>
           </div>
         </Container.Title>
         <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
