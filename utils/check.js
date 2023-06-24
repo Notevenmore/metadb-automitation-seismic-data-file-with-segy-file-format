@@ -1,12 +1,28 @@
-function checkAuth() {
+import {useRouter} from 'next/router';
+import {useDispatch, useSelector} from 'react-redux';
+import {useEffect, useState} from 'react';
+
+function CheckAuth() {
   const user = useSelector(state => state.user.user);
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
+
   const handleProfile = async () => {
-    const res = await getProfile(user.name);
+    const res = await getProfile(user.name).then(
+      () => {
+        dispatch(setUser(res));
+      },
+      err => {
+        setMessage({
+          message: String(err),
+          color: "red",
+          show: true
+        })
+      },
+    );
     // console.log(res, user.name)
-    dispatch(setUser(res));
   };
 
   useEffect(() => {
@@ -18,9 +34,11 @@ function checkAuth() {
     handleProfile();
     // console.log(user.name)
   }, [user.name, router.events, useSelector(state => state.user.user.name)]);
+
+  return {Message, setMessage}
 }
 
-function checkUser(userType) {
+function CheckUser(userType) {
   const router = useRouter();
   const user = useSelector(state => state.user.user);
 
@@ -32,4 +50,4 @@ function checkUser(userType) {
   }, [router.asPath]);
 }
 
-export {checkAuth, checkUser}
+export {CheckAuth , CheckUser};
