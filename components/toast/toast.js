@@ -46,7 +46,7 @@ const Toast = ({message, setmessage, additional_styles, children}) => {
       className={twMerge(
         `flex items-center space-x-2 fixed left-[50%]
       translate-x-[-50%] text-white
-      px-3 rounded-lg py-2 transition-[top] duration-[230ms] ${
+      px-3 rounded-lg py-2 transition-all duration-[230ms] ${
         message.show ? '' : ``
       }`,
         additional_styles,
