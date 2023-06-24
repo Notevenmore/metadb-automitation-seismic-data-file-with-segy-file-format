@@ -12,13 +12,11 @@ function TokenExpired(err) {
     }
 }
 
-const cookie = parseCookies().user_data
-
-async function getProfiles () {
+async function getProfiles (token) {
     try{
         const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_AUTH}/profile/list`, {
             headers: {
-                Authorization: `Bearer ${JSON.parse(cookie).access_token}`
+                Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token}`
             }
         })
         const data = res.data.data
@@ -26,7 +24,7 @@ async function getProfiles () {
         console.log(data)
     } catch (err) {
         TokenExpired(err)
-        console.log(err, code)
+        console.log(err)
     }
 }
 
@@ -34,7 +32,7 @@ async function getProfile (userId) {
     try{
         const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_AUTH}/profile/${userId}`, {
             headers: {
-                Authorization: `Bearer ${JSON.parse(cookie).access_token}`
+                Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token}`
             }
         })
         const data = res.data.data
@@ -42,7 +40,7 @@ async function getProfile (userId) {
         console.log(data)
     } catch (err) {
         TokenExpired(err)
-        console.log(err)
+        throw err
     }
 }
 
@@ -50,15 +48,15 @@ async function removeProfile (userId) {
     try{
         const res = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_AUTH}/profile/${userId}`, {
             headers: {
-                Authorization: `Bearer ${JSON.parse(cookie).access_token}`
+                Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token}`
             }
         })
         const data = res.data.data
         return data
         console.log(data)
     } catch (err) {
-        console.log(err)
         TokenExpired(err)
+        throw err
     }
 }
 
@@ -66,7 +64,7 @@ async function updateProfile (body) {
     try{
         const res = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_AUTH}/profile`,body, {
             headers: {
-                Authorization: `Bearer ${JSON.parse(cookie).access_token}`
+                Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token}`
             },
             // data: body
         })
@@ -84,7 +82,7 @@ async function addProfile (body) {
     try{
         const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_AUTH}/profile/new`,body, {
             headers: {
-                Authorization: `Bearer ${JSON.parse(cookie).access_token}`
+                Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token}`
             },
             // data: body
         })
@@ -92,9 +90,8 @@ async function addProfile (body) {
         return data
         console.log(data)
     } catch (err) {
-        console.log(err)
         TokenExpired(err)
-        return err
+        throw err
     }
 }
 
