@@ -64,6 +64,10 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         })
         .then(res => {
           let final = [];
+          if (!res) {
+            setData([0]);
+            return;
+          }
           res.forEach(workspace => {
             final.push({
               // Name: workspace.workspace_name,
@@ -365,7 +369,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
               ? ['Search did not return any result']
               : ['AFE', 'KKKS', 'Working area', 'Type', 'Action']
             : data.length !== 0
-            ? ['AFE', 'KKKS', 'Working area', 'Type', 'Action']
+            ? data[0] === 0
+              ? ['No records have been created']
+              : ['AFE', 'KKKS', 'Working area', 'Type', 'Action']
             : error
             ? ['Connection error']
             : ['Loading...']
@@ -389,6 +395,13 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                   },
                 ]
               : [{'Loading...': 'Getting record list...'}]
+            : data[0] === 0
+            ? [
+                {
+                  'No records have been created':
+                    'Heads up! Create a new record by clicking the + button below',
+                },
+              ]
             : data
         }
         setSelectedRows={selectedTableData}
