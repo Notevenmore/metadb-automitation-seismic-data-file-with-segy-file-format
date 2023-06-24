@@ -1,6 +1,6 @@
 import SideBar from '../components/navigation_bar/SideBar';
 import TopBar from '../components/navigation_bar/Topbar';
-import {checkAuth, checkUser} from './getLayout';
+import { checkAuth, checkUser } from '../utils/check';
 
 export default function LayoutIcon({children}) {
   checkAuth();
