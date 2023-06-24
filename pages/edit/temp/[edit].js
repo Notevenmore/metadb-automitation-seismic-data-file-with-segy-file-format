@@ -6,17 +6,17 @@ import Sheets from '../../../components/sheets/sheets';
 import TableComponent from '../../../components/table/table';
 import Input from '../../../components/input_form/input';
 import Container from '../../../components/container/container';
-import config from '../../../config';
 import Highlight from 'react-highlight';
 import {
   downloadWorkspace,
   init_data,
   saveDocument,
 } from '../../../components/utility_functions';
+import Toast from '../../../components/toast/toast';
 
 const DocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
-  const [Message, setMessage] = useState({message: '', color: ''});
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [error, seterror] = useState('');
   const [Data, setData] = useState([-1]);
   const [dataContentDetails, setdataContentDetails] = useState([-1]);
@@ -94,9 +94,10 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           message:
             'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
           color: 'blue',
+          show: true,
         });
         await delay(10000);
-        setMessage({message: '', color: ''});
+        setMessage({message: '', color: '', show: false});
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -117,10 +118,14 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       );
       if (result.success) {
         setIsSaved(true);
-        setMessage({message: 'Record successfully saved', color: 'blue'});
+        setMessage({
+          message: 'Record successfully saved',
+          color: 'blue',
+          show: true,
+        });
         router.events.emit('routeChangeComplete');
         await delay(3000);
-        setMessage({message: '', color: ''});
+        setMessage({message: '', color: '', show: false});
       }
     } catch (error) {
       // Handle error and display error message
@@ -129,6 +134,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           error,
         )}`,
         color: 'red',
+        show: true,
       });
     }
     router.events.emit('routeChangeComplete');
@@ -149,14 +155,15 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         setMessage({
           message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
           color: 'blue',
+          show: true,
         });
         setIsSaved(false);
         router.events.emit('routeChangeComplete');
         await delay(3500);
-        setMessage({message: '', color: ''});
+        setMessage({message: '', color: '', show: false});
       }
     } catch (error) {
-      setMessage({message: `${String(error)}`, color: 'red'});
+      setMessage({message: `${String(error)}`, color: 'red', show: true});
     }
     router.events.emit('routeChangeComplete');
     settriggerSave('');
@@ -344,7 +351,8 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           disabled={!spreadsheetReady || Message.message ? true : false}
         />
       </div>
-      <div
+      <Toast setmessage={setMessage}>{Message.message}</Toast>
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%]
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${
@@ -356,7 +364,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           path=""
           onClick={e => {
             e.preventDefault();
-            setMessage({message: '', color: ''});
+            setMessage({message: '', color: '', show: false});
           }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -372,7 +380,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             />
           </svg>
         </Button>
-      </div>
+      </div> */}
     </Container>
   ) : (
     <div

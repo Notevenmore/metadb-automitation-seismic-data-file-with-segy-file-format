@@ -11,6 +11,7 @@ import Highlight from 'react-highlight';
 import {setUploadDocumentSettings} from '../../store/generalSlice';
 import {useDispatch} from 'react-redux';
 import {checkAfe} from '../../components/utility_functions';
+import Toast from '../../components/toast/toast';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
@@ -25,7 +26,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     afe_number: '',
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
-  const [Message, setMessage] = useState({message: '', color: ''});
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
 
@@ -171,6 +172,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         message:
           "Creating a new record... Please don't leave this page or click anything",
         color: 'blue',
+        show: true,
       });
       await fetch(`${config[datatype]['afe']}`, {
         method: 'POST',
@@ -204,6 +206,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       setMessage({
         message: 'Success. Redirecting to the next page...',
         color: 'blue',
+        show: true,
       });
       router.events.emit('routeChangeComplete');
       await delay(1500);
@@ -213,7 +216,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       });
     } catch (error) {
       // Handle error and display error message
-      setMessage({message: String(error), color: 'red'});
+      setMessage({message: String(error), color: 'red', show: true});
     }
     router.events.emit('routeChangeComplete');
   };
@@ -226,6 +229,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         message:
           "Deleting record... Please don't leave this page or click anything",
         color: 'blue',
+        show: true,
       });
       await fetch(`${config[datatype]['afe']}${afe_number}`, {
         method: 'DELETE',
@@ -237,15 +241,15 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           throw `Response returned with status code ${res.status}: ${res.statusText}`;
         }
       });
-      setMessage({message: 'Success', color: 'blue'});
+      setMessage({message: 'Success', color: 'blue', show: true});
       reset_search();
       init();
       router.events.emit('routeChangeComplete');
       await delay(2000);
-      setMessage({message: '', color: ''});
+      setMessage({message: '', color: '', show: false});
       // router.reload(window.location.pathname)
     } catch (error) {
-      setMessage({message: String(error), color: 'red'});
+      setMessage({message: String(error), color: 'red', show: true});
     }
     router.events.emit('routeChangeComplete');
   };
@@ -315,6 +319,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           error,
         )}`,
         color: 'red',
+        show: true,
       });
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
@@ -604,7 +609,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           </div>
         </div>
       </div>
-      <div
+      <Toast setmessage={setMessage}>{Message.message}</Toast>
+
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%]
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${
@@ -632,7 +639,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             />
           </svg>
         </Button>
-      </div>
+      </div> */}
     </Container>
   );
 };

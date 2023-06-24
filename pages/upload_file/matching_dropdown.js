@@ -17,6 +17,7 @@ import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
 import config from '../../config';
+import Toast from '../../components/toast/toast';
 
 const FullButton = ({children, onClick}) => {
   return (
@@ -311,7 +312,7 @@ export default function MatchReview({config, setTitle}) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState('');
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState('');
   const [error, setError] = useState('');
 
@@ -456,12 +457,15 @@ export default function MatchReview({config, setTitle}) {
       router.events.emit('routeChangeComplete');
       setLoading('');
       setTimeout(() => {
-        setMessage(
-          'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-        );
+        setMessage({
+          message:
+            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+          color: 'blue',
+          show: true,
+        });
       }, 3000);
       await delay(5000);
-      setMessage('');
+      setMessage({message: '', color: '', show: false});
     };
     init();
   }, [files]);
@@ -758,7 +762,9 @@ export default function MatchReview({config, setTitle}) {
           <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} />
           <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
-      <div
+      <Toast setmessage={setMessage}>{Message.message}</Toast>
+
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
           Message ? '' : '-translate-y-20'
         }`}>
@@ -783,7 +789,7 @@ export default function MatchReview({config, setTitle}) {
             />
           </svg>
         </Buttons>
-      </div>
+      </div> */}
     </Container>
   );
 }

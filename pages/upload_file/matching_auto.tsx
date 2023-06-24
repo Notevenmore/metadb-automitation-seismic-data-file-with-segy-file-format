@@ -18,6 +18,7 @@ import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
 import config from '../../config';
+import Toast from '../../components/toast/toast';
 
 interface FullButtonProps {
   onClick: () => void;
@@ -420,7 +421,7 @@ export default function MatchReview({
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState('');
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -598,12 +599,15 @@ export default function MatchReview({
           }
           setLoading('');
           setTimeout(() => {
-            setMessage(
-              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-            );
+            setMessage({
+              message:
+                'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+              color: 'blue',
+              show: true,
+            });
           }, 3000);
           await delay(5000);
-          setMessage('');
+          setMessage({message: '', color: '', show: false});
         } catch (error) {
           setError(String(error));
         }
@@ -665,7 +669,7 @@ export default function MatchReview({
   const saveChanges = e => {
     e.preventDefault();
     let final = [];
-    setMessage('Loading... please wait');
+    setMessage({message: 'Loading... please wait', color: 'blue', show: true});
     try {
       for (let page = 0; page < state.length; page++) {
         // convert all keys to lowercase to match database
@@ -675,12 +679,15 @@ export default function MatchReview({
         final.push(temp_obj);
       }
     } catch (error) {
-      setMessage(
-        'Something happened while sending the data to the next page. Please try again later or contact maintainer if the problem persists.',
-      );
+      setMessage({
+        message:
+          'Something happened while sending the data to the next page. Please try again later or contact maintainer if the problem persists.',
+        color: 'red',
+        show: true,
+      });
       return;
     }
-    setMessage('');
+    setMessage({message: '', color: '', show: false});
     dispatch(setReviewData(final));
     localStorage.setItem('hello_world', JSON.stringify(final));
     router.push({
@@ -842,12 +849,13 @@ export default function MatchReview({
         {/* @ts-ignore */}
         {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
-      <div
+      <Toast setmessage={setMessage}>{Message.message}</Toast>
+
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
           Message ? '' : '-translate-y-20'
         }`}>
         <p>{Message}</p>
-        {/* @ts-ignore */}
         <Buttons
           additional_styles="px-1 py-1 text-black"
           path=""
@@ -868,7 +876,7 @@ export default function MatchReview({
             />
           </svg>
         </Buttons>
-      </div>
+      </div> */}
     </Container>
   );
 }

@@ -11,6 +11,7 @@ import Input from '../components/input_form/input';
 import config, {datatypes} from '../config';
 import {setUploadDocumentSettings} from '../store/generalSlice';
 import {checkAfe} from '../components/utility_functions';
+import Toast from '../components/toast/toast';
 
 export async function getServerSideProps(context) {
   const config = JSON.parse(process.env.ENDPOINTS);
@@ -40,7 +41,7 @@ const HomeSection = ({config}) => {
     afe_number: '',
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
-  const [Message, setMessage] = useState({message: '', color: ''});
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
 
@@ -65,6 +66,7 @@ const HomeSection = ({config}) => {
           message:
             "Creating a new record... Please don't leave this page or click anything",
           color: 'blue',
+          show: true,
         });
         await fetch(`${config[datatypes[dataType]]['afe']}`, {
           method: 'POST',
@@ -98,6 +100,7 @@ const HomeSection = ({config}) => {
         setMessage({
           message: 'Success. Redirecting to the next page...',
           color: 'blue',
+          show: true,
         });
         router.events.emit('routeChangeComplete');
         await delay(1500);
@@ -110,6 +113,7 @@ const HomeSection = ({config}) => {
         setMessage({
           message: String(error),
           color: 'red',
+          show: true,
         });
       }
       router.events.emit('routeChangeComplete');
@@ -179,6 +183,7 @@ const HomeSection = ({config}) => {
           error,
         )}`,
         color: 'red',
+        show: true,
       });
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
@@ -424,7 +429,9 @@ const HomeSection = ({config}) => {
           </div>
         </div>
       </div>
-      <div
+      <Toast setmessage={setMessage}>{Message.message}</Toast>
+
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%]
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${
@@ -452,7 +459,7 @@ const HomeSection = ({config}) => {
             />
           </svg>
         </Buttons>
-      </div>
+      </div> */}
     </section>
   );
 };

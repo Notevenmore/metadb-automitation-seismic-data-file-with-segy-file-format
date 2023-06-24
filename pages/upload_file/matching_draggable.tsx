@@ -21,6 +21,7 @@ import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
 import config from '../../config';
+import Toast from '../../components/toast/toast';
 
 interface FullButtonProps {
   onClick: () => void;
@@ -476,7 +477,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState('');
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const imageRef = useRef();
   const {dim: naturalDim, reload: naturalReload} = useNaturalImageDim(imageRef);
   const {dim: actualDim, reload: actualReload} = useElementDim(imageRef);
@@ -678,12 +679,15 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       router.events.emit('routeChangeComplete');
       setLoading('');
       setTimeout(() => {
-        setMessage(
-          'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-        );
+        setMessage({
+          message:
+            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+          color: 'blue',
+          show: true,
+        });
       }, 3000);
       await delay(5000);
-      setMessage('');
+      setMessage({message: '', color: '', show: false});
     };
     init();
   }, [files]);
@@ -965,12 +969,13 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           {/* @ts-ignore */}
           {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
         </ButtonsSection>
-        <div
+        <Toast setmessage={setMessage}>{Message.message}</Toast>
+
+        {/* <div
           className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
             Message ? '' : '-translate-y-20'
           }`}>
           <p>{Message}</p>
-          {/* @ts-ignore */}
           <Buttons
             additional_styles="px-1 py-1 text-black"
             path=""
@@ -991,7 +996,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               />
             </svg>
           </Buttons>
-        </div>
+        </div> */}
       </Container>
     </DraggableProvider>
   );

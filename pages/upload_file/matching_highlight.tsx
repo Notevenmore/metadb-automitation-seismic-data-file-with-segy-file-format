@@ -1,10 +1,8 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import Container from '../../components/container/container';
 import HeaderTable, {
   HeaderDivider,
   ButtonsSection,
-  HeaderRow,
-  HeaderInput,
 } from '../../components/header_table/header_table';
 import Buttons from '../../components/buttons/buttons';
 import {ImageEditor, Tuple4} from '../components/highlight_viewer';
@@ -14,9 +12,8 @@ import {useRouter} from 'next/router';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
-import config from '../../config';
 import Input from '../../components/input_form/input';
-import TableComponent from '../../components/table/table';
+import Toast from '../../components/toast/toast';
 
 interface TableRow {
   id: number;
@@ -255,7 +252,11 @@ export default function MatchingGuided({config, setTitle}) {
 
   // utility states
   const [loading, setLoading] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState<object>({
+    message: '',
+    color: '',
+    show: false,
+  });
   const [error, setError] = useState<string>('');
 
   // @ts-ignore
@@ -378,12 +379,15 @@ export default function MatchingGuided({config, setTitle}) {
       router.events.emit('routeChangeComplete');
       setLoading(null);
       setTimeout(() => {
-        setMessage(
-          'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-        );
+        setMessage({
+          message:
+            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+          color: 'blue',
+          show: true,
+        });
       }, 3000);
       await delay(5000);
-      setMessage('');
+      setMessage({message: '', color: '', show: false});
     };
     init();
   }, []);
@@ -594,17 +598,17 @@ export default function MatchingGuided({config, setTitle}) {
         {/* @ts-ignore */}
         {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
-      <div
+      <Toast setmessage={setMessage}>{message.message}</Toast>
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all z-40 ${
           message ? '' : '-translate-y-20'
         }`}>
         <p>{message}</p>
-        {/* @ts-ignore */}
         <Buttons
           additional_styles="px-1 py-1 text-black"
           path=""
           onClick={() => {
-            setMessage('');
+            setMessage({message: '', color: '', show: false});
           }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -620,7 +624,7 @@ export default function MatchingGuided({config, setTitle}) {
             />
           </svg>
         </Buttons>
-      </div>
+      </div> */}
       <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
           error ? '' : '-translate-y-20'
