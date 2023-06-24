@@ -1,9 +1,10 @@
 import SideBar from '../components/navigation_bar/SideBar';
 import TopBar from '../components/navigation_bar/Topbar';
-import {checkAuth} from './getLayout';
+import {checkAuth, checkUser} from './getLayout';
 
 export default function LayoutIcon({children}) {
   checkAuth();
+  checkUser("Regular User")
 
   return (
     <div className="h-screen overflow-hidden">

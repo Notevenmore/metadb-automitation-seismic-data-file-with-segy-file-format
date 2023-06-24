@@ -32,6 +32,18 @@ function checkAuth() {
 
 }
 
+function checkUser(userType){
+  const router = useRouter();
+  const user = useSelector(state => state.user.user);
+
+  useEffect(() => {
+    if(user.type !== userType) {
+      router.push('/login/signin');
+      return;
+    }
+  }, [router.asPath])
+}
+
 function getLayoutBlank(page) {
   return <Blank>{page}</Blank>;
 }
@@ -48,4 +60,4 @@ function getLayoutTop(page) {
   return <LayoutTop>{page}</LayoutTop>;
 }
 
-export {getLayoutBlank, getLayoutIcon, getLayoutWidget, checkAuth, getLayoutTop};
+export {getLayoutBlank, getLayoutIcon, getLayoutWidget, checkAuth, getLayoutTop, checkUser};
