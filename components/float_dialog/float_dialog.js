@@ -31,43 +31,49 @@ const FloatDialog = ({
   return (
     <section className="relative">
       <section onClick={onClick ? onClick : toggleDialog}>{children}</section>
-      {show && (
-        <section
-          className={twMerge(
-            `bg-white absolute z-[50]  
+      <section
+        className={twMerge(
+          `${
+            show ? 'opacity-100 visible' : '-translate-y-1 opacity-0 invisible'
+          } bg-white absolute z-[50]  
             border-[1px] border-solid border-float_dialog rounded-[10px]
-            h-fit`,
-            className,
-          )}
-          style={{width: width}}>
-          {float_title && (
-            <>
-              <h2 className="text-[16px] font-bold my-[20px] px-[12px]">
-                {float_title ? float_title : ''}
-              </h2>
-              <Divider />
-            </>
-          )}
-          {items.contents.map((content, index) => (
-            <FloatSection
-              key={index}
-              content={content}
-              index={index}
-              toggleDialog={toggleDialog}
-            />
-            // if(items.type == "notification"){
-            //     return(
-            //         <FloatSection section_title={content.section_title}
-            //         section_content={content.section_content}/>
-            //     )
-            // }
-            // else if(items.type == "profile"){
-            //     return(
+            h-fit transition-all shadow-lg drop-shadow`,
+          className,
+        )}
+        style={{width: width}}>
+        {float_title && (
+          <>
+            <h2 className="text-[16px] font-bold my-[20px] px-[12px]">
+              {float_title ? float_title : ''}
+            </h2>
+            <Divider />
+          </>
+        )}
+        {items.contents.map((content, index) => (
+          <FloatSection
+            key={index}
+            content={content}
+            index={index}
+            toggleDialog={toggleDialog}
+          />
+          // if(items.type == "notification"){
+          //     return(
+          //         <FloatSection section_title={content.section_title}
+          //         section_content={content.section_content}/>
+          //     )
+          // }
+          // else if(items.type == "profile"){
+          //     return(
 
-            //     )
-            // }
-          ))}
-        </section>
+          //     )
+          // }
+        ))}
+      </section>
+      {show && (
+        <div
+          className="fixed bg-transparent top-0 bottom-0 left-0 right-0 z-[49]"
+          onClick={_ => setShow(!show)}
+        />
       )}
     </section>
   );

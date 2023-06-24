@@ -12,6 +12,7 @@ import {useRouter} from 'next/router';
 import {useSelector} from 'react-redux';
 import config from '../config';
 import {saveDocument} from '../components/utility_functions';
+import Toast from '../components/toast/toast';
 
 export async function getServerSideProps(context) {
   const config = JSON.parse(process.env.ENDPOINTS);
@@ -22,7 +23,7 @@ export async function getServerSideProps(context) {
 
 export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
-  const [Message, setMessage] = useState({message: '', color: ''});
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [spreadsheetID, setspreadsheetID] = useState();
   const [workspaceData, setworkspaceData] = useState();
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
@@ -58,10 +59,14 @@ export default function NewDocumentPage({setTitle, config}) {
         setMessage,
       );
       if (save_result.success) {
-        setMessage({message: 'Record successfully saved', color: 'blue'});
+        setMessage({
+          message: 'Record successfully saved',
+          color: 'blue',
+          show: true,
+        });
         router.events.emit('routeChangeComplete');
         await delay(3000);
-        setMessage({message: '', color: ''});
+        setMessage({message: '', color: '', show: false});
       }
     } catch (error) {
       setMessage({
@@ -69,6 +74,7 @@ export default function NewDocumentPage({setTitle, config}) {
           error,
         )}`,
         color: 'red',
+        show: true,
       });
     }
     router.events.emit('routeChangeComplete');
@@ -81,9 +87,10 @@ export default function NewDocumentPage({setTitle, config}) {
           message:
             'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
           color: 'blue',
+          show: true,
         });
         await delay(10000);
-        setMessage({message: '', color: ''});
+        setMessage({message: '', color: '', show: false});
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -220,7 +227,11 @@ export default function NewDocumentPage({setTitle, config}) {
           Cancel
         </Buttons>
       </div>
-      <div
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
+
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${
           Message.color || 'blue'
         }-500 text-white px-3 rounded-lg py-2 transition-all ${
@@ -248,7 +259,7 @@ export default function NewDocumentPage({setTitle, config}) {
             />
           </svg>
         </Buttons>
-      </div>
+      </div> */}
     </Container>
   ) : (
     <p>Loading...</p>

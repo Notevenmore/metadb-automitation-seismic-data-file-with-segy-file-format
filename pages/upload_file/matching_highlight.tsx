@@ -1,10 +1,8 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import Container from '../../components/container/container';
 import HeaderTable, {
   HeaderDivider,
   ButtonsSection,
-  HeaderRow,
-  HeaderInput,
 } from '../../components/header_table/header_table';
 import Buttons from '../../components/buttons/buttons';
 import {ImageEditor, Tuple4} from '../components/highlight_viewer';
@@ -14,7 +12,8 @@ import {useRouter} from 'next/router';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
-import config from '../../config';
+import Input from '../../components/input_form/input';
+import Toast from '../../components/toast/toast';
 
 interface TableRow {
   id: number;
@@ -249,10 +248,15 @@ export default function MatchingGuided({config, setTitle}) {
   const [docId, _setDocId] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [formType, setformType] = useState<string>('');
+  const [data, setdata] = useState([]);
 
   // utility states
   const [loading, setLoading] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
+  const [message, setMessage] = useState({
+    message: '',
+    color: '',
+    show: false,
+  });
   const [error, setError] = useState<string>('');
 
   // @ts-ignore
@@ -297,7 +301,7 @@ export default function MatchingGuided({config, setTitle}) {
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
-    setTitle('Data Matching - Highlight');
+    setTitle('Data Matching | Highlight');
     const init = async () => {
       router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
@@ -375,12 +379,15 @@ export default function MatchingGuided({config, setTitle}) {
       router.events.emit('routeChangeComplete');
       setLoading(null);
       setTimeout(() => {
-        setMessage(
-          'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-        );
+        setMessage({
+          message:
+            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+          color: 'blue',
+          show: true,
+        });
       }, 3000);
       await delay(5000);
-      setMessage('');
+      setMessage({message: '', color: '', show: false});
     };
     init();
   }, []);
@@ -437,26 +444,54 @@ export default function MatchingGuided({config, setTitle}) {
     <div
       key={data.id}
       className={
-        (selectedRow === data.id ? 'text-red-500 underline' : '') +
-        ' cursor-pointer'
+        (selectedRow === data.id ? 'underline' : '') + ' cursor-pointer'
       }>
-      <HeaderDivider />
-      <div onClick={_ => clickRow(data.id)} className={'w-full'}>
-        <HeaderInput
-          label1={
-            (selectedRow === data.id ? '* ' : '') +
-            data.key
-              .replace(/\_/g, ' ')
-              .split(' ')
-              .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-              .join(' ')
-          }>
-          <HeaderRow title={data.value}>
-            {data.value?.length > 20
-              ? data.value?.substring(0, 20) + '...'
-              : data.value}
-          </HeaderRow>
-        </HeaderInput>
+      <HeaderDivider additional_styles="border-gray-300" />
+      <div
+        onClick={_ => clickRow(data.id)}
+        className={
+          (selectedRow === data.id ? 'underline' : '') +
+          ' w-full cursor-pointer py-2.5 grid grid-cols-[1fr_auto] items-center space-x-2'
+        }>
+        <Input
+          type="text"
+          label={data.key
+            .replace(/\_/g, ' ')
+            .split(' ')
+            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+            .join(' ')}
+          label_loc="beside"
+          value={data.value || ''}
+          title={data.value || ''}
+          placeholder="Highlighted text will show up here"
+          additional_styles_input="overflow-ellipsis placeholder:text-gray-400"
+          additional_styles_label={`${
+            selectedRow === data.id ? 'font-bold' : 'font-semibold'
+          } cursor-pointer`}
+          additional_styles="min-w-0 cursor-pointer"
+          onChange={e => setValueForId(data.id, e.target.value)}
+        />
+        <Buttons
+          additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
+          title="Reset input"
+          disabled={data.value ? false : true}
+          onClick={() => {
+            setValueForId(data.id, '');
+          }}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </Buttons>
       </div>
     </div>
   );
@@ -484,10 +519,10 @@ export default function MatchingGuided({config, setTitle}) {
     </div>
   ) : (
     <Container additional_class="full-height relative">
-      <Container.Title>
+      <Container.Title back>
         <div className="-space-y-2">
           <p className="capitalize text-sm font-normal">{path_query}</p>
-          <p>Data Matching</p>
+          <p>Data Matching - Highlight</p>
         </div>
       </Container.Title>
       {/* <div className="grid grid-cols-2 gap-14 border-[2px] rounded-lg p-2"> */}
@@ -563,17 +598,19 @@ export default function MatchingGuided({config, setTitle}) {
         {/* @ts-ignore */}
         {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
-      <div
+      <Toast message={message} setmessage={setMessage}>
+        {message.message}
+      </Toast>
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all z-40 ${
           message ? '' : '-translate-y-20'
         }`}>
         <p>{message}</p>
-        {/* @ts-ignore */}
         <Buttons
           additional_styles="px-1 py-1 text-black"
           path=""
           onClick={() => {
-            setMessage('');
+            setMessage({message: '', color: '', show: false});
           }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -589,7 +626,7 @@ export default function MatchingGuided({config, setTitle}) {
             />
           </svg>
         </Buttons>
-      </div>
+      </div> */}
       <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
           error ? '' : '-translate-y-20'

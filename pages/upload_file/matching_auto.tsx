@@ -18,6 +18,7 @@ import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
 import config from '../../config';
+import Toast from '../../components/toast/toast';
 
 interface FullButtonProps {
   onClick: () => void;
@@ -420,7 +421,7 @@ export default function MatchReview({
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState('');
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -473,7 +474,7 @@ export default function MatchReview({
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
-    setTitle('Data Matching - Automatic');
+    setTitle('Data Matching | Automatic');
     const init = async () => {
       router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
@@ -598,12 +599,15 @@ export default function MatchReview({
           }
           setLoading('');
           setTimeout(() => {
-            setMessage(
-              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-            );
+            setMessage({
+              message:
+                'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+              color: 'blue',
+              show: true,
+            });
           }, 3000);
           await delay(5000);
-          setMessage('');
+          setMessage({message: '', color: '', show: false});
         } catch (error) {
           setError(String(error));
         }
@@ -665,7 +669,7 @@ export default function MatchReview({
   const saveChanges = e => {
     e.preventDefault();
     let final = [];
-    setMessage('Loading... please wait');
+    setMessage({message: 'Loading... please wait', color: 'blue', show: true});
     try {
       for (let page = 0; page < state.length; page++) {
         // convert all keys to lowercase to match database
@@ -675,12 +679,15 @@ export default function MatchReview({
         final.push(temp_obj);
       }
     } catch (error) {
-      setMessage(
-        'Something happened while sending the data to the next page. Please try again later or contact maintainer if the problem persists.',
-      );
+      setMessage({
+        message:
+          'Something happened while sending the data to the next page. Please try again later or contact maintainer if the problem persists.',
+        color: 'red',
+        show: true,
+      });
       return;
     }
-    setMessage('');
+    setMessage({message: '', color: '', show: false});
     dispatch(setReviewData(final));
     localStorage.setItem('hello_world', JSON.stringify(final));
     router.push({
@@ -692,19 +699,20 @@ export default function MatchReview({
   const toRowComponent = (data: TableRow) => {
     return (
       <div key={data.id}>
-        <HeaderDivider />
-        <HeaderInput
-          label1={data.key
-            .toLowerCase()
-            .replace(/\_/g, ' ')
-            .split(' ')
-            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-            .join(' ')}>
+        <HeaderDivider additional_styles="border-gray-300" />
+        <div className="py-2.5 grid grid-cols-[1fr_auto] items-center space-x-2">
           <Input
+            label={data.key
+              .toLowerCase()
+              .replace(/\_/g, ' ')
+              .split(' ')
+              .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+              .join(' ')}
+            label_loc="beside"
             value={data.value}
             type="dropdown"
             name={'submissionType'}
-            placeholder={'Value'}
+            placeholder="Selected data will show up here"
             // @ts-ignore
             dropdown_items={dropDownOptions}
             required={true}
@@ -713,7 +721,28 @@ export default function MatchReview({
             onChange={e => setValueForId(data.id, pageNo, e.target.value)}
             withSearch
           />
-        </HeaderInput>
+          <Buttons
+            additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
+            title="Reset input"
+            disabled={data.value ? false : true}
+            onClick={() => {
+              setValueForId(data.id, pageNo, '');
+            }}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </Buttons>
+        </div>
       </div>
     );
   };
@@ -745,10 +774,10 @@ export default function MatchReview({
     </div>
   ) : (
     <Container additional_class="full-height relative">
-      <Container.Title>
+      <Container.Title back>
         <div className="-space-y-2">
           <p className="capitalize text-sm font-normal">{path_query}</p>
-          <p>Data Matching</p>
+          <p>Data Matching - Automatic</p>
         </div>
       </Container.Title>
       <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
@@ -820,12 +849,15 @@ export default function MatchReview({
         {/* @ts-ignore */}
         {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
-      <div
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
+
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
           Message ? '' : '-translate-y-20'
         }`}>
         <p>{Message}</p>
-        {/* @ts-ignore */}
         <Buttons
           additional_styles="px-1 py-1 text-black"
           path=""
@@ -846,7 +878,7 @@ export default function MatchReview({
             />
           </svg>
         </Buttons>
-      </div>
+      </div> */}
     </Container>
   );
 }

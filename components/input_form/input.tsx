@@ -49,10 +49,12 @@ const Input: React.FunctionComponent<InputProps> = ({
 
   const [SearchData, setSearchData] = useState([]);
   const onSearch = e => {
-    const name = e.target.value.toLocaleLowerCase();
+    // const name = e.target.value.toLocaleLowerCase();
+    const name = e.target.value.toLowerCase().split('').join('.*');
     let temp = dropdown_items as any;
     temp = temp.filter(item => {
-      return item.toLocaleLowerCase().includes(name);
+      // return item.toLocaleLowerCase().includes(name);
+      return new RegExp(name).test(item.toLowerCase());
     });
     // console.log("search", temp);
     setSearchData(temp);
@@ -153,7 +155,7 @@ const Input: React.FunctionComponent<InputProps> = ({
             className={twMerge(
               `${
                 DoSearch ? 'block' : 'hidden'
-              } group-focus:block active:block z-[50] absolute bg-gray-200 shadow-md mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
+              } group-focus:block active:block z-[50] absolute bg-gray-200 shadow-lg drop-shadow-lg mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
               additional_styles_menu_container,
             )}>
             {withSearch && dropdown_items.length > 0 ? (

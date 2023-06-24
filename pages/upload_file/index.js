@@ -8,6 +8,7 @@ import {storeFile, setUploadDocumentSettings} from '../../store/generalSlice';
 import Select from '../../public/icons/selection_tool.svg';
 import config, {datatypes} from '../../config';
 import {checkAfe} from '../../components/utility_functions';
+import Toast from '../../components/toast/toast';
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function UploadFilePage({config, setTitle}) {
     Method: '',
   });
   const [toggleOverlay, settoggleOverlay] = useState(false);
-  const [Message, setMessage] = useState({message: '', color: ''});
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
 
@@ -59,6 +60,20 @@ export default function UploadFilePage({config, setTitle}) {
     console.log('detail', dragActive);
   }, [dragActive]);
 
+  const horizontal_scroll = (evt, workflow_container) => {
+    evt.preventDefault();
+    workflow_container.scrollLeft += evt.deltaY;
+  };
+
+  useEffect(() => {
+    const workflow_container = document.getElementById(
+      'workflow_type_container',
+    );
+    workflow_container.addEventListener('wheel', e =>
+      horizontal_scroll(e, workflow_container),
+    );
+  }, []);
+
   const dispatch = useDispatch();
 
   const handleSubmit = e => {
@@ -71,6 +86,41 @@ export default function UploadFilePage({config, setTitle}) {
 
   const delay = delay_amount_ms =>
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
+
+  // TODO: DEBUG ONLY, COMMENT ON PRODUCTION AND PROPER TESTING
+  // AND UNCOMMENT THE COMMENTED METHOD WITH THE SAME NAME
+
+  // const proceed = async (e, submit = false, element = false) => {
+  //   e.preventDefault();
+  //   if (element) {
+  //     const comparator = document.getElementById('overlay');
+  //     const comparator_parent = document.getElementById('overlay_parent');
+  //     console.log(e.target, comparator, e.target !== comparator);
+  //     if (![comparator, comparator_parent].includes(e.target)) {
+  //       router.events.emit('routeChangeComplete');
+  //       return;
+  //     }
+  //   }
+  //   settoggleOverlay(false);
+  //   if (submit) {
+  //     router.push({
+  //       pathname:
+  //         UplSettings.Method === 'dropdown'
+  //           ? '/upload_file/matching_dropdown'
+  //           : UplSettings.Method === 'highlight'
+  //           ? '/upload_file/matching_highlight'
+  //           : UplSettings.Method === 'dragdrop'
+  //           ? '/upload_file/matching_draggable'
+  //           : '/upload_file/matching_auto',
+  //       query: {
+  //         form_type: datatypes[UplSettings.DataType],
+  //       },
+  //     });
+  //   }
+  // };
+
+  // TODO: UNCOMMENT ON TESTING AND PRODUCTION AND COMMENT THE OTHER METHOD WITH THE
+  // SAME NAME
 
   const proceed = async (e, submit = false, element = false) => {
     e.preventDefault();
@@ -91,6 +141,7 @@ export default function UploadFilePage({config, setTitle}) {
           message:
             "Creating a new record... Please don't leave this page or click anything",
           color: 'blue',
+          show: true,
         });
         if (
           fileUpload.length < 1 ||
@@ -128,6 +179,7 @@ export default function UploadFilePage({config, setTitle}) {
             message:
               'Success. A new record has been created. Redirecting to the next page...',
             color: 'blue',
+            show: true,
           });
           router.events.emit('routeChangeComplete');
           await delay(1000);
@@ -149,6 +201,7 @@ export default function UploadFilePage({config, setTitle}) {
             message:
               'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
             color: 'red',
+            show: true,
           });
         }
       }
@@ -158,6 +211,7 @@ export default function UploadFilePage({config, setTitle}) {
           error,
         )}`,
         color: 'red',
+        show: true,
       });
     }
 
@@ -207,6 +261,7 @@ export default function UploadFilePage({config, setTitle}) {
           error,
         )}`,
         color: 'red',
+        show: true,
       });
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
@@ -348,11 +403,13 @@ export default function UploadFilePage({config, setTitle}) {
               additional_styles_label={additional_styles_label}
               autoComplete="off"
               onChange={e =>
-                setUplSettings({
-                  ...UplSettings,
-                  afe_number: e.target.value,
-                  workspace_name: `record_${e.target.value}`,
-                })
+                UplSettings.DataType
+                  ? setUplSettings({
+                      ...UplSettings,
+                      afe_number: e.target.value,
+                      workspace_name: `record_${e.target.value}`,
+                    })
+                  : null
               }
               onFocus={e => handleAfeChange(e, true)}
               onBlur={e => handleAfeChange(e, false)}
@@ -455,7 +512,9 @@ export default function UploadFilePage({config, setTitle}) {
           Choose your preferred method of data matching
         </h2>
         <div className="w-[80%] max-w-[80%] flex items-center justify-center">
-          <div className="flex space-x-3 overflow-auto">
+          <div
+            id="workflow_type_container"
+            className="flex space-x-3 overflow-auto">
             <Buttons
               id="dropdown"
               title=""
@@ -692,35 +751,9 @@ export default function UploadFilePage({config, setTitle}) {
           </div>
         </div>
       )}
-      <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%]
-                 translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
-                 px-3 rounded-lg py-2 transition-all ${
-                   Message.message ? '' : '-translate-y-20'
-                 }`}>
-        <p>{Message.message}</p>
-        <Buttons
-          additional_styles="px-1 py-1 text-black"
-          path=""
-          onClick={e => {
-            e.preventDefault();
-            setMessage({message: '', color: ''});
-          }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Buttons>
-      </div>
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
     </Container>
   );
 }

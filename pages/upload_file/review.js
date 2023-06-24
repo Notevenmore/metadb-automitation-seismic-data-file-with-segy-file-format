@@ -20,6 +20,7 @@ import ChevronRight from '../../public/icons/chevron-right.svg';
 import {ImageEditor} from '../components/highlight_viewer';
 import config from '../../config';
 import {saveDocument} from '../../components/utility_functions';
+import Toast from '../../components/toast/toast';
 
 export async function getServerSideProps(context) {
   const config = JSON.parse(process.env.ENDPOINTS);
@@ -31,7 +32,7 @@ export async function getServerSideProps(context) {
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
   const [ImageReview, setImageReview] = useState('');
-  const [Message, setMessage] = useState({message: '', color: ''});
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [PageNo, setPageNo] = useState(0);
   const [ImageURL, setImageURL] = useState('');
   const [error, setError] = useState('');
@@ -123,16 +124,24 @@ export default function UploadFileReview({setTitle, config}) {
         setMessage,
       );
       if (save_result.success) {
-        setMessage({message: 'Record successfully saved', color: 'blue'});
+        setMessage({
+          message: 'Record successfully saved',
+          color: 'blue',
+          show: false,
+        });
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
-          setMessage({message: 'Redirecting to homepage...', color: 'blue'});
+          setMessage({
+            message: 'Redirecting to homepage...',
+            color: 'blue',
+            show: false,
+          });
           await delay(1000);
           router.push('/');
         } else {
           await delay(3000);
-          setMessage({message: '', color: ''});
+          setMessage({message: '', color: '', show: false});
         }
       }
     } catch (error) {
@@ -141,6 +150,7 @@ export default function UploadFileReview({setTitle, config}) {
           error,
         )}`,
         color: 'red',
+        show: false,
       });
     }
     router.events.emit('routeChangeComplete');
@@ -153,9 +163,10 @@ export default function UploadFileReview({setTitle, config}) {
           message:
             'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
           color: 'blue',
+          show: false,
         });
         await delay(10000);
-        setMessage({message: '', color: ''});
+        setMessage({message: '', color: '', show: false});
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -407,7 +418,10 @@ export default function UploadFileReview({setTitle, config}) {
           Save and exit
         </Buttons>
       </div>
-      <div
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${
           Message.color || 'blue'
         }-500 text-white px-3 rounded-lg py-2 transition-transform ${
@@ -435,7 +449,7 @@ export default function UploadFileReview({setTitle, config}) {
             />
           </svg>
         </Buttons>
-      </div>
+      </div> */}
     </Container>
   ) : (
     <p>Loading...</p>

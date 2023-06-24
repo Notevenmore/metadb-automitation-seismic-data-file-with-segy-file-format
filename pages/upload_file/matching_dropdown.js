@@ -17,6 +17,7 @@ import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
 import config from '../../config';
+import Toast from '../../components/toast/toast';
 
 const FullButton = ({children, onClick}) => {
   return (
@@ -311,7 +312,7 @@ export default function MatchReview({config, setTitle}) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState('');
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState('');
   const [error, setError] = useState('');
 
@@ -364,7 +365,7 @@ export default function MatchReview({config, setTitle}) {
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
-    setTitle('Data Matching - Dropdown');
+    setTitle('Data Matching | Dropdown');
     const init = async () => {
       router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
@@ -456,12 +457,15 @@ export default function MatchReview({config, setTitle}) {
       router.events.emit('routeChangeComplete');
       setLoading('');
       setTimeout(() => {
-        setMessage(
-          'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-        );
+        setMessage({
+          message:
+            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+          color: 'blue',
+          show: true,
+        });
       }, 3000);
       await delay(5000);
-      setMessage('');
+      setMessage({message: '', color: '', show: false});
     };
     init();
   }, [files]);
@@ -547,25 +551,56 @@ export default function MatchReview({config, setTitle}) {
 
   const toRowComponent = data => (
     <div key={data.id}>
-      <HeaderDivider />
-      <HeaderInput
+      <HeaderDivider additional_styles="border-gray-300" />
+      <div className="py-2.5 grid grid-cols-[1fr_auto] items-center space-x-2">
+        <Input
+          label={data.key
+            .replace(/\_/g, ' ')
+            .split(' ')
+            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+            .join(' ')}
+          label_loc="beside"
+          value={data.value}
+          type="dropdown"
+          name={'submissionType'}
+          placeholder={'Selected data will be shown here'}
+          dropdown_items={dropDownOptions}
+          required={true}
+          additional_styles="w-full"
+          additional_styles_input_dropdown="placeholder:text-gray-400"
+          onChange={e => setValueForId(data.id, e.target.value)}
+          withSearch
+        />
+        <Buttons
+          additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
+          title="Reset input"
+          disabled={data.value ? false : true}
+          onClick={() => {
+            setValueForId(data.id, '');
+          }}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </Buttons>
+      </div>
+      {/* <HeaderInput
         label1={data.key
           .replace(/\_/g, ' ')
           .split(' ')
           .map(s => s.charAt(0).toUpperCase() + s.substring(1))
           .join(' ')}>
-        <Input
-          value={data.value}
-          type="dropdown"
-          name={'submissionType'}
-          placeholder={'Value'}
-          dropdown_items={dropDownOptions}
-          required={true}
-          additional_styles="w-full"
-          onChange={e => setValueForId(data.id, e.target.value)}
-          withSearch
-        />
-      </HeaderInput>
+        
+      </HeaderInput> */}
       {/* <HeaderInputInput
         leftChildren={
           <>
@@ -627,10 +662,10 @@ export default function MatchReview({config, setTitle}) {
     </div>
   ) : (
     <Container additional_class="full-height relative">
-      <Container.Title>
+      <Container.Title back>
         <div className="-space-y-2">
           <p className="capitalize text-sm font-normal">{path_query}</p>
-          <p>Data Matching</p>
+          <p>Data Matching - Dropdown</p>
         </div>
       </Container.Title>
       <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
@@ -727,7 +762,11 @@ export default function MatchReview({config, setTitle}) {
           <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} />
           <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
-      <div
+      <Toast message={Message} setmessage={setMessage}>
+        {Message.message}
+      </Toast>
+
+      {/* <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
           Message ? '' : '-translate-y-20'
         }`}>
@@ -752,7 +791,7 @@ export default function MatchReview({config, setTitle}) {
             />
           </svg>
         </Buttons>
-      </div>
+      </div> */}
     </Container>
   );
 }

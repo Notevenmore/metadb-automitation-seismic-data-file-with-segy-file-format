@@ -17,11 +17,13 @@ const HeaderTable = ({children}) => {
   );
 };
 
-const HeaderDivider = () => {
+const HeaderDivider = ({additional_styles}) => {
   return (
     <Divider
-      additional_styles={`-ml-2 w-[calc(100%+16px)]
-             lg:-ml-4 lg:w-[calc(100%+25px)]`}
+      additional_styles={twMerge(
+        '-ml-2 w-[calc(100%+16px)] lg:-ml-4 lg:w-[calc(100%+25px)]',
+        additional_styles,
+      )}
     />
   );
 };
