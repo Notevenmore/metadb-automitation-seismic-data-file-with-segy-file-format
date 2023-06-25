@@ -89,7 +89,7 @@ export default function SignInPage({setTitle}) {
           <div className="border border-b-[#d9d9d9] mt-2"></div>
         </div>
         <div className="max-md:text-center text-[30px] font-bold">Sign in</div>
-        <form onSubmit={(e) => e.preventDefault()}
+        <form onSubmit={handleSignIn}
           className="flex flex-col gap-y-4 w-full md:pr-10"
           autoComplete="off">
           <Input
@@ -152,6 +152,7 @@ export default function SignInPage({setTitle}) {
           <div className="flex flex-col max-md:items-center gap-y-3">
             <Buttons
               path=""
+              type='submit'
               button_description="Sign In"
               additional_styles="px-12 py-1 mt-4 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
               onClick={handleSignIn}
