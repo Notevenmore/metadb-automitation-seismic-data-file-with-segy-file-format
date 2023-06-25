@@ -262,9 +262,7 @@ export default function UploadFileReview({setTitle, config}) {
           <Input
             type="text"
             name={'dataType'}
-            defaultValue={
-              router.query.form_type?.replace(/\_/g, ' ') || 'basin'
-            }
+            value={router.query.form_type?.replace(/\_/g, ' ') || 'basin'}
             additional_styles="w-full"
             additional_styles_input="font-semibold capitalize"
             disabled
