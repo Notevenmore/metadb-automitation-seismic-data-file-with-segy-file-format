@@ -1,6 +1,8 @@
 import {useRouter} from 'next/router';
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from 'react';
+import { getProfile } from '../services/admin';
+import { setUser } from '../store/userSlice';
 
 function CheckAuth() {
   const user = useSelector(state => state.user.user);
@@ -11,7 +13,7 @@ function CheckAuth() {
 
   const handleProfile = async () => {
     const res = await getProfile(user.name).then(
-      () => {
+      (res) => {
         dispatch(setUser(res));
       },
       err => {
