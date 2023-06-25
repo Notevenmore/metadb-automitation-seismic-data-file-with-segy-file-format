@@ -89,15 +89,15 @@ export default function SignInPage({setTitle}) {
           <div className="border border-b-[#d9d9d9] mt-2"></div>
         </div>
         <div className="max-md:text-center text-[30px] font-bold">Sign in</div>
-        <form
+        <form onSubmit={(e) => e.preventDefault()}
           className="flex flex-col gap-y-4 w-full md:pr-10"
           autoComplete="off">
           <Input
-            label="Email"
+            label="Username"
             label_loc="above"
-            type="email"
+            type="text"
             name={'email'}
-            placeholder={'E-mail'}
+            placeholder={'Username'}
             value={loginData.email}
             onChange={e => handleChange(e)}
             required={true}
