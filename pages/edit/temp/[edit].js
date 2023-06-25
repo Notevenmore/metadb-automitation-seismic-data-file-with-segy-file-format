@@ -63,9 +63,11 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
     // Call init_data to set up the workspace data
     const init_call = async () => {
       try {
+        console.log(router.query.workspace_data);
         const initial_data = await init_data(config, router, {
           afe_number: router?.query?.workspace_data,
         });
+        console.log(initial_data);
         setData(initial_data.data ? initial_data.data : [{}]);
         setdataContentDetails(
           initial_data.data ? initial_data.data_content : [{}],
@@ -218,7 +220,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   <Input
                     name="kkks_name"
                     type={'text'}
-                    defaultValue={
+                    value={
                       workspaceData?.kkks_name || 'Geodwipa Teknika Nusantara'
                     }
                     onChange={handleWorkspaceChange}
@@ -232,7 +234,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   <Input
                     name="working_area"
                     type={'text'}
-                    defaultValue={
+                    value={
                       workspaceData?.working_area ||
                       'Geodwipa Teknika Nusantara'
                     }
@@ -247,9 +249,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   <Input
                     name="submission_type"
                     type={'dropdown'}
-                    defaultValue={
-                      workspaceData?.submission_type || 'Select an item'
-                    }
+                    value={workspaceData?.submission_type || 'Select an item'}
                     dropdown_items={[
                       'Quarterly',
                       'Relinquishment',
@@ -271,7 +271,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   <Input
                     name="afe_number"
                     type={'number'}
-                    defaultValue={String(workspaceData?.afe_number) || '1'}
+                    value={String(workspaceData?.afe_number) || '1'}
                     disabled
                   />,
                 ],
@@ -279,7 +279,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   <p className="font-bold">Data type</p>,
                   <Input
                     type={'text'}
-                    defaultValue={router.query.form_type.replace(/\_/g, ' ')}
+                    value={router.query.form_type.replace(/\_/g, ' ')}
                     additional_styles_input="capitalize font-semibold"
                     disabled
                   />,

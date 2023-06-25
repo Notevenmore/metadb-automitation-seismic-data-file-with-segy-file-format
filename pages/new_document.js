@@ -262,6 +262,24 @@ export default function NewDocumentPage({setTitle, config}) {
       </div> */}
     </Container>
   ) : (
-    <p>Loading...</p>
+    <div className="h-full flex flex-col justify-center border-collapse space-y-5 overflow-auto">
+      <div className="flex p-5 space-y-5 flex-col items-center overflow-auto">
+        <h1 className="font-bold text-3xl text-center">Information</h1>
+        <p className="text-center">
+          Page reload or manual address input detected. If you accidentally
+          reload this page or something forced you to reload this page, you can
+          go to the record list of the data type you have just entered. The
+          record along with its details you have just inputted will be there.
+          You can add data relating to the record there afterwards.
+        </p>
+        <Buttons
+          onClick={e => {
+            e.preventDefault();
+            router.push('/');
+          }}>
+          Go home
+        </Buttons>
+      </div>
+    </div>
   );
 }
