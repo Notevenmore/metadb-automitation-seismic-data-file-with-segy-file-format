@@ -1,9 +1,9 @@
 import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfile, removeProfile, updateProfile} from '../../services/admin';
-import {useEffect, useState} from 'react';
 import Toast from '../../components/toast/toast';
 
 UserPage.getLayout = getLayoutTop;

@@ -41,14 +41,14 @@ export const DraggableProvider = ({children}: PropsWithChildren<{}>) => {
       });
     }
 
-    function onMouseDown(event: MouseEvent) {
+    function onMouseDown() {
       dispatch({
         act: DraggableAct.SET_MOUSE_DOWN,
         down: true,
       });
     }
 
-    function onMouseUp(event: MouseEvent) {
+    function onMouseUp() {
       dispatch({
         act: DraggableAct.SET_MOUSE_DOWN,
         down: false,

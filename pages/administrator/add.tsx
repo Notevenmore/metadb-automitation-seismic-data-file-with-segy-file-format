@@ -1,5 +1,3 @@
-// get server side props
-
 import {useRouter} from 'next/router';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input';
@@ -70,11 +68,11 @@ export default function AddNewUserPage() {
       },
       err => {
         if (err.response.status === 409) {
-			setMessage({
-			  message: String(err),
-			  color: 'red',
-			  show: true,
-			});
+          setMessage({
+            message: String(err),
+            color: 'red',
+            show: true,
+          });
         }
       },
     );

@@ -18,7 +18,7 @@ const TableComponent = ({
     content: content,
   };
 
-  const handleSelectAll = e => {
+  const handleSelectAll = () => {
     const temp = [];
     const checkbox = document.getElementById(
       'checkbox_all',
@@ -34,7 +34,8 @@ const TableComponent = ({
     });
     setSelected(temp);
   };
-  const handleSelectRow = (e, row_input_id: string, row_id: string) => {
+
+  const handleSelectRow = (row_input_id: string, row_id: string) => {
     let temp = Selected;
     const checkbox_header = document.getElementById(
       'checkbox_all',
@@ -52,6 +53,7 @@ const TableComponent = ({
       setSelected(prev => [...prev, row_id]);
     }
   };
+
   useEffect(() => {
     if (with_checkbox) {
       // directly using the setState function is prevented for performance sake
@@ -79,7 +81,7 @@ const TableComponent = ({
               <input
                 type="checkbox"
                 id="checkbox_all"
-                onClick={e => handleSelectAll(e)}
+                onClick={() => handleSelectAll()}
               />
             </th>
           ) : null}
@@ -110,9 +112,8 @@ const TableComponent = ({
                   id={'row_input_' + row_index}
                   name="checkbox_row"
                   type="checkbox"
-                  onClick={e =>
+                  onClick={() =>
                     handleSelectRow(
-                      e,
                       'row_input_' + row_index,
                       'row_' + row_index,
                     )

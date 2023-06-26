@@ -7,7 +7,7 @@ interface ButtonProps extends React.ComponentProps<'button'> {
   query?: string;
   button_description?: string;
   additional_styles?: string;
-  withPath: boolean;
+  withPath?: boolean;
 }
 
 const Buttons: React.FunctionComponent<ButtonProps> = ({

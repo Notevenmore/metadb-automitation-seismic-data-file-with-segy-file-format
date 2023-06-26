@@ -5,14 +5,12 @@ import {
   Dispatch,
   MutableRefObject,
   PropsWithChildren,
-  ReactNode,
   useContext,
   useEffect,
   useReducer,
   useRef,
   useState,
 } from 'react';
-// import { useMouseDown, useMouseWithin } from "./custom-hook";
 
 export type Tuple4<T> = [T, T, T, T];
 export type Tuple2<T> = [T, T];
@@ -400,14 +398,12 @@ export const useScrolling = () => {
     // spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
     var keys = {37: 1, 38: 1, 39: 1, 40: 1};
 
-    // @ts-ignore
-    function preventDefault(e) {
+    function preventDefault(e: {preventDefault: () => void}) {
       e.preventDefault();
     }
 
     // @ts-ignore
     function preventDefaultForScrollKeys(e) {
-      // @ts-ignore
       if (keys[e.keyCode]) {
         preventDefault(e);
         return false;
@@ -417,7 +413,6 @@ export const useScrolling = () => {
     // modern Chrome requires { passive: false } when adding event
     var supportsPassive = false;
     try {
-      // @ts-ignore
       window.addEventListener(
         'test',
         null,
@@ -427,7 +422,9 @@ export const useScrolling = () => {
           },
         }),
       );
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
 
     var wheelOpt = supportsPassive ? {passive: false} : false;
     var wheelEvent =
@@ -564,8 +561,7 @@ export const useMousePositionRelativeTo = (ref: MutableRefObject<null>) => {
     const [elX, elY] = elementOffset;
     const [scX, scY] = scrollOffset;
     const [mX, mY] = mousePos;
-    // console.log(`left: ${scX}`)
-    // console.log(`top: ${scY}`)
+
     setPos(_ => [mX - elX + scX, mY - elY - scY]);
   }, [scrollOffset, mousePos, elementOffset]);
 
@@ -957,29 +953,3 @@ export const ImageEditor = ({boundsObserver, imageUrl}: ImageEditorProps) => {
     </ImageEditorProvider>
   );
 };
-
-import React from 'react';
-
-const highlight_viewer = () => {
-  return <></>;
-};
-
-export default highlight_viewer;
-
-// export default function Index() {
-//     const doc_id: string = "c5fd3ac264d654b04b759f193a16254b8eb0c878a3f0de0f914aaf2cae3da47f";
-//     const page_no: number = 2;
-
-//     function boundsObserver(bounds: Tuple4<number>[]) {
-//         if (bounds.length === 0) return;
-//         const last = bounds.length - 1;
-//         const bound = bounds[last];
-//         extractTextFromBounds(doc_id, page_no, bound);
-//     }
-
-//     return (<>
-//         <main className="flex justify-center align-middle pt-10 pb-10">
-//             <ImageEditor boundsObserver={boundsObserver} imageUrl={`http://localhost:7000/ocr_service/v1/image/${doc_id}/${page_no}`}/>
-//         </main>
-//     </>)
-// }

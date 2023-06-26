@@ -48,15 +48,13 @@ const Input: React.FunctionComponent<InputProps> = ({
   };
 
   const [SearchData, setSearchData] = useState([]);
-  const onSearch = e => {
-    // const name = e.target.value.toLocaleLowerCase();
+  const onSearch = (e: {target: {value: string}}) => {
     const name = e.target.value.toLowerCase().split('').join('.*');
     let temp = dropdown_items as any;
-    temp = temp.filter(item => {
-      // return item.toLocaleLowerCase().includes(name);
+    temp = temp.filter((item: string) => {
       return new RegExp(name).test(item.toLowerCase());
     });
-    // console.log("search", temp);
+
     setSearchData(temp);
   };
 
@@ -106,8 +104,8 @@ const Input: React.FunctionComponent<InputProps> = ({
         <input
           type={type}
           className={twMerge(
-            `rounded-md bg-gray-200 placeholder:text-gray-500 
-                         outline-none px-2 py-1.5 w-full hover:bg-gray-300 
+            `rounded-md bg-gray-200 placeholder:text-gray-500
+                         outline-none px-2 py-1.5 w-full hover:bg-gray-300
                          focus:bg-gray-300 focus:outline-[2px] focus:outline-gray-400
                          transition-all`,
             additional_styles_input,
@@ -177,7 +175,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                       <li
                         key={index}
                         className="hover:bg-gray-300 py-1 px-2 transition-all"
-                        onClick={e => {
+                        onClick={() => {
                           setclicked(!clicked);
                           setSelected(item);
                           (document.activeElement as HTMLElement).blur();
@@ -191,7 +189,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                       <li
                         key={index}
                         className="hover:bg-gray-300 py-1 px-2 transition-all"
-                        onClick={e => {
+                        onClick={() => {
                           setclicked(!clicked);
                           setSelected(item);
                           (document.activeElement as HTMLElement).blur();

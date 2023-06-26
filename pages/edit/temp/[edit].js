@@ -354,35 +354,6 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
       </Toast>
-      {/* <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%]
-                 translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
-                 px-3 rounded-lg py-2 transition-all ${
-                   Message.message ? '' : '-translate-y-20'
-                 }`}>
-        <p>{Message.message}</p>
-        <Button
-          additional_styles="px-1 py-1 text-black"
-          path=""
-          onClick={e => {
-            e.preventDefault();
-            setMessage({message: '', color: '', show: false});
-          }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Button>
-      </div> */}
     </Container>
   ) : (
     <div

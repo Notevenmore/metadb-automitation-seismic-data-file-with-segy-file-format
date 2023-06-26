@@ -20,6 +20,7 @@ import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
 import Toast from '../../components/toast/toast';
+import Image from 'next/image';
 
 interface FullButtonProps {
   onClick: () => void;
@@ -738,24 +739,13 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     });
   };
 
-  // useEffect(() => {
-  //   localStorage.setItem('reviewData', JSON.stringify(state))
-  // }, [state])
-
   const toRowComponent = (data: TableRow) => {
     return (
       <div key={data.id}>
         <HeaderDivider additional_styles="border-gray-300" />
         <div className="py-2.5 grid grid-cols-[1fr_auto] items-center space-x-2">
           <DroppableBox
-            onDrop={drop =>
-              setValueForId(
-                data.id,
-                pageNo,
-                // `${data.value.trim()} ${drop.trim()}`.trim(),
-                drop.trim(),
-              )
-            }>
+            onDrop={drop => setValueForId(data.id, pageNo, drop.trim())}>
             <Input
               label={data.key
                 .replace(/\_/g, ' ')
@@ -767,10 +757,8 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               type="dropdown"
               name={'submissionType'}
               placeholder="Dropped items' text will show up here"
-              // @ts-ignore
               dropdown_items={dropDownOptions}
               required={true}
-              // @ts-ignore
               additional_styles="w-full"
               onChange={e => setValueForId(data.id, pageNo, e.target.value)}
               withSearch
@@ -782,7 +770,8 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             disabled={data.value ? false : true}
             onClick={() => {
               setValueForId(data.id, pageNo, '');
-            }}>
+            }}
+            withPath={false}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -798,14 +787,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             </svg>
           </Buttons>
         </div>
-        {/* <HeaderInput
-          label1={data.key
-            .replace(/\_/g, ' ')
-            .split(' ')
-            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-            .join(' ')}>
-
-        </HeaderInput> */}
       </div>
     );
   };
@@ -828,8 +809,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                 width: `${it.dim[0] * sw}px`,
                 height: `${it.dim[1] * sh}px`,
               }}>
-              {/* eslint-disable-next-line @next/next/no-img-element  */}
-              <img
+              <Image
                 src={it.src}
                 alt=""
                 draggable={false}
@@ -861,7 +841,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      {/* @ts-ignore */}
       <Buttons
         path=""
         button_description="Back"
@@ -884,20 +863,14 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             {state[pageNo - 1]?.map(toRowComponent)}
             <HeaderDivider additional_styles={undefined} />
           </HeaderTable>
-          <div
-            // style={{
-            //   outline: "2px solid green",
-            // }}
-            className="h-[calc(100vh-55px)] rounded-lg border border-gray-300 sticky top-0">
+          <div className="h-[calc(100vh-55px)] rounded-lg border border-gray-300 sticky top-0">
             <Draggables />
-            {/* eslint-disable-next-line @next/next/no-img-element  */}
-            <img
+            <Image
               src={imageBase64Str}
               alt=""
               className="object-contain m-auto"
               ref={imageRef}
               style={{
-                // outline: "1px solid purple",
                 margin: '5px',
               }}
               onLoad={() => {
@@ -922,14 +895,13 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                   <ChevronLeft />
                 </div>
               </Buttons>
-              <div
-                // @ts-ignore
+              <Buttons
                 path=""
                 title=""
                 button_description=""
                 className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
                 <p className="w-5 h-5">{pageNo}</p>
-              </div>
+              </Buttons>
               <Buttons
                 path=""
                 title="Next page"
@@ -957,41 +929,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             }}
           />
         </div>
-        <ButtonsSection>
-          {/* <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" /> */}
-          {/* <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} /> */}
-          {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
-        </ButtonsSection>
         <Toast message={Message} setmessage={setMessage}>
           {Message.message}
         </Toast>
-
-        {/* <div
-          className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
-            Message ? '' : '-translate-y-20'
-          }`}>
-          <p>{Message}</p>
-          <Buttons
-            additional_styles="px-1 py-1 text-black"
-            path=""
-            onClick={() => {
-              setMessage('');
-            }}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </Buttons>
-        </div> */}
       </Container>
     </DraggableProvider>
   );
