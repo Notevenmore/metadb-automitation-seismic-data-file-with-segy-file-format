@@ -9,6 +9,7 @@ import Select from '../../public/icons/selection_tool.svg';
 import config, {datatypes} from '../../config';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
+import getFileType from '../../utils/filetype'
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -37,6 +38,15 @@ export default function UploadFilePage({config, setTitle}) {
     if (e.target.files.length == 0) setFileUpload([]);
     else setFileUpload(e.target.files);
   };
+  useEffect(() => {
+    if(fileUpload.length<=0) {
+      setUplSettings(prev => ({...prev, FileFormat: ""}))
+      return
+    }
+
+    const fileType = getFileType(fileUpload[0].name)
+    setUplSettings(prev => ({...prev, FileFormat: fileType}))
+  }, [fileUpload])
 
   const [dragActive, setDragActive] = useState(false);
   const handleDrop = e => {
@@ -55,10 +65,6 @@ export default function UploadFilePage({config, setTitle}) {
       setDragActive(false);
     }
   };
-
-  useEffect(() => {
-    console.log('detail', dragActive);
-  }, [dragActive]);
 
   const horizontal_scroll = (evt, workflow_container) => {
     evt.preventDefault();
