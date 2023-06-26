@@ -6,7 +6,6 @@ import Input from '../../components/input_form/input';
 import HeaderTable, {
   HeaderDivider,
   ButtonsSection,
-  HeaderInput,
 } from '../../components/header_table/header_table';
 import {useSelector, useDispatch} from 'react-redux';
 import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
@@ -20,7 +19,6 @@ import {Tuple2} from '../../components/draggable/types';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Highlight from 'react-highlight';
-import config from '../../config';
 import Toast from '../../components/toast/toast';
 
 interface FullButtonProps {
@@ -34,16 +32,16 @@ const FullButton = ({
   return (
     <button
       className="
-      flex 
-      items-center 
+      flex
+      items-center
       space-x-2
       px-5
       py-2
-      rounded-lg 
-      bg-primary 
-      hover:bg-gray-300 
-      transition-all 
-      w-full 
+      rounded-lg
+      bg-primary
+      hover:bg-gray-300
+      transition-all
+      w-full
       justify-center"
       onClick={onClick}>
       {children}
@@ -59,10 +57,10 @@ const HeaderRowWithGap = ({children}: PropsWithChildren<{}>) => {
       justify-center
       lg:items-center
       lg:flex-row
-      flex-col 
-      w-full 
-      py-[10px] 
-      lg:h-[55px] 
+      flex-col
+      w-full
+      py-[10px]
+      lg:h-[55px]
       gap-1
       ">
       <>{children}</>
@@ -75,34 +73,34 @@ interface HeaderInputInputProps {
   rightChildren: ReactNode;
 }
 
-const HeaderInputInput = ({
-  leftChildren,
-  rightChildren,
-}: HeaderInputInputProps) => {
-  return (
-    <HeaderRowWithGap>
-      <>{leftChildren}</>
-      <>{rightChildren}</>
-    </HeaderRowWithGap>
-  );
-};
+// const HeaderInputInput = ({
+//   leftChildren,
+//   rightChildren,
+// }: HeaderInputInputProps) => {
+//   return (
+//     <HeaderRowWithGap>
+//       <>{leftChildren}</>
+//       <>{rightChildren}</>
+//     </HeaderRowWithGap>
+//   );
+// };
 
 interface DeleteButtonProps {
   onClick: () => void;
 }
 
-const DeleteButton = ({
-  children,
-  onClick,
-}: PropsWithChildren<DeleteButtonProps>) => (
-  <>
-    <button
-      className="flex items-center space-x-2 px-5 py-2 rounded-lg bg-red-300 hover:bg-red-200 transition-all justify-center w-[4rem]"
-      onClick={onClick}>
-      {children}
-    </button>
-  </>
-);
+// const DeleteButton = ({
+//   children,
+//   onClick,
+// }: PropsWithChildren<DeleteButtonProps>) => (
+//   <>
+//     <button
+//       className="flex items-center space-x-2 px-5 py-2 rounded-lg bg-red-300 hover:bg-red-200 transition-all justify-center w-[4rem]"
+//       onClick={onClick}>
+//       {children}
+//     </button>
+//   </>
+// );
 
 // function uuidv4() {
 //   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
@@ -806,7 +804,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             .split(' ')
             .map(s => s.charAt(0).toUpperCase() + s.substring(1))
             .join(' ')}>
-          
+
         </HeaderInput> */}
       </div>
     );
@@ -884,7 +882,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
           <HeaderTable>
             {state[pageNo - 1]?.map(toRowComponent)}
-            <HeaderDivider />
+            <HeaderDivider additional_styles={undefined} />
           </HeaderTable>
           <div
             // style={{
@@ -913,7 +911,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         {totalPageNo > 1 ? (
           <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
             <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-              {/* @ts-ignore */}
               <Buttons
                 path=""
                 title="Previous page"
@@ -925,15 +922,14 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                   <ChevronLeft />
                 </div>
               </Buttons>
-              {/* @ts-ignore */}
               <div
+                // @ts-ignore
                 path=""
                 title=""
                 button_description=""
                 className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
                 <p className="w-5 h-5">{pageNo}</p>
               </div>
-              {/* @ts-ignore */}
               <Buttons
                 path=""
                 title="Next page"
@@ -949,10 +945,10 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           </div>
         ) : null}
         <div className="flex items-center justify-center w-full py-4">
-          {/* @ts-ignore */}
           <Buttons
             button_description="View on sheets"
             path="/upload_file/review"
+            // @ts-ignore
             query={{form_type: formType}}
             additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
             disabled={formType ? false : true}
@@ -962,11 +958,8 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           />
         </div>
         <ButtonsSection>
-          {/* @ts-ignore */}
           {/* <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" /> */}
-          {/* @ts-ignore */}
           {/* <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} /> */}
-          {/* @ts-ignore */}
           {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
         </ButtonsSection>
         <Toast message={Message} setmessage={setMessage}>
@@ -1004,7 +997,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

@@ -1,5 +1,3 @@
-// get server side props
-
 import {useRouter} from 'next/router';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input';
@@ -152,7 +150,7 @@ export default function UserPage() {
           </div>
         </form>
       )}
-	  
+
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
       </Toast>

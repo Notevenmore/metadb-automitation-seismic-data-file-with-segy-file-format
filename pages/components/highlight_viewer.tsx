@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import {
   Context,
   createContext,
@@ -751,7 +752,7 @@ function Navbar() {
         config.selected ? 'bg-blue-500' : ''
       } rounded-md aspect-square text-white flex justify-center align-middle p-1`}
       onClick={config.onClick}>
-      <img
+      <Image
         src={config.imgSrc}
         alt=""
         style={{
@@ -927,7 +928,7 @@ const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
           {bounds.map(b => (
             <SelectionBox key={b.toString()} bound={b} />
           ))}
-          <img
+          <Image
             src={imageUrl}
             alt=""
             ref={imageRef}

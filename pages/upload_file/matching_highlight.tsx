@@ -236,28 +236,28 @@ const generateImageUrl = (docId: string, page: number) => {
 };
 
 export default function MatchingGuided({config, setTitle}) {
-  const doc_id: string =
+  const doc_id =
     'c5fd3ac264d654b04b759f193a16254b8eb0c878a3f0de0f914aaf2cae3da47f';
-  const page_no: number = 2;
+  const page_no = 2;
 
   // const [state, setState] = useState<TableRow[]>(initialState);
   const [state, setState] = useState({} as any);
-  const [selectedRow, setSelectedRow] = useState<number>(-1);
-  const [pageNo, setPageNo] = useState<number>(1);
-  const [totalPageNo, setTotalPageNo] = useState<number>(1);
+  const [selectedRow, setSelectedRow] = useState(-1);
+  const [pageNo, setPageNo] = useState(1);
+  const [totalPageNo, setTotalPageNo] = useState(1);
   const [docId, _setDocId] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [formType, setformType] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState(null);
+  const [formType, setformType] = useState('');
   const [data, setdata] = useState([]);
 
   // utility states
-  const [loading, setLoading] = useState<string>('');
+  const [loading, setLoading] = useState('');
   const [message, setMessage] = useState({
     message: '',
     color: '',
     show: false,
   });
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState('');
 
   // @ts-ignore
   const files = useSelector(state => state.general.file);
@@ -544,7 +544,6 @@ export default function MatchingGuided({config, setTitle}) {
             {/* {Array.from({ length: totalPageNo }, (item, index) =>
           <Buttons path={} title="" button_description="" additional_styles="" key={index} />
         )} */}
-            {/* @ts-ignore */}
             <Buttons
               path=""
               title="Previous page"
@@ -556,15 +555,14 @@ export default function MatchingGuided({config, setTitle}) {
                 <ChevronLeft />
               </div>
             </Buttons>
-            {/* @ts-ignore */}
             <div
+              // @ts-ignore
               path=""
               title=""
               button_description=""
               className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
               <p className="w-5 h-5">{pageNo}</p>
             </div>
-            {/* @ts-ignore */}
             <Buttons
               path=""
               title="Next page"
@@ -580,10 +578,10 @@ export default function MatchingGuided({config, setTitle}) {
         </div>
       ) : null}
       <div className="flex items-center justify-center w-full py-4">
-        {/* @ts-ignore */}
         <Buttons
           button_description="View on sheets"
           path="/upload_file/review"
+          // @ts-ignore
           query={{form_type: formType}}
           additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           disabled={formType ? false : true}
@@ -593,9 +591,7 @@ export default function MatchingGuided({config, setTitle}) {
         />
       </div>
       <ButtonsSection>
-        {/* @ts-ignore */}
         {/* <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} /> */}
-        {/* @ts-ignore */}
         {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
       </ButtonsSection>
       <Toast message={message} setmessage={setMessage}>

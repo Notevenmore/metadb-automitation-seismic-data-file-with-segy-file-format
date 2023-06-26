@@ -2,12 +2,12 @@ import Link from 'next/link';
 import {twMerge} from 'tailwind-merge';
 
 interface ButtonProps extends React.ComponentProps<'button'> {
-  path: '';
-  title: '';
-  query: '';
-  button_description: '';
-  additional_styles: '';
-  withPath: '';
+  path?: string;
+  title?: string;
+  query?: string;
+  button_description?: string;
+  additional_styles?: string;
+  withPath: boolean;
 }
 
 const Buttons: React.FunctionComponent<ButtonProps> = ({
