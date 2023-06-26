@@ -1,7 +1,7 @@
+import Highlight from 'react-highlight';
 import Buttons from '../../components/buttons/buttons';
 import Well_sample_core from '../../public/icons/well_sample_core.svg';
 import Input from '../../components/input_form/input';
-import Highlight from 'react-highlight';
 
 const InputPage = () => {
   let demo_holder_1 = [[]];
@@ -18,6 +18,7 @@ const InputPage = () => {
     'Demo item 8',
     'Demo item 9',
   ];
+
   return (
     <div className="flex flex-col text-[14.5px]">
       <div className="w-full flex flex-auto">
@@ -89,14 +90,14 @@ const InputPage = () => {
               <p className="font-bold">Code:</p>
               <Highlight className="border-2 rounded-md">
                 {`<Input
-    label="E-mail"
-    label_loc="beside"
-    type="email"
-    name={"email"}
-    autoComplete="none"
-    placeholder={"E-mail"}
-    required={true}
-/>`}
+                  label="E-mail"
+                  label_loc="beside"
+                  type="email"
+                  name={"email"}
+                  autoComplete="none"
+                  placeholder={"E-mail"}
+                  required={true}
+              />`}
               </Highlight>
               <p className="font-bold">Output:</p>
               <Input
@@ -115,17 +116,17 @@ const InputPage = () => {
               <p className="font-bold">Code:</p>
               <Highlight className="border-2 rounded-md">
                 {`<Input
-    label="E-mail"
-    label_loc="above"
-    type="email"
-    name={"email"}
-    autoComplete="none"
-    placeholder={"E-mail"}
-    required={false}
-    additional_styles="space-y-1"
-    additional_styles_label=""
-    additional_styles_input=""
-/>`}
+                  label="E-mail"
+                  label_loc="above"
+                  type="email"
+                  name={"email"}
+                  autoComplete="none"
+                  placeholder={"E-mail"}
+                  required={false}
+                  additional_styles="space-y-1"
+                  additional_styles_label=""
+                  additional_styles_input=""
+              />`}
               </Highlight>
               <p className="font-bold">Output:</p>
               <Input
@@ -147,12 +148,12 @@ const InputPage = () => {
               <p className="font-bold">Code:</p>
               <Highlight className="border-2 rounded-md">
                 {`<Input
-    type="text"
-    name={"labelless"}
-    autoComplete="none"
-    placeholder={"Label-less input"}
-    required={true}
-/>`}
+                  type="text"
+                  name={"labelless"}
+                  autoComplete="none"
+                  placeholder={"Label-less input"}
+                  required={true}
+              />`}
               </Highlight>
               <p className="font-bold">Output:</p>
               <Input
@@ -192,8 +193,8 @@ const InputPage = () => {
               <br />
               <Highlight className="border-2 rounded-md">
                 {`let demo_holder_1 = [[]]
-let demo_holder_2 = [[]]
-let demo_holder_3 = [[]]`}
+                  let demo_holder_2 = [[]]
+                  let demo_holder_3 = [[]]`}
               </Highlight>
               <br />
               <p>
@@ -210,13 +211,13 @@ let demo_holder_3 = [[]]`}
               <p className="font-bold">Code:</p>
               <Highlight className="border-2 rounded-md">
                 {`<Input
-    label='Choose an item'
-    label_loc='above'
-    type="dropdown"
-    dropdown_items={dropdownItems}
-    setSelectedItem={demo_holder_1}
-    required={true}
-/>`}
+                  label='Choose an item'
+                  label_loc='above'
+                  type="dropdown"
+                  dropdown_items={dropdownItems}
+                  setSelectedItem={demo_holder_1}
+                  required={true}
+              />`}
               </Highlight>
               <p className="font-bold">Output:</p>
               <Input
@@ -241,14 +242,14 @@ let demo_holder_3 = [[]]`}
                   }}
                 />
               </div>
-              <br></br>
+              <br />
               <p>
                 Other examples which implement the same logic as the single-line
                 text input above with{' '}
                 <code className="bg-gray-200 px-1">dropdown</code> passed as the{' '}
                 <code className="bg-gray-200 px-1">type</code> prop:
               </p>
-              <br></br>
+              <br />
               <Input
                 label="Choose an item"
                 label_loc="beside"

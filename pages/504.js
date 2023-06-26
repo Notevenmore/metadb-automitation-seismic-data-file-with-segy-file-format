@@ -7,7 +7,8 @@ export default function Custom504() {
       <Error
         code="503"
         description="Gateway Timeout"
-        text="There is a gateway timeout error. Reloat the page in a few minutes"></Error>
+        text="There is a gateway timeout error. Reloat the page in a few minutes"
+      />
     </div>
   );
 }

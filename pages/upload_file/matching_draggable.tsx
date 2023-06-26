@@ -1,116 +1,22 @@
-/* eslint-disable react/jsx-key */
 import {MutableRefObject, useEffect, useRef, useState} from 'react';
+import {useRouter} from 'next/router';
+import {useSelector, useDispatch} from 'react-redux';
+import Highlight from 'react-highlight';
 import Buttons from '../../components/buttons/buttons';
 import Container from '../../components/container/container.js';
 import Input from '../../components/input_form/input';
-import HeaderTable, {
+import {
+  HeaderTable,
   HeaderDivider,
-  ButtonsSection,
 } from '../../components/header_table/header_table';
-import {useSelector, useDispatch} from 'react-redux';
 import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {useRouter} from 'next/router';
-import {PropsWithChildren} from 'react';
-import {ReactNode} from 'react';
 import {DraggableProvider} from '../../components/draggable/provider';
 import {DraggableBox, DroppableBox} from '../../components/draggable/component';
 import {Tuple4, useNaturalImageDim} from '../components/highlight_viewer';
 import {Tuple2} from '../../components/draggable/types';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Highlight from 'react-highlight';
 import Toast from '../../components/toast/toast';
-import Image from 'next/image';
-
-interface FullButtonProps {
-  onClick: () => void;
-}
-
-const FullButton = ({
-  children,
-  onClick,
-}: PropsWithChildren<FullButtonProps>) => {
-  return (
-    <button
-      className="
-      flex
-      items-center
-      space-x-2
-      px-5
-      py-2
-      rounded-lg
-      bg-primary
-      hover:bg-gray-300
-      transition-all
-      w-full
-      justify-center"
-      onClick={onClick}>
-      {children}
-    </button>
-  );
-};
-
-const HeaderRowWithGap = ({children}: PropsWithChildren<{}>) => {
-  return (
-    <div
-      className="
-      flex
-      justify-center
-      lg:items-center
-      lg:flex-row
-      flex-col
-      w-full
-      py-[10px]
-      lg:h-[55px]
-      gap-1
-      ">
-      <>{children}</>
-    </div>
-  );
-};
-
-interface HeaderInputInputProps {
-  leftChildren: ReactNode;
-  rightChildren: ReactNode;
-}
-
-// const HeaderInputInput = ({
-//   leftChildren,
-//   rightChildren,
-// }: HeaderInputInputProps) => {
-//   return (
-//     <HeaderRowWithGap>
-//       <>{leftChildren}</>
-//       <>{rightChildren}</>
-//     </HeaderRowWithGap>
-//   );
-// };
-
-interface DeleteButtonProps {
-  onClick: () => void;
-}
-
-// const DeleteButton = ({
-//   children,
-//   onClick,
-// }: PropsWithChildren<DeleteButtonProps>) => (
-//   <>
-//     <button
-//       className="flex items-center space-x-2 px-5 py-2 rounded-lg bg-red-300 hover:bg-red-200 transition-all justify-center w-[4rem]"
-//       onClick={onClick}>
-//       {children}
-//     </button>
-//   </>
-// );
-
-// function uuidv4() {
-//   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-//     (
-//       c ^
-//       (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-//     ).toString(16)
-//   );
-// }
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -125,12 +31,6 @@ export const toBase64 = (file: File): Promise<string> =>
     };
     reader.onerror = error => reject(error);
   });
-
-// const generateKeyValuePair = () => {
-//   const newPair = { ...newDefaultPair };
-//   newPair.id = uuidv4();
-//   return newPair;
-// };
 
 interface ApiCallResponse<Body> {
   status: 'success' | 'failed';
@@ -809,7 +709,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                 width: `${it.dim[0] * sw}px`,
                 height: `${it.dim[1] * sh}px`,
               }}>
-              <Image
+              <img
                 src={it.src}
                 alt=""
                 draggable={false}
@@ -865,7 +765,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           </HeaderTable>
           <div className="h-[calc(100vh-55px)] rounded-lg border border-gray-300 sticky top-0">
             <Draggables />
-            <Image
+            <img
               src={imageBase64Str}
               alt=""
               className="object-contain m-auto"
@@ -881,7 +781,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             />
           </div>
         </div>
-        {totalPageNo > 1 ? (
+        {totalPageNo > 1 && (
           <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
             <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
               <Buttons
@@ -915,7 +815,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               </Buttons>
             </div>
           </div>
-        ) : null}
+        )}
         <div className="flex items-center justify-center w-full py-4">
           <Buttons
             button_description="View on sheets"

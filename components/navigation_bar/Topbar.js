@@ -1,18 +1,15 @@
-import Icon from '@mdi/react';
-import {mdiBellOutline, mdiHomeFloorA} from '@mdi/js';
-import RoundImage from '../image/RoundImage';
-import GTN from '../../public/images/gtn_logo_singleline.png';
-import MetaDB from '../../public/images/metadata3.png';
 import Link from 'next/link';
 import {useEffect, useState} from 'react';
-import Mime from '../../dummy-data/mime';
 import {useDispatch, useSelector} from 'react-redux';
-import FloatDialog from '../float_dialog/float_dialog';
+import {useRouter} from 'next/router';
+import RoundImage from '../image/RoundImage';
+import MetaDB from '../../public/images/metadata3.png';
+import Mime from '../../dummy-data/mime';
+import {FloatDialog} from '../float_dialog';
 import {logOut} from '../../store/userSlice';
 import Image from 'next/image';
-import {useRouter} from 'next/router';
 
-export default function TopBar(props) {
+export default function TopBar() {
   const user = useSelector(state => state.user.user);
   const router = useRouter();
   const [profile, setProfile] = useState('');
@@ -33,7 +30,6 @@ export default function TopBar(props) {
   };
   const [profileProps, setProfileProps] = useState({});
   useEffect(() => {
-    // setProfile();
     setProfileProps({
       float_title: (
         <>
@@ -44,6 +40,7 @@ export default function TopBar(props) {
       ),
     });
   }, []);
+
   useEffect(() => {
     setProfile(Mime(user.profile_picture)); // TODO CHANGE TO NOT USE HARDCODED STRING LATER
   }, [user]);
@@ -57,15 +54,10 @@ export default function TopBar(props) {
   return (
     <nav className="w-full flex justify-between items-center py-3 px-5 border-b border-gray-300">
       <Link href="/" className="flex items-center gap-x-4">
-        {/* <BSP className="w-[60px]" onClick={props.handleClick}/> */}
-        {/* <img src={GTN} className='w-5 h-5'/> */}
-        {/* <Image src={GTN} width={115} height={50}/> */}
         <Image src={MetaDB} width={30} height={50} alt="MetaDB Logo" />
         <h1 className="text-xl font-bold">MetaDB</h1>
       </Link>
       <div className="flex items-center gap-x-3">
-        {/* <img src="/icons/bell-outline.svg" className="w-[1rem]" alt="notification" /> */}
-        {/* <div className="border-l-[1.5px] border-slate-200 h-6"> </div> */}
         <FloatDialog
           items={profileItem}
           className={`right-0 top-[50px]`}

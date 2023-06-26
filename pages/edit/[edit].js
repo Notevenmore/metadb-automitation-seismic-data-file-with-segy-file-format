@@ -1,6 +1,5 @@
-/* eslint-disable react/jsx-key */
 import {useRouter} from 'next/router';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import Button from '../../components/buttons/buttons';
 import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
@@ -10,9 +9,8 @@ import bibliography from '../../dummy-data/bibliography.json';
 import bibliography_data from '../../dummy-data/bibliography_data.json';
 import pwr from '../../dummy-data/pwr.json';
 import pwr_data from '../../dummy-data/pwr_1.json';
-import config from '../../config';
 
-const DocEditor = ({spreadsheetID, workspace_name, config}) => {
+const DocEditor = ({workspace_name, config}) => {
   // note: workspaceName, workspace_name, workspace_names, and workspace_name_space is different
   const [IsSaved, setIsSaved] = useState(false);
   const [Message, setMessage] = useState({message: '', color: ''});
@@ -24,13 +22,11 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
 
   const [spreadsheetId, setspreadsheetId] = useState();
 
-  const iframe_ref = useRef();
   const warningText =
     'You have unsaved changes - Are you sure you want to leave this page?';
-  // const sheetID = spreadsheetID.response
 
   const router = useRouter();
-  // console.log(router.query)
+
   const handleWindowClose = e => {
     e.preventDefault();
     if (!IsSaved) return (e.returnValue = warningText);
@@ -177,8 +173,6 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(new_data),
-      // }).then(response => {
-      //     return response.json()
     })
       .then(response => {
         // Handle non-200 response status
@@ -458,10 +452,12 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
           workspaceData?.Name
             ? [
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-2">
                     <p>Nama KKKS</p>
                     <p className="text-gray-400">(KKKS Name)</p>
                   </div>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     name="KKS"
                     type={'text'}
@@ -472,10 +468,12 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
                   />,
                 ],
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-2">
                     <p>Nama wilayah kerja</p>
                     <p className="text-gray-400">(Working area)</p>
                   </div>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     name="wilayah_kerja"
                     type={'text'}
@@ -487,10 +485,12 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
                   />,
                 ],
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-2">
                     <p>Jenis penyerahan data</p>
                     <p className="text-gray-400">(Submission type)</p>
                   </div>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     name="submission"
                     type={'dropdown'}
@@ -500,10 +500,12 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
                   />,
                 ],
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-2">
                     <p>Nomor AFE</p>
                     <p className="text-gray-400">(AFE number)</p>
                   </div>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     name="AFE"
                     type={'number'}
@@ -512,7 +514,9 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
                   />,
                 ],
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <p className="font-bold">Data type</p>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     type={'text'}
                     defaultValue={router.query.form_type.replace(/\_/g, ' ')}
@@ -523,12 +527,14 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
                 // [<p className="font-bold">Data classification</p>, <Input type={"dropdown"} dropdown_items={["Report"]} />],
                 // [<p className="font-bold">Data sub-classification</p>, <Input type={"dropdown"} dropdown_items={["Printed"]} />]
               ]
-            : [[<p>Getting data... Please wait</p>]]
+            : // eslint-disable-next-line react/jsx-key
+              [[<p>Getting data... Please wait</p>]]
         }
       />
       <div className="h-full">
         <TableComponent
           header={[
+            // eslint-disable-next-line react/jsx-key
             <div className="flex justify-between items-center">
               <p>Data</p>
             </div>,
@@ -536,6 +542,7 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
           content={[
             Data
               ? [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="h-[750px]">
                     <Sheets
                       type="review"
@@ -546,7 +553,8 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
                     />
                   </div>,
                 ]
-              : [<p>Getting data... Please wait</p>],
+              : // eslint-disable-next-line react/jsx-key
+                [<p>Getting data... Please wait</p>],
           ]}
           additional_styles_row="p-0"
           additional_styles="overflow-hidden"
@@ -560,9 +568,7 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           disabled={spreadsheetReady ? false : true}
         />
-        {/* <Button path="" button_description="Unsave document" onClick={(e) => { e.preventDefault(); setIsSaved(false) }} /> */}
       </div>
-      {/* <p className="bg-black text-white p-2">document saved: {String(IsSaved)}</p> */}
       <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%]
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
@@ -592,14 +598,6 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
           </svg>
         </Button>
       </div>
-      {/* <div className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${Error ? "" : "-translate-y-20"}`}>
-                    <p>{Error}</p>
-                    <Button additional_styles="px-1 py-1 text-black" path="" onClick={(e) => { e.preventDefault(); setError("") }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </Button>
-                </div> */}
     </Container>
   ) : (
     <div
@@ -615,7 +613,6 @@ const DocEditor = ({spreadsheetID, workspace_name, config}) => {
 };
 
 export async function getServerSideProps(context) {
-  // console.log(context.params.edit)
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {

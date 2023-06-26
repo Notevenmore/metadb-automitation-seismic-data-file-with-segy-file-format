@@ -6,7 +6,7 @@ import Container from '../../components/container/container.js';
 import Input from '../../components/input_form/input';
 import {storeFile, setUploadDocumentSettings} from '../../store/generalSlice';
 import Select from '../../public/icons/selection_tool.svg';
-import config, {datatypes} from '../../config';
+import {datatypes} from '../../config';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
 
@@ -30,40 +30,13 @@ export default function UploadFilePage({config, setTitle}) {
   const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
-
-  const fileUploadRef = useRef(null);
-
-  const changeFile = e => {
-    if (e.target.files.length == 0) setFileUpload([]);
-    else setFileUpload(e.target.files);
-  };
-
   const [dragActive, setDragActive] = useState(false);
-  const handleDrop = e => {
-    e.stopPropagation();
-    e.preventDefault();
-    fileUploadRef.current.files = e.dataTransfer.files;
-    setFileUpload(e.dataTransfer.files);
-    setDragActive(false);
-  };
-  const handleDrag = e => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
+  const dispatch = useDispatch();
+  const fileUploadRef = useRef(null);
 
   useEffect(() => {
     console.log('detail', dragActive);
   }, [dragActive]);
-
-  const horizontal_scroll = (evt, workflow_container) => {
-    evt.preventDefault();
-    workflow_container.scrollLeft += evt.deltaY;
-  };
 
   useEffect(() => {
     const workflow_container = document.getElementById(
@@ -74,7 +47,33 @@ export default function UploadFilePage({config, setTitle}) {
     );
   }, []);
 
-  const dispatch = useDispatch();
+  const changeFile = e => {
+    if (e.target.files.length == 0) setFileUpload([]);
+    else setFileUpload(e.target.files);
+  };
+
+  const handleDrop = e => {
+    e.stopPropagation();
+    e.preventDefault();
+    fileUploadRef.current.files = e.dataTransfer.files;
+    setFileUpload(e.dataTransfer.files);
+    setDragActive(false);
+  };
+
+  const handleDrag = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const horizontal_scroll = (evt, workflow_container) => {
+    evt.preventDefault();
+    workflow_container.scrollLeft += evt.deltaY;
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -149,7 +148,6 @@ export default function UploadFilePage({config, setTitle}) {
             return x === null || x === '';
           })
         ) {
-          // setError("Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.")
           throw 'Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.';
         }
         const post_workspace = await fetch(
@@ -231,10 +229,11 @@ export default function UploadFilePage({config, setTitle}) {
         }
       } else {
         setpopupMessage({message: '', color: ''});
+
         if (!UplSettings.afe_number || !UplSettings.DataType) {
           return;
         }
-        // setpopupMessage({message: 'Checking...', color: 'green'});
+
         const result = await checkAfe(
           false,
           config,
@@ -243,9 +242,7 @@ export default function UploadFilePage({config, setTitle}) {
         );
         if (result !== 'null') {
           setafeExist(true);
-          // setpopupMessage({message: 'AFE number available', color: 'green'});
-          // await delay(1000);
-          // setpopupMessage({message: '', color: ''});
+
           setpopupMessage({
             message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Please choose a different one`,
             color: 'red',
@@ -427,29 +424,6 @@ export default function UploadFilePage({config, setTitle}) {
               } text-sm w-full text-center transition-all pointer-events-none`}>
               <p>{popupMessage.message}</p>
             </div>
-            {/* <div
-              className={`${
-                popupMessage.message
-                  ? 'visible opacity-100'
-                  : 'invsible opacity-0 -translate-x-2'
-              } absolute ml-4 left-[100%] -translate-y-[50%] top-[50%] border-2 ${
-                popupMessage.color === 'red'
-                  ? 'bg-red-100 border-red-500'
-                  : 'bg-searchbg border-blue-500'
-              } w-[60%] z-[9999999] p-1 rounded-md pointer-events-none transition-all`}>
-              <p className="font-semibold text-sm">{popupMessage.message}</p>
-            </div>
-            <div
-              className={`${
-                popupMessage.message
-                  ? 'visible opacity-100'
-                  : 'invsible opacity-0 -translate-x-2'
-              } absolute ml-3 left-[100%] -translate-y-[50%] top-[50%] border-2 rotate-45 h-2 w-2 ${
-                popupMessage.color === 'red'
-                  ? 'bg-red-500 border-red-500'
-                  : 'bg-blue-500 border-blue-500'
-              } z-[9999998] transition-all`}
-            /> */}
           </div>
           <Input
             label="KKKS name"
@@ -758,7 +732,7 @@ export default function UploadFilePage({config, setTitle}) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

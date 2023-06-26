@@ -1,10 +1,10 @@
-import {Divider} from '../float_dialog/float_dialog';
+import {Divider} from '../float_dialog';
 import {twMerge} from 'tailwind-merge';
 
-const HeaderTable = ({children}) => {
+export const HeaderTable = ({children}) => {
   return (
     <section
-      className="border border-solid 
+      className="border border-solid
         border-float_dialog rounded-md lg:pl-4 px-2">
       <section
         className="font-bold py-2 bg-black/[.16]
@@ -17,7 +17,7 @@ const HeaderTable = ({children}) => {
   );
 };
 
-const HeaderDivider = ({additional_styles}) => {
+export const HeaderDivider = ({additional_styles}) => {
   return (
     <Divider
       additional_styles={twMerge(
@@ -28,7 +28,7 @@ const HeaderDivider = ({additional_styles}) => {
   );
 };
 
-const HeaderRow = ({children, ...props}) => {
+export const HeaderRow = ({children, ...props}) => {
   return (
     <div
       className="flex justify-center lg:items-center
@@ -39,7 +39,7 @@ const HeaderRow = ({children, ...props}) => {
   );
 };
 
-const HeaderLabel = ({label1, label2}) => {
+export const HeaderLabel = ({label1, label2}) => {
   return (
     <div
       className={
@@ -57,7 +57,7 @@ const HeaderLabel = ({label1, label2}) => {
   );
 };
 
-const HeaderStatic = ({label1, label2, content = false}) => {
+export const HeaderStatic = ({label1, label2, content = false}) => {
   return (
     <HeaderRow>
       {label2 ? (
@@ -73,7 +73,7 @@ const HeaderStatic = ({label1, label2, content = false}) => {
   );
 };
 
-const HeaderInput = ({label1, label2 = false, children}) => {
+export const HeaderInput = ({label1, label2 = false, children}) => {
   return (
     <HeaderRow>
       <HeaderLabel label1={label1} label2={label2} />
@@ -82,7 +82,7 @@ const HeaderInput = ({label1, label2 = false, children}) => {
   );
 };
 
-const ButtonsSection = ({children, className = ''}) => {
+export const ButtonsSection = ({children, className = ''}) => {
   return (
     <section
       className={twMerge(
@@ -93,14 +93,4 @@ const ButtonsSection = ({children, className = ''}) => {
       <>{children}</>
     </section>
   );
-};
-
-export default HeaderTable;
-export {
-  HeaderDivider,
-  HeaderRow,
-  HeaderLabel,
-  HeaderStatic,
-  HeaderInput,
-  ButtonsSection,
 };

@@ -72,7 +72,7 @@ const TableComponent = ({
       )}>
       <thead className="bg-gray-200">
         <tr className="text-left">
-          {with_checkbox ? (
+          {with_checkbox && (
             <th
               className={twMerge(
                 'pl-[14px] pt-1 w-5',
@@ -84,7 +84,7 @@ const TableComponent = ({
                 onClick={() => handleSelectAll()}
               />
             </th>
-          ) : null}
+          )}
           {tableData.header.map((header, index) => {
             return (
               <th
@@ -102,7 +102,7 @@ const TableComponent = ({
             key={row_index}
             id={'row_' + row_index}
             className="hover:bg-side_bar">
-            {with_checkbox ? (
+            {with_checkbox && (
               <td
                 className={twMerge(
                   'pl-[14px] pt-1 w-5 border-t-2 border-solid border-black/20',
@@ -120,7 +120,7 @@ const TableComponent = ({
                   }
                 />
               </td>
-            ) : null}
+            )}
             {contentAlignWithHeader
               ? tableData.header.map((header, idx) => {
                   return (

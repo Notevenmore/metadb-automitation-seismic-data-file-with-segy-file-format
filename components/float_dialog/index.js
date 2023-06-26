@@ -13,7 +13,7 @@ const items_notification = {
   ],
 };
 
-const FloatDialog = ({
+export const FloatDialog = ({
   children,
   float_title,
   items = null,
@@ -25,9 +25,7 @@ const FloatDialog = ({
   function toggleDialog() {
     setShow(prev => !prev);
   }
-  // const isNotification = items.type == "notification"
-  // const isProfile = items.type == "profile"
-  // console.log(float_title)
+
   return (
     <section className="relative">
       <section onClick={onClick ? onClick : toggleDialog}>{children}</section>
@@ -35,7 +33,7 @@ const FloatDialog = ({
         className={twMerge(
           `${
             show ? 'opacity-100 visible' : '-translate-y-1 opacity-0 invisible'
-          } bg-white absolute z-[50]  
+          } bg-white absolute z-[50]
             border-[1px] border-solid border-float_dialog rounded-[10px]
             h-fit transition-all shadow-lg drop-shadow`,
           className,
@@ -56,17 +54,6 @@ const FloatDialog = ({
             index={index}
             toggleDialog={toggleDialog}
           />
-          // if(items.type == "notification"){
-          //     return(
-          //         <FloatSection section_title={content.section_title}
-          //         section_content={content.section_content}/>
-          //     )
-          // }
-          // else if(items.type == "profile"){
-          //     return(
-
-          //     )
-          // }
         ))}
       </section>
       {show && (
@@ -101,7 +88,7 @@ const FloatSection = ({content, index, toggleDialog}) => {
   );
 };
 
-const IconSection = ({children}) => {
+export const IconSection = ({children}) => {
   return (
     <section className="flex flex-row justify-end w-[340px] cursor-pointer">
       <>{children}</>
@@ -109,7 +96,7 @@ const IconSection = ({children}) => {
   );
 };
 
-const FloatDialogNotification = () => {
+export const FloatDialogNotification = () => {
   return (
     <FloatDialog float_title="notification" items={items_notification}>
       <IconSection>
@@ -119,7 +106,7 @@ const FloatDialogNotification = () => {
   );
 };
 
-const FloatDialogProfile = () => {
+export const FloatDialogProfile = () => {
   return (
     <FloatDialog float_title="Profile" items={items_notification}>
       <IconSection>
@@ -129,65 +116,33 @@ const FloatDialogProfile = () => {
   );
 };
 
-const NotificationIcon = () => {
+export const NotificationIcon = () => {
   return (
     <img
       src="/icons/bell-outline.svg"
       alt="notif"
-      className="w-[19px] h-[24px]"></img>
+      className="w-[19px] h-[24px]"
+    />
   );
 };
 
-const ProfileIcon = () => {
+export const ProfileIcon = () => {
   return (
     <img
       src="/images/unknown.jpg"
       alt="profile"
-      className="w-[26px] rounded-full"></img>
+      className="w-[26px] rounded-full"
+    />
   );
 };
 
-const FloatDialogProfile2 = () => {
-  return (
-    <section className="p-[19px] border-2 border-solid border-float_dialog rounded-[10px] w-[263px] h-[201px] text-[16px]">
-      <ProfileIcon />
-      <section className="flex flex-col justify-between h-[59px] mb-[17px]">
-        <h2 className="leading-[15px] font-bold">Profile Name</h2>
-        <h2 className="leading-[15px] font-regular">emailaddress@email.com</h2>
-        <h2 className="leading-[15px] font-medium">Occupation</h2>
-      </section>
-      <ProfileDivider></ProfileDivider>
-      <h2 className="leading-[15px] font-medium my-[17px]">Account settings</h2>
-      <ProfileDivider></ProfileDivider>
-      <h2 className="leading-[15px] font-medium my-[17px]">Sign out</h2>
-    </section>
-  );
-};
-
-const Divider = ({additional_styles = null}) => {
+export const Divider = ({additional_styles = null}) => {
   return (
     <hr
       className={twMerge(
         `border-1 border-solid border-float_section_divider`,
         additional_styles,
-      )}></hr>
+      )}
+    />
   );
-};
-
-const NotificationDivider = () => {
-  return <Divider additional_styles={'-ml-[26px] w-[340px]'}></Divider>;
-};
-
-const ProfileDivider = () => {
-  return <Divider additional_styles={'-ml-[19px] w-[263px]'}></Divider>;
-};
-
-export default FloatDialog;
-export {
-  FloatDialogNotification,
-  FloatDialogProfile,
-  Divider,
-  IconSection,
-  NotificationIcon,
-  ProfileIcon,
 };

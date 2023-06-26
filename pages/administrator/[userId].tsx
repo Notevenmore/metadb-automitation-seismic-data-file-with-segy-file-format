@@ -18,10 +18,9 @@ interface Detail {
 
 export default function UserPage() {
   const [detail, setDetail] = useState<Detail>();
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const router = useRouter();
   const {userId} = router.query;
-
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
 
   const handleProfile = async () => {
     const res = await getProfile(userId).then(

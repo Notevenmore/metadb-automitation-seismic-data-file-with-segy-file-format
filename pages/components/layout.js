@@ -1,4 +1,3 @@
-/* eslint-disable */
 import Highlight from 'react-highlight';
 import Container from '../../components/container/container';
 
@@ -54,7 +53,8 @@ export default function LayoutPage() {
           <a
             href="https://nextjs.org/docs/basic-features/layouts"
             target="_blank"
-            className="text-link">
+            className="text-link"
+            rel="noreferrer">
             here
           </a>
           .

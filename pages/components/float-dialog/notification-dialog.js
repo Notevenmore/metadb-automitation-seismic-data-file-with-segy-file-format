@@ -1,8 +1,8 @@
-import FloatDialogNotification from '../../../components/float_dialog/float_dialog';
-import hljs from 'highlight.js';
-import {useEffect} from 'react';
 import Highlight from 'react-highlight';
-import {Divider} from '../../../components/float_dialog/float_dialog';
+import {
+  FloatDialogNotification,
+  Divider,
+} from '../../../components/float_dialog';
 
 export default function NotificationDialogPage() {
   return (
@@ -54,20 +54,8 @@ export default function NotificationDialogPage() {
         Overall, this component provides a convenient and reusable way to render
         floating dialog boxes in React.
       </p>
-      <FloatDialogNotification></FloatDialogNotification>
+      <FloatDialogNotification />
     </div>
-  );
-}
-
-function PopupDialogPage() {
-  useEffect(() => {
-    hljs.highlightAll();
-  }, []);
-  return (
-    <section className="flex flex-col w-full h-fit text-[14.5px] px-10 py-5">
-      <HeaderSection></HeaderSection>
-      <MainSection></MainSection>
-    </section>
   );
 }
 
@@ -165,9 +153,7 @@ border-[2px] border-solid border-black h-[490px]">
       </CodeSnippet>
       <div
         className="flex justify-center items-center
-       border-[2px] border-solid border-black h-[490px]">
-        {/* <PopupDialog/> */}
-      </div>
+       border-[2px] border-solid border-black h-[490px]"></div>
     </section>
   );
 };
@@ -186,9 +172,7 @@ border-solid border-black h-[490px]">
 </div>`}
       </CodeSnippet>
 
-      <div className="flex border-[2px] border-solid border-black h-[490px]">
-        {/* <PopupDialog/> */}
-      </div>
+      <div className="flex border-[2px] border-solid border-black h-[490px]"></div>
     </section>
   );
 };
@@ -207,9 +191,7 @@ border-[2px] border-solid border-black h-[490px]">
 </div>`}
       </CodeSnippet>
 
-      <div className="flex justify-end items-end border-[2px] border-solid border-black h-[490px]">
-        {/* <PopupDialog/> */}
-      </div>
+      <div className="flex justify-end items-end border-[2px] border-solid border-black h-[490px]"></div>
     </section>
   );
 };

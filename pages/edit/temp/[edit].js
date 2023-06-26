@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-key */
+import Highlight from 'react-highlight';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import Button from '../../../components/buttons/buttons';
@@ -6,7 +6,6 @@ import Sheets from '../../../components/sheets/sheets';
 import TableComponent from '../../../components/table/table';
 import Input from '../../../components/input_form/input';
 import Container from '../../../components/container/container';
-import Highlight from 'react-highlight';
 import {
   downloadWorkspace,
   init_data,
@@ -29,6 +28,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
     'You have unsaved changes - Are you sure you want to leave this page?';
 
   const router = useRouter();
+
   const handleWindowClose = e => {
     e.preventDefault();
     if (!IsSaved) return (e.returnValue = warningText);
@@ -213,10 +213,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           workspaceData?.kkks_name
             ? [
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-2">
                     <p>Nama KKKS</p>
                     <p className="text-gray-400">(KKKS Name)</p>
                   </div>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     name="kkks_name"
                     type={'text'}
@@ -227,10 +229,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-2">
                     <p>Nama wilayah kerja</p>
                     <p className="text-gray-400">(Working area)</p>
                   </div>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     name="working_area"
                     type={'text'}
@@ -242,10 +246,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-2">
                     <p>Jenis penyerahan data</p>
                     <p className="text-gray-400">(Submission type)</p>
                   </div>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     name="submission_type"
                     type={'dropdown'}
@@ -264,10 +270,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-2">
                     <p>Nomor AFE</p>
                     <p className="text-gray-400">(AFE number)</p>
                   </div>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     name="afe_number"
                     type={'number'}
@@ -276,7 +284,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <p className="font-bold">Data type</p>,
+                  // eslint-disable-next-line react/jsx-key
                   <Input
                     type={'text'}
                     value={router.query.form_type.replace(/\_/g, ' ')}
@@ -287,6 +297,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
               ]
             : [
                 [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-3 justify-center items-center p-2">
                     <div className="w-5 h-5 border-t-transparent rounded-full border-2 border-black animate-spin" />
                     <p>Getting data... Please wait</p>
@@ -298,6 +309,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       <div className="h-full">
         <TableComponent
           header={[
+            // eslint-disable-next-line react/jsx-key
             <div className="flex justify-between items-center">
               <p>Data</p>
             </div>,
@@ -305,6 +317,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           content={[
             Data
               ? [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="h-[750px]">
                     <Sheets
                       type="review"
@@ -317,6 +330,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   </div>,
                 ]
               : [
+                  // eslint-disable-next-line react/jsx-key
                   <div className="flex space-x-3 justify-center items-center p-2">
                     <div className="w-5 h-5 border-t-transparent rounded-full border-2 border-black animate-spin" />
                     <p>Getting data... Please wait</p>

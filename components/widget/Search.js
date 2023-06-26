@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -69,7 +68,7 @@ export default function SearchWidget() {
     <div className="w-full h-auto px-5 pt-1 text-[14.5px]">
       {!expandSearch ? (
         <div className="flex flex-row items-center relative justify-between">
-          <Image
+          <img
             alt="icon"
             src="/icons/magnify.svg"
             width={30}
@@ -90,7 +89,7 @@ export default function SearchWidget() {
             title="Expand"
             onClick={() => setExpandSearch(true)}>
             <p>Expand</p>
-            <Image
+            <img
               alt="icon"
               src="/icons/chevron-down.svg"
               width={30}
@@ -104,7 +103,7 @@ export default function SearchWidget() {
           className="relative flex flex-col gap-y-2 pb-2 w-full"
           onSubmit={applyFilter}>
           <div className="flex flex-row items-center relative w-full">
-            <Image
+            <img
               alt="icon"
               src="/icons/magnify.svg"
               width={30}
@@ -220,7 +219,7 @@ export default function SearchWidget() {
           <div
             title="Collapse"
             className="absolute bottom-0 right-0 px-1.5 py-1 cursor-pointer hover:bg-gray-200 rounded-md transition-all">
-            <Image
+            <img
               alt="icon"
               src="/icons/chevron-double-up.svg"
               width={30}
@@ -231,7 +230,7 @@ export default function SearchWidget() {
           </div>
         </form>
       )}
-      <div className="border-b border-b-[#dddddd]"></div>
+      <div className="border-b border-b-[#dddddd]" />
     </div>
   );
 }

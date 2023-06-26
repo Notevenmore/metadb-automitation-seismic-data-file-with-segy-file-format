@@ -1,11 +1,10 @@
-import Image from 'next/image';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import Container from '../components/container/container';
 import Input from '../components/input_form/input';
 import TableComponent from '../components/table/table';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import Button from '../components/buttons/buttons';
+import Image from 'next/image';
 
 const Bibliography = ({setTitle}) => {
   setTitle('Bibliography');
@@ -14,7 +13,7 @@ const Bibliography = ({setTitle}) => {
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
   let selectedTableData = [[]];
 
-  const handleEditClick = (e, workspace_name) => {
+  const handleEditClick = workspace_name => {
     let final = workspace_name.toLocaleLowerCase().replace(/\s/g, '_');
     router.push(`/edit/${final}`);
   };
@@ -41,7 +40,6 @@ const Bibliography = ({setTitle}) => {
             className="w-[25px] h-[15px] alt='' "
             alt="icon"
           />
-          {/* <Link title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'Bibliography Report Final')}> */}
           <Link
             title="Edit workspace"
             href={{
@@ -87,7 +85,6 @@ const Bibliography = ({setTitle}) => {
             className="w-[25px] h-[15px] alt='' "
             alt="icon"
           />
-          {/* <Link title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, 'New workspace from uploaded file')}> */}
           <Link
             title="Edit workspace"
             href={{
@@ -115,8 +112,8 @@ const Bibliography = ({setTitle}) => {
         </div>
       ),
     },
-    // { No: 4, Name: "New workspace from uploaded file", KKS: "Geodwipa Teknika Nusantara", "wilayah kerja": "Jakarta", jenis: "Bibliography", AFE: "2023032802", action: <div className="flex flex-row gap-x-1 items-center"><Image src="/icons/magnify.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /><Button title="Edit workspace" path="" className="" onClick={(e) => handleEditClick(e, )}><Image src="/icons/pencil.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></Button><Image src="/icons/delete.svg" width={50} height={50} className="w-[25px] h-[15px] alt='' " alt="icon" /></div> },
   ];
+
   const [data, setData] = useState(table_data);
   const onSearch = e => {
     const name = e.target.value.toLocaleLowerCase();
@@ -127,6 +124,7 @@ const Bibliography = ({setTitle}) => {
     console.log('search', temp);
     setData(temp);
   };
+
   return (
     <Container>
       <Container.Title>
@@ -150,7 +148,6 @@ const Bibliography = ({setTitle}) => {
               src="/icons/magnify.svg"
               width="20"
               height="20"
-              // className="absolute right-[10px] top-[2.5px]"
               className="absolute top-[50%] right-3 translate-y-[-50%]"
               alt="search"
             />

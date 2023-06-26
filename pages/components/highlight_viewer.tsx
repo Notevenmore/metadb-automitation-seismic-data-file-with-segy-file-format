@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import {
   Context,
   createContext,
@@ -268,6 +267,7 @@ export const ImageEditorProvider = ({
     initialImageEditorState,
   );
   const {bounds, mousePositionRelativeToImage} = state;
+
   useEffect(() => {
     if (boundsObserver) boundsObserver(bounds);
   }, [bounds]);
@@ -327,6 +327,7 @@ export const useMouseWithin = (ref: MutableRefObject<null>) => {
 
   useEffect(() => {
     document.addEventListener('mousemove', onMouseMove);
+
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
     };
@@ -337,6 +338,7 @@ export const useMouseWithin = (ref: MutableRefObject<null>) => {
 
 export const useElementOffset = (ref: MutableRefObject<null>) => {
   const [elementOffset, setElementOffset] = useState([0, 0]);
+
   function calculateOffset() {
     if (ref.current === null) {
       return;
@@ -345,9 +347,11 @@ export const useElementOffset = (ref: MutableRefObject<null>) => {
     const {top, left} = element.getBoundingClientRect();
     setElementOffset(_ => [left, top]);
   }
+
   useEffect(() => {
     calculateOffset();
   }, []);
+
   useEffect(() => {
     window.addEventListener('resize', calculateOffset);
 
@@ -355,6 +359,7 @@ export const useElementOffset = (ref: MutableRefObject<null>) => {
       window.removeEventListener('resize', calculateOffset);
     };
   }, []);
+
   return elementOffset;
 };
 
@@ -363,16 +368,21 @@ export const useScrollOffset = () => {
 
   function onScroll(_: Event) {
     const parent = document.getElementById('layout-icon');
+
     setScrollOffset(_ => [parent.scrollLeft, parent.scrollTop]);
   }
+
   useEffect(() => {
     const parent = document.getElementById('layout-icon');
+
     parent.addEventListener('scroll', onScroll);
     setScrollOffset(_ => [parent.scrollLeft, parent.scrollTop]);
+
     return () => {
       parent.removeEventListener('scroll', onScroll);
     };
   }, []);
+
   return scrollOffset;
 };
 
@@ -381,6 +391,7 @@ const useInitialScrollOffset = () => {
 
   useEffect(() => {
     const parent = document.getElementById('layout-icon');
+
     setScrollOffset(_ => [parent.scrollLeft, parent.scrollTop]);
   }, []);
 
@@ -412,6 +423,7 @@ export const useScrolling = () => {
 
     // modern Chrome requires { passive: false } when adding event
     var supportsPassive = false;
+
     try {
       window.addEventListener(
         'test',
@@ -457,6 +469,7 @@ export const useScrolling = () => {
       enableScroll();
     };
   }, [scroll]);
+
   return {setScroll};
 };
 
@@ -472,6 +485,7 @@ export const useScrollingValueWithin = (
   const [value, setValue] = useState(initial);
   const mouseWithin = useMouseWithin(ref);
   const {setScroll} = useScrolling();
+
   useEffect(() => {
     function onWheel(event: WheelEvent) {
       if (!mouseWithin) {
@@ -479,8 +493,10 @@ export const useScrollingValueWithin = (
         return;
       }
       setScroll(_ => false);
+
       const dy = event.deltaY;
       const up = dy < 0;
+
       if (up) {
         setValue(v => {
           if (v >= max) {
@@ -517,14 +533,17 @@ export const useScrollingValueWithin = (
 
 export const useElementDim = (ref: MutableRefObject<null>) => {
   const [dim, setDim] = useState<Tuple2<number>>([0, 0]);
+
   useEffect(() => {
     if (ref.current === null) {
       return;
     }
+
     const element = ref.current as unknown as HTMLElement;
     const {width, height} = element.getBoundingClientRect();
     setDim(_ => [width, height]);
   }, [ref]);
+
   return dim;
 };
 
@@ -532,6 +551,7 @@ export const useMousePosition = () => {
   const [mousePos, setMousePos] = useState([0, 0]);
   const [finalPos, setFinalPos] = useState([0, 0]);
   const scrollOffset = useScrollOffset();
+
   function onMouseMove(event: MouseEvent) {
     setMousePos(_ => [event.clientX, event.clientY]);
   }
@@ -541,6 +561,7 @@ export const useMousePosition = () => {
     const [soX, soY] = scrollOffset;
     setFinalPos(_ => [mX + soX, mY + soY]);
   }, [scrollOffset, mousePos]);
+
   useEffect(() => {
     document.addEventListener('mousemove', onMouseMove);
     return () => {
@@ -574,6 +595,7 @@ export const useMouseDrag = () => {
   const [origin, setOrigin] = useState([0, 0]);
   const [offset, setOffset] = useState([0, 0]);
   const [isDragging, setIsDragging] = useState(false);
+
   useEffect(() => {
     if (mouseDown) {
       setOffset(_ => [0, 0]);
@@ -591,6 +613,7 @@ export const useMouseDrag = () => {
       setOffset(_ => [mX - orX, mY - orY]);
     }
   }, [mousePos]);
+
   return {isDragging, offset};
 };
 
@@ -637,6 +660,7 @@ export const useMousePositionRelative = (
 ) => {
   const {dispatch} = useContext(context);
   const mousePos = useMousePositionRelativeTo(editorRef);
+
   useEffect(() => {
     dispatch({
       actionType: ImageEditorActionType.SET_MOUSE_POS_RELATIVE_TO_IMAGE,
@@ -651,6 +675,7 @@ export const useEditorDim = (
 ) => {
   const {dispatch} = useContext(context);
   const editorDim = useElementDim(editorRef);
+
   useEffect(() => {
     dispatch({
       actionType: ImageEditorActionType.SET_EDITOR_DIM,
@@ -721,6 +746,7 @@ function Navbar() {
     selectedNavbarButton,
     editorDim: [editorWidth],
   } = state;
+
   useEffect(() => {
     const newButtonConfig: NavbarButtonConfig[] = [
       {
@@ -748,7 +774,7 @@ function Navbar() {
         config.selected ? 'bg-blue-500' : ''
       } rounded-md aspect-square text-white flex justify-center align-middle p-1`}
       onClick={config.onClick}>
-      <Image
+      <img
         src={config.imgSrc}
         alt=""
         style={{
@@ -795,6 +821,7 @@ export const SelectionBox = ({bound}: SelectionBoxProps) => {
   }
   const width = Math.abs(x2 - x1);
   const height = Math.abs(y2 - y1);
+
   return (
     <div
       style={{
@@ -805,16 +832,19 @@ export const SelectionBox = ({bound}: SelectionBoxProps) => {
         height: `${height}px`,
         zIndex: '9',
         backgroundColor: 'rgba(89, 190, 233, 0.5)',
-      }}></div>
+      }}
+    />
   );
 };
 
 export const useNaturalImageDim = (ref: MutableRefObject<null>) => {
   const [dim, setDim] = useState([0, 0]);
   const [check, setCheck] = useState(false);
+
   function reload() {
     setCheck(t => !t);
   }
+
   useEffect(() => {
     const element = ref.current as unknown as HTMLImageElement;
     if (!element) return;
@@ -852,36 +882,35 @@ const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
     selectorState,
     editorDim: [editorWidth, editorHeight],
   } = state;
-
   const mouseDown = useMouseDown();
   // imageUrl listener to clear bounds, whenever the imageUrl changes
   const {
     dim: [width, height],
     reload,
   } = useNaturalImageDim(imageRef);
+
   useEffect(() => {
     dispatch({
       actionType: ImageEditorActionType.CLEAR_BOUNDS,
     });
   }, [imageUrl]);
+
   const InsetShadow = () => (
-    <>
+    <div
+      style={{
+        zIndex: '1',
+        position: 'relative',
+        width: '0px',
+        height: '0px',
+      }}>
       <div
         style={{
-          zIndex: '1',
-          position: 'relative',
-          width: '0px',
-          height: '0px',
-        }}>
-        <div
-          style={{
-            position: 'absolute',
-            boxShadow: '0px 0px 5px 1px inset',
-            width: `${editorWidth}px`,
-            height: `${editorHeight}px`,
-          }}></div>
-      </div>
-    </>
+          position: 'absolute',
+          boxShadow: '0px 0px 5px 1px inset',
+          width: `${editorWidth}px`,
+          height: `${editorHeight}px`,
+        }}></div>
+    </div>
   );
 
   const SelectingBox = () => {
@@ -892,52 +921,49 @@ const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
   };
 
   return (
-    <>
+    <div
+      className={`bg-slate-500 relative overflow-hidden`}
+      ref={viewerRef}
+      style={{
+        cursor:
+          selectedNavbarButton === NavbarButton.MOVE_BUTTON
+            ? mouseDown
+              ? 'grabbing'
+              : 'grab'
+            : 'default',
+      }}>
+      <Navbar />
+      <InsetShadow />
       <div
-        // w-[1000px] h-[1000px]
-        className={`bg-slate-500 relative overflow-hidden`}
-        ref={viewerRef}
+        ref={imageWrapperRef}
         style={{
-          cursor:
-            selectedNavbarButton === NavbarButton.MOVE_BUTTON
-              ? mouseDown
-                ? 'grabbing'
-                : 'grab'
-              : 'default',
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          position: 'relative',
+          left: `${translate[0]}px`,
+          top: `${translate[1]}px`,
+          overflow: 'visible',
+          width: `${width}px`,
+          height: `${height}px`,
+          boxShadow: '0px 0px 10px 1px',
         }}>
-        <Navbar />
-        <InsetShadow />
-        <div
-          ref={imageWrapperRef}
+        <SelectingBox />
+        {bounds.map(b => (
+          <SelectionBox key={b.toString()} bound={b} />
+        ))}
+        <img
+          src={imageUrl}
+          alt=""
+          ref={imageRef}
+          onLoad={_ => reload()}
+          draggable={false}
           style={{
-            transform: `scale(${scale})`,
-            transformOrigin: 'top left',
-            position: 'relative',
-            left: `${translate[0]}px`,
-            top: `${translate[1]}px`,
-            overflow: 'visible',
             width: `${width}px`,
             height: `${height}px`,
-            boxShadow: '0px 0px 10px 1px',
-          }}>
-          <SelectingBox />
-          {bounds.map(b => (
-            <SelectionBox key={b.toString()} bound={b} />
-          ))}
-          <Image
-            src={imageUrl}
-            alt=""
-            ref={imageRef}
-            onLoad={_ => reload()}
-            draggable={false}
-            style={{
-              width: `${width}px`,
-              height: `${height}px`,
-            }}
-          />
-        </div>
+          }}
+        />
       </div>
-    </>
+    </div>
   );
 };
 

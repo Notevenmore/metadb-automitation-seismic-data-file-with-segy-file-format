@@ -136,7 +136,8 @@ export function DroppableBox({
             height: '100%',
             border: '1px solid red',
             top: 0,
-          }}></div>
+          }}
+        />
       )}
     </div>
   );

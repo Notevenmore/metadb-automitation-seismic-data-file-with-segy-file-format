@@ -1,9 +1,9 @@
 import '../styles/globals.css';
-import {store} from '../store';
 import {Provider} from 'react-redux';
 import Head from 'next/head';
 import {useRouter} from 'next/router';
 import {useState, useEffect} from 'react';
+import {store} from '../store';
 import ProgressBar from '../components/progress_bar/progress_bar';
 import {getLayoutIcon} from '../layout/getLayout';
 

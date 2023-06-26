@@ -31,7 +31,7 @@ const ButtonPage = () => {
             <p>
               Below are the example usages of the <code>button</code> component.
             </p>
-            <br></br>
+            <br />
 
             <h3 className="text-xl font-bold">Example 1</h3>
             <Highlight className="html rounded-md border-2">
@@ -40,7 +40,7 @@ const ButtonPage = () => {
               }
             </Highlight>
             <Buttons path="" button_description="Choose file manually" />
-            <br></br>
+            <br />
 
             <h3 className="text-xl font-bold">Example 2</h3>
             <Highlight className="html rounded-md border-2">
@@ -49,7 +49,7 @@ const ButtonPage = () => {
               }
             </Highlight>
             <Buttons path="" button_description="Make a new document" />
-            <br></br>
+            <br />
 
             <h3 className="text-xl font-bold">Example 3</h3>
             <Highlight className="html rounded-md border-2">
@@ -60,7 +60,7 @@ const ButtonPage = () => {
             <Buttons path="" button_description="Make a new document">
               <Well_sample_core className="w-4 h-4" />
             </Buttons>
-            <br></br>
+            <br />
 
             <h3 className="text-xl font-bold">Example 4</h3>
             <p>

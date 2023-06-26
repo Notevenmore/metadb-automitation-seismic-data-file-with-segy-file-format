@@ -1,5 +1,3 @@
-import Image from 'next/image';
-import React from 'react';
 import Buttons from '../../components/buttons/buttons';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input.tsx';

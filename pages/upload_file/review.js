@@ -1,33 +1,22 @@
-/* eslint-disable react/jsx-key */
-import {useEffect, useRef, useState} from 'react';
-import Buttons from '../../components/buttons/buttons';
-import Container from '../../components/container/container.js';
-import Input from '../../components/input_form/input';
-import HeaderTable, {
-  HeaderDivider,
-  HeaderStatic,
-  HeaderInput,
-  ButtonsSection,
-  HeaderRow,
-} from '../../components/header_table/header_table';
-import Sheets from '../../components/sheets/sheets';
-import Table from '../../components/table/table';
+import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
 import Highlight from 'react-highlight';
+import Buttons from '../../components/buttons/buttons';
+import Container from '../../components/container/container.js';
+import Input from '../../components/input_form/input';
+import {
+  HeaderTable,
+  HeaderDivider,
+  HeaderInput,
+} from '../../components/header_table/header_table';
+import Sheets from '../../components/sheets/sheets';
+import Table from '../../components/table/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import {ImageEditor} from '../components/highlight_viewer';
-import config from '../../config';
 import {saveDocument} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
-
-export async function getServerSideProps(context) {
-  const config = JSON.parse(process.env.ENDPOINTS);
-  return {
-    props: {config: config}, // will be passed to the page component as props
-  };
-}
 
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
@@ -272,6 +261,7 @@ export default function UploadFileReview({setTitle, config}) {
       <div className="pt-3">
         <Table
           header={[
+            // eslint-disable-next-line react/jsx-key
             <div className="flex justify-between items-center">
               <p>Data</p>
               {ImageReview ? (
@@ -299,6 +289,7 @@ export default function UploadFileReview({setTitle, config}) {
           ]}
           content={[
             [
+              // eslint-disable-next-line react/jsx-key
               <div className="h-[750px]">
                 {loading && !ReviewData.length >= 1 ? (
                   <div className="flex flex-col items-center justify-center space-y-2 h-full">
@@ -322,10 +313,11 @@ export default function UploadFileReview({setTitle, config}) {
           additional_styles_row="p-0"
         />
       </div>
-      {ImageReview ? (
+      {ImageReview && (
         <div className="pt-3 bg-">
           <Table
             header={[
+              // eslint-disable-next-line react/jsx-key
               <div className="flex justify-between items-center">
                 <p>Data</p>
                 <Buttons
@@ -339,14 +331,15 @@ export default function UploadFileReview({setTitle, config}) {
               </div>,
             ]}
             content={[
+              // eslint-disable-next-line react/jsx-key
               [<ImageEditor boundsObserver={() => {}} imageUrl={ImageURL} />],
             ]}
             additional_styles="overflow-hidden"
             additional_styles_row="p-0"
           />
         </div>
-      ) : null}
-      {document_summary?.body.page_count > 1 ? (
+      )}
+      {document_summary?.body.page_count > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
             <Buttons
@@ -390,7 +383,7 @@ export default function UploadFileReview({setTitle, config}) {
             </Buttons>
           </div>
         </div>
-      ) : null}
+      )}
       <div className="flex space-x-3 py-4">
         <Buttons
           path=""
@@ -420,37 +413,15 @@ export default function UploadFileReview({setTitle, config}) {
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
       </Toast>
-      {/* <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${
-          Message.color || 'blue'
-        }-500 text-white px-3 rounded-lg py-2 transition-transform ${
-          Message.message ? '' : '-translate-y-20'
-        }`}>
-        <p>{Message.message}</p>
-        <Buttons
-          additional_styles="px-1 py-1 text-black"
-          path=""
-          onClick={e => {
-            e.preventDefault();
-            setMessage({message: '', color: 'orange'});
-          }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Buttons>
-      </div> */}
     </Container>
   ) : (
     <p>Loading...</p>
   );
+}
+
+export async function getServerSideProps() {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
 }

@@ -1,20 +1,26 @@
-import Input from '../../components/input_form/input';
-import Buttons from '../../components/buttons/buttons';
-import {getLayoutBlank} from '../../layout/getLayout';
-import Link from 'next/link';
 import Image from 'next/image';
-import {getAllRoles, getLogin} from '../../services/user';
 import {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
-import {setUser} from '../../store/userSlice';
 import {useEffect} from 'react';
+import Input from '../../components/input_form/input';
+import Buttons from '../../components/buttons/buttons';
+import {getLayoutBlank} from '../../layout/getLayout';
+import {setUser} from '../../store/userSlice';
+import {getLogin} from '../../services/user';
 
 SignInPage.getLayout = getLayoutBlank;
 
 export default function SignInPage({setTitle}) {
   const user = useSelector(state => state.user.user);
   const router = useRouter();
+  const [Error, setError] = useState('');
+  const [loginData, setLoginData] = useState({
+    email: '',
+    password: '',
+  });
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (user.email) {
       router.push('/');
@@ -22,11 +28,7 @@ export default function SignInPage({setTitle}) {
   }, []);
 
   setTitle('Sign in');
-  const [Error, setError] = useState('');
-  const [loginData, setLoginData] = useState({
-    email: '',
-    password: '',
-  });
+
   const handleChange = e => {
     const {name, value} = e.target;
     setLoginData(prev => ({
@@ -35,7 +37,6 @@ export default function SignInPage({setTitle}) {
     }));
   };
 
-  const dispatch = useDispatch();
   const handleSignIn = async e => {
     e.preventDefault();
     router.events.emit('routeChangeStart');

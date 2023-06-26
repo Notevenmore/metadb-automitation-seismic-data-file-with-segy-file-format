@@ -52,7 +52,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
     setSkipInitialization(false);
   }, []);
 
-  const delay = delay_amount_ms =>
+  const delay = (delay_amount_ms: number) =>
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         let data,
           final = [];
         const workspaces = JSON.parse(localStorage.getItem('workspaces'));
-        workspaces.some(workspace => {
+        workspaces.some((workspace: {name: string}) => {
           if (id === workspace.name) {
             data = JSON.parse(localStorage.getItem(workspace.name));
             return true;

@@ -36,4 +36,5 @@ export const {
   setDocumentSummary,
   setReviewData,
 } = generalSlice.actions;
+
 export default generalSlice.reducer;

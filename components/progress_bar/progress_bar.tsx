@@ -50,7 +50,7 @@ const ProgressBar: React.FC<{isRouteChanging: boolean}> = ({
         }
       `}</style>
       <div className="container">
-        <div className="bar"></div>
+        <div className="bar" />
         <div className="block fixed right-6 top-[80px] z-50">
           <div className="spinner" />
         </div>

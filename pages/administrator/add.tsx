@@ -1,9 +1,8 @@
-import {useRouter} from 'next/router';
+import {useState} from 'react';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input';
 import {getLayoutTop} from '../../layout/getLayout';
 import {addProfile} from '../../services/admin';
-import {useState} from 'react';
 import {defaultProfile} from '../../dummy-data/mime';
 import Toast from '../../components/toast/toast';
 
@@ -27,7 +26,6 @@ export default function AddNewUserPage() {
     password: '',
   });
   const [Message, setMessage] = useState({message: '', color: '', show: false});
-  const router = useRouter();
 
   const handleChange = e => {
     const {name, value} = e.target;

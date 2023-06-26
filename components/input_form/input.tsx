@@ -4,7 +4,7 @@ import Arrow from '../../public/icons/arrow_notrail.svg';
 
 interface InputProps extends React.ComponentProps<'input'> {
   label: string;
-  label_loc: string;
+  label_loc?: string;
   dropdown_items?: string[];
   additional_styles_label?: string;
   additional_styles_input?: string;
@@ -156,7 +156,7 @@ const Input: React.FunctionComponent<InputProps> = ({
               } group-focus:block active:block z-[50] absolute bg-gray-200 shadow-lg drop-shadow-lg mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
               additional_styles_menu_container,
             )}>
-            {withSearch && dropdown_items.length > 0 ? (
+            {withSearch && dropdown_items.length > 0 && (
               <input
                 className="sticky top-0 bg-inherit border border-b-gray-400/[.5] outline-none py-1 px-2 placeholder:italic w-full"
                 placeholder="Search"
@@ -167,7 +167,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                 }}
                 onChange={onSearch}
               />
-            ) : null}
+            )}
             <ul className="list-none max-h-[230px]">
               {SearchData.length > 0
                 ? SearchData.map((item, index) => {

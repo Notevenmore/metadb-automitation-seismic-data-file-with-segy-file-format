@@ -81,6 +81,7 @@ export type SetDraggablePositionAction = {
   x: number;
   y: number;
 };
+
 export type AddDraggableAction = {
   act: DraggableAct.ADD_DRAGGABLE;
   id: number;
@@ -88,41 +89,51 @@ export type AddDraggableAction = {
   snapToOrigin?: boolean;
   data?: ItemData;
 };
+
 export type AddDroppableAction = {act: DraggableAct.ADD_DROPPABLE; id: number};
+
 export type SetDragItemCanHoldAction = {
   act: DraggableAct.SET_DRAG_ITEM_CAN_HOLD;
   id: number;
   canHold: boolean;
 };
+
 export type SetDragItemHoldingAction = {
   act: DraggableAct.SET_DRAG_ITEM_HOLDING;
   id: number;
   holding: boolean;
 };
+
 export type SetDroppableCanDropAction = {
   act: DraggableAct.SET_DROPPABLE_CAN_DROP;
   id: number;
   canDrop: boolean;
 };
+
 export type SetDroppableDataAction = {
   act: DraggableAct.SET_DROPPABLE_DATA;
   id: number;
   data: ItemData;
 };
+
 export type ClearAllDragItemHoldingAction = {
   act: DraggableAct.CLEAR_ALL_DRAG_ITEM_HOLDING;
 };
+
 export type ClearAllDragItemCanHoldAction = {
   act: DraggableAct.CLEAR_ALL_DRAG_ITEM_CAN_HOLD;
 };
+
 export type ClearAllDropItemCanDropAction = {
   act: DraggableAct.CLEAR_ALL_DROP_ITEM_CAN_DROP;
 };
+
 export type SetMouseMousePositionAction = {
   act: DraggableAct.SET_MOUSE_POSITION;
   x: number;
   y: number;
 };
+
 export type SetMouseDownAction = {
   act: DraggableAct.SET_MOUSE_DOWN;
   down: boolean;

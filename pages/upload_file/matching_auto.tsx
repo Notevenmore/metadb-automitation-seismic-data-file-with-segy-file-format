@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useRouter} from 'next/router';
@@ -7,7 +6,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import Buttons from '../../components/buttons/buttons';
 import Container from '../../components/container/container.js';
 import Input from '../../components/input_form/input';
-import HeaderTable, {
+import {
+  HeaderTable,
   HeaderDivider,
 } from '../../components/header_table/header_table';
 import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
@@ -15,25 +15,6 @@ import {ImageEditor} from '../components/highlight_viewer';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Toast from '../../components/toast/toast';
-
-const HeaderRowWithGap = ({children}: PropsWithChildren<{}>) => {
-  return (
-    <div
-      className="
-      flex
-      justify-center
-      lg:items-center
-      lg:flex-row
-      flex-col
-      w-full
-      py-[10px]
-      lg:h-[55px]
-      gap-1
-      ">
-      <>{children}</>
-    </div>
-  );
-};
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -653,7 +634,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           <ImageEditor boundsObserver={() => {}} imageUrl={imageBase64Str} />
         </div>
       </div>
-      {totalPageNo > 1 ? (
+      {totalPageNo > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
             <Buttons
@@ -689,7 +670,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             </Buttons>
           </div>
         </div>
-      ) : null}
+      )}
       <div className="flex items-center justify-center w-full py-4">
         <Buttons
           button_description="View on sheets"

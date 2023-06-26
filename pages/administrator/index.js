@@ -1,13 +1,11 @@
+import {useEffect, useState} from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import {getLayoutTop} from '../../layout/getLayout';
 import Container from '../../components/container/container';
-import {useEffect} from 'react';
 import {getProfiles, removeProfile} from '../../services/admin';
-import {useState} from 'react';
-import Link from 'next/link';
 import Input from '../../components/input_form/input';
 import Buttons from '../../components/buttons/buttons';
-import {useSelector} from 'react-redux';
-import Image from 'next/image';
 import Toast from '../../components/toast/toast';
 
 AdministratorPage.getLayout = getLayoutTop;

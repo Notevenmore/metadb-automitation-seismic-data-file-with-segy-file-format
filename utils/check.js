@@ -1,8 +1,8 @@
 import {useRouter} from 'next/router';
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from 'react';
-import { getProfile } from '../services/admin';
-import { setUser } from '../store/userSlice';
+import {getProfile} from '../services/admin';
+import {setUser} from '../store/userSlice';
 
 function CheckAuth() {
   const user = useSelector(state => state.user.user);
@@ -13,18 +13,17 @@ function CheckAuth() {
 
   const handleProfile = async () => {
     const res = await getProfile(user.name).then(
-      (res) => {
+      res => {
         dispatch(setUser(res));
       },
       err => {
         setMessage({
           message: String(err),
-          color: "red",
-          show: true
-        })
+          color: 'red',
+          show: true,
+        });
       },
     );
-    // console.log(res, user.name)
   };
 
   useEffect(() => {
@@ -34,10 +33,9 @@ function CheckAuth() {
     }
     if (user.type === 'Administrator') return;
     handleProfile();
-    // console.log(user.name)
   }, [user.name, router.events, useSelector(state => state.user.user.name)]);
 
-  return {Message, setMessage}
+  return {Message, setMessage};
 }
 
 function CheckUser(userType) {
@@ -52,4 +50,4 @@ function CheckUser(userType) {
   }, [router.asPath]);
 }
 
-export {CheckAuth , CheckUser};
+export {CheckAuth, CheckUser};
