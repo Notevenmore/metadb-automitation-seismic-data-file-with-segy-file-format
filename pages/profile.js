@@ -70,7 +70,7 @@ const Profile = ({setTitle}) => {
       console.log('start');
       await updateProfile({
         userid: user.name,
-        profile_pict: currentUser.profile_picture,
+        profile_picture: currentUser.profile_picture,
       }).then(
         () => {
           dispatch(setUser(currentUser));
@@ -101,7 +101,7 @@ const Profile = ({setTitle}) => {
             {/* <img src={Mime(user.profile_picture) || ProfilePic} className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full" /> */}
             {/* //TODO CHANGE THE LINE BELOW TO NOT USE HARDCODED PROFILE PICTURE STRING */}
             <Image
-              src={user.profile_pict ? Mime(user.profile_pict) : ProfilePic}
+              src={user.profile_picture ? Mime(user.profile_picture) : ProfilePic}
               alt="image"
               width={500}
               height={500}
