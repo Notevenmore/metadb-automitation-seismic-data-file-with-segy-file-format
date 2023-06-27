@@ -1,82 +1,19 @@
-/* eslint-disable react/jsx-key */
 import {useEffect, useRef, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useRouter} from 'next/router';
+import Highlight from 'react-highlight';
 import Buttons from '../../components/buttons/buttons';
 import Container from '../../components/container/container.js';
 import Input from '../../components/input_form/input';
-import HeaderTable, {
+import {
+  HeaderTable,
   HeaderDivider,
-  ButtonsSection,
-  HeaderRow,
-  HeaderInput,
 } from '../../components/header_table/header_table';
-import {useDispatch, useSelector} from 'react-redux';
 import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {useRouter} from 'next/router';
-import {ImageEditor, Tuple4} from '../components/highlight_viewer';
+import {ImageEditor} from '../components/highlight_viewer';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Highlight from 'react-highlight';
-import config from '../../config';
 import Toast from '../../components/toast/toast';
-
-const FullButton = ({children, onClick}) => {
-  return (
-    <button
-      className="
-      flex 
-      items-center 
-      space-x-2
-      px-5
-      py-2
-      rounded-lg 
-      bg-primary 
-      hover:bg-gray-300 
-      transition-all 
-      w-full 
-      justify-center"
-      onClick={onClick}>
-      {children}
-    </button>
-  );
-};
-
-const HeaderRowWithGap = ({children}) => {
-  return (
-    <div
-      className="
-      flex
-      justify-center
-      lg:items-center
-      lg:flex-row
-      flex-col 
-      w-full 
-      py-[10px] 
-      lg:h-[55px] 
-      gap-1
-      ">
-      <>{children}</>
-    </div>
-  );
-};
-
-const HeaderInputInput = ({leftChildren, rightChildren}) => {
-  return (
-    <HeaderRowWithGap>
-      <>{leftChildren}</>
-      <>{rightChildren}</>
-    </HeaderRowWithGap>
-  );
-};
-
-const DeleteButton = ({children, onClick}) => (
-  <>
-    <button
-      className="flex items-center space-x-2 px-5 py-2 rounded-lg bg-red-300 hover:bg-red-200 transition-all justify-center w-[4rem]"
-      onClick={onClick}>
-      {children}
-    </button>
-  </>
-);
 
 function uuidv4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -349,7 +286,6 @@ export default function MatchReview({config, setTitle}) {
       const responseWords = await postScrapeAnnotate(docId, pageNo);
       if (responseWords.status === 'success') {
         setDropDownOptions(_ => responseWords.body.words);
-        // setState(_ => [...initialState]);
       }
     };
     onPageChange();
@@ -375,8 +311,6 @@ export default function MatchReview({config, setTitle}) {
       } else {
         try {
           const file = files[0];
-          //   const filename = file.name;
-          //   const size = file.size;
           const imageBase64Str = await toBase64(file);
 
           setLoading('Uploading document...');
@@ -407,7 +341,6 @@ export default function MatchReview({config, setTitle}) {
           }
           setImageBase64Str(_ => generateImageUrl(docId, pageNo));
           setDropDownOptions(_ => result.body.words);
-          // setState((_) => initialState);
 
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
@@ -482,15 +415,13 @@ export default function MatchReview({config, setTitle}) {
     const files = e.target.files;
     if (files !== null) {
       const file = files[0];
-      //   const filename = file.name;
-      //   const size = file.size;
       const imageBase64Str = await toBase64(file);
       const result = await postScrapeAnnotate(imageBase64Str);
       console.log(result);
+
       if (result.status === 'success') {
         setImageBase64Str(_ => result.body.base64str);
         setDropDownOptions(_ => result.body.dropdown);
-        // setState((_) => initialState);
       }
     } else {
     }
@@ -519,11 +450,6 @@ export default function MatchReview({config, setTitle}) {
       ];
       console.log(final);
       return {...final};
-
-      // const index = state.findIndex((pair) => pair.id === id);
-      // const cpair = state.find((pair) => pair.id === id);
-      // const newPair = { ...cpair, value };
-      // return [...state.slice(0, index), newPair, ...state.slice(index + 1)];
     });
   };
 
@@ -531,8 +457,6 @@ export default function MatchReview({config, setTitle}) {
   useEffect(() => {
     console.log(state);
     dispatch(setReviewData(state));
-    // localStorage.setItem('reviewData', JSON.stringify(state))
-    // console.log(localStorage.getItem('reviewData'))
   }, [state]);
 
   const removePair = id => {
@@ -593,46 +517,6 @@ export default function MatchReview({config, setTitle}) {
           </svg>
         </Buttons>
       </div>
-      {/* <HeaderInput
-        label1={data.key
-          .replace(/\_/g, ' ')
-          .split(' ')
-          .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-          .join(' ')}>
-        
-      </HeaderInput> */}
-      {/* <HeaderInputInput
-        leftChildren={
-          <>
-            <input type="checkbox" className="mr-2" />
-            <DeleteButton onClick={(_) => removePair(data.id)}>
-              Delete
-            </DeleteButton>
-            <Input
-              value={data.key}
-              type="dropdown"
-              name={"submissionType"}
-              placeholder={"Key"}
-              dropdown_items={dropDownOptions}
-              required={true}
-              additional_styles="w-full"
-              onChange={(e) => setKeyForId(data.id, e.target.value)}
-            />
-          </>
-        }
-        rightChildren={
-          <Input
-            value={data.value}
-            type="dropdown"
-            name={"submissionType"}
-            placeholder={"Value"}
-            dropdown_items={dropDownOptions}
-            required={true}
-            additional_styles="w-full"
-            onChange={(e) => setValueForId(data.id, e.target.value)}
-          />
-        }
-      /> */}
     </div>
   );
 
@@ -651,7 +535,6 @@ export default function MatchReview({config, setTitle}) {
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      {/* @ts-ignore */}
       <Buttons
         path=""
         button_description="Back"
@@ -672,14 +555,10 @@ export default function MatchReview({config, setTitle}) {
         <HeaderTable>
           {state[pageNo - 1]?.map(toRowComponent)}
           <HeaderDivider />
-          {/* <HeaderRow>
-            <FullButton onClick={addPair}>+</FullButton>
-          </HeaderRow> */}
         </HeaderTable>
         <div className="h-[calc(100vh-55px)] sticky top-0 grid grid-cols-1 rounded-lg overflow-clip">
           <ImageEditor boundsObserver={() => {}} imageUrl={imageBase64Str} />
         </div>
-        {/* <img src={imageBase64Str} alt="" className="object-contain m-auto" /> */}
       </div>
       <input
         accept="image/*"
@@ -689,10 +568,9 @@ export default function MatchReview({config, setTitle}) {
         hidden
         onChange={handleChangeUploadFile}
       />
-      {totalPageNo > 1 ? (
+      {totalPageNo > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-            {/* @ts-ignore */}
             <Buttons
               path=""
               title="Previous page"
@@ -704,15 +582,13 @@ export default function MatchReview({config, setTitle}) {
                 <ChevronLeft />
               </div>
             </Buttons>
-            {/* @ts-ignore */}
-            <div
+            <Buttons
               path=""
               title=""
               button_description=""
               className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
               <p className="w-5 h-5">{pageNo}</p>
-            </div>
-            {/* @ts-ignore */}
+            </Buttons>
             <Buttons
               path=""
               title="Next page"
@@ -726,9 +602,8 @@ export default function MatchReview({config, setTitle}) {
             </Buttons>
           </div>
         </div>
-      ) : null}
+      )}
       <div className="flex items-center justify-center w-full py-4">
-        {/* @ts-ignore */}
         <Buttons
           button_description="View on sheets"
           path="/upload_file/review"
@@ -740,63 +615,14 @@ export default function MatchReview({config, setTitle}) {
           }}
         />
       </div>
-      <ButtonsSection>
-        {/* <Buttons
-            path=""
-            additional_styles="bg-primary"
-            component="label"
-            onClick={handleUploadButtonClick}
-          >
-            Upload File
-          </Buttons>
-          <Buttons path="" additional_styles="bg-primary">
-            Save changes
-          </Buttons>
-          <Buttons path="" additional_styles="bg-primary">
-            Save and exit
-          </Buttons>
-          <Buttons path="" additional_styles="text-error">
-            Cancel
-          </Buttons> */}
-        {/* <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" />
-          <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} />
-          <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
-      </ButtonsSection>
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
       </Toast>
-
-      {/* <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
-          Message ? '' : '-translate-y-20'
-        }`}>
-        <p>{Message}</p>
-        <Buttons
-          additional_styles="px-1 py-1 text-black"
-          path=""
-          onClick={() => {
-            setMessage('');
-          }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Buttons>
-      </div> */}
     </Container>
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

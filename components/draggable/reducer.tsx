@@ -1,9 +1,6 @@
 import {
   AddDraggableAction,
   AddDroppableAction,
-  ClearAllDragItemCanHoldAction,
-  ClearAllDragItemHoldingAction,
-  ClearAllDropItemCanDropAction,
   DraggableAct,
   DraggableAction,
   DraggableItemData,
@@ -21,10 +18,10 @@ import {
   Tuple2,
 } from './types';
 
-export function draggableReducer(
+export const draggableReducer = (
   state: DraggableState,
   action: DraggableAction,
-): DraggableState {
+): DraggableState => {
   console.log(state);
   switch (action.act) {
     case DraggableAct.SET_DRAGGABLE_POSITION: {
@@ -54,13 +51,13 @@ export function draggableReducer(
     case DraggableAct.CLEAR_ALL_DRAG_ITEM_CAN_HOLD: {
       // private
       // clear all drag item that is holding
-      return actor.reduceClearAllDragItemCanHold(state, action);
+      return actor.reduceClearAllDragItemCanHold(state);
     }
     case DraggableAct.CLEAR_ALL_DROP_ITEM_CAN_DROP: {
-      return actor.reduceClearAllDropItemCanDrop(state, action);
+      return actor.reduceClearAllDropItemCanDrop(state);
     }
     case DraggableAct.CLEAR_ALL_DRAG_ITEM_HOLDING: {
-      return actor.reduceClearAllDragItemHolding(state, action);
+      return actor.reduceClearAllDragItemHolding(state);
     }
     case DraggableAct.SET_MOUSE_POSITION: {
       // private
@@ -72,7 +69,7 @@ export function draggableReducer(
       return actor.reduceSetMouseDown(state, action);
     }
   }
-}
+};
 
 const actor = {
   reduceSetDraggablePosition: function (
@@ -187,7 +184,6 @@ const actor = {
 
   reduceClearAllDragItemCanHold: function (
     state: DraggableState,
-    action: ClearAllDragItemCanHoldAction,
   ): DraggableState {
     const items = state.draggableItems.map(it => ({...it, canHold: false}));
     return {
@@ -198,7 +194,6 @@ const actor = {
 
   reduceClearAllDropItemCanDrop: function (
     state: DraggableState,
-    action: ClearAllDropItemCanDropAction,
   ): DraggableState {
     const items = state.droppableItems.map(it => ({...it, canDrop: false}));
     return {
@@ -209,7 +204,6 @@ const actor = {
 
   reduceClearAllDragItemHolding: function (
     state: DraggableState,
-    action: ClearAllDragItemHoldingAction,
   ): DraggableState {
     const items = state.draggableItems.map(it => ({...it, holding: false}));
     return {

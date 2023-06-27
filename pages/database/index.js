@@ -4,6 +4,7 @@ import Input from '../../components/input_form/input';
 
 export default function Database() {
   const additional_styles_label = 'w-[20%]';
+
   return (
     <Container>
       <Container.Title back>Connect with database</Container.Title>

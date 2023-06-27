@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import styles from '../../../styles/NavItem.module.css';
 import {useState} from 'react';
 import {useRouter} from 'next/router';
+import styles from '../../../styles/NavItem.module.css';
 
-export default function Item({icon, name, child, link, collapse, setCollapse}) {
+export const Item = ({icon, name, child, link, collapse, setCollapse}) => {
   const [toggleOpen, setToggleOpen] = useState(false);
   const [selected, setselected] = useState('');
   function toggle() {
@@ -39,16 +39,17 @@ export default function Item({icon, name, child, link, collapse, setCollapse}) {
                 link={item.link}
                 collapse={collapse}
                 selected={selected}
-                setSelected={setselected}></Child>
+                setSelected={setselected}
+              />
             </div>
           ))}
         </div>
       )}
     </div>
   );
-}
+};
 
-function Child({icon, name, link = '', collapse}) {
+const Child = ({icon, name, link = '', collapse}) => {
   const router = useRouter();
   return (
     <Link href={link || router.asPath} className={styles.navItem}>
@@ -76,4 +77,4 @@ function Child({icon, name, link = '', collapse}) {
       </div>
     </Link>
   );
-}
+};

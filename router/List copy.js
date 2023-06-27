@@ -1,4 +1,4 @@
-const routing_list = [
+const routing_list_copy = [
   {
     name: 'Home',
     link: '/',
@@ -196,4 +196,3 @@ const routing_list = [
     ],
   },
 ];
-export default routing_list;

@@ -1,117 +1,22 @@
-/* eslint-disable react/jsx-key */
 import {MutableRefObject, useEffect, useRef, useState} from 'react';
+import {useRouter} from 'next/router';
+import {useSelector, useDispatch} from 'react-redux';
+import Highlight from 'react-highlight';
 import Buttons from '../../components/buttons/buttons';
 import Container from '../../components/container/container.js';
 import Input from '../../components/input_form/input';
-import HeaderTable, {
+import {
+  HeaderTable,
   HeaderDivider,
-  ButtonsSection,
-  HeaderInput,
 } from '../../components/header_table/header_table';
-import {useSelector, useDispatch} from 'react-redux';
 import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {useRouter} from 'next/router';
-import {PropsWithChildren} from 'react';
-import {ReactNode} from 'react';
 import {DraggableProvider} from '../../components/draggable/provider';
 import {DraggableBox, DroppableBox} from '../../components/draggable/component';
 import {Tuple4, useNaturalImageDim} from '../components/highlight_viewer';
 import {Tuple2} from '../../components/draggable/types';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Highlight from 'react-highlight';
-import config from '../../config';
 import Toast from '../../components/toast/toast';
-
-interface FullButtonProps {
-  onClick: () => void;
-}
-
-const FullButton = ({
-  children,
-  onClick,
-}: PropsWithChildren<FullButtonProps>) => {
-  return (
-    <button
-      className="
-      flex 
-      items-center 
-      space-x-2
-      px-5
-      py-2
-      rounded-lg 
-      bg-primary 
-      hover:bg-gray-300 
-      transition-all 
-      w-full 
-      justify-center"
-      onClick={onClick}>
-      {children}
-    </button>
-  );
-};
-
-const HeaderRowWithGap = ({children}: PropsWithChildren<{}>) => {
-  return (
-    <div
-      className="
-      flex
-      justify-center
-      lg:items-center
-      lg:flex-row
-      flex-col 
-      w-full 
-      py-[10px] 
-      lg:h-[55px] 
-      gap-1
-      ">
-      <>{children}</>
-    </div>
-  );
-};
-
-interface HeaderInputInputProps {
-  leftChildren: ReactNode;
-  rightChildren: ReactNode;
-}
-
-const HeaderInputInput = ({
-  leftChildren,
-  rightChildren,
-}: HeaderInputInputProps) => {
-  return (
-    <HeaderRowWithGap>
-      <>{leftChildren}</>
-      <>{rightChildren}</>
-    </HeaderRowWithGap>
-  );
-};
-
-interface DeleteButtonProps {
-  onClick: () => void;
-}
-
-const DeleteButton = ({
-  children,
-  onClick,
-}: PropsWithChildren<DeleteButtonProps>) => (
-  <>
-    <button
-      className="flex items-center space-x-2 px-5 py-2 rounded-lg bg-red-300 hover:bg-red-200 transition-all justify-center w-[4rem]"
-      onClick={onClick}>
-      {children}
-    </button>
-  </>
-);
-
-// function uuidv4() {
-//   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-//     (
-//       c ^
-//       (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-//     ).toString(16)
-//   );
-// }
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -126,12 +31,6 @@ export const toBase64 = (file: File): Promise<string> =>
     };
     reader.onerror = error => reject(error);
   });
-
-// const generateKeyValuePair = () => {
-//   const newPair = { ...newDefaultPair };
-//   newPair.id = uuidv4();
-//   return newPair;
-// };
 
 interface ApiCallResponse<Body> {
   status: 'success' | 'failed';
@@ -740,24 +639,13 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     });
   };
 
-  // useEffect(() => {
-  //   localStorage.setItem('reviewData', JSON.stringify(state))
-  // }, [state])
-
   const toRowComponent = (data: TableRow) => {
     return (
       <div key={data.id}>
         <HeaderDivider additional_styles="border-gray-300" />
         <div className="py-2.5 grid grid-cols-[1fr_auto] items-center space-x-2">
           <DroppableBox
-            onDrop={drop =>
-              setValueForId(
-                data.id,
-                pageNo,
-                // `${data.value.trim()} ${drop.trim()}`.trim(),
-                drop.trim(),
-              )
-            }>
+            onDrop={drop => setValueForId(data.id, pageNo, drop.trim())}>
             <Input
               label={data.key
                 .replace(/\_/g, ' ')
@@ -769,10 +657,8 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               type="dropdown"
               name={'submissionType'}
               placeholder="Dropped items' text will show up here"
-              // @ts-ignore
               dropdown_items={dropDownOptions}
               required={true}
-              // @ts-ignore
               additional_styles="w-full"
               onChange={e => setValueForId(data.id, pageNo, e.target.value)}
               withSearch
@@ -784,7 +670,8 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             disabled={data.value ? false : true}
             onClick={() => {
               setValueForId(data.id, pageNo, '');
-            }}>
+            }}
+            withPath={false}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -800,14 +687,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             </svg>
           </Buttons>
         </div>
-        {/* <HeaderInput
-          label1={data.key
-            .replace(/\_/g, ' ')
-            .split(' ')
-            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-            .join(' ')}>
-          
-        </HeaderInput> */}
       </div>
     );
   };
@@ -830,7 +709,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                 width: `${it.dim[0] * sw}px`,
                 height: `${it.dim[1] * sh}px`,
               }}>
-              {/* eslint-disable-next-line @next/next/no-img-element  */}
               <img
                 src={it.src}
                 alt=""
@@ -863,7 +741,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      {/* @ts-ignore */}
       <Buttons
         path=""
         button_description="Back"
@@ -884,22 +761,16 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
           <HeaderTable>
             {state[pageNo - 1]?.map(toRowComponent)}
-            <HeaderDivider />
+            <HeaderDivider additional_styles={undefined} />
           </HeaderTable>
-          <div
-            // style={{
-            //   outline: "2px solid green",
-            // }}
-            className="h-[calc(100vh-55px)] rounded-lg border border-gray-300 sticky top-0">
+          <div className="h-[calc(100vh-55px)] rounded-lg border border-gray-300 sticky top-0">
             <Draggables />
-            {/* eslint-disable-next-line @next/next/no-img-element  */}
             <img
               src={imageBase64Str}
               alt=""
               className="object-contain m-auto"
               ref={imageRef}
               style={{
-                // outline: "1px solid purple",
                 margin: '5px',
               }}
               onLoad={() => {
@@ -910,10 +781,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             />
           </div>
         </div>
-        {totalPageNo > 1 ? (
+        {totalPageNo > 1 && (
           <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
             <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-              {/* @ts-ignore */}
               <Buttons
                 path=""
                 title="Previous page"
@@ -925,15 +795,13 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                   <ChevronLeft />
                 </div>
               </Buttons>
-              {/* @ts-ignore */}
-              <div
+              <Buttons
                 path=""
                 title=""
                 button_description=""
                 className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
                 <p className="w-5 h-5">{pageNo}</p>
-              </div>
-              {/* @ts-ignore */}
+              </Buttons>
               <Buttons
                 path=""
                 title="Next page"
@@ -947,12 +815,12 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               </Buttons>
             </div>
           </div>
-        ) : null}
+        )}
         <div className="flex items-center justify-center w-full py-4">
-          {/* @ts-ignore */}
           <Buttons
             button_description="View on sheets"
             path="/upload_file/review"
+            // @ts-ignore
             query={{form_type: formType}}
             additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
             disabled={formType ? false : true}
@@ -961,50 +829,15 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             }}
           />
         </div>
-        <ButtonsSection>
-          {/* @ts-ignore */}
-          {/* <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" /> */}
-          {/* @ts-ignore */}
-          {/* <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} /> */}
-          {/* @ts-ignore */}
-          {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
-        </ButtonsSection>
         <Toast message={Message} setmessage={setMessage}>
           {Message.message}
         </Toast>
-
-        {/* <div
-          className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
-            Message ? '' : '-translate-y-20'
-          }`}>
-          <p>{Message}</p>
-          <Buttons
-            additional_styles="px-1 py-1 text-black"
-            path=""
-            onClick={() => {
-              setMessage('');
-            }}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </Buttons>
-        </div> */}
       </Container>
     </DraggableProvider>
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

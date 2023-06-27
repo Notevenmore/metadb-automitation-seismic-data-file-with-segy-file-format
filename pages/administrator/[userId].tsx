@@ -1,11 +1,9 @@
-// get server side props
-
 import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfile, removeProfile, updateProfile} from '../../services/admin';
-import {useEffect, useState} from 'react';
 import Toast from '../../components/toast/toast';
 
 UserPage.getLayout = getLayoutTop;
@@ -20,10 +18,9 @@ interface Detail {
 
 export default function UserPage() {
   const [detail, setDetail] = useState<Detail>();
+  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const router = useRouter();
   const {userId} = router.query;
-
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
 
   const handleProfile = async () => {
     const res = await getProfile(userId).then(
@@ -152,7 +149,7 @@ export default function UserPage() {
           </div>
         </form>
       )}
-	  
+
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
       </Toast>

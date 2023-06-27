@@ -1,5 +1,4 @@
 import Highlight from 'react-highlight';
-
 import Buttons from '../../components/buttons/buttons';
 import TableComponent from '../../components/table/table';
 import Well_sample_core from '../../public/icons/well_sample_core.svg';
@@ -71,34 +70,34 @@ const TablePage = () => {
             </p>
             <Highlight className="text-sm border-2 rounded-md">
               {`const tableData = {
-    header: ["id", "email", "first_name", "last_name", "avatar"],
-    content: [
-        {
-        "id": 1,
-        "email": "george.bluth@reqres.in",
-        "first_name": "George",
-        "last_name": "Bluth",
-        "avatar": "https://reqres.in/img/faces/1-image.jpg"
-        },
-        {
-        "id": 2,
-        "email": "janet.weaver@reqres.in",
-        "first_name": "Janet",
-        "last_name": "Weaver",
-        "avatar": "https://reqres.in/img/faces/2-image.jpg"
-        }
-    ]
-}
-`}
+                header: ["id", "email", "first_name", "last_name", "avatar"],
+                content: [
+                    {
+                    "id": 1,
+                    "email": "george.bluth@reqres.in",
+                    "first_name": "George",
+                    "last_name": "Bluth",
+                    "avatar": "https://reqres.in/img/faces/1-image.jpg"
+                    },
+                    {
+                    "id": 2,
+                    "email": "janet.weaver@reqres.in",
+                    "first_name": "Janet",
+                    "last_name": "Weaver",
+                    "avatar": "https://reqres.in/img/faces/2-image.jpg"
+                    }
+                ]
+            }
+            `}
             </Highlight>
             <div className="w-full space-y-2 pt-2">
               <h2 className="text-lg font-bold">1. A normal table.</h2>
               <p className="font-bold">Code:</p>
               <Highlight className="text-sm border-2 rounded-md">
-                {`<TableComponent 
-    header={tableData.header} 
-    content={tableData.content} 
-/>`}
+                {`<TableComponent
+                  header={tableData.header}
+                  content={tableData.content}
+                  />`}
               </Highlight>
               <p className="font-bold">Output:</p>
               <TableComponent
@@ -125,27 +124,27 @@ const TablePage = () => {
               <p className="font-bold">Code:</p>
               <Highlight className="text-sm border-2 rounded-md">
                 {`<TableComponent
-    with_checkbox={true}
-    header={["Document name", "Working area", "Type", "AFE", "Action"]}
-    content={
-        [
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-            ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
-        ]
-    }
-    setSelectedRows={SelectedTableData}
-/>`}
+                  with_checkbox={true}
+                  header={["Document name", "Working area", "Type", "AFE", "Action"]}
+                  content={
+                      [
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                          ["Lorem ipsum", "Pulau Geodwipa", "Quarterly", 12345, <div key={2} className="flex space-x-2"><button>e</button><button>v</button><button>d</button></div>],
+                      ]
+                  }
+                  setSelectedRows={SelectedTableData}
+              />`}
               </Highlight>
               <br />
               <p className="font-bold">Output:</p>

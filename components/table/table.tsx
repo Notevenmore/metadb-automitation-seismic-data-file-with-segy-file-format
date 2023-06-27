@@ -18,7 +18,7 @@ const TableComponent = ({
     content: content,
   };
 
-  const handleSelectAll = e => {
+  const handleSelectAll = () => {
     const temp = [];
     const checkbox = document.getElementById(
       'checkbox_all',
@@ -34,7 +34,8 @@ const TableComponent = ({
     });
     setSelected(temp);
   };
-  const handleSelectRow = (e, row_input_id: string, row_id: string) => {
+
+  const handleSelectRow = (row_input_id: string, row_id: string) => {
     let temp = Selected;
     const checkbox_header = document.getElementById(
       'checkbox_all',
@@ -52,6 +53,7 @@ const TableComponent = ({
       setSelected(prev => [...prev, row_id]);
     }
   };
+
   useEffect(() => {
     if (with_checkbox) {
       // directly using the setState function is prevented for performance sake
@@ -70,7 +72,7 @@ const TableComponent = ({
       )}>
       <thead className="bg-gray-200">
         <tr className="text-left">
-          {with_checkbox ? (
+          {with_checkbox && (
             <th
               className={twMerge(
                 'pl-[14px] pt-1 w-5',
@@ -79,10 +81,10 @@ const TableComponent = ({
               <input
                 type="checkbox"
                 id="checkbox_all"
-                onClick={e => handleSelectAll(e)}
+                onClick={() => handleSelectAll()}
               />
             </th>
-          ) : null}
+          )}
           {tableData.header.map((header, index) => {
             return (
               <th
@@ -100,7 +102,7 @@ const TableComponent = ({
             key={row_index}
             id={'row_' + row_index}
             className="hover:bg-side_bar">
-            {with_checkbox ? (
+            {with_checkbox && (
               <td
                 className={twMerge(
                   'pl-[14px] pt-1 w-5 border-t-2 border-solid border-black/20',
@@ -110,16 +112,15 @@ const TableComponent = ({
                   id={'row_input_' + row_index}
                   name="checkbox_row"
                   type="checkbox"
-                  onClick={e =>
+                  onClick={() =>
                     handleSelectRow(
-                      e,
                       'row_input_' + row_index,
                       'row_' + row_index,
                     )
                   }
                 />
               </td>
-            ) : null}
+            )}
             {contentAlignWithHeader
               ? tableData.header.map((header, idx) => {
                   return (

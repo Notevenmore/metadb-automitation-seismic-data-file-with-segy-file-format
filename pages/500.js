@@ -8,7 +8,8 @@ export default function Custom500() {
         code="500"
         description="Server Error"
         text="Uh-uh something's wrong with the server. Refresh the page or come
-                back later."></Error>
+                back later."
+      />
     </div>
   );
 }

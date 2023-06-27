@@ -1,25 +1,18 @@
 import {useEffect, useState} from 'react';
+import {useRouter} from 'next/router';
+import {useSelector} from 'react-redux';
 import Buttons from '../components/buttons/buttons';
 import Container from '../components/container/container.js';
 import Input from '../components/input_form/input';
-import HeaderTable, {
+import {
+  HeaderTable,
   HeaderDivider,
   HeaderInput,
 } from '../components/header_table/header_table';
 import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
-import {useRouter} from 'next/router';
-import {useSelector} from 'react-redux';
-import config from '../config';
 import {saveDocument} from '../components/utility_functions';
 import Toast from '../components/toast/toast';
-
-export async function getServerSideProps(context) {
-  const config = JSON.parse(process.env.ENDPOINTS);
-  return {
-    props: {config: config}, // will be passed to the page component as props
-  };
-}
 
 export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
@@ -230,38 +223,33 @@ export default function NewDocumentPage({setTitle, config}) {
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
       </Toast>
-
-      {/* <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-${
-          Message.color || 'blue'
-        }-500 text-white px-3 rounded-lg py-2 transition-all ${
-          Message.message ? '' : '-translate-y-20'
-        }`}>
-        <p>{Message.message}</p>
-        <Buttons
-          additional_styles="px-1 py-1 text-black"
-          path=""
-          onClick={e => {
-            e.preventDefault();
-            setMessage({message: '', color: ''});
-          }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Buttons>
-      </div> */}
     </Container>
   ) : (
-    <p>Loading...</p>
+    <div className="h-full flex flex-col justify-center border-collapse space-y-5 overflow-auto">
+      <div className="flex p-5 space-y-5 flex-col items-center overflow-auto">
+        <h1 className="font-bold text-3xl text-center">Information</h1>
+        <p className="text-center">
+          Page reload or manual address input detected. If you accidentally
+          reload this page or something forced you to reload this page, you can
+          go to the record list of the data type you have just entered. The
+          record along with its details you have just inputted will be there.
+          You can add data relating to the record there afterwards.
+        </p>
+        <Buttons
+          onClick={e => {
+            e.preventDefault();
+            router.push('/');
+          }}>
+          Go home
+        </Buttons>
+      </div>
+    </div>
   );
+}
+
+export async function getServerSideProps() {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
 }

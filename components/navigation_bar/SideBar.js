@@ -1,23 +1,20 @@
-import Item from './navigation_item/Item';
-import List from '../../router/List';
 import {useState} from 'react';
+import {Item} from './navigation_item/Item';
+import List from '../../router/List';
 import SearchWidget from '../widget/Search';
 
-export default function SideBar({half}) {
+export const SideBar = () => {
   const [iconCollapse, setIconCollapse] = useState(false);
   return (
     <div
-      // className={`float-left ${half ? "h-full" : "h-screen"} ${iconCollapse ? "w-auto" : ""} flex flex-col pt-2 pb-10 w-[314px] bg-side_bar overflow-y-auto relative`}
       className={`float-left justify-between full-height ${
         iconCollapse ? 'w-[57px]' : 'w-[314px]'
-      } flex flex-col bg-side_bar overflow-y-auto overflow-x-hidden relative transition-all`}
-      // style={{ width: iconCollapse ? "auto" : "" }}>
-    >
+      } flex flex-col bg-side_bar overflow-y-auto overflow-x-hidden relative transition-all`}>
       <div className="overflow-y-auto pb-10 overflow-x-hidden">
         {iconCollapse ? (
           <div>
             <Item icon="/icons/magnify.svg" collapse={iconCollapse} />
-            <div className="border-b border-b-[#dddddd]"></div>
+            <div className="border-b border-b-[#dddddd]" />
           </div>
         ) : (
           <div>
@@ -32,7 +29,8 @@ export default function SideBar({half}) {
                 ? '/icons/chevron-double-right.svg'
                 : '/icons/chevron-double-left.svg'
             }
-            collapse={iconCollapse}></Item>
+            collapse={iconCollapse}
+          />
         </div>
         {List.map(router => (
           <Item
@@ -42,7 +40,8 @@ export default function SideBar({half}) {
             link={router.link}
             collapse={iconCollapse}
             setCollapse={setIconCollapse}
-            key={router.name}></Item>
+            key={router.name}
+          />
         ))}
       </div>
       <div
@@ -53,4 +52,4 @@ export default function SideBar({half}) {
       </div>
     </div>
   );
-}
+};

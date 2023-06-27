@@ -3,16 +3,16 @@ import {twMerge} from 'tailwind-merge';
 import Arrow from '../../public/icons/arrow_notrail.svg';
 
 interface InputProps extends React.ComponentProps<'input'> {
-  label: '';
-  label_loc: '';
-  dropdown_items: [];
-  additional_styles_label: '';
-  additional_styles_input: '';
-  additional_styles_input_dropdown: '';
-  additional_styles_menu_container: '';
-  additional_styles: '';
-  withSearch: boolean;
-  setSelectedItem;
+  label: string;
+  label_loc?: string;
+  dropdown_items?: string[];
+  additional_styles_label?: string;
+  additional_styles_input?: string;
+  additional_styles_input_dropdown?: string;
+  additional_styles_menu_container?: string;
+  additional_styles?: string;
+  withSearch?: boolean;
+  setSelectedItem?;
 }
 
 const Input: React.FunctionComponent<InputProps> = ({
@@ -29,16 +29,16 @@ const Input: React.FunctionComponent<InputProps> = ({
   withSearch,
   ...inputProps
 }) => {
-  const [Selected, setSelected] = useState();
+  const [selected, setSelected] = useState('');
   const [clicked, setclicked] = useState(false);
-  const [CurrentlyFocused, setCurrentlyFocused] = useState<Element>();
-  const [DoSearch, setDoSearch] = useState<Element>();
+  const [currentlyFocused, setCurrentlyFocused] = useState<Element>();
+  const [doSearch, setDoSearch] = useState<Element>();
   const selectorRef = useRef();
-  const handleUnfocus = e => {
+  const handleUnfocus = (e: {preventDefault: () => void}) => {
     e.preventDefault();
     console.log(document.activeElement);
     // to close the dropdown items when the dropdown menu is clicked again
-    if (document.activeElement === CurrentlyFocused) {
+    if (document.activeElement === currentlyFocused) {
       (document.activeElement as HTMLElement).blur();
       setCurrentlyFocused(null);
       setDoSearch(null);
@@ -48,15 +48,13 @@ const Input: React.FunctionComponent<InputProps> = ({
   };
 
   const [SearchData, setSearchData] = useState([]);
-  const onSearch = e => {
-    // const name = e.target.value.toLocaleLowerCase();
+  const onSearch = (e: {target: {value: string}}) => {
     const name = e.target.value.toLowerCase().split('').join('.*');
     let temp = dropdown_items as any;
-    temp = temp.filter(item => {
-      // return item.toLocaleLowerCase().includes(name);
+    temp = temp.filter((item: string) => {
       return new RegExp(name).test(item.toLowerCase());
     });
-    // console.log("search", temp);
+
     setSearchData(temp);
   };
 
@@ -64,14 +62,14 @@ const Input: React.FunctionComponent<InputProps> = ({
     // directly using the setState function is prevented for performance sake
     // (to prevent re-render, which is very expensive in resource in this case)
     if (setSelectedItem) {
-      setSelectedItem[0] = [Selected];
+      setSelectedItem[0] = [selected];
     }
     // forcefully trigger onChange event to make onChange on parent component works
-    if (Selected) {
+    if (selected) {
       console.log('reached');
       const selector = selectorRef.current as any;
       const lastValue = selector.value;
-      selector.value = Selected;
+      selector.value = selected;
       const event = new Event('input', {bubbles: true});
       const tracker = selector._valueTracker;
       if (tracker) {
@@ -79,7 +77,7 @@ const Input: React.FunctionComponent<InputProps> = ({
       }
       selector.dispatchEvent(event);
     }
-  }, [Selected, clicked]);
+  }, [selected, clicked]);
 
   return (
     <div
@@ -106,8 +104,8 @@ const Input: React.FunctionComponent<InputProps> = ({
         <input
           type={type}
           className={twMerge(
-            `rounded-md bg-gray-200 placeholder:text-gray-500 
-                         outline-none px-2 py-1.5 w-full hover:bg-gray-300 
+            `rounded-md bg-gray-200 placeholder:text-gray-500
+                         outline-none px-2 py-1.5 w-full hover:bg-gray-300
                          focus:bg-gray-300 focus:outline-[2px] focus:outline-gray-400
                          transition-all`,
             additional_styles_input,
@@ -145,7 +143,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                 'truncate w-[90%] bg-transparent outline-none cursor-default select-none placeholder:text-gray-500',
                 additional_styles_input_dropdown,
               )}
-              value={Selected || 'Select an item'}
+              value={selected || 'Select an item'}
               readOnly
               {...inputProps}
             />
@@ -154,11 +152,11 @@ const Input: React.FunctionComponent<InputProps> = ({
           <div
             className={twMerge(
               `${
-                DoSearch ? 'block' : 'hidden'
+                doSearch ? 'block' : 'hidden'
               } group-focus:block active:block z-[50] absolute bg-gray-200 shadow-lg drop-shadow-lg mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
               additional_styles_menu_container,
             )}>
-            {withSearch && dropdown_items.length > 0 ? (
+            {withSearch && dropdown_items.length > 0 && (
               <input
                 className="sticky top-0 bg-inherit border border-b-gray-400/[.5] outline-none py-1 px-2 placeholder:italic w-full"
                 placeholder="Search"
@@ -169,7 +167,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                 }}
                 onChange={onSearch}
               />
-            ) : null}
+            )}
             <ul className="list-none max-h-[230px]">
               {SearchData.length > 0
                 ? SearchData.map((item, index) => {
@@ -177,7 +175,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                       <li
                         key={index}
                         className="hover:bg-gray-300 py-1 px-2 transition-all"
-                        onClick={e => {
+                        onClick={() => {
                           setclicked(!clicked);
                           setSelected(item);
                           (document.activeElement as HTMLElement).blur();
@@ -191,7 +189,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                       <li
                         key={index}
                         className="hover:bg-gray-300 py-1 px-2 transition-all"
-                        onClick={e => {
+                        onClick={() => {
                           setclicked(!clicked);
                           setSelected(item);
                           (document.activeElement as HTMLElement).blur();

@@ -1,11 +1,10 @@
-/* eslint-disable */
-import React, {useEffect, useRef, useState} from 'react';
 import ReactMarkdown from 'react-markdown';
-import data from '../../dummy-data/help_editor_data';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import nightOwl from 'react-syntax-highlighter/dist/cjs/styles/hljs/night-owl';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import {useEffect, useRef, useState} from 'react';
+import data from '../../dummy-data/help_editor_data';
 import Input from '../../components/input_form/input';
 import Button from '../../components/buttons/buttons';
 
@@ -13,9 +12,9 @@ const Editor = () => {
   const [Title, setTitle] = useState(data.title);
   const [Warning, setWarning] = useState(true);
   const [Description, setDescription] = useState(data.data);
-  const [Description_norender, setDescription_norender] = useState([data.data]);
   const [Checked, setChecked] = useState(false);
   const body_editor = useRef();
+  const Description_norender = [data.data];
 
   const formatText = (type, element) => {
     const start = element.selectionStart;
@@ -158,7 +157,7 @@ const Editor = () => {
 
   return (
     <div className="h-fit p-6 space-y-4">
-      {Warning ? (
+      {Warning && (
         <div className="w-full rounded-md bg-yellow-400 p-3 relative">
           <button
             title="Close warning"
@@ -188,7 +187,7 @@ const Editor = () => {
             the text editor.
           </p>
         </div>
-      ) : null}
+      )}
       <div className="flex space-x-2">
         <label className="flex items-center w-fit space-x-2 relative">
           <svg
@@ -199,7 +198,7 @@ const Editor = () => {
             <path d="M1 4.5L5 9L14 1" strokeWidth="2" stroke="#fff" />
           </svg>
           <input
-            onChange={e => {
+            onChange={() => {
               setChecked(!Checked);
             }}
             checked={Checked}
@@ -223,7 +222,6 @@ const Editor = () => {
           additional_styles={`${Checked ? 'pointer-events-none' : ''}`}
           disabled={Checked ? true : false}
         />
-        {/* <Button path='.' onClick={(e) => { e.preventDefault(); console.log([document.getElementsByClassName("editor_body")[0].value]) }} button_description='Print text to console' /> */}
       </div>
       <Input
         type="text"
@@ -236,7 +234,6 @@ const Editor = () => {
       />
       <div className="h-full min-h-screen w-full grid grid-cols-2 space-x-2">
         {' '}
-        {/*grid grid-cols-2 */}
         <div className="border-2 rounded-md h-full overflow-clip flex flex-col">
           <div className="border-b bg-gray-200 flex px-2 h-fit sticky top-0">
             <div
@@ -255,7 +252,7 @@ const Editor = () => {
               </svg>
               <div className="absolute top-[45px] left-0 hidden group-hover:block text-center bg-white border-2 border-black/[.15] rounded-md overflow-clip w-fit">
                 <Button
-                  onClick={e => {
+                  onClick={() => {
                     document.execCommand(
                       'insertText',
                       false,
@@ -272,7 +269,7 @@ const Editor = () => {
                   button_description="H1"
                   className="hover:bg-gray-100 transition-all w-[100px] py-2 text-3xl"></Button>
                 <Button
-                  onClick={e => {
+                  onClick={() => {
                     document.execCommand(
                       'insertText',
                       false,
@@ -306,7 +303,7 @@ const Editor = () => {
                   button_description="H3"
                   className="hover:bg-gray-100 transition-all w-[100px] py-2 text-xl"></Button>
                 <Button
-                  onClick={e => {
+                  onClick={() => {
                     document.execCommand(
                       'insertText',
                       false,
@@ -323,7 +320,7 @@ const Editor = () => {
                   button_description="H4"
                   className="hover:bg-gray-100 transition-all w-[100px] py-2 text-lg"></Button>
                 <Button
-                  onClick={e => {
+                  onClick={() => {
                     document.execCommand(
                       'insertText',
                       false,
@@ -340,7 +337,7 @@ const Editor = () => {
                   button_description="H5"
                   className="hover:bg-gray-100 transition-all w-[100px] py-2 text-md"></Button>
                 <Button
-                  onClick={e => {
+                  onClick={() => {
                     document.execCommand(
                       'insertText',
                       false,
@@ -611,7 +608,6 @@ const Editor = () => {
           </div>
           <div className="h-full">
             {' '}
-            {/* h-full */}
             {Checked ? (
               <textarea
                 ref={body_editor}
@@ -642,6 +638,7 @@ const Editor = () => {
         </div>
         <div className="border-2 rounded-md p-5 prose h-full break-words">
           <ReactMarkdown
+            // eslint-disable-next-line react/no-children-prop
             children={Description}
             rehypePlugins={[rehypeRaw]}
             remarkPlugins={[remarkGfm]}
@@ -650,6 +647,7 @@ const Editor = () => {
                 const match = /language-(\w+)/.exec(className || '');
                 return !inline && match ? (
                   <SyntaxHighlighter
+                    // eslint-disable-next-line react/no-children-prop
                     children={String(children).replace(/\n$/, '')}
                     style={nightOwl}
                     language={match[1]}

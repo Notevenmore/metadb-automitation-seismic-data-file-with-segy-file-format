@@ -1,24 +1,24 @@
-/* eslint-disable */
 import {useRouter} from 'next/router';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import Button from '../../components/buttons/buttons';
 import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
 import Input from '../../components/input_form/input';
 import Container from '../../components/container/container';
 
-const DocEditor = ({spreadsheetID}) => {
+const DocEditor = () => {
   const [IsSaved, setIsSaved] = useState(false);
   const iframe_ref = useRef();
   const warningText =
     'You have unsaved changes - Are you sure you want to leave this page?';
-  // const sheetID = spreadsheetID.response
   const router = useRouter();
+
   const handleWindowClose = e => {
     e.preventDefault();
     if (!IsSaved) return (e.returnValue = warningText);
     return;
   };
+
   const handleBrowseAway = (url, {shallow}) => {
     if (!IsSaved) {
       if (url === router.asPath || !window.confirm(warningText)) {
@@ -28,6 +28,7 @@ const DocEditor = ({spreadsheetID}) => {
     }
     return;
   };
+
   useEffect(() => {
     window.addEventListener('beforeunload', handleWindowClose);
     router.events.on('routeChangeStart', handleBrowseAway);
@@ -36,6 +37,7 @@ const DocEditor = ({spreadsheetID}) => {
       router.events.off('routeChangeStart', handleBrowseAway);
     };
   }, [IsSaved]);
+
   useEffect(() => {
     console.log(iframe_ref.current);
   }, [iframe_ref]);
@@ -58,6 +60,7 @@ const DocEditor = ({spreadsheetID}) => {
               <p>Nama KKKS</p>
               <p className="text-gray-400">(KKKS Name)</p>
             </div>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'text'} defaultValue="Geodwipa Teknika Nusantara" />,
           ],
           [
@@ -65,6 +68,7 @@ const DocEditor = ({spreadsheetID}) => {
               <p>Nama wilayah kerja</p>
               <p className="text-gray-400">(Working area)</p>
             </div>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'text'} defaultValue="Geodwipa Teknika Nusantara" />,
           ],
           [
@@ -72,6 +76,7 @@ const DocEditor = ({spreadsheetID}) => {
               <p>Jenis penyerahan data</p>
               <p className="text-gray-400">(Submission type)</p>
             </div>,
+            // eslint-disable-next-line react/jsx-key
             <Input
               type={'dropdown'}
               dropdown_items={[
@@ -91,24 +96,28 @@ const DocEditor = ({spreadsheetID}) => {
               <p>Nomor AFE</p>
               <p className="text-gray-400">(AFE number)</p>
             </div>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'number'} defaultValue="1" />,
           ],
           [
             <p key={7} className="font-bold">
               Data type
             </p>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'dropdown'} dropdown_items={['Well data']} />,
           ],
           [
             <p key={8} className="font-bold">
               Data classification
             </p>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'dropdown'} dropdown_items={['Report']} />,
           ],
           [
             <p key={9} className="font-bold">
               Data sub-classification
             </p>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'dropdown'} dropdown_items={['Printed']} />,
           ],
         ]}
@@ -116,12 +125,14 @@ const DocEditor = ({spreadsheetID}) => {
       <div className="h-full">
         <TableComponent
           header={[
+            // eslint-disable-next-line react/jsx-key
             <div className="flex justify-between items-center">
               <p>Data</p>
             </div>,
           ]}
           content={[
             [
+              // eslint-disable-next-line react/jsx-key
               <div className="h-[750px]">
                 <Sheets
                   ref={iframe_ref}
@@ -153,7 +164,6 @@ const DocEditor = ({spreadsheetID}) => {
           }}
         />
       </div>
-      {/* <p className="bg-black text-white p-2">document saved: {String(IsSaved)}</p> */}
     </Container>
   );
 };

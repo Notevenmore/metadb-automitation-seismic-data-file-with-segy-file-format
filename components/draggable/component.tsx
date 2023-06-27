@@ -1,4 +1,4 @@
-import {PropsWithChildren, useContext, useEffect, useState} from 'react';
+import {PropsWithChildren, useContext, useEffect} from 'react';
 import {DraggableContext} from './provider';
 import {useRandomId} from './util';
 import {DraggableAct, ItemData, Tuple2} from './types';
@@ -17,9 +17,7 @@ export function DraggableBox({
   snapToOrigin,
   data,
 }: PropsWithChildren<DraggableBoxProps>) {
-  const [mouseWithin, setMouseWithin] = useState(false);
   const {dispatch, state} = useContext(DraggableContext);
-  // const id = useRandomId();
   const item = state.draggableItems.find(item => item.id === id);
   useEffect(() => {
     console.log(initialPos);
@@ -31,7 +29,6 @@ export function DraggableBox({
       snapToOrigin,
       data,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialPos, id]);
   return (
     <div
@@ -44,7 +41,6 @@ export function DraggableBox({
         draggable={false}
         onMouseEnter={() => {
           console.log('Mouse Enter');
-          setMouseWithin(true);
           dispatch({
             act: DraggableAct.SET_DRAG_ITEM_CAN_HOLD,
             id: id,
@@ -53,7 +49,6 @@ export function DraggableBox({
         }}
         onMouseLeave={() => {
           console.log('Mouse Leave');
-          setMouseWithin(false);
           dispatch({
             act: DraggableAct.SET_DRAG_ITEM_CAN_HOLD,
             id: id,
@@ -95,8 +90,8 @@ export function DroppableBox({
       id: id.current,
       data: '',
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemData]);
+
   const onMouseEnter = () => {
     dispatch({
       act: DraggableAct.SET_DROPPABLE_CAN_DROP,
@@ -104,6 +99,7 @@ export function DroppableBox({
       canDrop: true,
     });
   };
+
   const onMouseLeave = () => {
     dispatch({
       act: DraggableAct.SET_DROPPABLE_CAN_DROP,
@@ -117,7 +113,6 @@ export function DroppableBox({
       act: DraggableAct.ADD_DROPPABLE,
       id: id.current,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -130,7 +125,7 @@ export function DroppableBox({
       }}
       className="min-w-[100%]">
       {children}
-      {isHolding ? (
+      {isHolding && (
         <div
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
@@ -141,9 +136,8 @@ export function DroppableBox({
             height: '100%',
             border: '1px solid red',
             top: 0,
-          }}></div>
-      ) : (
-        ''
+          }}
+        />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input';
 import TableComponent from '../../components/table/table';
@@ -18,6 +18,7 @@ export default function BasinPage() {
     console.log('search', temp);
     setData(temp);
   };
+
   return (
     <Container>
       <Container.Title>
@@ -34,8 +35,8 @@ export default function BasinPage() {
             />
             <Image
               src="/icons/magnify.svg"
-              width="20"
-              height="20"
+              width={20}
+              height={20}
               className="absolute right-[10px] top-[2.5px]"
               alt="search"
             />
