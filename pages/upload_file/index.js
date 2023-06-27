@@ -9,6 +9,7 @@ import Select from '../../public/icons/selection_tool.svg';
 import {datatypes} from '../../config';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
+import getFileType from '../../utils/filetype'
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -51,6 +52,15 @@ export default function UploadFilePage({config, setTitle}) {
     if (e.target.files.length == 0) setFileUpload([]);
     else setFileUpload(e.target.files);
   };
+  useEffect(() => {
+    if(fileUpload.length<=0) {
+      setUplSettings(prev => ({...prev, FileFormat: ""}))
+      return
+    }
+
+    const fileType = getFileType(fileUpload[0].name)
+    setUplSettings(prev => ({...prev, FileFormat: fileType}))
+  }, [fileUpload])
 
   const handleDrop = e => {
     e.stopPropagation();
@@ -347,6 +357,7 @@ export default function UploadFilePage({config, setTitle}) {
               type="file"
               className="hidden"
               ref={fileUploadRef}
+              accept="image/png, application/pdf, application/vnd.openxmlformats-officedocument.presentationml.presentation, text/csv"
               onChange={e => changeFile(e)}
             />
           </div>

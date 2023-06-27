@@ -61,12 +61,13 @@ const Profile = ({setTitle}) => {
   };
 
   const handleUploadPhoto = async () => {
-    if (currentUser && user.profile_picture !== currentUser.profile_picture) {
+    if(user === currentUser) return;
+
       router.events.emit('routeChangeStart');
       console.log('start');
       await updateProfile({
         userid: user.name,
-        profile_picture: currentUser.profile_picture,
+        profile_pict: currentUser.profile_picture,
       }).then(
         () => {
           dispatch(setUser(currentUser));
@@ -77,7 +78,6 @@ const Profile = ({setTitle}) => {
         },
       );
       router.events.emit('routeChangeComplete');
-    }
   };
 
   useEffect(() => {
