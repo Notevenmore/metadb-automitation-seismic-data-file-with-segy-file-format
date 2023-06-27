@@ -24,7 +24,6 @@ export async function getLogin(email, password) {
     .catch(err => {
       console.log(err.code, err.message);
       throw new Error(`${err.message}. Please contact maintainer.`);
-      return {data: err, succeed: false};
     });
 
   return result;

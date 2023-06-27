@@ -1,5 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
-// import config from '../../config';
+import {useCallback, useEffect, useState} from 'react';
 
 interface IframeProps extends React.ComponentProps<'iframe'> {
   existingID: any;
@@ -8,7 +7,7 @@ interface IframeProps extends React.ComponentProps<'iframe'> {
   data: any;
   getSpreadsheetID: any;
   finishedInitializing: any;
-  config: any
+  config: any;
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
@@ -40,7 +39,9 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         throw error;
       });
     }
-    const makeTemp = await fetch(`${props.config.services.sheets}/createSpreadsheet`);
+    const makeTemp = await fetch(
+      `${props.config.services.sheets}/createSpreadsheet`,
+    );
     const spreadsheetID = await makeTemp.json();
     setsheetID(spreadsheetID.response);
     try {
@@ -51,7 +52,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
     setSkipInitialization(false);
   }, []);
 
-  const delay = delay_amount_ms =>
+  const delay = (delay_amount_ms: number) =>
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
@@ -104,12 +105,11 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
       if (props.type === 'update') {
         setLoadingMsg(`Fetching from database`);
         delay(3000);
-        // const id = props.id
         const id = 'Laporan Data 2023';
         let data,
           final = [];
         const workspaces = JSON.parse(localStorage.getItem('workspaces'));
-        workspaces.some(workspace => {
+        workspaces.some((workspace: {name: string}) => {
           if (id === workspace.name) {
             data = JSON.parse(localStorage.getItem(workspace.name));
             return true;
@@ -144,25 +144,6 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
           .catch(error => {
             throw error;
           });
-
-        // await fetch('http://localhost:5050/appendFromDatabase', {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     body: JSON.stringify({
-        //         form_type: props.form_type,
-        //         spreadsheetID: sheetID
-        //     })
-        // }).then(response => {
-        //     return response.json()
-        // }).then(response => {
-        //     if (response.status !== 200) {
-        //         sethasError(true)
-        //         setErrorMessage(response.response)
-        //         console.log(response)
-        //     }
-        // }).catch(error => { throw error })
       } else if (props.type === 'review') {
         try {
           console.log('first');
@@ -202,36 +183,6 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
             .catch(error => {
               throw error;
             });
-
-          // ---| OLD WORKFLOW |---
-
-          // if (props.form_type !== "bibliography"){
-          //     data.forEach(item => {
-          //         final.push({ no: '-', ...item })
-          //     })
-          // } else {
-          //     final = data
-          // }
-
-          // await fetch('http://localhost:5050/appendToSheets2', {
-          //     method: "POST",
-          //     headers: {
-          //         "Content-Type": "application/json"
-          //     },
-          //     body: JSON.stringify({
-          //         form_type: props.form_type,
-          //         spreadsheetID: sheetID,
-          //         data: JSON.stringify(final)
-          //     })
-          // }).then(response => {
-          //     return response.json()
-          // }).then(response => {
-          //     if (response.status !== 200) {
-          //         sethasError(true)
-          //         setErrorMessage(response.response)
-          //         console.log(response)
-          //     }
-          // }).catch(error => { throw error })
         } catch (error) {
           sethasError(true);
           setErrorMessage(String(error));
@@ -278,13 +229,5 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
     </div>
   );
 };
-
-// export async function getServerSideProps(context) {
-//   const config = JSON.parse(process.env.ENDPOINTS);
-//   console.log(config)
-//   return {
-//     props: {config: config}, // will be passed to the page component as props
-//   };
-// }
 
 export default Sheets;

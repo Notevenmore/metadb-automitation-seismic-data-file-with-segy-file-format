@@ -1,17 +1,18 @@
-import {useEffect, useRef, useState} from 'react';
+import {useState} from 'react';
 import Buttons from '../../components/buttons/buttons';
 import Container from '../../components/container/container.js';
 import Input from '../../components/input_form/input';
-import HeaderTable, {
+import {
+  HeaderTable,
   HeaderDivider,
   HeaderStatic,
   HeaderInput,
   ButtonsSection,
 } from '../../components/header_table/header_table';
-import SideBar from '../../components/navigation_bar/SideBar';
 
 export default function BasinEditPage() {
-  const [detail, setDetail] = useState('bbb');
+  const [detail, setDetail] = useState('');
+
   return (
     <Container
       additional_class="full-height relative"

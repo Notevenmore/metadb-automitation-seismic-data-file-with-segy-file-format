@@ -1,6 +1,6 @@
 import Buttons from '../buttons/buttons';
 import Close from '../../public/icons/close.svg';
-import {Divider} from '../float_dialog/float_dialog';
+import {Divider} from '../float_dialog';
 
 // FIXME create onClick event for the button
 const PopupDialog = ({
@@ -26,8 +26,8 @@ const PopupDialog = ({
     <aside
       className="flex flex-col justify-between w-[470px] h-[280px]
          px-[26px] py-[24px] border-[1px] border-solid border-[#C9C9C9] rounded-[10px]">
-      <PopupTitle title={title}></PopupTitle>
-      <Divider additional_styles={'-ml-[27px] w-[470px]'}></Divider>
+      <PopupTitle title={title} />
+      <Divider additional_styles={'-ml-[27px] w-[470px]'} />
       <p className="text-[16px] w-[397px] text-center">
         {content ? content : DEFAULT_CONTENT()}
       </p>
@@ -47,7 +47,7 @@ const PopupTitle = ({title}) => {
         <strong>{title}</strong>
       </h2>
       <div className="flex bg-[#D9D9D9] w-[27px] h-[27px] rounded-[5px]">
-        <Close className="my-auto mx-auto h-[13px] w-[13px]"></Close>
+        <Close className="my-auto mx-auto h-[13px] w-[13px]" />
       </div>
     </section>
   );
@@ -77,4 +77,5 @@ const ButtonsSection = ({
     </section>
   );
 };
+
 export default PopupDialog;

@@ -1,17 +1,18 @@
 import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useRouter} from 'next/router';
+import Highlight from 'react-highlight';
 import Container from '../../components/container/container';
-import HeaderTable, {
+import {
+  HeaderTable,
   HeaderDivider,
   ButtonsSection,
 } from '../../components/header_table/header_table';
 import Buttons from '../../components/buttons/buttons';
 import {ImageEditor, Tuple4} from '../components/highlight_viewer';
-import {useDispatch, useSelector} from 'react-redux';
 import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {useRouter} from 'next/router';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Highlight from 'react-highlight';
 import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
 
@@ -20,129 +21,6 @@ interface TableRow {
   key: string;
   value: string | null;
 }
-
-// const initialState: TableRow[] = [
-//   {
-//     id: 0,
-//     key: "NO",
-//     value: null,
-//   },
-//   {
-//     id: 1,
-//     key: "BA_LONG_NAME",
-//     value: null,
-//   },
-//   {
-//     id: 2,
-//     key: "BA_TYPE",
-//     value: null,
-//   },
-//   {
-//     id: 3,
-//     key: "AREA_ID",
-//     value: null,
-//   },
-//   {
-//     id: 4,
-//     key: "AREA_TYPE",
-//     value: null,
-//   },
-//   {
-//     id: 5,
-//     key: "FIELD_NAME",
-//     value: null,
-//   },
-//   {
-//     id: 6,
-//     key: "WELL_NAME",
-//     value: null,
-//   },
-//   {
-//     id: 7,
-//     key: "UWI",
-//     value: null,
-//   },
-//   {
-//     id: 8,
-//     key: "TITLE",
-//     value: null,
-//   },
-//   {
-//     id: 9,
-//     key: "CREATOR_NAME",
-//     value: null,
-//   },
-//   {
-//     id: 10,
-//     key: "CREATE_DATE",
-//     value: null,
-//   },
-//   {
-//     id: 11,
-//     key: "MEDIA_TYPE",
-//     value: null,
-//   },
-//   {
-//     id: 12,
-//     key: "DOCUMENT_TYPE",
-//     value: null,
-//   },
-//   {
-//     id: 13,
-//     key: "ITEM_CATEGORY",
-//     value: null,
-//   },
-//   {
-//     id: 14,
-//     key: "ITEM_SUB_CATEGORY",
-//     value: null,
-//   },
-//   {
-//     id: 15,
-//     key: "PAGE_COUNT",
-//     value: null,
-//   },
-//   {
-//     id: 16,
-//     key: "REMARK",
-//     value: null,
-//   },
-//   {
-//     id: 17,
-//     key: "BA_LONG_NAME",
-//     value: null,
-//   },
-//   {
-//     id: 18,
-//     key: "BA_TYPE",
-//     value: null,
-//   },
-//   {
-//     id: 19,
-//     key: "DATA_STORE_NAME",
-//     value: null,
-//   },
-//   {
-//     id: 20,
-//     key: "DATA_STORE_TYPE",
-//     value: null,
-//   },
-//   {
-//     id: 21,
-//     key: "SOURCE",
-//     value: null,
-//   },
-//   {
-//     id: 22,
-//     key: "QC_STATUS",
-//     value: null,
-//   },
-//   {
-//     id: 23,
-//     key: "CHECKED_BY_BA_ID",
-//     value: null,
-//   },
-// ];
 
 export const toBase64 = (file: File) =>
   new Promise<string>((resolve, reject) => {
@@ -231,33 +109,26 @@ const fetchDocumentSummary = async (docId: string) => {
 };
 
 const generateImageUrl = (docId: string, page: number) => {
-  //  `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`
   return `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`;
 };
 
 export default function MatchingGuided({config, setTitle}) {
-  const doc_id: string =
-    'c5fd3ac264d654b04b759f193a16254b8eb0c878a3f0de0f914aaf2cae3da47f';
-  const page_no: number = 2;
-
-  // const [state, setState] = useState<TableRow[]>(initialState);
   const [state, setState] = useState({} as any);
-  const [selectedRow, setSelectedRow] = useState<number>(-1);
-  const [pageNo, setPageNo] = useState<number>(1);
-  const [totalPageNo, setTotalPageNo] = useState<number>(1);
+  const [selectedRow, setSelectedRow] = useState(-1);
+  const [pageNo, setPageNo] = useState(1);
+  const [totalPageNo, setTotalPageNo] = useState(1);
   const [docId, _setDocId] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [formType, setformType] = useState<string>('');
-  const [data, setdata] = useState([]);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [formType, setformType] = useState('');
 
   // utility states
-  const [loading, setLoading] = useState<string>('');
+  const [loading, setLoading] = useState('');
   const [message, setMessage] = useState({
     message: '',
     color: '',
     show: false,
   });
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState('');
 
   // @ts-ignore
   const files = useSelector(state => state.general.file);
@@ -282,7 +153,6 @@ export default function MatchingGuided({config, setTitle}) {
   useEffect(() => {
     const onPageChange = async () => {
       if (docId === null) return;
-      // setState(_ => [...initialState]);
     };
     onPageChange();
   }, [pageNo]);
@@ -423,13 +293,6 @@ export default function MatchingGuided({config, setTitle}) {
       console.log(final);
       return {...final};
     });
-
-    // setState((state) => {
-    //   const index = state.findIndex((pair) => pair.id === id);
-    //   const cpair = state.find((pair) => pair.id === id);
-    //   const newPair = { ...cpair, value };
-    //   return [...state.slice(0, index), newPair, ...state.slice(index + 1)];
-    // });
   };
 
   const setDocId = (newDocId: string) => {
@@ -508,7 +371,6 @@ export default function MatchingGuided({config, setTitle}) {
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      {/* @ts-ignore */}
       <Buttons
         path=""
         button_description="Back"
@@ -525,26 +387,16 @@ export default function MatchingGuided({config, setTitle}) {
           <p>Data Matching - Highlight</p>
         </div>
       </Container.Title>
-      {/* <div className="grid grid-cols-2 gap-14 border-[2px] rounded-lg p-2"> */}
       <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
-        <HeaderTable>
-          {state[pageNo - 1]?.map(toRowComponent)}
-          {/* <HeaderDivider /> */}
-        </HeaderTable>
+        <HeaderTable>{state[pageNo - 1]?.map(toRowComponent)}</HeaderTable>
         <ImageEditor
           boundsObserver={boundsObserver}
           imageUrl={generateImageUrl(docId, pageNo)}
         />
-        {/* <div className="h-[calc(100vh-55px)] sticky top-0 grid grid-cols-1 rounded-lg overflow-clip">
-        </div> */}
       </div>
-      {totalPageNo > 1 ? (
+      {totalPageNo > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-            {/* {Array.from({ length: totalPageNo }, (item, index) =>
-          <Buttons path={} title="" button_description="" additional_styles="" key={index} />
-        )} */}
-            {/* @ts-ignore */}
             <Buttons
               path=""
               title="Previous page"
@@ -556,15 +408,13 @@ export default function MatchingGuided({config, setTitle}) {
                 <ChevronLeft />
               </div>
             </Buttons>
-            {/* @ts-ignore */}
-            <div
+            <Buttons
               path=""
               title=""
               button_description=""
               className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
               <p className="w-5 h-5">{pageNo}</p>
-            </div>
-            {/* @ts-ignore */}
+            </Buttons>
             <Buttons
               path=""
               title="Next page"
@@ -578,12 +428,12 @@ export default function MatchingGuided({config, setTitle}) {
             </Buttons>
           </div>
         </div>
-      ) : null}
+      )}
       <div className="flex items-center justify-center w-full py-4">
-        {/* @ts-ignore */}
         <Buttons
           button_description="View on sheets"
           path="/upload_file/review"
+          // @ts-ignore
           query={{form_type: formType}}
           additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           disabled={formType ? false : true}
@@ -592,47 +442,14 @@ export default function MatchingGuided({config, setTitle}) {
           }}
         />
       </div>
-      <ButtonsSection>
-        {/* @ts-ignore */}
-        {/* <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} /> */}
-        {/* @ts-ignore */}
-        {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
-      </ButtonsSection>
       <Toast message={message} setmessage={setMessage}>
         {message.message}
       </Toast>
-      {/* <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all z-40 ${
-          message ? '' : '-translate-y-20'
-        }`}>
-        <p>{message}</p>
-        <Buttons
-          additional_styles="px-1 py-1 text-black"
-          path=""
-          onClick={() => {
-            setMessage({message: '', color: '', show: false});
-          }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Buttons>
-      </div> */}
       <div
         className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
           error ? '' : '-translate-y-20'
         }`}>
         <p>{error}</p>
-        {/* @ts-ignore */}
         <Buttons
           additional_styles="px-1 py-1 text-black"
           path=""
@@ -658,7 +475,7 @@ export default function MatchingGuided({config, setTitle}) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

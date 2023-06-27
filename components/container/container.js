@@ -1,8 +1,11 @@
 import {useRouter} from 'next/router';
-import Image from 'next/image';
 import {twMerge} from 'tailwind-merge';
 
-export default function Container({children, additional_class="", ...divProps}) {
+export default function Container({
+  children,
+  additional_class = '',
+  ...divProps
+}) {
   return (
     <div
       className={twMerge('w-full flex flex-col p-10', additional_class)}
@@ -20,6 +23,7 @@ Container.Title = ({children, back = false}) => {
     </div>
   );
 };
+
 Container.Title.displayName = 'Container.Title';
 
 function BackButton() {
@@ -28,7 +32,7 @@ function BackButton() {
     <div
       className="hover:bg-black/[0.15] rounded w-[50px] h-[50px] flex justify-center items-center"
       onClick={() => router.back()}>
-      <Image
+      <img
         src="/icons/chevron-left.svg"
         alt="back icon"
         width={35}
@@ -47,4 +51,5 @@ Container.Subtitle = ({children, additional_class, tab = false}) => {
     </div>
   );
 };
+
 Container.Subtitle.displayName = 'Container.Subtitle';

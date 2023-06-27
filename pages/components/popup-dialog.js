@@ -2,7 +2,7 @@ import hljs from 'highlight.js';
 import {useEffect} from 'react';
 import Highlight from 'react-highlight';
 import PopupDialog from '../../components/popup_dialog/popup_dialog';
-import {Divider} from '../../components/float_dialog/float_dialog';
+import {Divider} from '../../components/float_dialog';
 
 export default function PopupDialogPage() {
   useEffect(() => {
@@ -10,8 +10,8 @@ export default function PopupDialogPage() {
   }, []);
   return (
     <section className="flex flex-col w-full h-fit text-[14.5px] px-10 py-5">
-      <HeaderSection></HeaderSection>
-      <MainSection></MainSection>
+      <HeaderSection />
+      <MainSection />
     </section>
   );
 }
@@ -59,9 +59,9 @@ const HeaderSection = () => {
 const MainSection = () => {
   return (
     <main className="flex flex-col gap-y-8">
-      <Example1></Example1>
-      <Example2></Example2>
-      <Example3></Example3>
+      <Example1 />
+      <Example2 />
+      <Example3 />
     </main>
   );
 };
@@ -104,9 +104,9 @@ const Example1 = () => {
       </ExampleTitle>
       <CodeSnippet>
         {`<div className="flex justify-center items-center
-border-[2px] border-solid border-black h-[490px]">
-  <PopupDialog></PopupDialog>
-</div>`}
+          border-[2px] border-solid border-black h-[490px]">
+            <PopupDialog></PopupDialog>
+          </div>`}
       </CodeSnippet>
       <div
         className="flex justify-center items-center
@@ -126,9 +126,9 @@ const Example2 = ({className}) => {
 
       <CodeSnippet>
         {`<div className="flex border-[2px]
-border-solid border-black h-[490px]">
-  <PopupDialog></PopupDialog>
-</div>`}
+          border-solid border-black h-[490px]">
+            <PopupDialog></PopupDialog>
+          </div>`}
       </CodeSnippet>
 
       <div className="flex border-[2px] border-solid border-black h-[490px]">
@@ -147,9 +147,9 @@ const Example3 = ({className}) => {
 
       <CodeSnippet>
         {`<div className="flex justify-end items-end
-border-[2px] border-solid border-black h-[490px]">
-  <PopupDialog></PopupDialog>
-</div>`}
+          border-[2px] border-solid border-black h-[490px]">
+            <PopupDialog></PopupDialog>
+          </div>`}
       </CodeSnippet>
 
       <div className="flex justify-end items-end border-[2px] border-solid border-black h-[490px]">

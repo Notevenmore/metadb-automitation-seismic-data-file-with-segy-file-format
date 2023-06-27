@@ -1,15 +1,15 @@
-import Buttons from '../components/buttons/buttons';
-import TableComponent from '../components/table/table';
-import Container from '../components/container/container';
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from 'react';
 import moment from 'moment/moment';
-import {logOut, setUser} from '../store/userSlice';
-import FloatDialog from '../components/float_dialog/float_dialog';
 import Image from 'next/image';
+import {useRouter} from 'next/router';
+import Buttons from '../components/buttons/buttons';
+import TableComponent from '../components/table/table';
+import Container from '../components/container/container';
+import {logOut, setUser} from '../store/userSlice';
+import {FloatDialog} from '../components/float_dialog';
 import Mime from 'dummy-data/mime';
 import ProfilePic from 'dummy-data/profile_pic';
-import {useRouter} from 'next/router';
 import {updateProfile} from '../services/admin';
 
 const Profile = ({setTitle}) => {
@@ -40,9 +40,6 @@ const Profile = ({setTitle}) => {
       reader.onload = () => {
         if (reader.readyState === 2) {
           if (/^image\/[\w]+$/.exec(files.type)) {
-            // setPic(reader.result);
-            // console.log(reader.result)
-            // const replace = /^(.+)(?=,)/.exec(reader.result)[0] + ', '
             const final = reader.result.replace(
               /^(.+)(?=,)/.exec(reader.result)[0] + ',',
               '',
@@ -76,7 +73,7 @@ const Profile = ({setTitle}) => {
           dispatch(setUser(currentUser));
           console.log('complete');
         },
-        (err) => {
+        err => {
           console.log(err);
         },
       );
@@ -98,10 +95,11 @@ const Profile = ({setTitle}) => {
       <div className="space-y-5">
         <div className="flex space-x-7">
           <div className="flex flex-col items-center justify-center space-y-2">
-            {/* <img src={Mime(user.profile_picture) || ProfilePic} className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full" /> */}
-            {/* //TODO CHANGE THE LINE BELOW TO NOT USE HARDCODED PROFILE PICTURE STRING */}
+            {/* // TODO CHANGE THE LINE BELOW TO NOT USE HARDCODED PROFILE PICTURE STRING */}
             <Image
-              src={user.profile_pict ? Mime(user.profile_pict) : ProfilePic}
+              src={
+                user.profile_picture ? Mime(user.profile_picture) : ProfilePic
+              }
               alt="image"
               width={500}
               height={500}

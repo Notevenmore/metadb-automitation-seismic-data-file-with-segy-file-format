@@ -1,4 +1,4 @@
-const init_data = async (config, router, workspaceData) => {
+export const init_data = async (config, router, workspaceData) => {
   if (!workspaceData.afe_number) {
     throw 'Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer.';
   }
@@ -44,7 +44,7 @@ const init_data = async (config, router, workspaceData) => {
   // since the 'data' variable above only holds the ids of the data, along with the ppdm guid it's referencing
   // to and the workspace afe number it's referencing to.
   let final = [];
-  // let ppdm_guids = []
+
   if (data) {
     for (const datatype_record_id of data) {
       const data_details = await fetch(
@@ -75,9 +75,7 @@ const init_data = async (config, router, workspaceData) => {
       Object.keys(data_details[0]).forEach(key => {
         if (key.toLowerCase().includes('date') && data_details[0][key]) {
           const date = new Date(data_details[0][key]);
-          // console.log(date)
-          // console.log(`${date.getFullYear()}-${date.getMonth().toString().padStart(2, "0")}-${(date.getDate() + 1).toString().padStart(2, "0")}`)
-          // console.log(new Intl.DateTimeFormat('ja-JP').format(date).replace(/\//g, "-"))
+
           data_details[0][key] = `${new Intl.DateTimeFormat('ja-JP')
             .format(date)
             .replace(/\//g, '-')}`;
@@ -89,7 +87,7 @@ const init_data = async (config, router, workspaceData) => {
   return {data: data, data_content: final, workspace_data: workspace_data[0]};
 };
 
-const saveDocument = async (
+export const saveDocument = async (
   e,
   router,
   config,
@@ -257,7 +255,6 @@ const saveDocument = async (
         // a try catch was put here to avoid new data being undefined if its length is shorter than old data
         try {
           if (!row[header.toLowerCase()]) {
-            // row[header.toLowerCase()] = spreadsheet_data?.response[idx_row][idx_col] * 1 || spreadsheet_data?.response[idx_row][idx_col] || null;
             if (header.toLowerCase().includes('page')) {
               row[header.toLowerCase()] =
                 spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
@@ -480,7 +477,7 @@ const saveDocument = async (
   return {success: true};
 };
 
-const downloadWorkspace = async (
+export const downloadWorkspace = async (
   router,
   config,
   spreadsheetId,
@@ -548,7 +545,7 @@ const downloadWorkspace = async (
   }
 };
 
-const checkAfe = async (e, config, data_type, afe_number) => {
+export const checkAfe = async (e, config, data_type, afe_number) => {
   if (e) {
     e.preventDefault();
   }
@@ -566,11 +563,4 @@ const checkAfe = async (e, config, data_type, afe_number) => {
       return res;
     });
   return afe_exist;
-};
-
-module.exports = {
-  init_data,
-  saveDocument,
-  downloadWorkspace,
-  checkAfe,
 };

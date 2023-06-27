@@ -1,17 +1,16 @@
-/* eslint-disable */
 import {useRouter} from 'next/router';
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import Button from '../components/buttons/buttons';
 import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
 import Input from '../components/input_form/input';
 import Container from '../components/container/container';
 
-const DocEditor = ({spreadsheetID}) => {
+const DocEditor = () => {
   const [IsSaved, setIsSaved] = useState(false);
   const warningText =
     'You have unsaved changes - Are you sure you want to leave this page?';
-  // const sheetID = spreadsheetID.response
+
   const router = useRouter();
   const handleWindowClose = e => {
     e.preventDefault();
@@ -27,30 +26,7 @@ const DocEditor = ({spreadsheetID}) => {
     }
     return;
   };
-  // const init = useCallback(async () => {
-  //     const previousID = localStorage.getItem('spreadsheetID')
-  //     console.log(previousID + " | " + sheetID)
-  //     if (previousID) {
-  //         await fetch('http://localhost:5000/deleteSpreadsheet', {
-  //             method: "POST",
-  //             headers: {
-  //                 "Content-Type": "application/json"
-  //             },
-  //             body: JSON.stringify({
-  //                 spreadsheetID: previousID
-  //             })
-  //         })
-  //     }
-  //     localStorage.setItem('spreadsheetID', sheetID)
-  // }, [])
-  // useEffect(() => {
-  //     if (!spreadsheetID.response){
-  //         setIsSaved(true)
-  //         router.push('/503')
-  //         return;
-  //     }
-  //     init()
-  // }, [init])
+
   useEffect(() => {
     window.addEventListener('beforeunload', handleWindowClose);
     router.events.on('routeChangeStart', handleBrowseAway);
@@ -59,13 +35,10 @@ const DocEditor = ({spreadsheetID}) => {
       router.events.off('routeChangeStart', handleBrowseAway);
     };
   }, [IsSaved]);
+
   return (
-    // <div className="w-full h-full p-3 space-y-3"></div>
     <Container additional_class="space-y-3">
       <Container.Title back>Edit Document (DEMO)</Container.Title>
-      {/* <p className="text-4xl font-bold">Edit document</p> */}
-      {/* <iframe className="w-full h-full" src="https://docs.google.com/spreadsheets/d/1DvODJvgqoVp2Dxvv-0ebWVm65VLIzXD4ir8gULGKK6k/edit?usp=sharing?single=false&widget=false&headers=false&rm=embedded"></iframe> */}
-      {/* <iframe className="w-full h-full" src={`https://docs.google.com/spreadsheets/d/${sheetID}?single=false&widget=false&headers=false&rm=embedded`}></iframe> */}
       <Input
         type="text"
         placeholder="Document title"
@@ -80,6 +53,7 @@ const DocEditor = ({spreadsheetID}) => {
               <p>Nama KKKS</p>
               <p className="text-gray-400">(KKKS Name)</p>
             </div>,
+            // eslint-disable-next-line react/jsx-key
             <Input
               type={'text'}
               defaultValue="Geodwipa Teknika Nusantara"
@@ -91,6 +65,7 @@ const DocEditor = ({spreadsheetID}) => {
               <p>Nama wilayah kerja</p>
               <p className="text-gray-400">(Working area)</p>
             </div>,
+            // eslint-disable-next-line react/jsx-key
             <Input
               type={'text'}
               defaultValue="Geodwipa Teknika Nusantara"
@@ -102,6 +77,7 @@ const DocEditor = ({spreadsheetID}) => {
               <p>Jenis penyerahan data</p>
               <p className="text-gray-400">(Submission type)</p>
             </div>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'dropdown'} dropdown_items={[1, 2, 3]} />,
           ],
           [
@@ -109,34 +85,36 @@ const DocEditor = ({spreadsheetID}) => {
               <p>Nomor AFE</p>
               <p className="text-gray-400">(AFE number)</p>
             </div>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'number'} defaultValue="1" />,
           ],
           [
             <p key={7} className="font-bold">
               Data type
             </p>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'dropdown'} dropdown_items={[1, 2, 3]} />,
           ],
           [
             <p key={8} className="font-bold">
               Data classification
             </p>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'dropdown'} dropdown_items={[1, 2, 3]} />,
           ],
           [
             <p key={9} className="font-bold">
               Data sub-classification
             </p>,
+            // eslint-disable-next-line react/jsx-key
             <Input type={'dropdown'} dropdown_items={[1, 2, 3]} />,
           ],
         ]}
       />
-      {/* <div className="border-2 rounded-md min-h-full">
-                <Sheets />
-            </div> */}
       <div className="h-full">
         <TableComponent
           header={[
+            // eslint-disable-next-line react/jsx-key
             <div className="flex justify-between items-center">
               <p>Data</p>
               <Button
@@ -148,6 +126,7 @@ const DocEditor = ({spreadsheetID}) => {
           ]}
           content={[
             [
+              // eslint-disable-next-line react/jsx-key
               <div className="h-[750px]">
                 <Sheets type="new" form_type="basin" />
               </div>,
@@ -181,18 +160,5 @@ const DocEditor = ({spreadsheetID}) => {
     </Container>
   );
 };
-
-// export async function getServerSideProps(context) {
-//     let spreadsheetID;
-//     try {
-//         const makeTemp = await fetch('http://localhost:5000/createSpreadsheet')
-//         spreadsheetID = await makeTemp.json()
-//     } catch (error) {
-//         spreadsheetID = {response: null}
-//     }
-//     return {
-//         props: { spreadsheetID: spreadsheetID }, // will be passed to the page component as props
-//     }
-// }
 
 export default DocEditor;

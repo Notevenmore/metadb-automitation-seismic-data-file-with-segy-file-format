@@ -1,114 +1,20 @@
-/* eslint-disable react/jsx-key */
 import {useEffect, useState} from 'react';
+import Highlight from 'react-highlight';
+import {useRouter} from 'next/router';
+import {PropsWithChildren} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import Buttons from '../../components/buttons/buttons';
 import Container from '../../components/container/container.js';
 import Input from '../../components/input_form/input';
-import HeaderTable, {
+import {
+  HeaderTable,
   HeaderDivider,
-  ButtonsSection,
-  HeaderInput,
 } from '../../components/header_table/header_table';
-import {useSelector, useDispatch} from 'react-redux';
 import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {useRouter} from 'next/router';
-import {PropsWithChildren} from 'react';
-import {ReactNode} from 'react';
-import {ImageEditor, Tuple4} from '../components/highlight_viewer';
+import {ImageEditor} from '../components/highlight_viewer';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Highlight from 'react-highlight';
-import config from '../../config';
 import Toast from '../../components/toast/toast';
-
-interface FullButtonProps {
-  onClick: () => void;
-}
-
-const FullButton = ({
-  children,
-  onClick,
-}: PropsWithChildren<FullButtonProps>) => {
-  return (
-    <button
-      className="
-      flex 
-      items-center 
-      space-x-2
-      px-5
-      py-2
-      rounded-lg 
-      bg-primary 
-      hover:bg-gray-300 
-      transition-all 
-      w-full 
-      justify-center"
-      onClick={onClick}>
-      {children}
-    </button>
-  );
-};
-
-const HeaderRowWithGap = ({children}: PropsWithChildren<{}>) => {
-  return (
-    <div
-      className="
-      flex
-      justify-center
-      lg:items-center
-      lg:flex-row
-      flex-col 
-      w-full 
-      py-[10px] 
-      lg:h-[55px] 
-      gap-1
-      ">
-      <>{children}</>
-    </div>
-  );
-};
-
-interface HeaderInputInputProps {
-  leftChildren: ReactNode;
-  rightChildren: ReactNode;
-}
-
-const HeaderInputInput = ({
-  leftChildren,
-  rightChildren,
-}: HeaderInputInputProps) => {
-  return (
-    <HeaderRowWithGap>
-      <>{leftChildren}</>
-      <>{rightChildren}</>
-    </HeaderRowWithGap>
-  );
-};
-
-interface DeleteButtonProps {
-  onClick: () => void;
-}
-
-const DeleteButton = ({
-  children,
-  onClick,
-}: PropsWithChildren<DeleteButtonProps>) => (
-  <>
-    <button
-      className="flex items-center space-x-2 px-5 py-2 rounded-lg bg-red-300 hover:bg-red-200 transition-all justify-center w-[4rem]"
-      onClick={onClick}>
-      {children}
-    </button>
-  </>
-);
-
-// function uuidv4() {
-//   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-//     (
-//       c ^
-//       (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-//     ).toString(16)
-//   );
-// }
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -123,12 +29,6 @@ export const toBase64 = (file: File): Promise<string> =>
     };
     reader.onerror = error => reject(error);
   });
-
-// const generateKeyValuePair = () => {
-//   const newPair = { ...newDefaultPair };
-//   newPair.id = uuidv4();
-//   return newPair;
-// };
 
 interface ApiCallResponse<Body> {
   status: 'success' | 'failed';
@@ -408,12 +308,7 @@ const INITIAL_STATE: State = [
   WELL_SUMMARRY_TABLE_EMPTY,
 ];
 
-export default function MatchReview({
-  config,
-  NEXT_PUBLIC_OCR_SERVICE_URL,
-  setTitle,
-}: MatchReviewProps) {
-  // const [state, setState] = useState<State>([INITIAL_STATE]);
+export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [state, setState] = useState<State>([]);
   const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
   const [imageBase64Str, setImageBase64Str] = useState('');
@@ -557,17 +452,6 @@ export default function MatchReview({
           }
           setState(temp_obj);
 
-          // setLoading("Predicting matches, this may take a while...")
-          // for (let pageNo = 1; pageNo <= pageCount; pageNo++) {
-          //   const autoFillResponse = await fetchAutoFill(docId, pageNo);
-          //   const _pairs = autoFillResponse.body?.pairs;
-          //   console.log(_pairs)
-          //   if (!_pairs) {
-          //     throw "Something went wrong while generating data pairs. autoFillResponse returned null."
-          //   };
-          //   const pairs: Map<string, string> = new Map(Object.entries(_pairs));
-          //   setPairs(pairs, pageNo);
-          // }
           setLoading('Awaiting state update...');
           // continue to the useeffect hook directly below this one
         } catch (error) {
@@ -616,10 +500,6 @@ export default function MatchReview({
     }
   }, [state, Loading]);
 
-  // useEffect(() => {
-  //   localStorage.setItem("reviewUploadedImage", imageBase64Str)
-  // }, [imageBase64Str])
-
   const setValueForId = (id: number, pageNo: number, value: string) => {
     setState(state => {
       const table = state[pageNo - 1];
@@ -639,8 +519,6 @@ export default function MatchReview({
   const setPairs = (pair: Map<string, string>, pageNo: number) => {
     setState(state => {
       const keys = Array.from(pair.keys());
-      // convert all keys to lowercase to match backend (database) // nevermind failed miserably
-      // const keys = Array.from(pair.keys()).map(key => { return key.toLowerCase() })
       const table = state[pageNo - 1];
       if (!table) return state;
       let indexes: number[] = [];
@@ -666,36 +544,6 @@ export default function MatchReview({
     });
   };
 
-  const saveChanges = e => {
-    e.preventDefault();
-    let final = [];
-    setMessage({message: 'Loading... please wait', color: 'blue', show: true});
-    try {
-      for (let page = 0; page < state.length; page++) {
-        // convert all keys to lowercase to match database
-        const temp_obj = Object.fromEntries(
-          Object.entries(state[page]).map(([k, v]) => [k.toLowerCase(), v]),
-        );
-        final.push(temp_obj);
-      }
-    } catch (error) {
-      setMessage({
-        message:
-          'Something happened while sending the data to the next page. Please try again later or contact maintainer if the problem persists.',
-        color: 'red',
-        show: true,
-      });
-      return;
-    }
-    setMessage({message: '', color: '', show: false});
-    dispatch(setReviewData(final));
-    localStorage.setItem('hello_world', JSON.stringify(final));
-    router.push({
-      pathname: '/upload_file/review',
-      query: {form_type: formType},
-    });
-  };
-
   const toRowComponent = (data: TableRow) => {
     return (
       <div key={data.id}>
@@ -713,10 +561,8 @@ export default function MatchReview({
             type="dropdown"
             name={'submissionType'}
             placeholder="Selected data will show up here"
-            // @ts-ignore
             dropdown_items={dropDownOptions}
             required={true}
-            // @ts-ignore
             additional_styles="w-full"
             onChange={e => setValueForId(data.id, pageNo, e.target.value)}
             withSearch
@@ -763,7 +609,6 @@ export default function MatchReview({
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      {/* @ts-ignore */}
       <Buttons
         path=""
         button_description="Back"
@@ -783,17 +628,15 @@ export default function MatchReview({
       <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
         <HeaderTable>
           {state[pageNo - 1]?.map(toRowComponent)}
-          <HeaderDivider />
+          <HeaderDivider additional_styles={undefined} />
         </HeaderTable>
         <div className="h-[calc(100vh-55px)] sticky top-0 grid grid-cols-1 rounded-lg overflow-clip">
           <ImageEditor boundsObserver={() => {}} imageUrl={imageBase64Str} />
         </div>
-        {/* <img src={imageBase64Str} alt="" className="object-contain m-auto" /> */}
       </div>
-      {totalPageNo > 1 ? (
+      {totalPageNo > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-            {/* @ts-ignore */}
             <Buttons
               path=""
               title="Previous page"
@@ -805,15 +648,15 @@ export default function MatchReview({
                 <ChevronLeft />
               </div>
             </Buttons>
-            {/* @ts-ignore */}
-            <div
+            <Buttons
               path=""
               title=""
               button_description=""
-              className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
+              className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg"
+            />
+            <div>
               <p className="w-5 h-5">{pageNo}</p>
             </div>
-            {/* @ts-ignore */}
             <Buttons
               path=""
               title="Next page"
@@ -827,13 +670,12 @@ export default function MatchReview({
             </Buttons>
           </div>
         </div>
-      ) : null}
+      )}
       <div className="flex items-center justify-center w-full py-4">
-        {/* @ts-ignore */}
         <Buttons
           button_description="View on sheets"
           path="/upload_file/review"
-          query={{form_type: formType}}
+          query={formType}
           additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           disabled={formType ? false : true}
           onClick={() => {
@@ -841,49 +683,14 @@ export default function MatchReview({
           }}
         />
       </div>
-      <ButtonsSection>
-        {/* @ts-ignore */}
-        {/* <Buttons button_description="View on sheets" path="/upload_file/review" additional_styles="bg-primary" /> */}
-        {/* @ts-ignore */}
-        {/* <Buttons path="" additional_styles="bg-primary" button_description="Previous Page" onClick={prevPage} /> */}
-        {/* @ts-ignore */}
-        {/* <Buttons path="" additional_styles="bg-primary" button_description="Next Page" onClick={nextPage} /> */}
-      </ButtonsSection>
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
       </Toast>
-
-      {/* <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-blue-500 text-white px-3 rounded-lg py-2 transition-all ${
-          Message ? '' : '-translate-y-20'
-        }`}>
-        <p>{Message}</p>
-        <Buttons
-          additional_styles="px-1 py-1 text-black"
-          path=""
-          onClick={() => {
-            setMessage('');
-          }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Buttons>
-      </div> */}
     </Container>
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   const NEXT_PUBLIC_OCR_SERVICE_URL = process.env.NEXT_PUBLIC_OCR_SERVICE_URL;
   return {

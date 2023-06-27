@@ -1,27 +1,27 @@
-import React from 'react';
 import {twMerge} from 'tailwind-merge';
-import Buttons from '../buttons/buttons';
 import {useEffect} from 'react';
 import {useMeasure} from 'react-use';
+import Buttons from '../buttons/buttons';
 
-/* 
-setmessage is a usestate variable passed from parent with properties 
-as such: 
+/*
+setmessage is a usestate variable passed from parent with properties
+as such:
 {
     message: string
     color: string
     show: bool
 }
 you can pass the string to show up in the toast with the usestate
-variable above. message.message in the variable above (passed as prop 
+variable above. message.message in the variable above (passed as prop
 from parent) will be ignored if children is specified.
 */
-const Toast = ({message, setmessage, additional_styles="", children}) => {
+const Toast = ({message, setmessage, additional_styles = '', children}) => {
   const colors = {
     blue: 'rgb(59 130 246)',
     red: 'rgb(239 68 68)',
     yellow: 'rgb(234 179 8)',
   };
+
   const [ref, bounds] = useMeasure();
 
   const delay = delay_amount_ms =>

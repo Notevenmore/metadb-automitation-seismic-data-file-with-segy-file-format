@@ -35,14 +35,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# bokeh
-/bokeh/HORIZON
-/bokeh/PROJECT
-/bokeh/SEGY
-/bokeh/TEMP
-/bokeh/UTILS
-/bokeh/WELL
-/bokeh/__pycache__
-
 # package.json
 package*.json

@@ -1,15 +1,13 @@
 import Image from 'next/image';
 import {useEffect, useState} from 'react';
+import {useRouter} from 'next/router';
+import Highlight from 'react-highlight';
+import {useDispatch} from 'react-redux';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input';
 import TableComponent from '../../components/table/table';
-import Link from 'next/link';
-import {useRouter} from 'next/router';
 import Button from '../../components/buttons/buttons';
-import config, {datatypes} from '../../config';
-import Highlight from 'react-highlight';
 import {setUploadDocumentSettings} from '../../store/generalSlice';
-import {useDispatch} from 'react-redux';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
 
@@ -70,18 +68,12 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           }
           res.forEach(workspace => {
             final.push({
-              // Name: workspace.workspace_name,
               KKKS: workspace.kkks_name,
               'Working area': workspace.working_area,
               AFE: workspace.afe_number,
               Type: workspace.submission_type,
               Action: (
                 <div className="flex flex-row gap-x-4 items-center">
-                  {/* <Button title="Download" additional_styles="px-3 hover:bg-green-300" className="flex" onClick={(e) => { downloadWorkspace(e, workspace.afe_number) }}>
-                                    <div className="w-[18px] h-[18px]">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><polyline points="86 110 128 152 170 110" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /><line x1="128" y1="40" x2="128" y2="152" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /><path d="M216,152v56a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V152" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" /></svg>
-                                    </div>
-                                </Button> */}
                   <Button
                     title="Edit record"
                     additional_styles="px-3"
@@ -150,7 +142,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     let temp = data;
     temp = temp.filter(item => {
       return (
-        // item.Name.toLocaleLowerCase().includes(name) ||
         item.KKKS.toLocaleLowerCase().includes(name) ||
         item['Working area'].toLocaleLowerCase().includes(name) ||
         String(item.AFE).toLocaleLowerCase().includes(name) ||
@@ -251,15 +242,10 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       router.events.emit('routeChangeComplete');
       await delay(2000);
       setMessage({message: '', color: '', show: false});
-      // router.reload(window.location.pathname)
     } catch (error) {
       setMessage({message: String(error), color: 'red', show: true});
     }
     router.events.emit('routeChangeComplete');
-  };
-
-  const downloadWorkspace = async (e, afe_number) => {
-    e.preventDefault();
   };
 
   const reset = (element = false) => {
@@ -295,7 +281,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         if (!newWorkspace.afe_number) {
           return;
         }
-        // setpopupMessage({message: 'Checking...', color: 'green'});
         const result = await checkAfe(
           false,
           config,
@@ -304,9 +289,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         );
         if (result !== 'null') {
           setafeExist(true);
-          // setpopupMessage({message: 'AFE number available', color: 'green'});
-          // await delay(1000);
-          // setpopupMessage({message: '', color: ''});
           setpopupMessage({
             message:
               'A record with the same AFE number already exists. Please choose a different one',
@@ -353,9 +335,8 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             />
             <Image
               src="/icons/magnify.svg"
-              width="20"
-              height="20"
-              // className="absolute right-[10px] top-[2.5px]"
+              width={20}
+              height={20}
               className="absolute top-[50%] right-3 translate-y-[-50%]"
               alt="search"
             />
@@ -405,7 +386,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             : data
         }
         setSelectedRows={selectedTableData}
-        // with_checkbox
         contentAlignWithHeader
         additional_styles="mb-20"
       />
@@ -479,17 +459,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             </p>
             <form className="space-y-3 flex flex-col items-center justify-center">
               <div className="w-full space-y-2 border-2 p-2 rounded-lg">
-                {/* <p>Workspace name</p>
-                                <Input
-                                    type="text"
-                                    name={"workingArea"}
-                                    placeholder={"Workspace name"}
-                                    value={newWorkspace.workspace_name}
-                                    required={true}
-                                    additional_styles="w-full"
-                                    autoComplete="off"
-                                    onChange={(e) => setnewWorkspace({ ...newWorkspace, workspace_name: e.target.value })}
-                                /> */}
                 <p>AFE number</p>
                 <div className="relative">
                   <Input
@@ -625,36 +594,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
       </Toast>
-
-      {/* <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%]
-                 translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
-                 px-3 rounded-lg py-2 transition-all ${
-                   Message.message ? '' : '-translate-y-20'
-                 }`}>
-        <p>{Message.message}</p>
-        <Button
-          additional_styles="px-1 py-1 text-black"
-          path=""
-          onClick={e => {
-            e.preventDefault();
-            setMessage({message: '', color: ''});
-          }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Button>
-      </div> */}
     </Container>
   );
 };

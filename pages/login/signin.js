@@ -1,20 +1,26 @@
-import Input from '../../components/input_form/input';
-import Buttons from '../../components/buttons/buttons';
-import {getLayoutBlank} from '../../layout/getLayout';
-import Link from 'next/link';
 import Image from 'next/image';
-import {getAllRoles, getLogin} from '../../services/user';
 import {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
-import {setUser} from '../../store/userSlice';
 import {useEffect} from 'react';
+import Input from '../../components/input_form/input';
+import Buttons from '../../components/buttons/buttons';
+import {getLayoutBlank} from '../../layout/getLayout';
+import {setUser} from '../../store/userSlice';
+import {getLogin} from '../../services/user';
 
 SignInPage.getLayout = getLayoutBlank;
 
 export default function SignInPage({setTitle}) {
   const user = useSelector(state => state.user.user);
   const router = useRouter();
+  const [Error, setError] = useState('');
+  const [loginData, setLoginData] = useState({
+    email: '',
+    password: '',
+  });
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (user.email) {
       router.push('/');
@@ -22,11 +28,7 @@ export default function SignInPage({setTitle}) {
   }, []);
 
   setTitle('Sign in');
-  const [Error, setError] = useState('');
-  const [loginData, setLoginData] = useState({
-    email: '',
-    password: '',
-  });
+
   const handleChange = e => {
     const {name, value} = e.target;
     setLoginData(prev => ({
@@ -35,7 +37,6 @@ export default function SignInPage({setTitle}) {
     }));
   };
 
-  const dispatch = useDispatch();
   const handleSignIn = async e => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
@@ -57,17 +58,15 @@ export default function SignInPage({setTitle}) {
       await getLogin(loginData.email, loginData.password).then(res => {
         const {succeed, data} = res;
         if (succeed) {
-          // console.log(data.data);
           dispatch(setUser(data.data));
-          if(data.data.type === "Administrator"){
-            router.push("/administrator", undefined, {shallow:true})
+          if (data.data.type === 'Administrator') {
+            router.push('/administrator', undefined, {shallow: true});
             // router.reload("/administrator")
             return;
           }
           router.push('/');
           return;
         }
-        // console.log(data);
         return;
       });
     } catch (error) {
@@ -89,7 +88,8 @@ export default function SignInPage({setTitle}) {
           <div className="border border-b-[#d9d9d9] mt-2"></div>
         </div>
         <div className="max-md:text-center text-[30px] font-bold">Sign in</div>
-        <form onSubmit={handleSignIn}
+        <form
+          onSubmit={handleSignIn}
           className="flex flex-col gap-y-4 w-full md:pr-10"
           autoComplete="off">
           <Input
@@ -116,13 +116,6 @@ export default function SignInPage({setTitle}) {
             additional_styles="space-y-1 text-[14px]"
             additional_styles_input="bg-[#ededed]"
           />
-          {/* <div className="flex flex-row justify-between items-center text-[12px]">
-                        <div className="flex flex-row gap-x-2 items-center">
-                            <input type="checkbox" name="rememberMe" />
-                            <div>Remember me</div>
-                        </div>
-                        <div className="text-link">Forgot your password?</div>
-                    </div> */}
           <div
             className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
               Error ? '' : '-translate-y-20'
@@ -152,15 +145,11 @@ export default function SignInPage({setTitle}) {
           <div className="flex flex-col max-md:items-center gap-y-3">
             <Buttons
               path=""
-              type='submit'
+              type="submit"
               button_description="Sign In"
               additional_styles="px-12 py-1 mt-4 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
               onClick={handleSignIn}
             />
-            {/* <div className="flex flex-row gap-x-1 text-[12px]">
-                            Don&apos;t have an account?
-                            <Link href="/login/signup" className="text-link">Sign up now</Link>
-                        </div> */}
           </div>
         </form>
       </div>

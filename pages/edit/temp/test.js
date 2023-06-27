@@ -1,35 +1,10 @@
-import React, {useEffect, useState} from 'react';
-// import config from '../../config'
+import {useEffect, useState} from 'react';
 
 const Test = () => {
   const [originaldata, setoriginaldata] = useState(
     'ID of the current inseted data is: 32',
   );
   const [data, setdata] = useState('ID of the current inseted data is: 32');
-  const [initData, setinitData] = useState({
-    ba_long_name: 'batzz',
-    ba_type: 'batzz',
-    area_id: 'batzz',
-    area_type: 'batzz',
-    field_name: 'batzz',
-    well_name: 'Lorem Ipsum',
-    id: 26,
-    uwi: 'batzz',
-    title: 'batzz',
-    creator_name: 'batzz',
-    create_date: '12-Dec-2023',
-    media_type: 'batzz',
-    document_type: 'batzz',
-    item_category: 'batzz',
-    item_sub_category: 'batzz',
-    page_count: 12,
-    remark: 'batzz',
-    data_store_name: 'batzz',
-    data_store_type: 'batzz',
-    source: 'batzz',
-    qc_status: 'batzz',
-    checked_by_ba_id: 'batzz',
-  });
   const [dateTest, setdateTest] = useState('29 December 2023');
   const [originaldate, setoriginaldate] = useState('29 December 2023');
   const [changed, setchanged] = useState(false);

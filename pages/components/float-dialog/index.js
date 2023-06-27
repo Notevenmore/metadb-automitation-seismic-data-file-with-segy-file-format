@@ -1,26 +1,17 @@
-import FloatDialog, {
-  FloatDialogNotification,
+import Highlight from 'react-highlight';
+import {
+  Divider,
+  FloatDialog,
   ProfileIcon,
   NotificationIcon,
   IconSection,
-} from '../../../components/float_dialog/float_dialog';
-import Highlight from 'react-highlight';
-import {Divider} from '../../../components/float_dialog/float_dialog';
+} from '../../../components/float_dialog';
 
 export default function FloatingDialogPage() {
   return (
     <section className="flex flex-col w-full h-fit text-[14.5px] px-10 py-5">
-      <HeaderSection></HeaderSection>
-      <MainSection></MainSection>
-    </section>
-  );
-}
-
-function PopupDialogPage() {
-  return (
-    <section className="flex flex-col w-full h-fit text-[14.5px] px-10 py-5">
-      <HeaderSection></HeaderSection>
-      <MainSection></MainSection>
+      <HeaderSection />
+      <MainSection />
     </section>
   );
 }
@@ -89,7 +80,7 @@ const HeaderSection = () => {
         <BoldCode>`show`</BoldCode> in state, which causes the floating dialog
         box to be rendered or hidden accordingly.
       </p>
-      <br></br>
+      <br />
       <p>
         Below is the example implementation of the
         <BoldCode> FloatDialog</BoldCode> component.
@@ -101,9 +92,9 @@ const HeaderSection = () => {
 const MainSection = () => {
   return (
     <main className="flex flex-col gap-y-8">
-      <Example1></Example1>
-      <Example2></Example2>
-      <Example3></Example3>
+      <Example1 />
+      <Example2 />
+      <Example3 />
     </main>
   );
 };

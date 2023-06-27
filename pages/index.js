@@ -1,24 +1,17 @@
-import Buttons from '../components/buttons/buttons';
-import FileIcon from '../public/icons/file.svg';
-import {Divider} from '../components/float_dialog/float_dialog';
-import Container from '../components/container/container';
-import {useDispatch, useSelector} from 'react-redux';
-import TableComponent from '../components/table/table';
-import draft from '../dummy-data/draft';
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
+import {useDispatch, useSelector} from 'react-redux';
+import Buttons from '../components/buttons/buttons';
+import FileIcon from '../public/icons/file.svg';
+import {Divider} from '../components/float_dialog';
+import Container from '../components/container/container';
+import TableComponent from '../components/table/table';
+import draft from '../dummy-data/draft';
 import Input from '../components/input_form/input';
-import config, {datatypes} from '../config';
+import {datatypes} from '../config';
 import {setUploadDocumentSettings} from '../store/generalSlice';
 import {checkAfe} from '../components/utility_functions';
 import Toast from '../components/toast/toast';
-
-export async function getServerSideProps(context) {
-  const config = JSON.parse(process.env.ENDPOINTS);
-  return {
-    props: {config: config}, // will be passed to the page component as props
-  };
-}
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
@@ -155,18 +148,16 @@ const HomeSection = ({config}) => {
         if (!dataType || !newWorkspace.afe_number) {
           return;
         }
-        // setpopupMessage({message: 'Checking...', color: 'green'});
+
         const result = await checkAfe(
           false,
           config,
           datatypes[dataType],
           parseInt(e.target.value),
         );
+
         if (result !== 'null') {
           setafeExist(true);
-          // setpopupMessage({message: 'AFE number available', color: 'green'});
-          // await delay(1000);
-          // setpopupMessage({message: '', color: ''});
           setpopupMessage({
             message:
               'A record with the same AFE number already exists. Please choose a different one',
@@ -196,7 +187,7 @@ const HomeSection = ({config}) => {
       className="flex flex-col justify-center items-center w-full h-full"
       onDragEnter={e => handleDrag(e)}>
       <section className="flex flex-col justify-around w-[944px] h-[426px] items-center">
-        <FileIcon className="w-[114px] h-[132px]"></FileIcon>
+        <FileIcon className="w-[114px] h-[132px]" />
         <h1 className="text-[24px] leading-[30px] font-semibold opacity-50 text-center">
           Choose the record of which data type to be shown by selecting from the
           side bar,
@@ -205,16 +196,17 @@ const HomeSection = ({config}) => {
         <div className="flex justify-center">
           <Buttons
             path={'/upload_file'}
-            button_description="Choose file manually"></Buttons>
+            button_description="Choose file manually"
+          />
         </div>
         <p className="text-center opacity-50">
           The document to be uploaded must be in either JPG, PNG, PDF, PPTX,
           CSV, XLSX, or LAS format.
         </p>
         <section className="flex justify-center items-center">
-          <Divider additional_styles={'w-[284px]'}></Divider>
+          <Divider additional_styles={'w-[284px]'} />
           <h1 className="text-[24px] font-semibold opacity-50 mx-[37px]">or</h1>
-          <Divider additional_styles={'w-[284px]'}></Divider>
+          <Divider additional_styles={'w-[284px]'} />
         </section>
         <section className="flex flex-row gap-x-3">
           <Buttons
@@ -223,9 +215,8 @@ const HomeSection = ({config}) => {
             onClick={e => {
               e.preventDefault();
               settoggleOverlay(true);
-            }}></Buttons>
-          {/* <Buttons path={"/drafts"} button_description="View drafts"></Buttons> */}
-          {/* <Buttons path={"/database"} button_description="Connect with database"></Buttons> */}
+            }}
+          />
         </section>
       </section>
       <div
@@ -284,17 +275,6 @@ const HomeSection = ({config}) => {
                   onChange={e => setdataType(e.target.value)}
                   withSearch
                 />
-                {/* <p>Workspace name</p>
-								<Input
-									type="text"
-									name={"workingArea"}
-									placeholder={"Workspace name"}
-									value={newWorkspace.workspace_name}
-									required={true}
-									additional_styles="w-full"
-									autoComplete="off"
-									onChange={(e) => setnewWorkspace({ ...newWorkspace, workspace_name: e.target.value })}
-								/> */}
                 <p>AFE number</p>
                 <div className="relative">
                   <Input
@@ -306,13 +286,12 @@ const HomeSection = ({config}) => {
                     additional_styles="w-full"
                     autoComplete="off"
                     onChange={e => {
-                      dataType
-                        ? setnewWorkspace({
-                            ...newWorkspace,
-                            afe_number: parseInt(e.target.value),
-                            workspace_name: `record_${e.target.value}`,
-                          })
-                        : null;
+                      dataType &&
+                        setnewWorkspace({
+                          ...newWorkspace,
+                          afe_number: parseInt(e.target.value),
+                          workspace_name: `record_${e.target.value}`,
+                        });
                     }}
                     onFocus={e => handleAfeChange(e, true)}
                     onBlur={e => handleAfeChange(e, false)}
@@ -432,36 +411,6 @@ const HomeSection = ({config}) => {
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
       </Toast>
-
-      {/* <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%]
-                 translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
-                 px-3 rounded-lg py-2 transition-all ${
-                   Message.message ? '' : '-translate-y-20'
-                 }`}>
-        <p>{Message.message}</p>
-        <Buttons
-          additional_styles="px-1 py-1 text-black"
-          path=""
-          onClick={e => {
-            e.preventDefault();
-            setMessage({message: '', color: ''});
-          }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Buttons>
-      </div> */}
     </section>
   );
 };
@@ -496,3 +445,10 @@ const SearchResult = () => {
     </Container>
   );
 };
+
+export async function getServerSideProps() {
+  const config = JSON.parse(process.env.ENDPOINTS);
+  return {
+    props: {config: config}, // will be passed to the page component as props
+  };
+}
