@@ -67,7 +67,7 @@ const Profile = ({setTitle}) => {
       console.log('start');
       await updateProfile({
         userid: user.name,
-        profile_pict: currentUser.profile_picture,
+        profile_picture: currentUser.profile_picture,
       }).then(
         () => {
           dispatch(setUser(currentUser));

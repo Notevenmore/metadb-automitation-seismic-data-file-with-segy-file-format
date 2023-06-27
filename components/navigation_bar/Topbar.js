@@ -42,7 +42,7 @@ export default function TopBar() {
   }, []);
 
   useEffect(() => {
-    setProfile(Mime(user.profile_pict || "")); // TODO CHANGE TO NOT USE HARDCODED STRING LATER
+    setProfile(Mime(user.profile_picture || "")); // TODO CHANGE TO NOT USE HARDCODED STRING LATER
   }, [user]);
 
   const dispatch = useDispatch();
