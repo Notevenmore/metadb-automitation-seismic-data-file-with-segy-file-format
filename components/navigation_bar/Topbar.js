@@ -39,7 +39,7 @@ export default function TopBar() {
         </>
       ),
     });
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     setProfile(Mime(user.profile_picture || "")); // TODO CHANGE TO NOT USE HARDCODED STRING LATER

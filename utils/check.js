@@ -9,15 +9,18 @@ function CheckAuth() {
   const router = useRouter();
   const dispatch = useDispatch();
 
+
   const [Message, setMessage] = useState({message: '', color: '', show: false});
 
   const handleProfile = async () => {
     console.log(user.userid)
     const res = await getProfile(user.userid).then(
       res => {
+  console.log("AAAAAAAAAAA")
         dispatch(setUser(res));
       },
       err => {
+        console.log("AAAAAAAAAAA")
         setMessage({
           message: String(err),
           color: 'red',
@@ -28,13 +31,13 @@ function CheckAuth() {
   };
 
   useEffect(() => {
-    if (!user.name) {
+    if (!user.userid) {
       router.push('/login/signin');
       return;
     }
     if (user.type === 'Administrator') return;
     handleProfile();
-  }, [user.name, router.events, useSelector(state => state.user.user.name)]);
+  }, [user.userid, router.events, useSelector(state => state.user.user.userid)]);
 
   return {Message, setMessage};
 }

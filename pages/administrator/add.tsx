@@ -36,7 +36,7 @@ export default function AddNewUserPage() {
     e.preventDefault();
     const data = {
       ...detail,
-      profile_pict: defaultProfile(),
+      profile_picture: defaultProfile(),
     };
     await addProfile(data).then(
       res => {
