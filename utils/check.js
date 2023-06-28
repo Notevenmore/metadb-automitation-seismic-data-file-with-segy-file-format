@@ -12,7 +12,8 @@ function CheckAuth() {
   const [Message, setMessage] = useState({message: '', color: '', show: false});
 
   const handleProfile = async () => {
-    const res = await getProfile(user.name).then(
+    console.log(user.userid)
+    const res = await getProfile(user.userid).then(
       res => {
         dispatch(setUser(res));
       },
