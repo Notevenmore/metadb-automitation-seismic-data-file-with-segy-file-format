@@ -12,7 +12,7 @@ import {datatypes} from '../config';
 import {setUploadDocumentSettings} from '../store/generalSlice';
 import {checkAfe} from '../components/utility_functions';
 import Toast from '../components/toast/toast';
-import { parseCookies } from 'nookies';
+import { TokenExpired } from '../services/admin';
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
@@ -67,7 +67,7 @@ const HomeSection = ({config}) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${
-              JSON.parse(parseCookies().user_data).access_token
+              JSON.parse(parseCookie().user_data).access_token
             }`,
           },
           body: JSON.stringify(newWorkspace),
@@ -76,6 +76,7 @@ const HomeSection = ({config}) => {
             if (res.status === 200) {
               return res.statusText;
             } else {
+              TokenExpired(res.status)
               return res.text();
             }
           })
