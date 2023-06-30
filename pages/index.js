@@ -12,6 +12,7 @@ import {datatypes} from '../config';
 import {setUploadDocumentSettings} from '../store/generalSlice';
 import {checkAfe} from '../components/utility_functions';
 import Toast from '../components/toast/toast';
+import { parseCookies } from 'nookies';
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
@@ -65,6 +66,9 @@ const HomeSection = ({config}) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${
+              JSON.parse(parseCookies().user_data).access_token
+            }`,
           },
           body: JSON.stringify(newWorkspace),
         })

@@ -10,6 +10,7 @@ import Button from '../../components/buttons/buttons';
 import {setUploadDocumentSettings} from '../../store/generalSlice';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
+import { parseCookies } from 'nookies';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
@@ -46,6 +47,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
       })
         .then(res =>
@@ -173,6 +177,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
         body: JSON.stringify(newWorkspace),
       })
@@ -180,6 +187,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           if (res.status === 200) {
             return res.statusText;
           } else {
+            console.log(res)
             return res.text();
           }
         })
