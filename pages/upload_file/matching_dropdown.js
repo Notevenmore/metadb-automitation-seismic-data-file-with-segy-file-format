@@ -47,6 +47,9 @@ const generateKeyValuePair = () => {
 const uploadImage = async imageBase64Str => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append("Authorization", `Bearer ${
+    JSON.parse(parseCookies().user_data).access_token
+  }`)
 
   var raw = JSON.stringify({
     base64str: imageBase64Str,
@@ -75,6 +78,9 @@ const uploadImage = async imageBase64Str => {
 const postScrapeAnnotate = async (docId, page) => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append("Authorization", `Bearer ${
+    JSON.parse(parseCookies().user_data).access_token
+  }`)
 
   var requestOptions = {
     method: 'GET',
@@ -351,6 +357,9 @@ export default function MatchReview({config, setTitle}) {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`
               },
               // TODO change form_type to be dynamic later
               // FINISHED
