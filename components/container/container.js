@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {twMerge} from 'tailwind-merge';
 
@@ -32,7 +33,7 @@ function BackButton() {
     <div
       className="hover:bg-black/[0.15] rounded w-[50px] h-[50px] flex justify-center items-center"
       onClick={() => router.back()}>
-      <img
+      <Image
         src="/icons/chevron-left.svg"
         alt="back icon"
         width={35}
