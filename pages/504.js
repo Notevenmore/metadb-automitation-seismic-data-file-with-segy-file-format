@@ -1,5 +1,5 @@
 import Styles from '../styles/Error.module.css';
-import Error from '../components/error/Error';
+import Error from '../components/error';
 
 export default function Custom504() {
   return (
