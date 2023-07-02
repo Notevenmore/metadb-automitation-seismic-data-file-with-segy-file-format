@@ -1,7 +1,7 @@
 import {twMerge} from 'tailwind-merge';
 import {useEffect} from 'react';
 import {useMeasure} from 'react-use';
-import Buttons from '../buttons/buttons';
+import Button from '../button';
 
 /*
 setmessage is a usestate variable passed from parent with properties
@@ -44,7 +44,7 @@ const Toast = ({message, setmessage, additional_styles = '', children}) => {
     <div
       ref={ref}
       className={twMerge(
-        `flex items-center space-x-2 fixed left-[50%]
+        `flex items-center space-x-2 fixed left-1/2
       translate-x-[-50%] text-white
       px-3 rounded-lg py-2 transition-all duration-[230ms] ${
         message.show ? '' : ``
@@ -56,7 +56,7 @@ const Toast = ({message, setmessage, additional_styles = '', children}) => {
         top: message.show ? '1.25rem' : `-${bounds.height + 100}px`,
       }}>
       <div>{children || message.message}</div>
-      <Buttons additional_styles="px-1 py-1 text-black" onClick={hide}>
+      <Button additional_styles="px-1 py-1 text-black" onClick={hide}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -70,7 +70,7 @@ const Toast = ({message, setmessage, additional_styles = '', children}) => {
             d="M6 18L18 6M6 6l12 12"
           />
         </svg>
-      </Buttons>
+      </Button>
     </div>
   );
 };

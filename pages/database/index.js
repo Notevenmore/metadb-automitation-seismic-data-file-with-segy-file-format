@@ -1,4 +1,4 @@
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input';
 
@@ -106,14 +106,14 @@ export default function Database() {
           />
         </div>
         <div className="flex flex-row gap-x-3 items-center justify-center">
-          <Buttons
+          <Button
             path="/database/select-table"
             button_description="Connect"
             additional_styles="bg-primary"
             type="submit"
             onClick={e => console.log(e)}
           />
-          <Buttons path="" button_description="Cancel" />
+          <Button path="" button_description="Cancel" />
         </div>
       </form>
     </Container>

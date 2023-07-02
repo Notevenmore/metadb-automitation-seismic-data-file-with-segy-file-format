@@ -1,5 +1,5 @@
 import Highlight from 'react-highlight';
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import Well_sample_core from '../../public/icons/well_sample_core.svg';
 import Input from '../../components/input_form/input';
 
@@ -233,7 +233,7 @@ const InputPage = () => {
                   Click the button below to print the selected item to the
                   console.
                 </p>
-                <Buttons
+                <Button
                   path=""
                   button_description="Print to console"
                   onClick={e => {
@@ -258,7 +258,7 @@ const InputPage = () => {
                 setSelectedItem={demo_holder_2}
                 required={true}
               />
-              <Buttons
+              <Button
                 path=""
                 button_description="Print to console"
                 onClick={e => {
@@ -273,7 +273,7 @@ const InputPage = () => {
                 setSelectedItem={demo_holder_3}
                 required={true}
               />
-              <Buttons
+              <Button
                 path=""
                 button_description="Print to console"
                 onClick={e => {
@@ -285,14 +285,12 @@ const InputPage = () => {
             <div className="py-5 w-full text-center flex flex-col items-center space-y-2">
               <p>Other documentations:</p>
               <div className="flex space-x-2">
-                <Buttons
-                  path={'/button'}
-                  button_description="Buttons component">
+                <Button path={'/button'} button_description="Buttons component">
                   <Well_sample_core className="w-4 h-4" />
-                </Buttons>
-                <Buttons path={'/table'} button_description="Table component">
+                </Button>
+                <Button path={'/table'} button_description="Table component">
                   <Well_sample_core className="w-4 h-4" />
-                </Buttons>
+                </Button>
               </div>
             </div>
           </div>

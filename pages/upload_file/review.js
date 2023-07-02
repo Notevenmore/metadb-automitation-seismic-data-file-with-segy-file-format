@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
 import Highlight from 'react-highlight';
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import Container from '../../components/container/container.js';
 import Input from '../../components/input_form/input';
 import {
@@ -168,7 +168,7 @@ export default function UploadFileReview({setTitle, config}) {
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      <Buttons path="/" button_description="Go back home" />
+      <Button path="/" button_description="Go back home" />
     </div>
   ) : workspaceData ? (
     <Container additional_class="full-height relative">
@@ -265,7 +265,7 @@ export default function UploadFileReview({setTitle, config}) {
             <div className="flex justify-between items-center">
               <p>Data</p>
               {ImageReview ? (
-                <Buttons
+                <Button
                   button_description="Hide image"
                   additional_styles="bg-white"
                   path=""
@@ -275,7 +275,7 @@ export default function UploadFileReview({setTitle, config}) {
                   }}
                 />
               ) : (
-                <Buttons
+                <Button
                   button_description="View uploaded picture below"
                   additional_styles="bg-white"
                   path=""
@@ -320,7 +320,7 @@ export default function UploadFileReview({setTitle, config}) {
               // eslint-disable-next-line react/jsx-key
               <div className="flex justify-between items-center">
                 <p>Data</p>
-                <Buttons
+                <Button
                   button_description="Hide image"
                   additional_styles="bg-white"
                   path=""
@@ -342,7 +342,7 @@ export default function UploadFileReview({setTitle, config}) {
       {document_summary?.body.page_count > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-            <Buttons
+            <Button
               path=""
               title="Previous page"
               button_description=""
@@ -357,13 +357,13 @@ export default function UploadFileReview({setTitle, config}) {
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
-            </Buttons>
+            </Button>
             <div
               title="Page number"
               className="bg-white border-2 p-3 cursor-default select-none rounded-lg text-center">
               <p className="w-5 h-5">{PageNo + 1}</p>
             </div>
-            <Buttons
+            <Button
               path=""
               title="Next page"
               button_description=""
@@ -380,12 +380,12 @@ export default function UploadFileReview({setTitle, config}) {
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
-            </Buttons>
+            </Button>
           </div>
         </div>
       )}
       <div className="flex space-x-3 py-4">
-        <Buttons
+        <Button
           path=""
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           onClick={saveDocumentHandler}
@@ -395,8 +395,8 @@ export default function UploadFileReview({setTitle, config}) {
               : false
           }>
           Save changes
-        </Buttons>
-        <Buttons
+        </Button>
+        <Button
           path=""
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           onClick={e => {
@@ -408,7 +408,7 @@ export default function UploadFileReview({setTitle, config}) {
               : false
           }>
           Save and exit
-        </Buttons>
+        </Button>
       </div>
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}

@@ -3,15 +3,15 @@ import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 import Highlight from 'react-highlight';
 import {useDispatch} from 'react-redux';
+import {parseCookies} from 'nookies';
 import Container from '../../components/container/container';
 import Input from '../../components/input_form/input';
 import TableComponent from '../../components/table/table';
-import Button from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import {setUploadDocumentSettings} from '../../store/generalSlice';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
-import { parseCookies } from 'nookies';
-import { TokenExpired } from '../../services/admin';
+import {TokenExpired} from '../../services/admin';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
@@ -61,7 +61,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         )
         .then(([status, res]) => {
           if (status !== 200) {
-            TokenExpired(status)
+            TokenExpired(status);
             throw `Service returned with status ${status}: ${res}`;
           }
           return res;
@@ -189,8 +189,8 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           if (res.status === 200) {
             return res.statusText;
           } else {
-            TokenExpired(res.status)
-            console.log(res)
+            TokenExpired(res.status);
+            console.log(res);
             return res.text();
           }
         })
@@ -243,11 +243,11 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${
             JSON.parse(parseCookies().user_data).access_token
-          }`
+          }`,
         },
       }).then(res => {
         if (res.status !== 200) {
-          TokenExpired(status)
+          TokenExpired(status);
           throw `Response returned with status code ${res.status}: ${res.statusText}`;
         }
       });

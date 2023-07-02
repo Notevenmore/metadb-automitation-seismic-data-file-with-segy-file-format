@@ -5,7 +5,7 @@ import {getLayoutTop} from '../../layout/getLayout';
 import Container from '../../components/container/container';
 import {getProfiles, removeProfile} from '../../services/admin';
 import Input from '../../components/input_form/input';
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import Toast from '../../components/toast/toast';
 
 AdministratorPage.getLayout = getLayoutTop;
@@ -67,11 +67,9 @@ export default function AdministratorPage() {
               onChange={e => handleSearch(e)}
             />
           </div>
-          <Buttons
-            path="/administrator/add"
-            additional_styles="bg-primary h-[32px]">
+          <Button path="/administrator/add" additional_styles="bg-primary h-8">
             Add User
-          </Buttons>
+          </Button>
         </div>
         <div className="w-full h-auto border-gray-500 border-[1px] rounded-[5px] flex flex-col">
           <ItemRow>

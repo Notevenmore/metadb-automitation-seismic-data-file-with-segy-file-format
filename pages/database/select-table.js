@@ -1,4 +1,4 @@
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import Container from '../../components/container/container';
 
 export default function SelectTable() {
@@ -10,12 +10,12 @@ export default function SelectTable() {
         this app
       </Container.Subtitle>
       <div className="flex flex-row gap-x-3 items-center justify-center">
-        <Buttons
+        <Button
           path="/database/new-document"
           button_description="Next"
           additional_styles="bg-primary"
         />
-        <Buttons path="" button_description="Cancel" additional_styles="" />
+        <Button path="" button_description="Cancel" additional_styles="" />
       </div>
     </Container>
   );

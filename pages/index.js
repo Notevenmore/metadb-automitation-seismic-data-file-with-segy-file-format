@@ -1,7 +1,8 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 import {useDispatch, useSelector} from 'react-redux';
-import Buttons from '../components/buttons/buttons';
+import {parseCookies} from 'nookies';
+import Button from '../components/button';
 import FileIcon from '../public/icons/file.svg';
 import {Divider} from '../components/float_dialog';
 import Container from '../components/container/container';
@@ -12,7 +13,7 @@ import {datatypes} from '../config';
 import {setUploadDocumentSettings} from '../store/generalSlice';
 import {checkAfe} from '../components/utility_functions';
 import Toast from '../components/toast/toast';
-import { TokenExpired } from '../services/admin';
+import {TokenExpired} from '../services/admin';
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
@@ -67,7 +68,7 @@ const HomeSection = ({config}) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${
-              JSON.parse(parseCookie().user_data).access_token
+              JSON.parse(parseCookies().user_data).access_token
             }`,
           },
           body: JSON.stringify(newWorkspace),
@@ -76,7 +77,7 @@ const HomeSection = ({config}) => {
             if (res.status === 200) {
               return res.statusText;
             } else {
-              TokenExpired(res.status)
+              TokenExpired(res.status);
               return res.text();
             }
           })
@@ -199,7 +200,7 @@ const HomeSection = ({config}) => {
           <br></br>or drag and drop a document here to be uploaded
         </h1>
         <div className="flex justify-center">
-          <Buttons
+          <Button
             path={'/upload_file'}
             button_description="Choose file manually"
           />
@@ -214,7 +215,7 @@ const HomeSection = ({config}) => {
           <Divider additional_styles={'w-[284px]'} />
         </section>
         <section className="flex flex-row gap-x-3">
-          <Buttons
+          <Button
             path=""
             button_description="Make a new record"
             onClick={e => {
@@ -239,7 +240,7 @@ const HomeSection = ({config}) => {
             className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${
               toggleOverlay ? '' : '-translate-y-10 opacity-0'
             } transition-all`}>
-            <Buttons
+            <Button
               path=""
               additional_styles="absolute top-2 right-2 px-1 py-1 text-black"
               title="Cancel"
@@ -260,7 +261,7 @@ const HomeSection = ({config}) => {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </Buttons>
+            </Button>
             <h1 className="font-bold text-3xl">New record</h1>
             <hr />
             <p className="font-semibold">
@@ -388,7 +389,7 @@ const HomeSection = ({config}) => {
                 />
               </div>
               <div className="space-x-2 flex">
-                <Buttons
+                <Button
                   type="submit"
                   button_description="Confirm"
                   disabled={
@@ -401,7 +402,7 @@ const HomeSection = ({config}) => {
                   additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
                   onClick={makenew}
                 />
-                <Buttons
+                <Button
                   button_description="Cancel"
                   onClick={e => {
                     e.preventDefault();

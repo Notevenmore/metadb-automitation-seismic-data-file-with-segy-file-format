@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 import {useSelector} from 'react-redux';
-import Buttons from '../components/buttons/buttons';
+import Button from '../components/button';
 import Container from '../components/container/container.js';
 import Input from '../components/input_form/input';
 import {
@@ -205,20 +205,20 @@ export default function NewDocumentPage({setTitle, config}) {
         />
       </div>
       <div className="flex space-x-2 py-10">
-        <Buttons
+        <Button
           path=""
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           onClick={saveDocumentHandler}
           disabled={Message.message || !spreadsheetReady ? true : false}>
           Save changes
-        </Buttons>
-        <Buttons
+        </Button>
+        <Button
           path=""
           additional_styles="text-error"
           onClick={router.back}
           disabled={Message.message || !spreadsheetReady ? true : false}>
           Cancel
-        </Buttons>
+        </Button>
       </div>
       <Toast message={Message} setmessage={setMessage}>
         {Message.message}
@@ -235,13 +235,13 @@ export default function NewDocumentPage({setTitle, config}) {
           record along with its details you have just inputted will be there.
           You can add data relating to the record there afterwards.
         </p>
-        <Buttons
+        <Button
           onClick={e => {
             e.preventDefault();
             router.push('/');
           }}>
           Go home
-        </Buttons>
+        </Button>
       </div>
     </div>
   );
