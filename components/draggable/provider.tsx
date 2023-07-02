@@ -12,7 +12,7 @@ import {
   INITIAL_DRAGGABLE_STATE,
 } from './types';
 import {draggableReducer} from './reducer';
-import {useScrollOffset} from '../../pages/components/highlight_viewer';
+import {useScrollOffset} from './util';
 
 export type DraggableContextProps = {
   state: DraggableState;

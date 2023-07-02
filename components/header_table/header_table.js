@@ -1,5 +1,5 @@
-import {Divider} from '../float_dialog';
 import {twMerge} from 'tailwind-merge';
+import {Divider} from '../Divider';
 
 export const HeaderTable = ({children}) => {
   return (

@@ -1,16 +1,16 @@
-import {useDispatch, useSelector} from 'react-redux';
-import {useEffect, useState} from 'react';
 import moment from 'moment/moment';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {FloatDialog} from '../components/FloatDialog';
 import Button from '../components/button';
-import TableComponent from '../components/table/table';
 import Container from '../components/container';
-import {logOut, setUser} from '../store/userSlice';
-import {FloatDialog} from '../components/float_dialog';
-import Mime from 'dummy-data/mime';
-import ProfilePic from 'dummy-data/profile_pic';
+import TableComponent from '../components/table/table';
+import Mime from '../dummy-data/mime';
+import ProfilePic from '../dummy-data/profile_pic';
 import {updateProfile} from '../services/admin';
+import {logOut, setUser} from '../store/userSlice';
 
 const Profile = ({setTitle}) => {
   setTitle('Profile');
