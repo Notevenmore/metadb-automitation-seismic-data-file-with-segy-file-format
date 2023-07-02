@@ -15,6 +15,7 @@ import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
+import { parseCookies } from 'nookies';
 
 interface TableRow {
   id: number;
@@ -37,6 +38,9 @@ async function extractTextFromBounds(
 ) {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append("Authorization", `Bearer ${
+    JSON.parse(parseCookies().user_data).access_token
+  }`)
   var raw = JSON.stringify({
     bounds: bound,
   });
@@ -64,6 +68,9 @@ async function extractTextFromBounds(
 const uploadImage = async (imageBase64Str: string) => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append("Authorization", `Bearer ${
+    JSON.parse(parseCookies().user_data).access_token
+  }`)
 
   var raw = JSON.stringify({
     base64str: imageBase64Str,
@@ -210,6 +217,9 @@ export default function MatchingGuided({config, setTitle}) {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`
               },
               // TODO change form_type to be dynamic later
               // FINISHED

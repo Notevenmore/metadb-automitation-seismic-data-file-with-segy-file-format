@@ -15,6 +15,7 @@ import {ImageEditor} from '../components/highlight_viewer';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Toast from '../../components/toast/toast';
+import { parseCookies } from 'nookies';
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -46,6 +47,9 @@ const uploadImage = async (
 ): Promise<UploadFileResponse> => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append("Authorization", `Bearer ${
+    JSON.parse(parseCookies().user_data).access_token
+  }`)
 
   var raw = JSON.stringify({
     base64str: imageBase64Str,
@@ -61,6 +65,7 @@ const uploadImage = async (
   try {
     const response = await fetch(
       `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/upload/base64`,
+
       requestOptions,
     );
     const result = await response.text();
@@ -84,6 +89,9 @@ const postScrapeAnnotate = async (
 ): Promise<ScrapeResponse> => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append("Authorization", `Bearer ${
+    JSON.parse(parseCookies().user_data).access_token
+  }`)
 
   var requestOptions: RequestInit = {
     method: 'GET',
@@ -420,6 +428,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`
               },
               // TODO change form_type to be dynamic later
               // FINISHED

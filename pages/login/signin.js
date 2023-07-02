@@ -93,11 +93,11 @@ export default function SignInPage({setTitle}) {
           className="flex flex-col gap-y-4 w-full md:pr-10"
           autoComplete="off">
           <Input
-            label="Username"
+            label="Email"
             label_loc="above"
-            type="text"
+            type="email"
             name={'email'}
-            placeholder={'Username'}
+            placeholder={'Email'}
             value={loginData.email}
             onChange={e => handleChange(e)}
             required={true}

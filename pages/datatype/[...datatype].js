@@ -10,6 +10,8 @@ import Button from '../../components/buttons/buttons';
 import {setUploadDocumentSettings} from '../../store/generalSlice';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
+import { parseCookies } from 'nookies';
+import { TokenExpired } from '../../services/admin';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
@@ -46,6 +48,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
       })
         .then(res =>
@@ -56,6 +61,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         )
         .then(([status, res]) => {
           if (status !== 200) {
+            TokenExpired(status)
             throw `Service returned with status ${status}: ${res}`;
           }
           return res;
@@ -173,6 +179,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
         body: JSON.stringify(newWorkspace),
       })
@@ -180,6 +189,8 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           if (res.status === 200) {
             return res.statusText;
           } else {
+            TokenExpired(res.status)
+            console.log(res)
             return res.text();
           }
         })
@@ -230,9 +241,13 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`
         },
       }).then(res => {
         if (res.status !== 200) {
+          TokenExpired(status)
           throw `Response returned with status code ${res.status}: ${res.statusText}`;
         }
       });

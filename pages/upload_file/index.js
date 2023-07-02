@@ -10,6 +10,8 @@ import {datatypes} from '../../config';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
 import getFileType from '../../utils/filetype'
+import { parseCookies } from 'nookies';
+import { TokenExpired } from '../../services/admin';
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -166,6 +168,9 @@ export default function UploadFilePage({config, setTitle}) {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${
+                JSON.parse(parseCookies().user_data).access_token
+              }`
             },
             body: JSON.stringify({
               afe_number: parseInt(UplSettings.afe_number),
@@ -178,6 +183,7 @@ export default function UploadFilePage({config, setTitle}) {
           },
         ).then(res => {
           if (res.status !== 200) {
+            TokenExpired(res.status)
             throw 'Failed to POST new record. Please try again.';
           }
           return res.text();
