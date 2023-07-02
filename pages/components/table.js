@@ -1,5 +1,5 @@
 import Highlight from 'react-highlight';
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import TableComponent from '../../components/table/table';
 import Well_sample_core from '../../public/icons/well_sample_core.svg';
 
@@ -310,7 +310,7 @@ const TablePage = () => {
                   press the button below and check dev console to see the
                   updates)
                 </p>
-                <Buttons
+                <Button
                   additional_styles="mt-2"
                   path="/"
                   button_description="Print to console"
@@ -322,14 +322,14 @@ const TablePage = () => {
               <div className="py-5 w-full text-center flex flex-col items-center space-y-2">
                 <p>Other documentations:</p>
                 <div className="flex space-x-2">
-                  <Buttons
+                  <Button
                     path={'/button'}
                     button_description="Buttons component">
                     <Well_sample_core className="w-4 h-4" />
-                  </Buttons>
-                  <Buttons path={'/input'} button_description="Input component">
+                  </Button>
+                  <Button path={'/input'} button_description="Input component">
                     <Well_sample_core className="w-4 h-4" />
-                  </Buttons>
+                  </Button>
                 </div>
               </div>
             </div>

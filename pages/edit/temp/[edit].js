@@ -1,7 +1,7 @@
 import Highlight from 'react-highlight';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import Button from '../../../components/buttons/buttons';
+import Button from '../../../components/button';
 import Sheets from '../../../components/sheets/sheets';
 import TableComponent from '../../../components/table/table';
 import Input from '../../../components/input_form/input';

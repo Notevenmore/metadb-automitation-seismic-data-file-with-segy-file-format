@@ -1,4 +1,4 @@
-import Buttons from '../buttons/buttons';
+import Button from '../button';
 import Close from '../../public/icons/close.svg';
 import {Divider} from '../float_dialog';
 
@@ -59,20 +59,20 @@ const ButtonsSection = ({
 }) => {
   return (
     <section className="flex flex-row justify-around">
-      <Buttons
+      <Button
         path="/"
         button_description={button_desc1}
-        additional_styles="bg-[#63F48C]"
+        additional_styles="bg-primary"
       />
-      <Buttons
+      <Button
         path="/"
         button_description={button_desc2}
-        additional_styles="bg-[#63F48C]"
+        additional_styles="bg-primary"
       />
-      <Buttons
+      <Button
         path="/"
         button_description={button_desc3}
-        additional_styles="text-[#FF0000]"
+        additional_styles="text-error"
       />
     </section>
   );

@@ -2,7 +2,7 @@ import hljs from 'highlight.js';
 import {useEffect} from 'react';
 import Highlight from 'react-highlight';
 import Well_sample_core from '../../public/icons/well_sample_core.svg';
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 
 const ButtonPage = () => {
   useEffect(() => {
@@ -39,7 +39,7 @@ const ButtonPage = () => {
                 "<Buttons \n\tpath='' \n\tbutton_description='Choose file manually' \n/>"
               }
             </Highlight>
-            <Buttons path="" button_description="Choose file manually" />
+            <Button path="" button_description="Choose file manually" />
             <br />
 
             <h3 className="text-xl font-bold">Example 2</h3>
@@ -48,18 +48,18 @@ const ButtonPage = () => {
                 "<Buttons \n\tpath='' \n\tbutton_description='Make a new document' \n/>"
               }
             </Highlight>
-            <Buttons path="" button_description="Make a new document" />
+            <Button path="" button_description="Make a new document" />
             <br />
 
             <h3 className="text-xl font-bold">Example 3</h3>
             <Highlight className="html rounded-md border-2">
               {`<Buttons path='' button_description='Make a new document' >
-    <Well_sample_core className='w-4 h-4' />
-</Buttons>`}
+                  <Well_sample_core className='w-4 h-4' />
+                </Buttons>`}
             </Highlight>
-            <Buttons path="" button_description="Make a new document">
+            <Button path="" button_description="Make a new document">
               <Well_sample_core className="w-4 h-4" />
-            </Buttons>
+            </Button>
             <br />
 
             <h3 className="text-xl font-bold">Example 4</h3>
@@ -74,7 +74,7 @@ const ButtonPage = () => {
                 }
               </Highlight>
             </pre>
-            <Buttons
+            <Button
               path=""
               button_description="View drafts"
               additional_styles={
@@ -84,12 +84,12 @@ const ButtonPage = () => {
             <div className="py-5 w-full text-center flex flex-col items-center space-y-2">
               <p>Other documentations:</p>
               <div className="flex space-x-2">
-                <Buttons path={'/table'} button_description="Table component">
+                <Button path={'/table'} button_description="Table component">
                   <Well_sample_core className="w-4 h-4" />
-                </Buttons>
-                <Buttons path={'/input'} button_description="Input component">
+                </Button>
+                <Button path={'/input'} button_description="Input component">
                   <Well_sample_core className="w-4 h-4" />
-                </Buttons>
+                </Button>
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
 import {useEffect} from 'react';
 import Input from '../../components/input_form/input';
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import {getLayoutBlank} from '../../layout/getLayout';
 import {setUser} from '../../store/userSlice';
 import {getLogin} from '../../services/user';
@@ -101,7 +101,7 @@ export default function SignInPage({setTitle}) {
             value={loginData.email}
             onChange={e => handleChange(e)}
             required={true}
-            additional_styles="space-y-1 text-[14px]"
+            additional_styles="space-y-1 text-sm"
             additional_styles_input="bg-[#ededed]"
           />
           <Input
@@ -117,11 +117,11 @@ export default function SignInPage({setTitle}) {
             additional_styles_input="bg-[#ededed]"
           />
           <div
-            className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
+            className={`flex items-center space-x-2 fixed top-5 left-1/2 translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
               Error ? '' : '-translate-y-20'
             }`}>
             <p>{Error}</p>
-            <Buttons
+            <Button
               additional_styles="px-1 py-1 text-black"
               path=""
               onClick={() => {
@@ -140,10 +140,10 @@ export default function SignInPage({setTitle}) {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </Buttons>
+            </Button>
           </div>
           <div className="flex flex-col max-md:items-center gap-y-3">
-            <Buttons
+            <Button
               path=""
               type="submit"
               button_description="Sign In"
@@ -153,7 +153,7 @@ export default function SignInPage({setTitle}) {
           </div>
         </form>
       </div>
-      <div className="w-[50%] px-[100px] flex flex-row justify-center">
+      <div className="w-1/2 px-[100px] flex flex-row justify-center">
         <div className="min-w-[400px] space-y-3">
           <Image
             src="/images/metadbpng.png"

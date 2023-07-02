@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import Container from '../../components/container/container.js';
 import Input from '../../components/input_form/input';
 import {
@@ -73,18 +73,18 @@ export default function BasinEditPage() {
         </HeaderInput>
       </HeaderTable>
       <ButtonsSection className={'max-lg:mt-5'}>
-        <Buttons path="" additional_styles="bg-primary">
+        <Button path="" additional_styles="bg-primary">
           Save changes
-        </Buttons>
-        <Buttons path="" additional_styles="bg-primary">
+        </Button>
+        <Button path="" additional_styles="bg-primary">
           Save and exit
-        </Buttons>
-        <Buttons path="" additional_styles="text-error">
+        </Button>
+        <Button path="" additional_styles="text-error">
           Cancel
-        </Buttons>
-        <Buttons path="" additional_styles="text-error">
+        </Button>
+        <Button path="" additional_styles="text-error">
           Delete file
-        </Buttons>
+        </Button>
       </ButtonsSection>
     </Container>
   );

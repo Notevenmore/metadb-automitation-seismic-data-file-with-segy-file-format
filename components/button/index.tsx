@@ -10,7 +10,7 @@ interface ButtonProps extends React.ComponentProps<'button'> {
   withPath?: boolean;
 }
 
-const Buttons: React.FunctionComponent<ButtonProps> = ({
+const Button: React.FunctionComponent<ButtonProps> = ({
   path,
   query,
   button_description,
@@ -37,8 +37,8 @@ const Buttons: React.FunctionComponent<ButtonProps> = ({
             additional_styles,
           )}
           {...buttonProps}>
-          {children ? <div>{children}</div> : null}
-          {button_description ? <p>{button_description}</p> : null}
+          {children}
+          {button_description}
         </button>
       </Link>
     </div>
@@ -54,11 +54,11 @@ const Buttons: React.FunctionComponent<ButtonProps> = ({
           additional_styles,
         )}
         {...buttonProps}>
-        {children ? <div>{children}</div> : null}
-        {button_description ? <p>{button_description}</p> : null}
+        {children}
+        {button_description}
       </button>
     </div>
   );
 };
 
-export default Buttons;
+export default Button;

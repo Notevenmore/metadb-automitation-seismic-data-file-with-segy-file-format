@@ -1,6 +1,6 @@
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import Button from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
 import Input from '../../components/input_form/input';
@@ -524,8 +524,6 @@ const DocEditor = ({workspace_name, config}) => {
                     disabled
                   />,
                 ],
-                // [<p className="font-bold">Data classification</p>, <Input type={"dropdown"} dropdown_items={["Report"]} />],
-                // [<p className="font-bold">Data sub-classification</p>, <Input type={"dropdown"} dropdown_items={["Printed"]} />]
               ]
             : // eslint-disable-next-line react/jsx-key
               [[<p>Getting data... Please wait</p>]]
@@ -570,7 +568,7 @@ const DocEditor = ({workspace_name, config}) => {
         />
       </div>
       <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%]
+        className={`flex items-center space-x-2 fixed top-5 left-1/2
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${
                    Message.message ? '' : '-translate-y-20'

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import Buttons from '../../components/buttons/buttons';
+import Button from '../../components/button';
 import Container from '../../components/container/container';
 
 export default function UploadingPage({}) {
@@ -50,17 +50,17 @@ export default function UploadingPage({}) {
           <div>
             {load === 'completed' ? (
               <div className="flex flex-row gap-x-3">
-                <Buttons
+                <Button
                   path="/upload_file/review"
                   button_description="Continue and review"
                   additional_styles="bg-primary flex-1"
                 />
-                <Buttons
+                <Button
                   path=""
                   button_description="Save draft"
                   additional_styles="bg-primary flex-1"
                 />
-                <Buttons
+                <Button
                   path=""
                   button_description="Cancel"
                   additional_styles="bg-[#e0e4e9] text-error"
