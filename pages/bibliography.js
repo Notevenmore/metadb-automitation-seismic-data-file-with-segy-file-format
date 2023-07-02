@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import Container from '../components/container/container';
+import Container from '../components/container';
 import Input from '../components/input_form/input';
 import TableComponent from '../components/table/table';
 import Link from 'next/link';
@@ -148,7 +148,7 @@ const Bibliography = ({setTitle}) => {
               src="/icons/magnify.svg"
               width="20"
               height="20"
-              className="absolute top-[50%] right-3 translate-y-[-50%]"
+              className="absolute top-1/2 right-3 translate-y-[-50%]"
               alt="search"
             />
           </div>

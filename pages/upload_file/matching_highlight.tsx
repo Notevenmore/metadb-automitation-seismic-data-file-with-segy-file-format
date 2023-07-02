@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
 import Highlight from 'react-highlight';
 import {parseCookies} from 'nookies';
-import Container from '../../components/container/container';
+import Container from '../../components/container';
 import {
   HeaderTable,
   HeaderDivider,
@@ -222,8 +222,6 @@ export default function MatchingGuided({config, setTitle}) {
                   JSON.parse(parseCookies().user_data).access_token
                 }`,
               },
-              // TODO change form_type to be dynamic later
-              // FINISHED
               body: JSON.stringify({
                 form_type: router.query?.form_type || 'basin',
               }),

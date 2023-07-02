@@ -4,7 +4,7 @@ import {useRouter} from 'next/router';
 import {useSelector, useDispatch} from 'react-redux';
 import {parseCookies} from 'nookies';
 import Button from '../../components/button';
-import Container from '../../components/container/container.js';
+import Container from '../../components/container';
 import Input from '../../components/input_form/input';
 import {
   HeaderTable,

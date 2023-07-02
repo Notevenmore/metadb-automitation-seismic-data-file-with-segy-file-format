@@ -1,5 +1,5 @@
 import Button from '../../components/button';
-import Container from '../../components/container/container';
+import Container from '../../components/container';
 import Input from '../../components/input_form/input';
 
 export default function Database() {

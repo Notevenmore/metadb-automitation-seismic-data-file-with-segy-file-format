@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import {useState} from 'react';
-import Container from '../../components/container/container';
+import Container from '../../components/container';
 import Input from '../../components/input_form/input';
 import TableComponent from '../../components/table/table';
 import Draft from '../../dummy-data/draft';

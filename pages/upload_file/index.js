@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {parseCookies} from 'nookies';
 import Button from '../../components/button';
-import Container from '../../components/container/container.js';
+import Container from '../../components/container';
 import Input from '../../components/input_form/input';
 import {storeFile, setUploadDocumentSettings} from '../../store/generalSlice';
 import Select from '../../public/icons/selection_tool.svg';

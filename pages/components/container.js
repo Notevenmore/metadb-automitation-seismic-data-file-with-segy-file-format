@@ -1,5 +1,5 @@
 import Highlight from 'react-highlight';
-import Container from '../../components/container/container.js';
+import Container from '../../components/container';
 
 export default function ContainerPage() {
   return (

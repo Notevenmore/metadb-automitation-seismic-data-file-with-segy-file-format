@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {getLayoutTop} from '../../layout/getLayout';
-import Container from '../../components/container/container';
+import Container from '../../components/container';
 import {getProfiles, removeProfile} from '../../services/admin';
 import Input from '../../components/input_form/input';
 import Button from '../../components/button';

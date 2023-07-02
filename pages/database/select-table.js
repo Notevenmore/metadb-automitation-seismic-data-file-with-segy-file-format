@@ -1,5 +1,5 @@
 import Button from '../../components/button';
-import Container from '../../components/container/container';
+import Container from '../../components/container';
 
 export default function SelectTable() {
   return (
