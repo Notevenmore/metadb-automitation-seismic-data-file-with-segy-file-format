@@ -1,19 +1,19 @@
-import {useEffect, useRef, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
+import {useEffect, useRef, useState} from 'react';
 import Highlight from 'react-highlight';
+import {useDispatch, useSelector} from 'react-redux';
+import {ImageEditor} from '../../components/HighlightViewer';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
 import {
-  HeaderTable,
   HeaderDivider,
+  HeaderTable,
 } from '../../components/header_table/header_table';
-import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {ImageEditor} from '../components/highlight_viewer';
+import Input from '../../components/input_form/input';
+import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Toast from '../../components/toast/toast';
+import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
 
 function uuidv4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>

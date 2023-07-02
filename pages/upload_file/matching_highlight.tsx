@@ -1,20 +1,20 @@
-import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
-import Highlight from 'react-highlight';
 import {parseCookies} from 'nookies';
+import {useEffect, useState} from 'react';
+import Highlight from 'react-highlight';
+import {useDispatch, useSelector} from 'react-redux';
+import {ImageEditor, Tuple4} from '../../components/HighlightViewer';
+import Button from '../../components/button';
 import Container from '../../components/container';
 import {
-  HeaderTable,
   HeaderDivider,
+  HeaderTable,
 } from '../../components/header_table/header_table';
-import Button from '../../components/button';
-import {ImageEditor, Tuple4} from '../components/highlight_viewer';
-import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import ChevronLeft from '../../public/icons/chevron-left.svg';
-import ChevronRight from '../../public/icons/chevron-right.svg';
 import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
+import ChevronLeft from '../../public/icons/chevron-left.svg';
+import ChevronRight from '../../public/icons/chevron-right.svg';
+import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
 
 interface TableRow {
   id: number;

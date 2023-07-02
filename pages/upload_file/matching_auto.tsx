@@ -11,7 +11,7 @@ import {
   HeaderDivider,
 } from '../../components/header_table/header_table';
 import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {ImageEditor} from '../components/highlight_viewer';
+import {ImageEditor} from '../../components/HighlightViewer';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Toast from '../../components/toast/toast';

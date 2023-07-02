@@ -1,22 +1,22 @@
-import {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
+import {useSelector} from 'react-redux';
+import {ImageEditor} from '../../components/HighlightViewer';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
 import {
-  HeaderTable,
   HeaderDivider,
   HeaderInput,
+  HeaderTable,
 } from '../../components/header_table/header_table';
+import Input from '../../components/input_form/input';
 import Sheets from '../../components/sheets/sheets';
 import Table from '../../components/table/table';
+import Toast from '../../components/toast/toast';
+import {saveDocument} from '../../components/utility_functions';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import {ImageEditor} from '../components/highlight_viewer';
-import {saveDocument} from '../../components/utility_functions';
-import Toast from '../../components/toast/toast';
 
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
