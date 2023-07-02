@@ -5,7 +5,7 @@ import {parseCookies} from 'nookies';
 import Button from '../components/button';
 import FileIcon from '../public/icons/file.svg';
 import {Divider} from '../components/float_dialog';
-import Container from '../components/container/container';
+import Container from '../components/container';
 import TableComponent from '../components/table/table';
 import draft from '../dummy-data/draft';
 import Input from '../components/input_form/input';

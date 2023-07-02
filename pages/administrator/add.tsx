@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import Container from '../../components/container/container';
+import Container from '../../components/container';
 import Input from '../../components/input_form/input';
 import {getLayoutTop} from '../../layout/getLayout';
 import {addProfile} from '../../services/admin';

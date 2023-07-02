@@ -5,7 +5,7 @@ import Button from '../../../components/button';
 import Sheets from '../../../components/sheets/sheets';
 import TableComponent from '../../../components/table/table';
 import Input from '../../../components/input_form/input';
-import Container from '../../../components/container/container';
+import Container from '../../../components/container';
 import {
   downloadWorkspace,
   init_data,

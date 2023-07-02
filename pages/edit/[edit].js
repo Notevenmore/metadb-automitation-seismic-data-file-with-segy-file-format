@@ -4,7 +4,7 @@ import Button from '../../components/button';
 import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
 import Input from '../../components/input_form/input';
-import Container from '../../components/container/container';
+import Container from '../../components/container';
 import bibliography from '../../dummy-data/bibliography.json';
 import bibliography_data from '../../dummy-data/bibliography_data.json';
 import pwr from '../../dummy-data/pwr.json';

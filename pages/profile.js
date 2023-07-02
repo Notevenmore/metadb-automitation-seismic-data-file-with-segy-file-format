@@ -5,7 +5,7 @@ import Image from 'next/image';
 import {useRouter} from 'next/router';
 import Button from '../components/button';
 import TableComponent from '../components/table/table';
-import Container from '../components/container/container';
+import Container from '../components/container';
 import {logOut, setUser} from '../store/userSlice';
 import {FloatDialog} from '../components/float_dialog';
 import Mime from 'dummy-data/mime';

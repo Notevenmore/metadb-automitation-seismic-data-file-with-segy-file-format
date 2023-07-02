@@ -3,7 +3,7 @@ import {useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import Button from '../../components/button';
-import Container from '../../components/container/container';
+import Container from '../../components/container';
 
 export default function UploadingPage({}) {
   const [load, setLoad] = useState('uploading');

@@ -18,14 +18,12 @@ export default function Container({
 
 Container.Title = ({children, back = false}) => {
   return (
-    <div className="flex flex-row items-center text-[36px] mb-10 gap-x-5 w-full">
+    <div className="flex flex-row items-center text-4xl mb-10 gap-x-5 w-full">
       {back && <BackButton />}
       <div className="font-bold flex-1">{children}</div>
     </div>
   );
 };
-
-Container.Title.displayName = 'Container.Title';
 
 function BackButton() {
   const router = useRouter();
@@ -46,11 +44,9 @@ function BackButton() {
 Container.Subtitle = ({children, additional_class, tab = false}) => {
   return (
     <div
-      className={`text-[12px] -mt-10 lg:text-[16px] mb-10 ${additional_class}`}
+      className={`text-xs -mt-10 lg:text-base mb-10 ${additional_class}`}
       style={{marginLeft: tab && '73.5px'}}>
       {children}
     </div>
   );
 };
-
-Container.Subtitle.displayName = 'Container.Subtitle';
