@@ -127,12 +127,6 @@ export const saveDocument = async (
         show: true,
       }),
     );
-    // setMessage({
-    //   message:
-    //     'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
-    //   color: 'red',
-    //   show: true,
-    // });
     return;
   }
 
@@ -145,12 +139,6 @@ export const saveDocument = async (
         show: true,
       }),
     );
-  // setMessage({
-  //   message:
-  //     "Checking changes in record information... Please don't leave this page or click anything",
-  //   color: 'blue',
-  //   show: true,
-  // });
 
   // check for changes in the workspace data, if there are any then push the updates to the db
   let workspace_data_changed = false;
@@ -193,12 +181,6 @@ export const saveDocument = async (
         show: true,
       }),
     );
-    // setMessage({
-    //   message:
-    //     "Saving record information... Please don't leave this page or click anything",
-    //   color: 'blue',
-    //   show: true,
-    // });
     await fetch(
       `${config[router.query.form_type]['afe']}${workspaceData['afe_number']}`,
       {
@@ -233,12 +215,6 @@ export const saveDocument = async (
       show: true,
     }),
   );
-  // setMessage({
-  //   message:
-  //     "Checking changes in record data... Please don't leave this page or click anything",
-  //   color: 'blue',
-  //   show: true,
-  // });
   // fetch original data from database
   const old_data = await init_data(config, router, workspaceData);
 
@@ -309,12 +285,6 @@ export const saveDocument = async (
       show: true,
     }),
   );
-  // setMessage({
-  //   message:
-  //     "Saving record data... Please don't leave this page or click anything",
-  //   color: 'blue',
-  //   show: true,
-  // });
   var idx_row = 0;
   if (spreadsheet_data.response) {
     for (
@@ -587,11 +557,6 @@ export const downloadWorkspace = async (
       show: true,
     }),
   );
-  // setMessage({
-  //   message: 'Downloading record as XLSX file, please wait...',
-  //   color: 'blue',
-  //   show: true,
-  // });
   if (spreadsheetId && router.query.form_type && workspaceData.afe_number) {
     const spreadsheet_download = await fetch(
       `${config.services.sheets}/downloadSheet`,
@@ -653,12 +618,6 @@ export const downloadWorkspace = async (
         show: true,
       }),
     );
-    // setMessage({
-    //   message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
-    //   color: 'blue',
-    //   show: true,
-    // });
-    // return {success: true};
   }
 };
 

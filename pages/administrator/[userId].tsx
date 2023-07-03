@@ -38,11 +38,6 @@ export default function UserPage() {
             show: true,
           }),
         );
-        // setMessage({
-        //   message: String(err),
-        //   color: 'red',
-        //   show: true,
-        // });
         return;
       },
     );
@@ -72,11 +67,6 @@ export default function UserPage() {
             show: true,
           }),
         );
-        // setMessage({
-        //   message: `${userId} data successfully updated.`,
-        //   color: 'blue',
-        //   show: true,
-        // });
       },
       err => {dispatch(
         setErrorMessage({
@@ -85,11 +75,6 @@ export default function UserPage() {
           show: true,
         }),
       );
-        // setMessage({
-        //   message: String(err),
-        //   color: 'red',
-        //   show: true,
-        // });
       },
     );
   };
@@ -172,10 +157,6 @@ export default function UserPage() {
           </div>
         </form>
       )}
-
-      {/* <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast> */}
     </Container>
   );
 }

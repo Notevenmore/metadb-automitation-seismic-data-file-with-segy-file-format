@@ -7,6 +7,7 @@ import {getProfiles, removeProfile} from '../../services/admin';
 import Input from '../../components/input_form/input';
 import Button from '../../components/button';
 import Toast from '../../components/toast/toast';
+import { setErrorMessage } from '../../store/generalSlice';
 
 AdministratorPage.getLayout = getLayoutTop;
 

@@ -13,6 +13,7 @@ import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
 import Toast from '../components/toast/toast';
 import {saveDocument} from '../components/utility_functions';
+import { setErrorMessage } from '../store/generalSlice';
 
 export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
@@ -54,11 +55,6 @@ export default function NewDocumentPage({setTitle, config}) {
         dispatch
       );
       if (save_result.success) {
-        // setMessage({
-        //   message: 'Record successfully saved',
-        //   color: 'blue',
-        //   show: true,
-        // });
 
         dispatch(setErrorMessage({
           message: 'Record successfully saved',
@@ -68,16 +64,8 @@ export default function NewDocumentPage({setTitle, config}) {
           router.events.emit('routeChangeComplete');
         await delay(3000);
         dispatch(setErrorMessage({message: '', color: '', show: false}));
-        // setMessage({message: '', color: '', show: false});
       }
     } catch (error) {
-      // setMessage({
-      //   message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-      //     error,
-      //   )}`,
-      //   color: 'red',
-      //   show: true,
-      // });
       dispatch(setErrorMessage({
         message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
           error,
@@ -98,16 +86,9 @@ export default function NewDocumentPage({setTitle, config}) {
           color: 'blue',
           show: true,
         }));
-        // setMessage({
-        //   message:
-        //     'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-        //   color: 'blue',
-        //   show: true,
-        // });
         await delay(10000);
         dispatch(setErrorMessage({message: '', color: '', show: false}));
 
-        // setMessage({message: '', color: '', show: false});
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -244,9 +225,6 @@ export default function NewDocumentPage({setTitle, config}) {
           Cancel
         </Button>
       </div>
-      {/* <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast> */}
     </Container>
   ) : (
     <div className="h-full flex flex-col justify-center border-collapse space-y-5 overflow-auto">
