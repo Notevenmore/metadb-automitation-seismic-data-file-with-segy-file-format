@@ -8,7 +8,10 @@ import Container from '../../components/container';
 import Input from '../../components/input_form/input';
 import TableComponent from '../../components/table/table';
 import Button from '../../components/button';
-import {setUploadDocumentSettings} from '../../store/generalSlice';
+import {
+  setErrorMessage,
+  setUploadDocumentSettings,
+} from '../../store/generalSlice';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
 import {TokenExpired} from '../../services/admin';
@@ -169,12 +172,14 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     router.events.emit('routeChangeStart');
     try {
       settoggleOverlay(false);
-      setMessage({
-        message:
-          "Creating a new record... Please don't leave this page or click anything",
-        color: 'blue',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message:
+            "Creating a new record... Please don't leave this page or click anything",
+          color: 'blue',
+          show: true,
+        }),
+      );
       await fetch(`${config[datatype]['afe']}`, {
         method: 'POST',
         headers: {
@@ -209,11 +214,13 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           }
         });
       dispatch(setUploadDocumentSettings(newWorkspace));
-      setMessage({
-        message: 'Success. Redirecting to the next page...',
-        color: 'blue',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: 'Success. Redirecting to the next page...',
+          color: 'blue',
+          show: true,
+        }),
+      );
       router.events.emit('routeChangeComplete');
       await delay(1500);
       router.push({
@@ -222,7 +229,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       });
     } catch (error) {
       // Handle error and display error message
-      setMessage({message: String(error), color: 'red', show: true});
+      dispatch(
+        setErrorMessage({message: String(error), color: 'red', show: true}),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -231,12 +240,14 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     try {
-      setMessage({
-        message:
-          "Deleting record... Please don't leave this page or click anything",
-        color: 'blue',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message:
+            "Deleting record... Please don't leave this page or click anything",
+          color: 'blue',
+          show: true,
+        }),
+      );
       await fetch(`${config[datatype]['afe']}${afe_number}`, {
         method: 'DELETE',
         headers: {
@@ -251,14 +262,18 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           throw `Response returned with status code ${res.status}: ${res.statusText}`;
         }
       });
-      setMessage({message: 'Success', color: 'blue', show: true});
+      dispatch(
+        setErrorMessage({message: 'Success', color: 'blue', show: true}),
+      );
       reset_search();
       init();
       router.events.emit('routeChangeComplete');
       await delay(2000);
-      setMessage({message: '', color: '', show: false});
+      dispatch(setErrorMessage({message: '', color: '', show: false}));
     } catch (error) {
-      setMessage({message: String(error), color: 'red', show: true});
+      dispatch(
+        setErrorMessage({message: String(error), color: 'red', show: true}),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -315,13 +330,15 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
       setpopupMessage({message: '', color: ''});
@@ -606,9 +623,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           </div>
         </div>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 };

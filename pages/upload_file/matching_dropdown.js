@@ -10,7 +10,12 @@ import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
+import {
+  setDocumentSummary,
+  setErrorMessage,
+  setReviewData,
+} from '../../store/generalSlice';
+import {parseCookies} from 'nookies';
 
 function uuidv4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -398,15 +403,17 @@ export default function MatchReview({config, setTitle}) {
       router.events.emit('routeChangeComplete');
       setLoading('');
       setTimeout(() => {
-        setMessage({
-          message:
-            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+            color: 'blue',
+            show: true,
+          }),
+        );
       }, 3000);
       await delay(5000);
-      setMessage({message: '', color: '', show: false});
+      dispatch(setErrorMessage({message: '', color: '', show: false}));
     };
     init();
   }, [files]);
@@ -623,9 +630,6 @@ export default function MatchReview({config, setTitle}) {
           }}
         />
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 }

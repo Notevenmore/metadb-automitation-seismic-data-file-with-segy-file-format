@@ -5,7 +5,7 @@ import {parseCookies} from 'nookies';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import Input from '../../components/input_form/input';
-import {storeFile, setUploadDocumentSettings} from '../../store/generalSlice';
+import {storeFile, setUploadDocumentSettings, setErrorMessage} from '../../store/generalSlice';
 import Select from '../../public/icons/selection_tool.svg';
 import {datatypes} from '../../config';
 import {checkAfe} from '../../components/utility_functions';
@@ -148,12 +148,14 @@ export default function UploadFilePage({config, setTitle}) {
       }
       settoggleOverlay(false);
       if (submit) {
-        setMessage({
-          message:
-            "Creating a new record... Please don't leave this page or click anything",
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              "Creating a new record... Please don't leave this page or click anything",
+            color: 'blue',
+            show: true,
+          }),
+        );
         if (
           fileUpload.length < 1 ||
           Object.values(UplSettings).some(x => {
@@ -189,12 +191,14 @@ export default function UploadFilePage({config, setTitle}) {
           return res.text();
         });
         if (post_workspace === 'OK') {
-          setMessage({
-            message:
-              'Success. A new record has been created. Redirecting to the next page...',
-            color: 'blue',
-            show: true,
-          });
+          dispatch(
+            setErrorMessage({
+              message:
+                'Success. A new record has been created. Redirecting to the next page...',
+              color: 'blue',
+              show: true,
+            }),
+          );
           router.events.emit('routeChangeComplete');
           await delay(1000);
           router.push({
@@ -211,22 +215,26 @@ export default function UploadFilePage({config, setTitle}) {
             },
           });
         } else {
-          setMessage({
-            message:
-              'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
-            color: 'red',
-            show: true,
-          });
+          dispatch(
+            setErrorMessage({
+              message:
+                'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
+              color: 'red',
+              show: true,
+            }),
+          );
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed to create a new record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed to create a new record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
 
     router.events.emit('routeChangeComplete');
@@ -269,13 +277,15 @@ export default function UploadFilePage({config, setTitle}) {
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
       setpopupMessage({message: '', color: ''});
@@ -740,9 +750,6 @@ export default function UploadFilePage({config, setTitle}) {
           </div>
         </div>
       )}
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 }

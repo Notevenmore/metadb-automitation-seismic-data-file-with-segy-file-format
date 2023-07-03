@@ -8,6 +8,7 @@ import Button from '../../components/button';
 import {getLayoutBlank} from '../../layout/getLayout';
 import {setUser} from '../../store/userSlice';
 import {getLogin} from '../../services/user';
+import { setErrorMessage } from '../../store/generalSlice';
 
 SignInPage.getLayout = getLayoutBlank;
 
@@ -70,7 +71,13 @@ export default function SignInPage({setTitle}) {
         return;
       });
     } catch (error) {
-      setError(String(error));
+      dispatch(
+        setErrorMessage({
+          message: String(error),
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -116,32 +123,6 @@ export default function SignInPage({setTitle}) {
             additional_styles="space-y-1 text-[14px]"
             additional_styles_input="bg-[#ededed]"
           />
-          <div
-            className={`flex items-center space-x-2 fixed top-5 left-1/2 translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
-              Error ? '' : '-translate-y-20'
-            }`}>
-            <p>{Error}</p>
-            <Button
-              additional_styles="px-1 py-1 text-black"
-              path=""
-              onClick={() => {
-                setError('');
-              }}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </Button>
-          </div>
           <div className="flex flex-col max-md:items-center gap-y-3">
             <Button
               path=""

@@ -7,6 +7,7 @@ import {getProfiles, removeProfile} from '../../services/admin';
 import Input from '../../components/input_form/input';
 import Button from '../../components/button';
 import Toast from '../../components/toast/toast';
+import { setErrorMessage } from '../../store/generalSlice';
 
 AdministratorPage.getLayout = getLayoutTop;
 
@@ -31,19 +32,21 @@ export default function AdministratorPage() {
   const handleRemove = async userId => {
     await removeProfile(userId).then(
       () => {
-        handleProfiles();
-        setMessage({
-          message: `${userId} acount successfully deleted.`,
-          color: 'blue',
-          show: true,
-        });
+        handleProfiles();dispatch(
+          setErrorMessage({
+            message: `${userId} acount successfully deleted.`,
+            color: 'blue',
+            show: true,
+          }),
+        );
       },
-      err => {
-        setMessage({
-          message: String(err),
-          color: 'red',
-          show: true,
-        });
+      err => {dispatch(
+        setErrorMessage({
+            message: String(err),
+            color: 'red',
+            show: true,
+        }),
+      );
       },
     );
   };
@@ -105,9 +108,6 @@ export default function AdministratorPage() {
           </div>
         </div>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 }
