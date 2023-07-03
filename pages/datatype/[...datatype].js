@@ -256,12 +256,15 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       }
     }
     settoggleOverlay(false);
-    setnewWorkspace({
-      workspace_name: '',
-      kkks_name: '',
-      working_area: '',
-      afe_number: '',
-      submission_type: '',
+    setnewWorkspace(x => {
+      return {
+        ...x,
+        workspace_name: '',
+        kkks_name: '',
+        working_area: '',
+        afe_number: '',
+        submission_type: '',
+      };
     });
     setpopupMessage({message: '', color: ''});
   };
@@ -390,7 +393,8 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         additional_styles="mb-20"
       />
       {error ? (
-        <Highlight className="html rounded-md border-2">{error}</Highlight>
+        // <Highlight className="html rounded-md border-2">{error}</Highlight>
+        <code className="rounded-md border-2 p-2">{error}</code>
       ) : null}
       <Button
         className="shadow-black/10 shadow-lg drop-shadow-lg hover:w-[170px] w-[60px] h-[60px] border rounded-full fixed bottom-9 right-12 bg-gray-200 flex items-center transition-all overflow-hidden outline-none"
