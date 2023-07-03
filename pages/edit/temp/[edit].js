@@ -12,6 +12,8 @@ import {
   saveDocument,
 } from '../../../components/utility_functions';
 import Toast from '../../../components/toast/toast';
+import {useDispatch} from 'react-redux';
+import {setErrorMessage} from '../../../store/generalSlice';
 
 const DocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
@@ -23,6 +25,8 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
   const [workspaceData, setworkspaceData] = useState();
   const [spreadsheetId, setspreadsheetId] = useState();
   const [triggerSave, settriggerSave] = useState(false);
+
+  const dispatch = useDispatch();
 
   const warningText =
     'You have unsaved changes - Are you sure you want to leave this page?';
@@ -92,14 +96,23 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
   useEffect(() => {
     if (spreadsheetReady) {
       setTimeout(async () => {
-        setMessage({
-          message:
-            'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+            color: 'blue',
+            show: true,
+          }),
+        );
+        // setMessage({
+        //   message:
+        //     'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+        //   color: 'blue',
+        //   show: true,
+        // });
         await delay(10000);
-        setMessage({message: '', color: '', show: false});
+        dispatch(setErrorMessage({message: '', color: '', show: false}));
+        // setMessage({message: '', color: '', show: false});
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -117,6 +130,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         spreadsheetId,
         workspaceData,
         setMessage,
+        dispatch
       );
       if (result.success) {
         setIsSaved(true);
@@ -152,6 +166,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         spreadsheetId,
         workspaceData,
         setMessage,
+        dispatch
       );
       if (result.success) {
         setMessage({
@@ -365,9 +380,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           disabled={!spreadsheetReady || Message.message ? true : false}
         />
       </div>
-      <Toast message={Message} setmessage={setMessage}>
+      {/* <Toast message={Message} setmessage={setMessage}>
         {Message.message}
-      </Toast>
+      </Toast> */}
     </Container>
   ) : (
     <div

@@ -8,7 +8,6 @@ import Button from '../../components/button';
 import {getLayoutBlank} from '../../layout/getLayout';
 import {setUser} from '../../store/userSlice';
 import {getLogin} from '../../services/user';
-import Toast from '../../components/toast/toast';
 import { setErrorMessage } from '../../store/generalSlice';
 
 SignInPage.getLayout = getLayoutBlank;
@@ -17,7 +16,6 @@ export default function SignInPage({setTitle}) {
   const user = useSelector(state => state.user.user);
   const router = useRouter();
   const [Error, setError] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -73,11 +71,6 @@ export default function SignInPage({setTitle}) {
         return;
       });
     } catch (error) {
-      // setMessage({
-      //   message: String(error),
-      //   color: 'red',
-      //   show: true,
-      // });
       dispatch(
         setErrorMessage({
           message: String(error),
@@ -130,7 +123,6 @@ export default function SignInPage({setTitle}) {
             additional_styles="space-y-1 text-[14px]"
             additional_styles_input="bg-[#ededed]"
           />
-          <Toast message={Message} setmessage={setMessage}>{Message.message}</Toast>
           <div className="flex flex-col max-md:items-center gap-y-3">
             <Button
               path=""

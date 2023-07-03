@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Button from '../components/button';
 import Container from '../components/container';
 import Input from '../components/input_form/input';
@@ -21,6 +21,7 @@ export default function NewDocumentPage({setTitle, config}) {
   const [workspaceData, setworkspaceData] = useState();
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
 
+  const dispatch = useDispatch();
   const upload_document_settings = useSelector(
     state => state.general.upload_document_settings,
   );
@@ -50,25 +51,40 @@ export default function NewDocumentPage({setTitle, config}) {
         spreadsheetID,
         workspaceData,
         setMessage,
+        dispatch
       );
       if (save_result.success) {
-        setMessage({
+        // setMessage({
+        //   message: 'Record successfully saved',
+        //   color: 'blue',
+        //   show: true,
+        // });
+
+        dispatch(setErrorMessage({
           message: 'Record successfully saved',
           color: 'blue',
           show: true,
-        });
-        router.events.emit('routeChangeComplete');
+        }))
+          router.events.emit('routeChangeComplete');
         await delay(3000);
-        setMessage({message: '', color: '', show: false});
+        dispatch(setErrorMessage({message: '', color: '', show: false}));
+        // setMessage({message: '', color: '', show: false});
       }
     } catch (error) {
-      setMessage({
+      // setMessage({
+      //   message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+      //     error,
+      //   )}`,
+      //   color: 'red',
+      //   show: true,
+      // });
+      dispatch(setErrorMessage({
         message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
           error,
         )}`,
         color: 'red',
         show: true,
-      });
+      }));
     }
     router.events.emit('routeChangeComplete');
   };
@@ -76,14 +92,22 @@ export default function NewDocumentPage({setTitle, config}) {
   useEffect(() => {
     if (spreadsheetReady) {
       setTimeout(async () => {
-        setMessage({
+        dispatch(setErrorMessage({
           message:
             'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
           color: 'blue',
           show: true,
-        });
+        }));
+        // setMessage({
+        //   message:
+        //     'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+        //   color: 'blue',
+        //   show: true,
+        // });
         await delay(10000);
-        setMessage({message: '', color: '', show: false});
+        dispatch(setErrorMessage({message: '', color: '', show: false}));
+
+        // setMessage({message: '', color: '', show: false});
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -220,9 +244,9 @@ export default function NewDocumentPage({setTitle, config}) {
           Cancel
         </Button>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
+      {/* <Toast message={Message} setmessage={setMessage}>
         {Message.message}
-      </Toast>
+      </Toast> */}
     </Container>
   ) : (
     <div className="h-full flex flex-col justify-center border-collapse space-y-5 overflow-auto">

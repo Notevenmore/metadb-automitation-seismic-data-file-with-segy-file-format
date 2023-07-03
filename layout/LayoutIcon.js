@@ -4,7 +4,7 @@ import Toast from '../components/toast/toast';
 import {CheckAuth, CheckUser} from '../utils/check';
 
 export default function LayoutIcon({children}) {
-  const {Message, setMessage} = CheckAuth();
+  CheckAuth();
   CheckUser('Regular User');
 
   return (

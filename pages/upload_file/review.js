@@ -1,7 +1,7 @@
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ImageEditor} from '../../components/HighlightViewer';
 import Button from '../../components/button';
 import Container from '../../components/container';
@@ -29,6 +29,8 @@ export default function UploadFileReview({setTitle, config}) {
   const [loading, setloading] = useState('');
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
   const [workspaceData, setworkspaceData] = useState();
+
+  const dispatch = useDispatch()
 
   const router = useRouter();
   const path_query =
@@ -112,6 +114,7 @@ export default function UploadFileReview({setTitle, config}) {
         spreadsheetID,
         workspaceData,
         setMessage,
+        dispatch
       );
       if (save_result.success) {
         setMessage({
@@ -149,12 +152,20 @@ export default function UploadFileReview({setTitle, config}) {
   useEffect(() => {
     if (spreadsheetReady) {
       setTimeout(async () => {
-        setMessage({
-          message:
-            'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+            color: 'blue',
+            show: true,
+          }),
+        );
+        // setMessage({
+        //   message:
+        //     'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+        //   color: 'blue',
+        //   show: true,
+        // });
         await delay(10000);
         setMessage({message: '', color: '', show: false});
       }, 3000);
@@ -410,9 +421,9 @@ export default function UploadFileReview({setTitle, config}) {
           Save and exit
         </Button>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
+      {/* <Toast message={Message} setmessage={setMessage}>
         {Message.message}
-      </Toast>
+      </Toast> */}
     </Container>
   ) : (
     <p>Loading...</p>
