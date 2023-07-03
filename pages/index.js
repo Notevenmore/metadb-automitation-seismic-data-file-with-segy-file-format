@@ -1,19 +1,19 @@
-import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
-import {useDispatch, useSelector} from 'react-redux';
 import {parseCookies} from 'nookies';
+import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {Divider} from '../components/Divider';
 import Button from '../components/button';
-import FileIcon from '../public/icons/file.svg';
-import {Divider} from '../components/float_dialog';
 import Container from '../components/container';
-import TableComponent from '../components/table/table';
-import draft from '../dummy-data/draft';
 import Input from '../components/input_form/input';
-import {datatypes} from '../config';
-import {setUploadDocumentSettings} from '../store/generalSlice';
-import {checkAfe} from '../components/utility_functions';
+import TableComponent from '../components/table/table';
 import Toast from '../components/toast/toast';
+import {checkAfe} from '../components/utility_functions';
+import {datatypes} from '../config';
+import draft from '../dummy-data/draft';
+import FileIcon from '../public/icons/file.svg';
 import {TokenExpired} from '../services/admin';
+import {setUploadDocumentSettings} from '../store/generalSlice';
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
