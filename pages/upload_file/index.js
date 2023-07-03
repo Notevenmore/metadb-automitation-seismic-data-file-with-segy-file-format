@@ -9,7 +9,7 @@ import Select from '../../public/icons/selection_tool.svg';
 import {datatypes} from '../../config';
 import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
-import getFileType from '../../utils/filetype'
+import getFileType from '../../utils/filetype';
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -53,14 +53,14 @@ export default function UploadFilePage({config, setTitle}) {
     else setFileUpload(e.target.files);
   };
   useEffect(() => {
-    if(fileUpload.length<=0) {
-      setUplSettings(prev => ({...prev, FileFormat: ""}))
-      return
+    if (fileUpload.length <= 0) {
+      setUplSettings(prev => ({...prev, FileFormat: ''}));
+      return;
     }
 
-    const fileType = getFileType(fileUpload[0].name)
-    setUplSettings(prev => ({...prev, FileFormat: fileType}))
-  }, [fileUpload])
+    const fileType = getFileType(fileUpload[0].name);
+    setUplSettings(prev => ({...prev, FileFormat: fileType}));
+  }, [fileUpload]);
 
   const handleDrop = e => {
     e.stopPropagation();
@@ -637,6 +637,7 @@ export default function UploadFilePage({config, setTitle}) {
             onClick={handleSubmit}
             disabled={
               fileUpload.length < 1 ||
+              afeExist ||
               Object.values(UplSettings).some(x => {
                 return x === null || x === '';
               })
