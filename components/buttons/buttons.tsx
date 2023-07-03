@@ -37,7 +37,7 @@ const Buttons: React.FunctionComponent<ButtonProps> = ({
             additional_styles,
           )}
           {...buttonProps}>
-          {children ? <div>{children}</div> : null}
+          {children ? children : null}
           {button_description ? <p>{button_description}</p> : null}
         </button>
       </Link>
@@ -54,7 +54,7 @@ const Buttons: React.FunctionComponent<ButtonProps> = ({
           additional_styles,
         )}
         {...buttonProps}>
-        {children ? <div>{children}</div> : null}
+        {children ? children : null}
         {button_description ? <p>{button_description}</p> : null}
       </button>
     </div>
