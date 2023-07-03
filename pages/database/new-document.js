@@ -1,14 +1,14 @@
 import {useState} from 'react';
+import {
+  ButtonsSection,
+  HeaderDivider,
+  HeaderInput,
+  HeaderStatic,
+  HeaderTable,
+} from '../../components/HeaderTable';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import Input from '../../components/input_form/input';
-import {
-  HeaderTable,
-  HeaderDivider,
-  HeaderStatic,
-  HeaderInput,
-  ButtonsSection,
-} from '../../components/header_table/header_table';
 
 export default function NewDocumentPageDatabase() {
   const [detail, setDetail] = useState('');
@@ -25,8 +25,8 @@ export default function NewDocumentPageDatabase() {
         name={'documentName'}
         placeholder={'Lorem ipsum laporan 2008'}
         additional_styles={'-mt-[20px] mb-[20px]'}
-        additional_styles_label={'font-bold mb-3 text-[16px]'}
-        additional_styles_input={'font-bold text-[36px]'}
+        additional_styles_label={'font-bold mb-3 text-base'}
+        additional_styles_input={'font-bold text-4xl'}
       />
       <HeaderTable>
         <HeaderStatic
