@@ -1,5 +1,4 @@
 import {twMerge} from 'tailwind-merge';
-import {useEffect} from 'react';
 import {useMeasure} from 'react-use';
 import Buttons from '../buttons/buttons';
 
@@ -36,19 +35,11 @@ const Toast = ({message, setmessage, additional_styles = '', children}) => {
     setmessage({message: '', color: '', show: false});
   };
 
-  useEffect(() => {
-    console.log(bounds);
-  }, [bounds]);
-
   return (
     <div
       ref={ref}
       className={twMerge(
-        `flex items-center space-x-2 fixed left-[50%]
-      translate-x-[-50%] text-white
-      px-3 rounded-lg py-2 transition-all duration-[230ms] ${
-        message.show ? '' : ``
-      }`,
+        'flex items-center space-x-2 fixed left-[50%] translate-x-[-50%] text-white px-3 rounded-lg py-2 transition-all duration-[230ms]',
         additional_styles,
       )}
       style={{
