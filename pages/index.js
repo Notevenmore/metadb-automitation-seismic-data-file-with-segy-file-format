@@ -57,12 +57,20 @@ const HomeSection = ({config}) => {
       router.events.emit('routeChangeStart');
       try {
         settoggleOverlay(false);
-        setMessage({
-          message:
-            "Creating a new record... Please don't leave this page or click anything",
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              "Creating a new record... Please don't leave this page or click anything",
+            color: 'blue',
+            show: true,
+          }),
+        );
+        // setMessage({
+        //   message:
+        //     "Creating a new record... Please don't leave this page or click anything",
+        //   color: 'blue',
+        //   show: true,
+        // });
         await fetch(`${config[datatypes[dataType]]['afe']}`, {
           method: 'POST',
           headers: {
@@ -96,11 +104,18 @@ const HomeSection = ({config}) => {
             }
           });
         dispatch(setUploadDocumentSettings(newWorkspace));
-        setMessage({
-          message: 'Success. Redirecting to the next page...',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: 'Success. Redirecting to the next page...',
+            color: 'blue',
+            show: true,
+          }),
+        );
+        // setMessage({
+        //   message: 'Success. Redirecting to the next page...',
+        //   color: 'blue',
+        //   show: true,
+        // });
         router.events.emit('routeChangeComplete');
         await delay(1500);
         router.push({
@@ -109,11 +124,18 @@ const HomeSection = ({config}) => {
         });
       } catch (error) {
         // Handle error and display error message
-        setMessage({
-          message: String(error),
-          color: 'red',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: String(error),
+            color: 'red',
+            show: true,
+          }),
+        );
+        // setMessage({
+        //   message: String(error),
+        //   color: 'red',
+        //   show: true,
+        // });
       }
       router.events.emit('routeChangeComplete');
     }
@@ -175,13 +197,22 @@ const HomeSection = ({config}) => {
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
+      // setMessage({
+      //   message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+      //     error,
+      //   )}`,
+      //   color: 'red',
+      //   show: true,
+      // });
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
       setpopupMessage({message: '', color: ''});
@@ -414,9 +445,9 @@ const HomeSection = ({config}) => {
           </div>
         </div>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
+      {/* <Toast message={Message} setmessage={setMessage}>
         {Message.message}
-      </Toast>
+      </Toast> */}
     </section>
   );
 };
