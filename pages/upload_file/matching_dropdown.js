@@ -2,13 +2,10 @@ import {useRouter} from 'next/router';
 import {useEffect, useRef, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
+import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {ImageEditor} from '../../components/HighlightViewer';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import {
-  HeaderDivider,
-  HeaderTable,
-} from '../../components/header_table/header_table';
 import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';

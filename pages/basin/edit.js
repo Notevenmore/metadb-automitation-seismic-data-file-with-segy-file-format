@@ -1,14 +1,14 @@
 import {useState} from 'react';
+import {
+  ButtonsSection,
+  HeaderDivider,
+  HeaderInput,
+  HeaderStatic,
+  HeaderTable,
+} from '../../components/HeaderTable';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import Input from '../../components/input_form/input';
-import {
-  HeaderTable,
-  HeaderDivider,
-  HeaderStatic,
-  HeaderInput,
-  ButtonsSection,
-} from '../../components/header_table/header_table';
 
 export default function BasinEditPage() {
   const [detail, setDetail] = useState('');

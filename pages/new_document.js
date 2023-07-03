@@ -1,18 +1,18 @@
-import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
+import {
+  HeaderDivider,
+  HeaderInput,
+  HeaderTable,
+} from '../components/HeaderTable';
 import Button from '../components/button';
 import Container from '../components/container';
 import Input from '../components/input_form/input';
-import {
-  HeaderTable,
-  HeaderDivider,
-  HeaderInput,
-} from '../components/header_table/header_table';
 import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
-import {saveDocument} from '../components/utility_functions';
 import Toast from '../components/toast/toast';
+import {saveDocument} from '../components/utility_functions';
 
 export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
