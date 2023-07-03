@@ -1,7 +1,9 @@
 import {twMerge} from 'tailwind-merge';
-import {useEffect} from 'react';
+import {ReactNode, useEffect} from 'react';
 import {useMeasure} from 'react-use';
 import Button from '../button';
+import {useDispatch, useSelector} from 'react-redux';
+import { setErrorMessage } from '../../store/generalSlice';
 
 /*
 setmessage is a usestate variable passed from parent with properties
@@ -15,7 +17,21 @@ you can pass the string to show up in the toast with the usestate
 variable above. message.message in the variable above (passed as prop
 from parent) will be ignored if children is specified.
 */
-const Toast = ({message, setmessage, additional_styles = '', children}) => {
+type Message = {
+  message: string;
+  color: string;
+  show: boolean;
+};
+
+const Toast = ({
+  message,
+  setmessage,
+  additional_styles = '',
+}: {
+  message?: Message;
+  setmessage?: any;
+  additional_styles?: string;
+}) => {
   const colors = {
     blue: 'rgb(59 130 246)',
     red: 'rgb(239 68 68)',
@@ -27,18 +43,27 @@ const Toast = ({message, setmessage, additional_styles = '', children}) => {
   const delay = delay_amount_ms =>
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
+  const dispatch = useDispatch();
+  const errMsg = useSelector((state: any) => state.general.error);
   const hide = async e => {
     if (e) {
       e.preventDefault();
     }
-    setmessage({...message, show: false});
+    // setmessage({...message, show: false});
+    dispatch(
+      setErrorMessage({
+        ...errMsg,
+        show: false,
+      }),
+    );
     await delay(300);
-    setmessage({message: '', color: '', show: false});
+    // setmessage({message: '', color: '', show: false});
+    dispatch(setErrorMessage({message: '', color: '', show: false}));
   };
 
-  useEffect(() => {
-    console.log(bounds);
-  }, [bounds]);
+  // useEffect(() => {
+  //   console.log(bounds);
+  // }, [bounds]);
 
   return (
     <div
@@ -46,16 +71,14 @@ const Toast = ({message, setmessage, additional_styles = '', children}) => {
       className={twMerge(
         `flex items-center space-x-2 fixed left-1/2
       translate-x-[-50%] text-white
-      px-3 rounded-lg py-2 transition-all duration-[230ms] ${
-        message.show ? '' : ``
-      }`,
+      px-3 rounded-lg py-2 transition-all duration-[230ms]`,
         additional_styles,
       )}
       style={{
-        backgroundColor: colors[message.color],
-        top: message.show ? '1.25rem' : `-${bounds.height + 100}px`,
+        backgroundColor: colors[errMsg.color],
+        top: errMsg.show ? '1.25rem' : `-${bounds.height + 100}px`,
       }}>
-      <div>{children || message.message}</div>
+      <div>{errMsg.message}</div>
       <Button additional_styles="px-1 py-1 text-black" onClick={hide}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

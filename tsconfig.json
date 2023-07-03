@@ -23,7 +23,7 @@
     "**/*.ts",
     "**/*.tsx",
     "utils/check.js"
-  ],
+, "components/toast/toast.tsx"  ],
   "exclude": [
     "node_modules"
   ],

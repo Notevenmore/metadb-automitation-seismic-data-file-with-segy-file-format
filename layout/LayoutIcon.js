@@ -12,9 +12,7 @@ export default function LayoutIcon({children}) {
       <TopBar />
       <SideBar />
       <div id="layout-icon" className="full-height h-full overflow-auto">
-        <Toast message={Message} setmessage={setMessage}>
-          {Message.message}
-        </Toast>
+        <Toast />
         {children}
       </div>
     </div>

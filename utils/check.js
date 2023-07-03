@@ -16,11 +16,9 @@ function CheckAuth() {
     console.log(user.userid)
     const res = await getProfile(user.userid).then(
       res => {
-  console.log("AAAAAAAAAAA")
         dispatch(setUser(res));
       },
       err => {
-        console.log("AAAAAAAAAAA")
         setMessage({
           message: String(err),
           color: 'red',
