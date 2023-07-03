@@ -1,20 +1,17 @@
+import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import {useRouter} from 'next/router';
-import {useSelector, useDispatch} from 'react-redux';
-import {parseCookies} from 'nookies';
+import {useDispatch, useSelector} from 'react-redux';
+import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
+import {ImageEditor} from '../../components/HighlightViewer';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import Input from '../../components/input_form/input';
-import {
-  HeaderTable,
-  HeaderDivider,
-} from '../../components/header_table/header_table';
-import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {ImageEditor} from '../../components/HighlightViewer';
+import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Toast from '../../components/toast/toast';
+import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {

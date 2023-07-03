@@ -2,14 +2,14 @@ import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useSelector} from 'react-redux';
-import {ImageEditor} from '../../components/HighlightViewer';
-import Button from '../../components/button';
-import Container from '../../components/container';
 import {
   HeaderDivider,
   HeaderInput,
   HeaderTable,
-} from '../../components/header_table/header_table';
+} from '../../components/HeaderTable';
+import {ImageEditor} from '../../components/HighlightViewer';
+import Button from '../../components/button';
+import Container from '../../components/container';
 import Input from '../../components/input_form/input';
 import Sheets from '../../components/sheets/sheets';
 import Table from '../../components/table/table';

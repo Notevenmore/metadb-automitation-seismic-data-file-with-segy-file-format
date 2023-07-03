@@ -12,12 +12,12 @@ export const HeaderTable = ({children}) => {
         Header
       </section>
       <HeaderDivider />
-      <>{children}</>
+      {children}
     </section>
   );
 };
 
-export const HeaderDivider = ({additional_styles}) => {
+export const HeaderDivider = ({additional_styles = ''}) => {
   return (
     <Divider
       additional_styles={twMerge(
@@ -28,18 +28,18 @@ export const HeaderDivider = ({additional_styles}) => {
   );
 };
 
-export const HeaderRow = ({children, ...props}) => {
+const HeaderRow = ({children, ...props}) => {
   return (
     <div
       className="flex justify-center lg:items-center
          lg:flex-row flex-col w-full py-[10px] lg:h-[55px]"
       {...props}>
-      <>{children}</>
+      {children}
     </div>
   );
 };
 
-export const HeaderLabel = ({label1, label2}) => {
+const HeaderLabel = ({label1, label2}) => {
   return (
     <div
       className={
@@ -57,7 +57,7 @@ export const HeaderLabel = ({label1, label2}) => {
   );
 };
 
-export const HeaderStatic = ({label1, label2, content = false}) => {
+export const HeaderStatic = ({label1, label2, content = ''}) => {
   return (
     <HeaderRow>
       {label2 ? (
@@ -68,16 +68,16 @@ export const HeaderStatic = ({label1, label2, content = false}) => {
       ) : (
         <p className="font-semibold min-w-[325px]">{label1}</p>
       )}
-      <p className="inline lg:ml-[8px] w-full">{content}</p>
+      <p className="inline lg:ml-2 w-full">{content}</p>
     </HeaderRow>
   );
 };
 
-export const HeaderInput = ({label1, label2 = false, children}) => {
+export const HeaderInput = ({label1, label2 = '', children}) => {
   return (
     <HeaderRow>
       <HeaderLabel label1={label1} label2={label2} />
-      <>{children}</>
+      {children}
     </HeaderRow>
   );
 };
@@ -90,7 +90,7 @@ export const ButtonsSection = ({children, className = ''}) => {
             max-lg:justify-center items-center gap-y-3 max-lg:mt-5 h-5`,
         className,
       )}>
-      <>{children}</>
+      {children}
     </section>
   );
 };
