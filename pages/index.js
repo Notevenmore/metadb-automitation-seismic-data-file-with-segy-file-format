@@ -122,12 +122,15 @@ const HomeSection = ({config}) => {
     }
     settoggleOverlay(false);
     setdataType('');
-    setnewWorkspace({
-      workspace_name: '',
-      kkks_name: '',
-      working_area: '',
-      afe_number: '',
-      submission_type: '',
+    setnewWorkspace(x => {
+      return {
+        ...x,
+        workspace_name: '',
+        kkks_name: '',
+        working_area: '',
+        afe_number: '',
+        submission_type: '',
+      };
     });
     setpopupMessage({message: '', color: ''});
   };
