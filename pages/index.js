@@ -13,7 +13,7 @@ import {datatypes} from '../config';
 import draft from '../dummy-data/draft';
 import FileIcon from '../public/icons/file.svg';
 import {TokenExpired} from '../services/admin';
-import {setUploadDocumentSettings} from '../store/generalSlice';
+import {setErrorMessage, setUploadDocumentSettings} from '../store/generalSlice';
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
