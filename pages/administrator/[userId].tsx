@@ -5,6 +5,8 @@ import Input from '../../components/input_form/input';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfile, removeProfile, updateProfile} from '../../services/admin';
 import Toast from '../../components/toast/toast';
+import { useDispatch } from 'react-redux';
+import { setErrorMessage } from '../../store/generalSlice';
 
 UserPage.getLayout = getLayoutTop;
 
@@ -22,17 +24,25 @@ export default function UserPage() {
   const router = useRouter();
   const {userId} = router.query;
 
+  const dispatch = useDispatch()
   const handleProfile = async () => {
     const res = await getProfile(userId).then(
       res => {
         return res;
       },
       err => {
-        setMessage({
-          message: String(err),
-          color: 'red',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: String(err),
+            color: 'red',
+            show: true,
+          }),
+        );
+        // setMessage({
+        //   message: String(err),
+        //   color: 'red',
+        //   show: true,
+        // });
         return;
       },
     );
@@ -55,18 +65,31 @@ export default function UserPage() {
     console.log(detail);
     await updateProfile(detail).then(
       () => {
-        setMessage({
-          message: `${userId} data successfully updated.`,
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: `${userId} data successfully updated.`,
+            color: 'blue',
+            show: true,
+          }),
+        );
+        // setMessage({
+        //   message: `${userId} data successfully updated.`,
+        //   color: 'blue',
+        //   show: true,
+        // });
       },
-      err => {
-        setMessage({
+      err => {dispatch(
+        setErrorMessage({
           message: String(err),
           color: 'red',
           show: true,
-        });
+        }),
+      );
+        // setMessage({
+        //   message: String(err),
+        //   color: 'red',
+        //   show: true,
+        // });
       },
     );
   };
@@ -150,9 +173,9 @@ export default function UserPage() {
         </form>
       )}
 
-      <Toast message={Message} setmessage={setMessage}>
+      {/* <Toast message={Message} setmessage={setMessage}>
         {Message.message}
-      </Toast>
+      </Toast> */}
     </Container>
   );
 }
