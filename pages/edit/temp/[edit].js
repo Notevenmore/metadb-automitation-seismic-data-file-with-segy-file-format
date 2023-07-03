@@ -130,28 +130,32 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         spreadsheetId,
         workspaceData,
         setMessage,
-        dispatch
+        dispatch,
       );
       if (result.success) {
         setIsSaved(true);
-        setMessage({
-          message: 'Record successfully saved',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: 'Record successfully saved',
+            color: 'blue',
+            show: true,
+          }),
+        );
         router.events.emit('routeChangeComplete');
         await delay(3000);
-        setMessage({message: '', color: '', show: false});
+        dispatch(setErrorMessage({message: '', color: '', show: false}));
       }
     } catch (error) {
       // Handle error and display error message
-      setMessage({
-        message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
     settriggerSave('');
@@ -166,21 +170,29 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         spreadsheetId,
         workspaceData,
         setMessage,
-        dispatch
+        dispatch,
       );
       if (result.success) {
-        setMessage({
-          message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
+            color: 'blue',
+            show: true,
+          }),
+        );
         setIsSaved(false);
         router.events.emit('routeChangeComplete');
         await delay(3500);
-        setMessage({message: '', color: '', show: false});
+        dispatch(setErrorMessage({message: '', color: '', show: false}));
       }
     } catch (error) {
-      setMessage({message: `${String(error)}`, color: 'red', show: true});
+      dispatch(
+        setErrorMessage({
+          message: `${String(error)}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
     settriggerSave('');
@@ -380,9 +392,6 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           disabled={!spreadsheetReady || Message.message ? true : false}
         />
       </div>
-      {/* <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast> */}
     </Container>
   ) : (
     <div

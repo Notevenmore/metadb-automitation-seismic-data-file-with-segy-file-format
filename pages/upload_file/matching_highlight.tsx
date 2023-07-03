@@ -11,7 +11,11 @@ import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
+import {
+  setDocumentSummary,
+  setErrorMessage,
+  setReviewData,
+} from '../../store/generalSlice';
 
 interface TableRow {
   id: number;
@@ -255,15 +259,17 @@ export default function MatchingGuided({config, setTitle}) {
       router.events.emit('routeChangeComplete');
       setLoading(null);
       setTimeout(() => {
-        setMessage({
-          message:
-            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+            color: 'blue',
+            show: true,
+          }),
+        );
       }, 3000);
       await delay(5000);
-      setMessage({message: '', color: '', show: false});
+      dispatch(setErrorMessage({message: '', color: '', show: false}));
     };
     init();
   }, []);
@@ -448,9 +454,6 @@ export default function MatchingGuided({config, setTitle}) {
           }}
         />
       </div>
-      <Toast message={message} setmessage={setMessage}>
-        {message.message}
-      </Toast>
       <div
         className={`flex items-center space-x-2 fixed top-5 left-1/2 translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
           error ? '' : '-translate-y-20'

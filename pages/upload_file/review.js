@@ -17,6 +17,7 @@ import Toast from '../../components/toast/toast';
 import {saveDocument} from '../../components/utility_functions';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
+import {setErrorMessage} from '../../store/generalSlice';
 
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
@@ -30,7 +31,7 @@ export default function UploadFileReview({setTitle, config}) {
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
   const [workspaceData, setworkspaceData] = useState();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const router = useRouter();
   const path_query =
@@ -114,37 +115,43 @@ export default function UploadFileReview({setTitle, config}) {
         spreadsheetID,
         workspaceData,
         setMessage,
-        dispatch
+        dispatch,
       );
       if (save_result.success) {
-        setMessage({
-          message: 'Record successfully saved',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: 'Record successfully saved',
+            color: 'blue',
+            show: true,
+          }),
+        );
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
-          setMessage({
-            message: 'Redirecting to homepage...',
-            color: 'blue',
-            show: true,
-          });
+          dispatch(
+            setErrorMessage({
+              message: 'Redirecting to homepage...',
+              color: 'blue',
+              show: true,
+            }),
+          );
           await delay(1000);
           router.push('/');
         } else {
           await delay(3000);
-          setMessage({message: '', color: '', show: false});
+          dispatch(setErrorMessage({message: '', color: '', show: false}));
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -167,7 +174,7 @@ export default function UploadFileReview({setTitle, config}) {
         //   show: true,
         // });
         await delay(10000);
-        setMessage({message: '', color: '', show: false});
+        dispatch(setErrorMessage({message: '', color: '', show: false}));
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -421,9 +428,6 @@ export default function UploadFileReview({setTitle, config}) {
           Save and exit
         </Button>
       </div>
-      {/* <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast> */}
     </Container>
   ) : (
     <p>Loading...</p>
