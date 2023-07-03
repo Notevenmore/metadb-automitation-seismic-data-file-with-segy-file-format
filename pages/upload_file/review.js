@@ -9,7 +9,7 @@ import {
   HeaderDivider,
   HeaderInput,
   HeaderTable,
-} from '../../components/header_table/header_table';
+} from '../../components/HeaderTable';
 import Input from '../../components/input_form/input';
 import Sheets from '../../components/sheets/sheets';
 import Table from '../../components/table/table';

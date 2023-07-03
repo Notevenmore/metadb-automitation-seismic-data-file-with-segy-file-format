@@ -3,16 +3,13 @@ import {parseCookies} from 'nookies';
 import {MutableRefObject, useEffect, useRef, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
+import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {Tuple4, useNaturalImageDim} from '../../components/HighlightViewer';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import {DraggableBox, DroppableBox} from '../../components/draggable/component';
 import {DraggableProvider} from '../../components/draggable/provider';
 import {Tuple2} from '../../components/draggable/types';
-import {
-  HeaderDivider,
-  HeaderTable,
-} from '../../components/header_table/header_table';
 import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
