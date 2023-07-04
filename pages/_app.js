@@ -6,6 +6,7 @@ import {useState, useEffect} from 'react';
 import {store} from '../store';
 import ProgressBar from '../components/progress_bar/progress_bar';
 import {getLayoutIcon} from '../layout/getLayout';
+import Toast from '../components/toast/toast';
 
 function MyApp({Component, pageProps}) {
   const getLayout = Component.getLayout || getLayoutIcon;
@@ -55,6 +56,7 @@ function MyApp({Component, pageProps}) {
         <meta name="description" content="MetaDB" />
         <link rel="icon" href="/metadb.svg" />
       </Head>
+      <Toast />
       {getLayout(<Component {...pageProps} setTitle={setPageTitle} />)}
     </Provider>
   );

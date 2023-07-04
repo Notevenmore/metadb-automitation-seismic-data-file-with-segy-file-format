@@ -1,5 +1,4 @@
 import TopBar from '../components/navigation_bar/Topbar';
-import Toast from '../components/toast/toast';
 import {CheckAuth, CheckUser} from '../utils/check';
 
 export default function LayoutTop({children}) {
@@ -10,7 +9,6 @@ export default function LayoutTop({children}) {
     <div className="h-screen overflow-hidden">
       <TopBar />
       <div className="full-height h-full overflow-auto">
-        <Toast />
         {children}
       </div>
     </div>
