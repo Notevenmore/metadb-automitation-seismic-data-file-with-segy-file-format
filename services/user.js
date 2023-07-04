@@ -22,7 +22,7 @@ export async function getLogin(email, password) {
       return {data: res, succeed: true};
     })
     .catch(err => {
-      console.log(err.code, err.message);
+      // console.log(err);
       throw new Error(`${err.message}. Please contact maintainer.`);
     });
 
