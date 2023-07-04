@@ -13,6 +13,7 @@ export default function RoundImage({source, width, style}: RoundImageProps) {
       className="object-scale-none rounded-full"
       src={source}
       width={width}
+      height={width}
       style={style}
       alt="profile"
     />

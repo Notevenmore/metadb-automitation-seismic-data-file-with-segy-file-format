@@ -166,9 +166,6 @@ export default function AddNewUserPage() {
           </button>
         </div>
       </form>
-      {/* <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast> */}
     </Container>
   );
 }
