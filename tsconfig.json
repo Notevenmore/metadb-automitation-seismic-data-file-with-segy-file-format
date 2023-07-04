@@ -22,8 +22,10 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "utils/check.js"
-, "components/toast/toast.tsx"  ],
+    "utils/check.js",
+    "components/toast/toast.tsx",
+    "svg.d.ts",
+  ],
   "exclude": [
     "node_modules"
   ],
