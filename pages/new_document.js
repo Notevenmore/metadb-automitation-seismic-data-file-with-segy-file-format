@@ -64,13 +64,20 @@ export default function NewDocumentPage({setTitle, config}) {
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
-          dispatch(
-            setErrorMessage({
-              message: 'Redirecting to homepage...',
-              color: 'blue',
-              show: true,
-            }),
-          );
+          setTimeout(async () => {
+            dispatch(
+              setErrorMessage({
+                message: 'Redirecting to homepage...',
+                color: 'blue',
+                show: true,
+              }),
+            );
+            await delay(1500);
+            dispatch(setErrorMessage({show: false}));
+            await delay(500);
+            dispatch(setErrorMessage({message: '', color: ''}));
+          }, 0);
+          await delay(1000);
           router.push('/');
         } else {
           await delay(3000);

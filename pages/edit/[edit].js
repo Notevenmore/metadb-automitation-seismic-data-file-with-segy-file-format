@@ -89,6 +89,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       } catch (error) {
         // Handle any errors that occur during initialization
         seterror(String(error));
+        router.events.emit('routeChangeComplete');
       }
     };
     init_call();
@@ -140,13 +141,20 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         router.events.emit('routeChangeComplete');
         if (triggerSave.includes('redirect')) {
           await delay(1000);
-          dispatch(
-            setErrorMessage({
-              message: 'Redirecting back to record list...',
-              color: 'blue',
-              show: true,
-            }),
-          );
+          setTimeout(async () => {
+            dispatch(
+              setErrorMessage({
+                message: 'Redirecting back to record list...',
+                color: 'blue',
+                show: true,
+              }),
+            );
+            await delay(1500);
+            dispatch(setErrorMessage({show: false}));
+            await delay(500);
+            dispatch(setErrorMessage({message: '', color: ''}));
+          }, 0);
+          await delay(1000);
           router.back();
         } else {
           await delay(3000);
@@ -193,7 +201,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         setIsSaved(false);
         router.events.emit('routeChangeComplete');
         await delay(3500);
-        dispatch(setErrorMessage({message: '', color: '', show: false}));
+        dispatch(setErrorMessage({show: false}));
+        await delay(500);
+        dispatch(setErrorMessage({message: '', color: ''}));
       }
     } catch (error) {
       dispatch(
