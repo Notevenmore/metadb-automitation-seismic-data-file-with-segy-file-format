@@ -51,13 +51,15 @@ export default function UploadFileReview({setTitle, config}) {
     // ---| NEW WORKFLOW |---
     const init = async () => {
       try {
+        setloading(`Reformatting OCR data`);
+        await delay(500);
+        router.events.emit('routeChangeStart');
         setImageURL(
           _ =>
             `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${
               document_summary?.document_id
             }/${PageNo + 1}`,
         );
-        setloading(`Reformatting OCR data`);
         let final = [];
         for (let idx = 0; idx < document_summary.body.page_count; idx++) {
           let row = {};
@@ -80,6 +82,7 @@ export default function UploadFileReview({setTitle, config}) {
       } catch (error) {
         setloading('');
         setError(String(error));
+        router.events.emit('routeChangeComplete');
       }
     };
     if (files.length < 1) {
@@ -165,6 +168,7 @@ export default function UploadFileReview({setTitle, config}) {
 
   useEffect(() => {
     if (spreadsheetReady) {
+      router.events.emit('routeChangeComplete');
       setTimeout(async () => {
         dispatch(
           setErrorMessage({
@@ -174,12 +178,6 @@ export default function UploadFileReview({setTitle, config}) {
             show: true,
           }),
         );
-        // setMessage({
-        //   message:
-        //     'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-        //   color: 'blue',
-        //   show: true,
-        // });
         await delay(10000);
         dispatch(setErrorMessage({show: false}));
         await delay(500);

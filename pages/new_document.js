@@ -38,6 +38,10 @@ export default function NewDocumentPage({setTitle, config}) {
       }
     }
     setTitle('New document');
+    setTimeout(async () => {
+      await delay(500);
+      router.events.emit('routeChangeStart');
+    }, 0);
   }, []);
 
   const saveDocumentHandler = async (e, redirect = false) => {
@@ -102,6 +106,7 @@ export default function NewDocumentPage({setTitle, config}) {
 
   useEffect(() => {
     if (spreadsheetReady) {
+      router.events.emit('routeChangeComplete');
       setTimeout(async () => {
         dispatch(
           setErrorMessage({
