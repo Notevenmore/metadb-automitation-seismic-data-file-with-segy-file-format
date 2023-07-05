@@ -2,7 +2,6 @@ import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {parseCookies} from 'nookies';
 import {useEffect, useState} from 'react';
-import Highlight from 'react-highlight';
 import {useDispatch} from 'react-redux';
 import Input from '../../components/Input';
 import Button from '../../components/button';
@@ -85,7 +84,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                     title="Edit record"
                     additional_styles="px-3"
                     className="flex"
-                    path={`/edit/temp/${workspace.workspace_name}`}
+                    path={`/edit/${workspace.workspace_name}`}
                     query={{
                       form_type: datatype,
                       workspace_data: workspace.afe_number,
