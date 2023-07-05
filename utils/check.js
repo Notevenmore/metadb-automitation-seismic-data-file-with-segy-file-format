@@ -3,29 +3,28 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from 'react';
 import {getProfile} from '../services/admin';
 import {setUser} from '../store/userSlice';
+import {setErrorMessage} from '../store/generalSlice';
 
 function CheckAuth() {
   const user = useSelector(state => state.user.user);
   const router = useRouter();
   const dispatch = useDispatch();
 
-
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
-
   const handleProfile = async () => {
-    console.log(user.userid)
+    console.log(user.userid);
     const res = await getProfile(user.userid).then(
       res => {
-  console.log("AAAAAAAAAAA")
         dispatch(setUser(res));
       },
       err => {
-        console.log("AAAAAAAAAAA")
-        setMessage({
-          message: String(err),
-          color: 'red',
-          show: true,
-        });
+        console.log('???');
+        dispatch(
+          setErrorMessage({
+            message: String(err),
+            color: 'red',
+            show: true,
+          }),
+        );
       },
     );
   };
@@ -37,9 +36,11 @@ function CheckAuth() {
     }
     if (user.type === 'Administrator') return;
     handleProfile();
-  }, [user.userid, router.events, useSelector(state => state.user.user.userid)]);
-
-  return {Message, setMessage};
+  }, [
+    user.userid,
+    router.events,
+    useSelector(state => state.user.user.userid),
+  ]);
 }
 
 function CheckUser(userType) {

@@ -1,20 +1,20 @@
-import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
+import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import Container from '../../components/container/container';
-import {
-  HeaderTable,
-  HeaderDivider,
-  ButtonsSection,
-} from '../../components/header_table/header_table';
-import Buttons from '../../components/buttons/buttons';
-import {ImageEditor, Tuple4} from '../components/highlight_viewer';
-import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
+import {ImageEditor, Tuple4} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
+import Button from '../../components/button';
+import Container from '../../components/container';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Input from '../../components/input_form/input';
-import Toast from '../../components/toast/toast';
+import {
+  setDocumentSummary,
+  setErrorMessage,
+  setReviewData,
+} from '../../store/generalSlice';
 
 interface TableRow {
   id: number;
@@ -37,6 +37,10 @@ async function extractTextFromBounds(
 ) {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append(
+    'Authorization',
+    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
+  );
   var raw = JSON.stringify({
     bounds: bound,
   });
@@ -64,6 +68,10 @@ async function extractTextFromBounds(
 const uploadImage = async (imageBase64Str: string) => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append(
+    'Authorization',
+    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
+  );
 
   var raw = JSON.stringify({
     base64str: imageBase64Str,
@@ -123,11 +131,6 @@ export default function MatchingGuided({config, setTitle}) {
 
   // utility states
   const [loading, setLoading] = useState('');
-  const [message, setMessage] = useState({
-    message: '',
-    color: '',
-    show: false,
-  });
   const [error, setError] = useState('');
 
   // @ts-ignore
@@ -211,6 +214,9 @@ export default function MatchingGuided({config, setTitle}) {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`,
               },
               body: JSON.stringify({
                 form_type: router.query?.form_type,
@@ -252,12 +258,14 @@ export default function MatchingGuided({config, setTitle}) {
       router.events.emit('routeChangeComplete');
       setLoading(null);
       setTimeout(() => {
-        setMessage({
-          message:
-            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+            color: 'blue',
+            show: true,
+          }),
+        );
       }, 3000);
       await delay(5000);
       setMessage(x => {
@@ -268,9 +276,9 @@ export default function MatchingGuided({config, setTitle}) {
         return {...x, show: false};
       });
       await delay(500);
-      setMessage(x => {
+      dispatch(setErrorMessage(x => {
         return {...x, message: '', color: ''};
-      });
+      }));
     };
     if (router.isReady) {
       init();
@@ -349,7 +357,7 @@ export default function MatchingGuided({config, setTitle}) {
           additional_styles="min-w-0 cursor-pointer"
           onChange={e => setValueForId(data.id, e.target.value)}
         />
-        <Buttons
+        <Button
           additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
           title="Reset input"
           disabled={data.value ? false : true}
@@ -369,7 +377,7 @@ export default function MatchingGuided({config, setTitle}) {
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>
-        </Buttons>
+        </Button>
       </div>
     </div>
   );
@@ -386,7 +394,7 @@ export default function MatchingGuided({config, setTitle}) {
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      <Buttons
+      <Button
         path=""
         button_description="Back"
         onClick={() => {
@@ -412,7 +420,7 @@ export default function MatchingGuided({config, setTitle}) {
       {totalPageNo > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-            <Buttons
+            <Button
               path=""
               title="Previous page"
               button_description=""
@@ -422,15 +430,15 @@ export default function MatchingGuided({config, setTitle}) {
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
-            </Buttons>
-            <Buttons
+            </Button>
+            <Button
               path=""
               title=""
               button_description=""
               className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
               <p className="w-5 h-5">{pageNo}</p>
-            </Buttons>
-            <Buttons
+            </Button>
+            <Button
               path=""
               title="Next page"
               button_description=""
@@ -440,12 +448,12 @@ export default function MatchingGuided({config, setTitle}) {
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
-            </Buttons>
+            </Button>
           </div>
         </div>
       )}
       <div className="flex items-center justify-center w-full py-4">
-        <Buttons
+        <Button
           button_description="View on sheets"
           path="/upload_file/review"
           // @ts-ignore
@@ -457,15 +465,12 @@ export default function MatchingGuided({config, setTitle}) {
           }}
         />
       </div>
-      <Toast message={message} setmessage={setMessage}>
-        {message.message}
-      </Toast>
       <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%] translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
+        className={`flex items-center space-x-2 fixed top-5 left-1/2 translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
           error ? '' : '-translate-y-20'
         }`}>
         <p>{error}</p>
-        <Buttons
+        <Button
           additional_styles="px-1 py-1 text-black"
           path=""
           onClick={() => {
@@ -484,7 +489,7 @@ export default function MatchingGuided({config, setTitle}) {
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>
-        </Buttons>
+        </Button>
       </div>
     </Container>
   );

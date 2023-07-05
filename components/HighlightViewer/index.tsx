@@ -739,7 +739,7 @@ interface NavbarButtonConfig {
   onClick?: () => void;
 }
 
-function Navbar() {
+export default function Navbar() {
   const [buttonConfig, setButtonConfig] = useState<NavbarButtonConfig[]>([]);
   const {state, dispatch} = useContext(ImageEditorContext);
   const {

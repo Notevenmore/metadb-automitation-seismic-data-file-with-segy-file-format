@@ -1,17 +1,18 @@
-import Highlight from 'react-highlight';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import Button from '../../../components/buttons/buttons';
+import Highlight from 'react-highlight';
+import Input from '../../../components/Input';
+import Button from '../../../components/button';
+import Container from '../../../components/container';
 import Sheets from '../../../components/sheets/sheets';
 import TableComponent from '../../../components/table/table';
-import Input from '../../../components/input_form/input';
-import Container from '../../../components/container/container';
 import {
   downloadWorkspace,
   init_data,
   saveDocument,
 } from '../../../components/utility_functions';
-import Toast from '../../../components/toast/toast';
+import {useDispatch} from 'react-redux';
+import {setErrorMessage} from '../../../store/generalSlice';
 
 const DocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
@@ -23,6 +24,8 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
   const [workspaceData, setworkspaceData] = useState();
   const [spreadsheetId, setspreadsheetId] = useState();
   const [triggerSave, settriggerSave] = useState(false);
+
+  const dispatch = useDispatch();
 
   const warningText =
     'You have unsaved changes - Are you sure you want to leave this page?';
@@ -95,20 +98,22 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
   useEffect(() => {
     if (spreadsheetReady) {
       setTimeout(async () => {
-        setMessage({
-          message:
-            'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+            color: 'blue',
+            show: true,
+          }),
+        );
         await delay(10000);
         setMessage(x => {
           return {...x, show: false};
         });
         await delay(300);
-        setMessage(x => {
+        dispatch(setErrorMessage(x => {
           return {...x, message: '', color: ''};
-        });
+        }));
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -126,14 +131,17 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         spreadsheetId,
         workspaceData,
         setMessage,
+        dispatch,
       );
       if (result.success) {
         setIsSaved(true);
-        setMessage({
-          message: 'Record successfully saved',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: 'Record successfully saved',
+            color: 'blue',
+            show: true,
+          }),
+        );
         router.events.emit('routeChangeComplete');
         if (triggerSave.includes('redirect')) {
           await delay(1000);
@@ -149,20 +157,22 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             return {...x, show: false};
           });
           await delay(500);
-          setMessage(x => {
+          dispatch(setErrorMessage(x => {
             return {...x, message: '', color: ''};
-          });
+          }));
         }
       }
     } catch (error) {
       // Handle error and display error message
-      setMessage({
-        message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
     settriggerSave('');
@@ -177,20 +187,29 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         spreadsheetId,
         workspaceData,
         setMessage,
+        dispatch,
       );
       if (result.success) {
-        setMessage({
-          message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
+            color: 'blue',
+            show: true,
+          }),
+        );
         setIsSaved(false);
         router.events.emit('routeChangeComplete');
         await delay(3500);
-        setMessage({message: '', color: '', show: false});
+        dispatch(setErrorMessage({message: '', color: '', show: false}));
       }
     } catch (error) {
-      setMessage({message: `${String(error)}`, color: 'red', show: true});
+      dispatch(
+        setErrorMessage({
+          message: `${String(error)}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
     settriggerSave('');
@@ -482,9 +501,6 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           </div>
         </Button>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   ) : (
     <div

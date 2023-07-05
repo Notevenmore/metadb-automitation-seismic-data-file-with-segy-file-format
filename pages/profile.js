@@ -1,16 +1,16 @@
-import {useDispatch, useSelector} from 'react-redux';
-import {useEffect, useState} from 'react';
 import moment from 'moment/moment';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
-import Buttons from '../components/buttons/buttons';
+import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {FloatDialog} from '../components/FloatDialog';
+import Button from '../components/button';
+import Container from '../components/container';
 import TableComponent from '../components/table/table';
-import Container from '../components/container/container';
-import {logOut, setUser} from '../store/userSlice';
-import {FloatDialog} from '../components/float_dialog';
-import Mime from 'dummy-data/mime';
-import ProfilePic from 'dummy-data/profile_pic';
+import Mime from '../dummy-data/mime';
+import ProfilePic from '../dummy-data/profile_pic';
 import {updateProfile} from '../services/admin';
+import {logOut, setUser} from '../store/userSlice';
 
 const Profile = ({setTitle}) => {
   setTitle('Profile');
@@ -61,23 +61,23 @@ const Profile = ({setTitle}) => {
   };
 
   const handleUploadPhoto = async () => {
-    if(user === currentUser) return;
+    if (user === currentUser) return;
 
-      router.events.emit('routeChangeStart');
-      console.log('start');
-      await updateProfile({
-        userid: user.name,
-        profile_picture: currentUser.profile_picture,
-      }).then(
-        () => {
-          dispatch(setUser(currentUser));
-          console.log('complete');
-        },
-        err => {
-          console.log(err);
-        },
-      );
-      router.events.emit('routeChangeComplete');
+    router.events.emit('routeChangeStart');
+    console.log('start');
+    await updateProfile({
+      userid: user.name,
+      profile_picture: currentUser.profile_picture,
+    }).then(
+      () => {
+        dispatch(setUser(currentUser));
+        console.log('complete');
+      },
+      err => {
+        console.log(err);
+      },
+    );
+    router.events.emit('routeChangeComplete');
   };
 
   useEffect(() => {
@@ -124,18 +124,18 @@ const Profile = ({setTitle}) => {
               }}
               className={`top-[35px] shadow-lg`}
               width="263px">
-              <Buttons
+              <Button
                 button_description="Edit"
                 path=""
-                additional_styles="py-0.5 pl-1.5 pr-3 space-x-0 border bg-transparent border-float_dialog text-[14px]">
+                additional_styles="py-0.5 pl-1.5 pr-3 space-x-0 border bg-transparent border-float_dialog text-sm">
                 <Image
                   src="/icons/pencil.svg"
-                  width={10}
-                  height={10}
+                  width={25}
+                  height={15}
                   className="w-[25px] h-[15px] alt='' "
                   alt="icon"
                 />
-              </Buttons>
+              </Button>
             </FloatDialog>
           </div>
           <TableComponent
@@ -152,8 +152,8 @@ const Profile = ({setTitle}) => {
           </p>
         </div>
         <div className="flex space-x-2">
-          <Buttons path="" button_description="Change my password" />
-          <Buttons
+          <Button path="" button_description="Change my password" />
+          <Button
             path=""
             button_description="Sign out"
             onClick={handleSignOut}

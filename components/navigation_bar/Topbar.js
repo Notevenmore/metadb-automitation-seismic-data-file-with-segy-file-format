@@ -1,13 +1,13 @@
+import Image from 'next/image';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {useRouter} from 'next/router';
-import RoundImage from '../image/RoundImage';
-import MetaDB from '../../public/images/metadata3.png';
 import Mime from '../../dummy-data/mime';
-import {FloatDialog} from '../float_dialog';
+import MetaDB from '../../public/images/metadata3.png';
 import {logOut} from '../../store/userSlice';
-import Image from 'next/image';
+import {FloatDialog} from '../FloatDialog';
+import RoundImage from '../RoundImage';
 
 export default function TopBar() {
   const user = useSelector(state => state.user.user);
@@ -42,7 +42,7 @@ export default function TopBar() {
   }, [user]);
 
   useEffect(() => {
-    setProfile(Mime(user.profile_picture || "")); // TODO CHANGE TO NOT USE HARDCODED STRING LATER
+    setProfile(Mime(user.profile_picture || '')); // TODO CHANGE TO NOT USE HARDCODED STRING LATER
   }, [user]);
 
   const dispatch = useDispatch();
@@ -65,7 +65,8 @@ export default function TopBar() {
           {...profileProps}>
           <RoundImage
             source={profile ? profile : '/images/unknown.jpg'}
-            size={{width: '30px'}}></RoundImage>
+            width={30}
+          />
         </FloatDialog>
       </div>
     </nav>

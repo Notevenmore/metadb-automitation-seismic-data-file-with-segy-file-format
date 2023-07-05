@@ -1,14 +1,14 @@
 import {useState} from 'react';
-import Buttons from '../../components/buttons/buttons';
-import Container from '../../components/container/container.js';
-import Input from '../../components/input_form/input';
 import {
-  HeaderTable,
-  HeaderDivider,
-  HeaderStatic,
-  HeaderInput,
   ButtonsSection,
-} from '../../components/header_table/header_table';
+  HeaderDivider,
+  HeaderInput,
+  HeaderStatic,
+  HeaderTable,
+} from '../../components/HeaderTable';
+import Input from '../../components/Input';
+import Button from '../../components/button';
+import Container from '../../components/container';
 
 export default function NewDocumentPageDatabase() {
   const [detail, setDetail] = useState('');
@@ -25,8 +25,8 @@ export default function NewDocumentPageDatabase() {
         name={'documentName'}
         placeholder={'Lorem ipsum laporan 2008'}
         additional_styles={'-mt-[20px] mb-[20px]'}
-        additional_styles_label={'font-bold mb-3 text-[16px]'}
-        additional_styles_input={'font-bold text-[36px]'}
+        additional_styles_label={'font-bold mb-3 text-base'}
+        additional_styles_input={'font-bold text-4xl'}
       />
       <HeaderTable>
         <HeaderStatic
@@ -111,15 +111,15 @@ export default function NewDocumentPageDatabase() {
         </HeaderInput>
       </HeaderTable>
       <ButtonsSection>
-        <Buttons path="" additional_styles="bg-primary">
+        <Button path="" additional_styles="bg-primary">
           Save changes
-        </Buttons>
-        <Buttons path="" additional_styles="bg-primary">
+        </Button>
+        <Button path="" additional_styles="bg-primary">
           Save and exit
-        </Buttons>
-        <Buttons path="" additional_styles="text-error">
+        </Button>
+        <Button path="" additional_styles="text-error">
           Cancel
-        </Buttons>
+        </Button>
       </ButtonsSection>
     </Container>
   );

@@ -1,3 +1,8 @@
+import {parseCookies} from 'nookies';
+import {TokenExpired} from '../services/admin';
+import {setErrorMessage} from '../store/generalSlice';
+import {store} from './../store/index'
+
 export const init_data = async (config, router, workspaceData) => {
   if (!workspaceData.afe_number) {
     throw 'Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer.';
@@ -8,6 +13,9 @@ export const init_data = async (config, router, workspaceData) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
     },
   )
@@ -16,6 +24,7 @@ export const init_data = async (config, router, workspaceData) => {
     )
     .then(([status, res]) => {
       if (status !== 200) {
+        TokenExpired(status);
         throw `Service returned with status ${status}: ${res}`;
       }
       return res;
@@ -27,6 +36,9 @@ export const init_data = async (config, router, workspaceData) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
     },
   )
@@ -35,6 +47,7 @@ export const init_data = async (config, router, workspaceData) => {
     )
     .then(([status, res]) => {
       if (status !== 200) {
+        TokenExpired(status);
         throw `Service returned with status ${status}: ${res}`;
       }
       return res;
@@ -57,6 +70,9 @@ export const init_data = async (config, router, workspaceData) => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${
+              JSON.parse(parseCookies().user_data).access_token
+            }`,
           },
         },
       )
@@ -68,6 +84,7 @@ export const init_data = async (config, router, workspaceData) => {
         )
         .then(([status, res]) => {
           if (status !== 200) {
+            TokenExpired(status);
             throw `Service returned with status ${status}: ${res}`;
           }
           return res;
@@ -94,6 +111,7 @@ export const saveDocument = async (
   spreadsheetId,
   workspaceData,
   setMessage,
+  dispatch
 ) => {
   if (e) {
     e.preventDefault();
@@ -101,22 +119,26 @@ export const saveDocument = async (
 
   // Check if spreadsheetId is available
   if (!spreadsheetId) {
-    setMessage({
-      message:
-        'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
-      color: 'red',
-      show: true,
-    });
+    dispatch(
+      setErrorMessage({
+        message:
+          'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
+        color: 'red',
+        show: true,
+      }),
+    );
     return;
   }
 
-  // Set saving message
-  setMessage({
-    message:
-      "Checking changes in record information... Please don't leave this page or click anything",
-    color: 'blue',
-    show: true,
-  });
+  // Set saving message 
+  dispatch(
+      setErrorMessage({
+        message:
+          "Checking changes in record information... Please don't leave this page or click anything",
+        color: 'blue',
+        show: true,
+      }),
+    );
 
   // check for changes in the workspace data, if there are any then push the updates to the db
   let workspace_data_changed = false;
@@ -126,6 +148,9 @@ export const saveDocument = async (
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
     },
   )
@@ -134,6 +159,7 @@ export const saveDocument = async (
     )
     .then(([status, res]) => {
       if (status !== 200) {
+        TokenExpired(status);
         throw `Service returned with status ${status} on record details GET: ${res}`;
       }
       return res;
@@ -147,18 +173,23 @@ export const saveDocument = async (
   });
 
   if (workspace_data_changed) {
-    setMessage({
-      message:
-        "Saving record information... Please don't leave this page or click anything",
-      color: 'blue',
-      show: true,
-    });
+    dispatch(
+      setErrorMessage({
+        message:
+          "Saving record information... Please don't leave this page or click anything",
+        color: 'blue',
+        show: true,
+      }),
+    );
     await fetch(
       `${config[router.query.form_type]['afe']}${workspaceData['afe_number']}`,
       {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
         body: JSON.stringify(workspaceData),
       },
@@ -166,6 +197,7 @@ export const saveDocument = async (
       .then(res => Promise.all([res.status, res.text()]))
       .then(([status, res]) => {
         if (status !== 200) {
+          TokenExpired(status);
           if (res.toLowerCase().includes('workspace_name_unique')) {
             throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`;
           } else {
@@ -175,12 +207,14 @@ export const saveDocument = async (
       });
   }
 
-  setMessage({
-    message:
-      "Checking changes in record data... Please don't leave this page or click anything",
-    color: 'blue',
-    show: true,
-  });
+  dispatch(
+    setErrorMessage({
+      message:
+        "Checking changes in record data... Please don't leave this page or click anything",
+      color: 'blue',
+      show: true,
+    }),
+  );
   // fetch original data from database
   const old_data = await init_data(config, router, workspaceData);
 
@@ -191,6 +225,9 @@ export const saveDocument = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
       body: JSON.stringify({
         form_type: router.query.form_type,
@@ -203,6 +240,7 @@ export const saveDocument = async (
     .then(response => {
       // Handle non-200 response status
       if (response.status !== 200) {
+        TokenExpired(response.status);
         throw `Service returned with status ${response.status} on spreadsheet GET headers: ${response.response}`;
       }
       return response;
@@ -213,6 +251,9 @@ export const saveDocument = async (
     method: 'POST',
     headers: {
       'Content-type': 'application/json',
+      Authorization: `Bearer ${
+        JSON.parse(parseCookies().user_data).access_token
+      }`,
     },
     body: JSON.stringify({
       form_type: router.query.form_type,
@@ -226,6 +267,7 @@ export const saveDocument = async (
     .then(response => {
       // Handle non-200 response status
       if (response.status !== 200) {
+        TokenExpired(response.status);
         throw `Service returned with status ${response.status} on spreadsheet GET rows: ${response.response}`;
       }
       return response;
@@ -234,12 +276,15 @@ export const saveDocument = async (
       throw err;
     });
 
-  setMessage({
-    message:
-      "Saving record data... Please don't leave this page or click anything",
-    color: 'blue',
-    show: true,
-  });
+    
+  dispatch(
+    setErrorMessage({
+      message:
+        "Saving record data... Please don't leave this page or click anything",
+      color: 'blue',
+      show: true,
+    }),
+  );
   var idx_row = 0;
   if (spreadsheet_data.response) {
     for (
@@ -362,6 +407,9 @@ export const saveDocument = async (
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${
+                JSON.parse(parseCookies().user_data).access_token
+              }`,
             },
             body: JSON.stringify({
               id: old_data.data_content[idx_row]['id'],
@@ -372,6 +420,7 @@ export const saveDocument = async (
           .then(res => Promise.all([res.status, res.text()]))
           .then(([status, res]) => {
             if (status !== 200) {
+              TokenExpired(status);
               throw `Service returned with status ${status} on record PUT: ${res}`;
             }
           });
@@ -393,12 +442,16 @@ export const saveDocument = async (
                 method: 'DELETE',
                 headers: {
                   'Content-Type': 'application/json',
+                  Authorization: `Bearer ${
+                    JSON.parse(parseCookies().user_data).access_token
+                  }`,
                 },
               },
             )
               .then(res => Promise.all([res.status, res.text()]))
               .then(([status, res]) => {
                 if (status !== 200) {
+                  TokenExpired(status);
                   throw `Service returned with status ${status} on record DELETE: ${res}`;
                 }
               });
@@ -415,6 +468,9 @@ export const saveDocument = async (
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
+                  Authorization: `Bearer ${
+                    JSON.parse(parseCookies().user_data).access_token
+                  }`,
                 },
                 body: JSON.stringify(row),
               },
@@ -422,6 +478,7 @@ export const saveDocument = async (
               .then(res => Promise.all([res.status, res.text()]))
               .then(([status, res]) => {
                 if (status !== 200) {
+                  TokenExpired(status);
                   throw `Service returned with status ${status} on record POST: ${res}`;
                 }
                 return res;
@@ -433,6 +490,9 @@ export const saveDocument = async (
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`,
               },
               body: JSON.stringify({
                 afe_number: workspaceData.afe_number,
@@ -443,6 +503,7 @@ export const saveDocument = async (
               .then(res => Promise.all([res.status, res.text()]))
               .then(([status, res]) => {
                 if (status !== 200) {
+                  TokenExpired(status);
                   throw `Service returned with status ${status} on append data to record POST: ${res}`;
                 }
               });
@@ -461,12 +522,16 @@ export const saveDocument = async (
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${
+                JSON.parse(parseCookies().user_data).access_token
+              }`,
             },
           },
         )
           .then(res => Promise.all([res.status, res.text()]))
           .then(([status, res]) => {
             if (status !== 200) {
+              TokenExpired(status);
               throw `Service returned with status ${status} on record DELETE: ${res}`;
             }
           });
@@ -483,12 +548,15 @@ export const downloadWorkspace = async (
   spreadsheetId,
   workspaceData,
   setMessage,
+  dispatch
 ) => {
-  setMessage({
-    message: 'Downloading record as XLSX file, please wait...',
-    color: 'blue',
-    show: true,
-  });
+  dispatch(
+    setErrorMessage({
+      message: 'Downloading record as XLSX file, please wait...',
+      color: 'blue',
+      show: true,
+    }),
+  );
   if (spreadsheetId && router.query.form_type && workspaceData.afe_number) {
     const spreadsheet_download = await fetch(
       `${config.services.sheets}/downloadSheet`,
@@ -496,6 +564,9 @@ export const downloadWorkspace = async (
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
         body: JSON.stringify({
           form_type: router.query.form_type,
@@ -509,6 +580,7 @@ export const downloadWorkspace = async (
       })
       .then(res => {
         if (res.status !== 200) {
+          TokenExpired(res.status);
           throw `Service returned with status code ${res.status}: ${res.response}`;
         }
         return res;
@@ -531,17 +603,21 @@ export const downloadWorkspace = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
       body: JSON.stringify({spreadsheetID: spreadsheet_download.response}),
     }).catch(err => {
       console.log(err);
     });
-    setMessage({
-      message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
-      color: 'blue',
-      show: true,
-    });
-    return {success: true};
+    dispatch(
+      setErrorMessage({
+        message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
+        color: 'blue',
+        show: true,
+      }),
+    );
   }
 };
 
@@ -553,11 +629,15 @@ export const checkAfe = async (e, config, data_type, afe_number) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${
+        JSON.parse(parseCookies().user_data).access_token
+      }`,
     },
   })
     .then(res => Promise.all([res.status, res.text()]))
     .then(([status, res]) => {
       if (status !== 200) {
+        TokenExpired(status);
         throw `Service returned with status ${status}: ${res}`;
       }
       return res;

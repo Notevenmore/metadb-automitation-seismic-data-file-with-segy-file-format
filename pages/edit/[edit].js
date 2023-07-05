@@ -1,14 +1,16 @@
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import Button from '../../components/buttons/buttons';
+import Input from '../../components/Input';
+import Button from '../../components/button';
+import Container from '../../components/container';
 import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
-import Input from '../../components/input_form/input';
-import Container from '../../components/container/container';
 import bibliography from '../../dummy-data/bibliography.json';
 import bibliography_data from '../../dummy-data/bibliography_data.json';
 import pwr from '../../dummy-data/pwr.json';
 import pwr_data from '../../dummy-data/pwr_1.json';
+import {useDispatch} from 'react-redux';
+import {setErrorMessage} from '../../store/generalSlice';
 
 const DocEditor = ({workspace_name, config}) => {
   // note: workspaceName, workspace_name, workspace_names, and workspace_name_space is different
@@ -32,6 +34,8 @@ const DocEditor = ({workspace_name, config}) => {
     if (!IsSaved) return (e.returnValue = warningText);
     return;
   };
+
+  const dispatch = useDispatch();
 
   // This function handles navigation away from the current page by checking whether unsaved changes are present and displaying a warning dialog if necessary
   const handleBrowseAway = (url, {shallow}) => {
@@ -268,7 +272,7 @@ const DocEditor = ({workspace_name, config}) => {
         setWorkspaceName(workspace_name.replace(/\_/g, ' '));
       } catch (error) {
         // Handle any errors that occur during initialization
-        setMessage({message: String(error), color: 'red'});
+        dispatch(setErrorMessage({message: String(error), color: 'red'}));
         console.log(error);
       }
     };
@@ -296,20 +300,26 @@ const DocEditor = ({workspace_name, config}) => {
     try {
       // Check if spreadsheetId is available
       if (!spreadsheetId) {
-        setMessage({
-          message:
-            'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
-          color: 'red',
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
+            color: 'red',
+            show: true,
+          }),
+        );
         return;
       }
 
       // Set saving message
-      setMessage({
-        message:
-          "Saving workspace... Please don't leave this page or click anything",
-        color: 'blue',
-      });
+      dispatch(
+        setErrorMessage({
+          message:
+            "Saving record data... Please don't leave this page or click anything",
+          color: 'blue',
+          show: true,
+        }),
+      );
 
       // Fetch spreadsheet data from the server
       const spreadsheet_data = await fetch(
@@ -400,15 +410,24 @@ const DocEditor = ({workspace_name, config}) => {
 
       // Set IsSaved to true and display success message
       setIsSaved(true);
-      setMessage({message: 'Workspace successfully saved', color: 'blue'});
+      dispatch(
+        setErrorMessage({
+          message: 'Workspace successfully saved',
+          color: 'blue',
+          show: true,
+        }),
+      );
     } catch (error) {
       // Handle error and display error message
-      setMessage({
-        message: `Failed to save workspace. Please try again. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed to save workspace. Please try again. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
   };
 
@@ -524,8 +543,6 @@ const DocEditor = ({workspace_name, config}) => {
                     disabled
                   />,
                 ],
-                // [<p className="font-bold">Data classification</p>, <Input type={"dropdown"} dropdown_items={["Report"]} />],
-                // [<p className="font-bold">Data sub-classification</p>, <Input type={"dropdown"} dropdown_items={["Printed"]} />]
               ]
             : // eslint-disable-next-line react/jsx-key
               [[<p>Getting data... Please wait</p>]]
@@ -570,7 +587,7 @@ const DocEditor = ({workspace_name, config}) => {
         />
       </div>
       <div
-        className={`flex items-center space-x-2 fixed top-5 left-[50%]
+        className={`flex items-center space-x-2 fixed top-5 left-1/2
                  translate-x-[-50%] bg-${Message.color || 'blue'}-500 text-white
                  px-3 rounded-lg py-2 transition-all ${
                    Message.message ? '' : '-translate-y-20'
@@ -581,7 +598,11 @@ const DocEditor = ({workspace_name, config}) => {
           path=""
           onClick={e => {
             e.preventDefault();
-            setMessage({message: '', color: ''});
+            dispatch(
+              setErrorMessage({message: '', color: '',
+                show: false,
+              }),
+            );
           }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -5,6 +5,11 @@ const initialState = {
   upload_document_settings: null,
   document_summary: null,
   review_data: null,
+  error: {
+    message: "",
+    color: "",
+    show: false
+  }
 };
 
 export const generalSlice = createSlice({
@@ -27,6 +32,10 @@ export const generalSlice = createSlice({
       console.log(action.payload);
       state.review_data = action.payload;
     },
+    setErrorMessage: (state, action) => {
+      // console.log(action.payload)
+      state.error = action.payload;
+    }
   },
 });
 
@@ -35,6 +44,7 @@ export const {
   setUploadDocumentSettings,
   setDocumentSummary,
   setReviewData,
+  setErrorMessage
 } = generalSlice.actions;
 
 export default generalSlice.reducer;

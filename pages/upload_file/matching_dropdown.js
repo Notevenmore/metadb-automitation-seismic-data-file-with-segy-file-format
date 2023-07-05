@@ -1,19 +1,20 @@
-import {useEffect, useRef, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
+import {useEffect, useRef, useState} from 'react';
 import Highlight from 'react-highlight';
-import Buttons from '../../components/buttons/buttons';
-import Container from '../../components/container/container.js';
-import Input from '../../components/input_form/input';
-import {
-  HeaderTable,
-  HeaderDivider,
-} from '../../components/header_table/header_table';
-import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {ImageEditor} from '../components/highlight_viewer';
+import {useDispatch, useSelector} from 'react-redux';
+import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
+import {ImageEditor} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
+import Button from '../../components/button';
+import Container from '../../components/container';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Toast from '../../components/toast/toast';
+import {
+  setDocumentSummary,
+  setErrorMessage,
+  setReviewData,
+} from '../../store/generalSlice';
 
 function uuidv4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -47,6 +48,10 @@ const generateKeyValuePair = () => {
 const uploadImage = async imageBase64Str => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append(
+    'Authorization',
+    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
+  );
 
   var raw = JSON.stringify({
     base64str: imageBase64Str,
@@ -75,6 +80,10 @@ const uploadImage = async imageBase64Str => {
 const postScrapeAnnotate = async (docId, page) => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append(
+    'Authorization',
+    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
+  );
 
   var requestOptions = {
     method: 'GET',
@@ -249,7 +258,6 @@ export default function MatchReview({config, setTitle}) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState('');
   const [error, setError] = useState('');
 
@@ -352,6 +360,9 @@ export default function MatchReview({config, setTitle}) {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`,
               },
               body: JSON.stringify({
                 form_type: router.query?.form_type,
@@ -393,21 +404,23 @@ export default function MatchReview({config, setTitle}) {
       router.events.emit('routeChangeComplete');
       setLoading('');
       setTimeout(() => {
-        setMessage({
-          message:
-            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+            color: 'blue',
+            show: true,
+          }),
+        );
       }, 3000);
       await delay(5000);
       setMessage(x => {
         return {...x, show: false};
       });
       await delay(500);
-      setMessage(x => {
+      dispatch(setErrorMessage(x => {
         return {...x, message: '', color: ''};
-      });
+      }));
     };
     if (router.isReady) {
       init();
@@ -506,7 +519,7 @@ export default function MatchReview({config, setTitle}) {
           onChange={e => setValueForId(data.id, e.target.value)}
           withSearch
         />
-        <Buttons
+        <Button
           additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
           title="Reset input"
           disabled={data.value ? false : true}
@@ -526,7 +539,7 @@ export default function MatchReview({config, setTitle}) {
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>
-        </Buttons>
+        </Button>
       </div>
     </div>
   );
@@ -546,7 +559,7 @@ export default function MatchReview({config, setTitle}) {
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      <Buttons
+      <Button
         path=""
         button_description="Back"
         onClick={() => {
@@ -582,7 +595,7 @@ export default function MatchReview({config, setTitle}) {
       {totalPageNo > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-            <Buttons
+            <Button
               path=""
               title="Previous page"
               button_description=""
@@ -592,15 +605,15 @@ export default function MatchReview({config, setTitle}) {
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
-            </Buttons>
-            <Buttons
+            </Button>
+            <Button
               path=""
               title=""
               button_description=""
               className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
               <p className="w-5 h-5">{pageNo}</p>
-            </Buttons>
-            <Buttons
+            </Button>
+            <Button
               path=""
               title="Next page"
               button_description=""
@@ -610,12 +623,12 @@ export default function MatchReview({config, setTitle}) {
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
-            </Buttons>
+            </Button>
           </div>
         </div>
       )}
       <div className="flex items-center justify-center w-full py-4">
-        <Buttons
+        <Button
           button_description="View on sheets"
           path="/upload_file/review"
           query={{form_type: formType}}
@@ -626,9 +639,6 @@ export default function MatchReview({config, setTitle}) {
           }}
         />
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 }

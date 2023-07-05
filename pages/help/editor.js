@@ -1,12 +1,12 @@
+import {useEffect, useRef, useState} from 'react';
 import ReactMarkdown from 'react-markdown';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import nightOwl from 'react-syntax-highlighter/dist/cjs/styles/hljs/night-owl';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
-import {useEffect, useRef, useState} from 'react';
+import Input from '../../components/Input';
+import Button from '../../components/button';
 import data from '../../dummy-data/help_editor_data';
-import Input from '../../components/input_form/input';
-import Button from '../../components/buttons/buttons';
 
 const Editor = () => {
   const [Title, setTitle] = useState(data.title);
@@ -267,7 +267,8 @@ const Editor = () => {
                   path=""
                   title="Header 1"
                   button_description="H1"
-                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-3xl"></Button>
+                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-3xl"
+                />
                 <Button
                   onClick={() => {
                     document.execCommand(
@@ -284,7 +285,8 @@ const Editor = () => {
                   path=""
                   title="Header 2"
                   button_description="H2"
-                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-2xl"></Button>
+                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-2xl"
+                />
                 <Button
                   onClick={e => {
                     document.execCommand(
@@ -301,7 +303,8 @@ const Editor = () => {
                   path=""
                   title="Header 3"
                   button_description="H3"
-                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-xl"></Button>
+                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-xl"
+                />
                 <Button
                   onClick={() => {
                     document.execCommand(
@@ -318,7 +321,8 @@ const Editor = () => {
                   path=""
                   title="Header 4"
                   button_description="H4"
-                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-lg"></Button>
+                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-lg"
+                />
                 <Button
                   onClick={() => {
                     document.execCommand(
@@ -335,7 +339,8 @@ const Editor = () => {
                   path=""
                   title="Header 5"
                   button_description="H5"
-                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-md"></Button>
+                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-md"
+                />
                 <Button
                   onClick={() => {
                     document.execCommand(
@@ -352,55 +357,56 @@ const Editor = () => {
                   path=""
                   title="Header 6"
                   button_description="H6"
-                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-sm"></Button>
+                  className="hover:bg-gray-100 transition-all w-[100px] py-2 text-sm"
+                />
               </div>
             </div>
             <Button
-              onClick={() => {
-                formatText('bold', document.getElementById('editor_body'));
-              }}
+              onClick={() =>
+                formatText('bold', document.getElementById('editor_body'))
+              }
               path=""
               title="Bold (CTRL + B)"
               button_description="B"
               additional_styles="text-[20px] px-2.5 font-mono font-bold"
             />
             <Button
-              onClick={() => {
-                formatText('italic', document.getElementById('editor_body'));
-              }}
+              onClick={() =>
+                formatText('italic', document.getElementById('editor_body'))
+              }
               path=""
               title="Italic (CTRL + I)"
               button_description="I"
               additional_styles="text-[20px] px-2.5 font-mono italic"
             />
             <Button
-              onClick={() => {
-                formatText('underline', document.getElementById('editor_body'));
-              }}
+              onClick={() =>
+                formatText('underline', document.getElementById('editor_body'))
+              }
               path=""
               title="Underline (CTRL + Shift + U)"
               button_description="U"
               additional_styles="text-[20px] px-2.5 font-mono underline"
             />
             <Button
-              onClick={() => {
+              onClick={() =>
                 formatText(
                   'strikethrough',
                   document.getElementById('editor_body'),
-                );
-              }}
+                )
+              }
               path=""
               title="Strikethrough (CTRL + Shift + S)"
               button_description="S"
               additional_styles="text-[20px] px-2.5 font-mono line-through"
             />
             <Button
-              onClick={() => {
+              onClick={() =>
                 formatText(
                   'ordered_list',
                   document.getElementById('editor_body'),
-                );
-              }}
+                )
+              }
               path=""
               title="Ordered list"
               additional_styles="p-2 font-mono h-full">
@@ -416,12 +422,12 @@ const Editor = () => {
               </svg>
             </Button>
             <Button
-              onClick={() => {
+              onClick={() =>
                 formatText(
                   'unordered_list',
                   document.getElementById('editor_body'),
-                );
-              }}
+                )
+              }
               path=""
               title="Unordered list"
               additional_styles="p-2 font-mono h-full">
@@ -440,9 +446,9 @@ const Editor = () => {
               </svg>
             </Button>
             <Button
-              onClick={() => {
-                formatText('quote', document.getElementById('editor_body'));
-              }}
+              onClick={() =>
+                formatText('quote', document.getElementById('editor_body'))
+              }
               path=""
               title="Quote"
               additional_styles="p-2 font-mono h-full">
@@ -458,9 +464,9 @@ const Editor = () => {
               </svg>
             </Button>
             <Button
-              onClick={() => {
-                formatText('code', document.getElementById('editor_body'));
-              }}
+              onClick={() =>
+                formatText('code', document.getElementById('editor_body'))
+              }
               path=""
               title="Code"
               additional_styles="p-2 font-mono h-full">
@@ -479,12 +485,9 @@ const Editor = () => {
               </svg>
             </Button>
             <Button
-              onClick={() => {
-                formatText(
-                  'multi-code',
-                  document.getElementById('editor_body'),
-                );
-              }}
+              onClick={() =>
+                formatText('multi-code', document.getElementById('editor_body'))
+              }
               path=""
               title="Multi-line code"
               additional_styles="p-2 font-mono h-full">
@@ -503,9 +506,9 @@ const Editor = () => {
               </svg>
             </Button>
             <Button
-              onClick={() => {
-                formatText('break', document.getElementById('editor_body'));
-              }}
+              onClick={() =>
+                formatText('break', document.getElementById('editor_body'))
+              }
               path=""
               title="New line"
               additional_styles="p-2 font-mono h-full">
@@ -523,9 +526,9 @@ const Editor = () => {
               </svg>
             </Button>
             <Button
-              onClick={() => {
-                formatText('link', document.getElementById('editor_body'));
-              }}
+              onClick={() =>
+                formatText('link', document.getElementById('editor_body'))
+              }
               path=""
               title="Insert link"
               additional_styles="p-2 font-mono h-full">

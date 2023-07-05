@@ -1,18 +1,18 @@
-import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
-import {useSelector} from 'react-redux';
-import Buttons from '../components/buttons/buttons';
-import Container from '../components/container/container.js';
-import Input from '../components/input_form/input';
+import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
-  HeaderTable,
   HeaderDivider,
   HeaderInput,
-} from '../components/header_table/header_table';
+  HeaderTable,
+} from '../components/HeaderTable';
+import Input from '../components/Input';
+import Button from '../components/button';
+import Container from '../components/container';
 import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
 import {saveDocument} from '../components/utility_functions';
-import Toast from '../components/toast/toast';
+import {setErrorMessage} from '../store/generalSlice';
 
 export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
@@ -21,6 +21,7 @@ export default function NewDocumentPage({setTitle, config}) {
   const [workspaceData, setworkspaceData] = useState();
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
 
+  const dispatch = useDispatch();
   const upload_document_settings = useSelector(
     state => state.general.upload_document_settings,
   );
@@ -50,13 +51,16 @@ export default function NewDocumentPage({setTitle, config}) {
         spreadsheetID,
         workspaceData,
         setMessage,
+        dispatch,
       );
       if (save_result.success) {
-        setMessage({
-          message: 'Record successfully saved',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: 'Record successfully saved',
+            color: 'blue',
+            show: true,
+          }),
+        );
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
@@ -72,19 +76,21 @@ export default function NewDocumentPage({setTitle, config}) {
             return {...x, show: false};
           });
           await delay(500);
-          setMessage(x => {
+          dispatch(setErrorMessage(x => {
             return {...x, message: '', color: ''};
-          });
+          }));
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -92,14 +98,16 @@ export default function NewDocumentPage({setTitle, config}) {
   useEffect(() => {
     if (spreadsheetReady) {
       setTimeout(async () => {
-        setMessage({
-          message:
-            'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+            color: 'blue',
+            show: true,
+          }),
+        );
         await delay(10000);
-        setMessage({message: '', color: '', show: false});
+        dispatch(setErrorMessage({message: '', color: '', show: false}));
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -221,7 +229,7 @@ export default function NewDocumentPage({setTitle, config}) {
         />
       </div>
       <div className="flex space-x-2 py-10">
-        <Buttons
+        <Button
           title="Save this record to the database"
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
           onClick={saveDocumentHandler}
@@ -252,8 +260,8 @@ export default function NewDocumentPage({setTitle, config}) {
             </svg>
             <p>Save changes</p>
           </div>
-        </Buttons>
-        <Buttons
+        </Button>
+        <Button
           title="Save this record to the database and exit from this page"
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
           onClick={e => {
@@ -290,11 +298,8 @@ export default function NewDocumentPage({setTitle, config}) {
             </svg>
             <p>Save and exit</p>
           </div>
-        </Buttons>
+        </Button>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   ) : (
     <div className="h-full flex flex-col justify-center border-collapse space-y-5 overflow-auto">
@@ -307,13 +312,13 @@ export default function NewDocumentPage({setTitle, config}) {
           record along with its details you have just inputted will be there.
           You can add data relating to the record there afterwards.
         </p>
-        <Buttons
+        <Button
           onClick={e => {
             e.preventDefault();
             router.push('/');
           }}>
           Go home
-        </Buttons>
+        </Button>
       </div>
     </div>
   );

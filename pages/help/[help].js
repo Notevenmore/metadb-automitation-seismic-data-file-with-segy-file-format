@@ -1,6 +1,6 @@
-import Buttons from '../../components/buttons/buttons';
-import Container from '../../components/container/container';
-import Input from '../../components/input_form/input.tsx';
+import Button from '../../components/button';
+import Container from '../../components/container';
+import Input from '../../components/Input';
 import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
 
@@ -23,12 +23,12 @@ const Documentation = props => {
               document)
             </p>
             <div className="flex space-x-2">
-              <Buttons
+              <Button
                 path={props.path}
                 button_description="Show preview below"
                 additional_styles="bg-gray-100"
               />
-              <Buttons
+              <Button
                 path={props.path}
                 button_description="Show preview beside"
                 additional_styles="bg-gray-100"

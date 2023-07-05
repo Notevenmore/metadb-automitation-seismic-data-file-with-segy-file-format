@@ -1,15 +1,19 @@
 import Image from 'next/image';
-import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
+import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useDispatch} from 'react-redux';
-import Container from '../../components/container/container';
-import Input from '../../components/input_form/input';
+import Input from '../../components/Input';
+import Button from '../../components/button';
+import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
-import Button from '../../components/buttons/buttons';
-import {setUploadDocumentSettings} from '../../store/generalSlice';
 import {checkAfe} from '../../components/utility_functions';
-import Toast from '../../components/toast/toast';
+import {TokenExpired} from '../../services/admin';
+import {
+  setErrorMessage,
+  setUploadDocumentSettings,
+} from '../../store/generalSlice';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
@@ -24,7 +28,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     afe_number: '',
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
 
@@ -46,6 +49,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
       })
         .then(res =>
@@ -56,6 +62,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         )
         .then(([status, res]) => {
           if (status !== 200) {
+            TokenExpired(status);
             throw `Service returned with status ${status}: ${res}`;
           }
           return res;
@@ -163,16 +170,21 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     router.events.emit('routeChangeStart');
     try {
       settoggleOverlay(false);
-      setMessage({
-        message:
-          "Creating a new record... Please don't leave this page or click anything",
-        color: 'blue',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message:
+            "Creating a new record... Please don't leave this page or click anything",
+          color: 'blue',
+          show: true,
+        }),
+      );
       await fetch(`${config[datatype]['afe']}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
         body: JSON.stringify(newWorkspace),
       })
@@ -180,6 +192,8 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           if (res.status === 200) {
             return res.statusText;
           } else {
+            TokenExpired(res.status);
+            console.log(res);
             return res.text();
           }
         })
@@ -198,11 +212,13 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           }
         });
       dispatch(setUploadDocumentSettings(newWorkspace));
-      setMessage({
-        message: 'Success. Redirecting to the next page...',
-        color: 'blue',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: 'Success. Redirecting to the next page...',
+          color: 'blue',
+          show: true,
+        }),
+      );
       router.events.emit('routeChangeComplete');
       await delay(1500);
       router.push({
@@ -211,7 +227,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       });
     } catch (error) {
       // Handle error and display error message
-      setMessage({message: String(error), color: 'red', show: true});
+      dispatch(
+        setErrorMessage({message: String(error), color: 'red', show: true}),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -220,30 +238,40 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     try {
-      setMessage({
-        message:
-          "Deleting record... Please don't leave this page or click anything",
-        color: 'blue',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message:
+            "Deleting record... Please don't leave this page or click anything",
+          color: 'blue',
+          show: true,
+        }),
+      );
       await fetch(`${config[datatype]['afe']}${afe_number}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
       }).then(res => {
         if (res.status !== 200) {
+          TokenExpired(status);
           throw `Response returned with status code ${res.status}: ${res.statusText}`;
         }
       });
-      setMessage({message: 'Success', color: 'blue', show: true});
+      dispatch(
+        setErrorMessage({message: 'Success', color: 'blue', show: true}),
+      );
       reset_search();
       init();
       router.events.emit('routeChangeComplete');
       await delay(2000);
-      setMessage({message: '', color: '', show: false});
+      dispatch(setErrorMessage({message: '', color: '', show: false}));
     } catch (error) {
-      setMessage({message: String(error), color: 'red', show: true});
+      dispatch(
+        setErrorMessage({message: String(error), color: 'red', show: true}),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -303,13 +331,15 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
       setpopupMessage({message: '', color: ''});
@@ -340,7 +370,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
               src="/icons/magnify.svg"
               width={20}
               height={20}
-              className="absolute top-[50%] right-3 translate-y-[-50%]"
+              className="absolute top-1/2 right-3 translate-y-[-50%]"
               alt="search"
             />
           </div>
@@ -402,7 +432,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           e.preventDefault;
           settoggleOverlay(true);
         }}>
-        <div className="flex items-center justify-center space-x-5 pl-[16px]">
+        <div className="flex items-center justify-center space-x-5 pl-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -595,9 +625,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           </div>
         </div>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 };

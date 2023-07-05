@@ -1,22 +1,22 @@
-import {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import Buttons from '../../components/buttons/buttons';
-import Container from '../../components/container/container.js';
-import Input from '../../components/input_form/input';
+import {useDispatch, useSelector} from 'react-redux';
+import {ImageEditor} from '../../components/HighlightViewer';
+import Button from '../../components/button';
+import Container from '../../components/container';
 import {
-  HeaderTable,
   HeaderDivider,
   HeaderInput,
-} from '../../components/header_table/header_table';
+  HeaderTable,
+} from '../../components/HeaderTable';
+import Input from '../../components/Input';
 import Sheets from '../../components/sheets/sheets';
 import Table from '../../components/table/table';
+import {saveDocument} from '../../components/utility_functions';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import {ImageEditor} from '../components/highlight_viewer';
-import {saveDocument} from '../../components/utility_functions';
-import Toast from '../../components/toast/toast';
+import {setErrorMessage} from '../../store/generalSlice';
 
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
@@ -29,6 +29,8 @@ export default function UploadFileReview({setTitle, config}) {
   const [loading, setloading] = useState('');
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
   const [workspaceData, setworkspaceData] = useState();
+
+  const dispatch = useDispatch();
 
   const router = useRouter();
   const path_query =
@@ -112,36 +114,43 @@ export default function UploadFileReview({setTitle, config}) {
         spreadsheetID,
         workspaceData,
         setMessage,
+        dispatch,
       );
       if (save_result.success) {
-        setMessage({
-          message: 'Record successfully saved',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: 'Record successfully saved',
+            color: 'blue',
+            show: true,
+          }),
+        );
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
-          setMessage({
-            message: 'Redirecting to homepage...',
-            color: 'blue',
-            show: true,
-          });
+          dispatch(
+            setErrorMessage({
+              message: 'Redirecting to homepage...',
+              color: 'blue',
+              show: true,
+            }),
+          );
           await delay(1000);
           router.push('/');
         } else {
           await delay(3000);
-          setMessage({message: '', color: '', show: false});
+          dispatch(setErrorMessage({message: '', color: '', show: false}));
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -149,14 +158,22 @@ export default function UploadFileReview({setTitle, config}) {
   useEffect(() => {
     if (spreadsheetReady) {
       setTimeout(async () => {
-        setMessage({
-          message:
-            'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+            color: 'blue',
+            show: true,
+          }),
+        );
+        // setMessage({
+        //   message:
+        //     'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+        //   color: 'blue',
+        //   show: true,
+        // });
         await delay(10000);
-        setMessage({message: '', color: '', show: false});
+        dispatch(setErrorMessage({message: '', color: '', show: false}));
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -168,7 +185,7 @@ export default function UploadFileReview({setTitle, config}) {
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      <Buttons path="/" button_description="Go back home" />
+      <Button path="/" button_description="Go back home" />
     </div>
   ) : workspaceData ? (
     <Container additional_class="full-height relative">
@@ -265,7 +282,7 @@ export default function UploadFileReview({setTitle, config}) {
             <div className="flex justify-between items-center">
               <p>Data</p>
               {ImageReview ? (
-                <Buttons
+                <Button
                   button_description="Hide image"
                   additional_styles="bg-white"
                   onClick={e => {
@@ -274,7 +291,7 @@ export default function UploadFileReview({setTitle, config}) {
                   }}
                 />
               ) : (
-                <Buttons
+                <Button
                   button_description="View uploaded picture below"
                   additional_styles="bg-white"
                   onClick={e => {
@@ -318,7 +335,7 @@ export default function UploadFileReview({setTitle, config}) {
               // eslint-disable-next-line react/jsx-key
               <div className="flex justify-between items-center">
                 <p>Data</p>
-                <Buttons
+                <Button
                   button_description="Hide image"
                   additional_styles="bg-white"
                   onClick={e => {
@@ -339,7 +356,7 @@ export default function UploadFileReview({setTitle, config}) {
       {document_summary?.body.page_count > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-            <Buttons
+            <Button
               title="Previous page"
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
@@ -353,13 +370,13 @@ export default function UploadFileReview({setTitle, config}) {
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
-            </Buttons>
+            </Button>
             <div
               title="Page number"
               className="bg-white border-2 p-3 cursor-default select-none rounded-lg text-center">
               <p className="w-5 h-5">{PageNo + 1}</p>
             </div>
-            <Buttons
+            <Button
               title="Next page"
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
@@ -375,12 +392,12 @@ export default function UploadFileReview({setTitle, config}) {
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
-            </Buttons>
+            </Button>
           </div>
         </div>
       )}
       <div className="flex space-x-3 py-4">
-        <Buttons
+        <Button
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
           onClick={saveDocumentHandler}
           disabled={
@@ -414,8 +431,8 @@ export default function UploadFileReview({setTitle, config}) {
             </svg>
             <p>Save changes</p>
           </div>
-        </Buttons>
-        <Buttons
+        </Button>
+        <Button
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
           onClick={e => {
             saveDocumentHandler(e, true);
@@ -451,11 +468,8 @@ export default function UploadFileReview({setTitle, config}) {
             </svg>
             <p>Save and exit</p>
           </div>
-        </Buttons>
+        </Button>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   ) : (
     <p>Loading...</p>

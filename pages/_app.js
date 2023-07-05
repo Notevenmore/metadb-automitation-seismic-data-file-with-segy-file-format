@@ -1,11 +1,12 @@
-import '../styles/globals.css';
-import {Provider} from 'react-redux';
 import Head from 'next/head';
 import {useRouter} from 'next/router';
-import {useState, useEffect} from 'react';
-import {store} from '../store';
+import {useEffect, useState} from 'react';
+import {Provider} from 'react-redux';
 import ProgressBar from '../components/progress_bar/progress_bar';
+import Toast from '../components/toast/toast';
 import {getLayoutIcon} from '../layout/getLayout';
+import {store} from '../store';
+import '../styles/globals.css';
 
 function MyApp({Component, pageProps}) {
   const getLayout = Component.getLayout || getLayoutIcon;
@@ -55,6 +56,7 @@ function MyApp({Component, pageProps}) {
         <meta name="description" content="MetaDB" />
         <link rel="icon" href="/metadb.svg" />
       </Head>
+      <Toast />
       {getLayout(<Component {...pageProps} setTitle={setPageTitle} />)}
     </Provider>
   );

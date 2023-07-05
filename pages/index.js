@@ -1,17 +1,21 @@
-import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
+import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import Buttons from '../components/buttons/buttons';
-import FileIcon from '../public/icons/file.svg';
-import {Divider} from '../components/float_dialog';
-import Container from '../components/container/container';
+import {Divider} from '../components/Divider';
+import Input from '../components/Input';
+import Button from '../components/button';
+import Container from '../components/container';
 import TableComponent from '../components/table/table';
-import draft from '../dummy-data/draft';
-import Input from '../components/input_form/input';
-import {datatypes} from '../config';
-import {setUploadDocumentSettings} from '../store/generalSlice';
 import {checkAfe} from '../components/utility_functions';
-import Toast from '../components/toast/toast';
+import {datatypes} from '../config';
+import draft from '../dummy-data/draft';
+import FileIcon from '../public/icons/file.svg';
+import {TokenExpired} from '../services/admin';
+import {
+  setErrorMessage,
+  setUploadDocumentSettings,
+} from '../store/generalSlice';
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
@@ -34,7 +38,6 @@ const HomeSection = ({config}) => {
     afe_number: '',
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
 
@@ -55,16 +58,21 @@ const HomeSection = ({config}) => {
       router.events.emit('routeChangeStart');
       try {
         settoggleOverlay(false);
-        setMessage({
-          message:
-            "Creating a new record... Please don't leave this page or click anything",
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              "Creating a new record... Please don't leave this page or click anything",
+            color: 'blue',
+            show: true,
+          }),
+        );
         await fetch(`${config[datatypes[dataType]]['afe']}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${
+              JSON.parse(parseCookies().user_data).access_token
+            }`,
           },
           body: JSON.stringify(newWorkspace),
         })
@@ -72,6 +80,7 @@ const HomeSection = ({config}) => {
             if (res.status === 200) {
               return res.statusText;
             } else {
+              TokenExpired(res.status);
               return res.text();
             }
           })
@@ -90,11 +99,13 @@ const HomeSection = ({config}) => {
             }
           });
         dispatch(setUploadDocumentSettings(newWorkspace));
-        setMessage({
-          message: 'Success. Redirecting to the next page...',
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: 'Success. Redirecting to the next page...',
+            color: 'blue',
+            show: true,
+          }),
+        );
         router.events.emit('routeChangeComplete');
         await delay(1500);
         router.push({
@@ -103,11 +114,13 @@ const HomeSection = ({config}) => {
         });
       } catch (error) {
         // Handle error and display error message
-        setMessage({
-          message: String(error),
-          color: 'red',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: String(error),
+            color: 'red',
+            show: true,
+          }),
+        );
       }
       router.events.emit('routeChangeComplete');
     }
@@ -172,13 +185,15 @@ const HomeSection = ({config}) => {
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
       setpopupMessage({message: '', color: ''});
@@ -197,7 +212,7 @@ const HomeSection = ({config}) => {
           <br></br>or drag and drop a document here to be uploaded
         </h1>
         <div className="flex justify-center">
-          <Buttons
+          <Button
             path={'/upload_file'}
             button_description="Choose file manually"
           />
@@ -212,7 +227,7 @@ const HomeSection = ({config}) => {
           <Divider additional_styles={'w-[284px]'} />
         </section>
         <section className="flex flex-row gap-x-3">
-          <Buttons
+          <Button
             path=""
             button_description="Make a new record"
             onClick={e => {
@@ -237,7 +252,7 @@ const HomeSection = ({config}) => {
             className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${
               toggleOverlay ? '' : '-translate-y-10 opacity-0'
             } transition-all`}>
-            <Buttons
+            <Button
               path=""
               additional_styles="absolute top-2 right-2 px-1 py-1 text-black"
               title="Cancel"
@@ -258,7 +273,7 @@ const HomeSection = ({config}) => {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </Buttons>
+            </Button>
             <h1 className="font-bold text-3xl">New record</h1>
             <hr />
             <p className="font-semibold">
@@ -305,7 +320,7 @@ const HomeSection = ({config}) => {
                       popupMessage.message
                         ? 'visible opacity-100'
                         : 'invsible opacity-0 -translate-x-2'
-                    } absolute ml-4 left-[100%] -translate-y-[50%] top-[50%] border-2 ${
+                    } absolute ml-4 left-full -translate-y-[50%] top-1/2 border-2 ${
                       popupMessage.color === 'red'
                         ? 'bg-red-100 border-red-500'
                         : 'bg-searchbg border-blue-500'
@@ -319,7 +334,7 @@ const HomeSection = ({config}) => {
                       popupMessage.message
                         ? 'visible opacity-100'
                         : 'invsible opacity-0 -translate-x-2'
-                    } absolute ml-3 left-[100%] -translate-y-[50%] top-[50%] border-2 rotate-45 h-2 w-2 ${
+                    } absolute ml-3 left-full -translate-y-[50%] top-1/2 border-2 rotate-45 h-2 w-2 ${
                       popupMessage.color === 'red'
                         ? 'bg-red-500 border-red-500'
                         : 'bg-blue-500 border-blue-500'
@@ -386,7 +401,7 @@ const HomeSection = ({config}) => {
                 />
               </div>
               <div className="space-x-2 flex">
-                <Buttons
+                <Button
                   type="submit"
                   button_description="Confirm"
                   disabled={
@@ -399,7 +414,7 @@ const HomeSection = ({config}) => {
                   additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
                   onClick={makenew}
                 />
-                <Buttons
+                <Button
                   button_description="Cancel"
                   onClick={e => {
                     e.preventDefault();
@@ -411,9 +426,6 @@ const HomeSection = ({config}) => {
           </div>
         </div>
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </section>
   );
 };

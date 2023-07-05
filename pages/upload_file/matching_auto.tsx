@@ -1,20 +1,20 @@
+import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import {useRouter} from 'next/router';
-import {PropsWithChildren} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
-import Buttons from '../../components/buttons/buttons';
-import Container from '../../components/container/container.js';
-import Input from '../../components/input_form/input';
-import {
-  HeaderTable,
-  HeaderDivider,
-} from '../../components/header_table/header_table';
-import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
-import {ImageEditor} from '../components/highlight_viewer';
+import {useDispatch, useSelector} from 'react-redux';
+import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
+import {ImageEditor} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
+import Button from '../../components/button';
+import Container from '../../components/container';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import Toast from '../../components/toast/toast';
+import {
+  setDocumentSummary,
+  setErrorMessage,
+  setReviewData,
+} from '../../store/generalSlice';
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -46,6 +46,10 @@ const uploadImage = async (
 ): Promise<UploadFileResponse> => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append(
+    'Authorization',
+    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
+  );
 
   var raw = JSON.stringify({
     base64str: imageBase64Str,
@@ -61,6 +65,7 @@ const uploadImage = async (
   try {
     const response = await fetch(
       `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/upload/base64`,
+
       requestOptions,
     );
     const result = await response.text();
@@ -84,6 +89,10 @@ const postScrapeAnnotate = async (
 ): Promise<ScrapeResponse> => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append(
+    'Authorization',
+    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
+  );
 
   var requestOptions: RequestInit = {
     method: 'GET',
@@ -316,7 +325,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -421,6 +429,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`,
               },
               body: JSON.stringify({
                 form_type: router.query?.form_type,
@@ -489,15 +500,17 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setLoading('');
           router.events.emit('routeChangeComplete');
           setTimeout(() => {
-            setMessage({
-              message:
-                'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-              color: 'blue',
-              show: true,
-            });
+            dispatch(
+              setErrorMessage({
+                message:
+                  'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+                color: 'blue',
+                show: true,
+              }),
+            );
           }, 3000);
           await delay(5000);
-          setMessage({message: '', color: '', show: false});
+          dispatch(setErrorMessage({message: '', color: '', show: false}));
         } catch (error) {
           setError(String(error));
           setLoading('');
@@ -575,7 +588,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             onChange={e => setValueForId(data.id, pageNo, e.target.value)}
             withSearch
           />
-          <Buttons
+          <Button
             additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
             title="Reset input"
             disabled={data.value ? false : true}
@@ -595,15 +608,11 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                 d="M6 18L18 6M6 6l12 12"
               />
             </svg>
-          </Buttons>
+          </Button>
         </div>
       </div>
     );
   };
-
-  // TODO HAVE NOT BEEN INTEGRATED YET
-  // TODO INTEGRATE THIS WORKFLOW TO THE MAIN APP.
-  // DONE
 
   return Loading ? (
     <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
@@ -617,7 +626,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         if the problem still persists by giving them the information below:
       </p>
       <Highlight className="html rounded-md border-2">{error}</Highlight>
-      <Buttons
+      <Button
         path=""
         button_description="Back"
         onClick={() => {
@@ -645,7 +654,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       {totalPageNo > 1 && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
-            <Buttons
+            <Button
               path=""
               title="Previous page"
               button_description=""
@@ -655,8 +664,8 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
-            </Buttons>
-            <Buttons
+            </Button>
+            <Button
               path=""
               title=""
               button_description=""
@@ -665,7 +674,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             <div>
               <p className="w-5 h-5">{pageNo}</p>
             </div>
-            <Buttons
+            <Button
               path=""
               title="Next page"
               button_description=""
@@ -675,12 +684,12 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
-            </Buttons>
+            </Button>
           </div>
         </div>
       )}
       <div className="flex items-center justify-center w-full py-4">
-        <Buttons
+        <Button
           button_description="View on sheets"
           path="/upload_file/review"
           query={formType}
@@ -691,9 +700,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           }}
         />
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 }

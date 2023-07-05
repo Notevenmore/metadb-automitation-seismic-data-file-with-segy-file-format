@@ -1,14 +1,19 @@
 import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
 import {useEffect, useRef, useState} from 'react';
 import {useDispatch} from 'react-redux';
-import Buttons from '../../components/buttons/buttons';
-import Container from '../../components/container/container.js';
-import Input from '../../components/input_form/input';
-import {storeFile, setUploadDocumentSettings} from '../../store/generalSlice';
-import Select from '../../public/icons/selection_tool.svg';
-import {datatypes} from '../../config';
+import Input from '../../components/Input';
+import Button from '../../components/button';
+import Container from '../../components/container';
 import {checkAfe} from '../../components/utility_functions';
-import Toast from '../../components/toast/toast';
+import {datatypes} from '../../config';
+import Select from '../../public/icons/selection_tool.svg';
+import {TokenExpired} from '../../services/admin';
+import {
+  setErrorMessage,
+  setUploadDocumentSettings,
+  storeFile,
+} from '../../store/generalSlice';
 import getFileType from '../../utils/filetype';
 
 export default function UploadFilePage({config, setTitle}) {
@@ -28,7 +33,6 @@ export default function UploadFilePage({config, setTitle}) {
     Method: '',
   });
   const [toggleOverlay, settoggleOverlay] = useState(false);
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -146,12 +150,14 @@ export default function UploadFilePage({config, setTitle}) {
       }
       settoggleOverlay(false);
       if (submit) {
-        setMessage({
-          message:
-            "Creating a new record... Please don't leave this page or click anything",
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message:
+              "Creating a new record... Please don't leave this page or click anything",
+            color: 'blue',
+            show: true,
+          }),
+        );
         if (
           fileUpload.length < 1 ||
           Object.values(UplSettings).some(x => {
@@ -166,6 +172,9 @@ export default function UploadFilePage({config, setTitle}) {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${
+                JSON.parse(parseCookies().user_data).access_token
+              }`,
             },
             body: JSON.stringify({
               afe_number: parseInt(UplSettings.afe_number),
@@ -178,17 +187,20 @@ export default function UploadFilePage({config, setTitle}) {
           },
         ).then(res => {
           if (res.status !== 200) {
+            TokenExpired(res.status);
             throw 'Failed to POST new record. Please try again.';
           }
           return res.text();
         });
         if (post_workspace === 'OK') {
-          setMessage({
-            message:
-              'Success. A new record has been created. Redirecting to the next page...',
-            color: 'blue',
-            show: true,
-          });
+          dispatch(
+            setErrorMessage({
+              message:
+                'Success. A new record has been created. Redirecting to the next page...',
+              color: 'blue',
+              show: true,
+            }),
+          );
           router.events.emit('routeChangeComplete');
           await delay(1000);
           router.push({
@@ -205,22 +217,26 @@ export default function UploadFilePage({config, setTitle}) {
             },
           });
         } else {
-          setMessage({
-            message:
-              'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
-            color: 'red',
-            show: true,
-          });
+          dispatch(
+            setErrorMessage({
+              message:
+                'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
+              color: 'red',
+              show: true,
+            }),
+          );
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed to create a new record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed to create a new record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
 
     router.events.emit('routeChangeComplete');
@@ -263,13 +279,15 @@ export default function UploadFilePage({config, setTitle}) {
         }
       }
     } catch (error) {
-      setMessage({
-        message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      });
+      dispatch(
+        setErrorMessage({
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
       setpopupMessage({message: '', color: ''});
@@ -313,7 +331,7 @@ export default function UploadFilePage({config, setTitle}) {
           <div className="w-full">
             <div>
               <div className="flex space-x-2 items-center justify-center">
-                <Buttons
+                <Button
                   path=""
                   additional_styles="bg-gray-300 hover:bg-gray-400/60 font-bold"
                   button_description="Choose a file"
@@ -326,13 +344,11 @@ export default function UploadFilePage({config, setTitle}) {
                 <div className="flex space-x-2 items-center justify-center pt-1">
                   <p className="">Uploaded file:</p>
                   <p className="underline">{fileUpload[0].name}</p>
-                  <Buttons
+                  <Button
                     path=""
                     additional_styles="px-1 py-1 bg-black/20 hover:bg-red-600 hover:text-white"
                     title="Remove file"
-                    onClick={e => {
-                      setFileUpload([]);
-                    }}>
+                    onClick={() => setFileUpload([])}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -346,7 +362,7 @@ export default function UploadFilePage({config, setTitle}) {
                         d="M6 18L18 6M6 6l12 12"
                       />
                     </svg>
-                  </Buttons>
+                  </Button>
                 </div>
               )}
               <p className="text-sm text-black/70 text-center pt-2">
@@ -500,7 +516,7 @@ export default function UploadFilePage({config, setTitle}) {
           <div
             id="workflow_type_container"
             className="flex space-x-3 overflow-auto">
-            <Buttons
+            <Button
               id="dropdown"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
@@ -531,8 +547,8 @@ export default function UploadFilePage({config, setTitle}) {
                   </p>
                 </section>
               </div>
-            </Buttons>
-            <Buttons
+            </Button>
+            <Button
               id="highlight"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
@@ -551,8 +567,8 @@ export default function UploadFilePage({config, setTitle}) {
                   </p>
                 </section>
               </div>
-            </Buttons>
-            <Buttons
+            </Button>
+            <Button
               id="dragdrop"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
@@ -583,8 +599,8 @@ export default function UploadFilePage({config, setTitle}) {
                   </p>
                 </section>
               </div>
-            </Buttons>
-            <Buttons
+            </Button>
+            <Button
               id="automatic"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
@@ -611,11 +627,11 @@ export default function UploadFilePage({config, setTitle}) {
                   </p>
                 </section>
               </div>
-            </Buttons>
+            </Button>
           </div>
         </div>
         <div className="flex flex-row gap-x-3 pt-3 pb-16">
-          <Buttons
+          <Button
             type="submit"
             path={
               fileUpload.length <= 1 ||
@@ -645,7 +661,7 @@ export default function UploadFilePage({config, setTitle}) {
                 : false
             }
           />
-          <Buttons
+          <Button
             type="submit"
             button_description="Cancel"
             path=""
@@ -668,7 +684,7 @@ export default function UploadFilePage({config, setTitle}) {
             className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${
               toggleOverlay ? '' : '-translate-y-10 opacity-0'
             } transition-all`}>
-            <Buttons
+            <Button
               path=""
               additional_styles="absolute top-2 right-2 px-1 py-1 text-black"
               title="Cancel"
@@ -686,7 +702,7 @@ export default function UploadFilePage({config, setTitle}) {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </Buttons>
+            </Button>
             <h1 className="font-bold text-3xl">Re-check the inputted data</h1>
             <hr />
             <p>
@@ -698,14 +714,14 @@ export default function UploadFilePage({config, setTitle}) {
               </strong>
             </p>
             <section className="flex w-full items-center justify-center space-x-2">
-              <Buttons
+              <Button
                 onClick={e => {
                   proceed(e, true);
                 }}
                 additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold">
                 Proceed
-              </Buttons>
-              <Buttons onClick={proceed}>Cancel</Buttons>
+              </Button>
+              <Button onClick={proceed}>Cancel</Button>
             </section>
           </div>
         </div>
@@ -737,9 +753,6 @@ export default function UploadFilePage({config, setTitle}) {
           </div>
         </div>
       )}
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 }

@@ -1,5 +1,5 @@
 import Styles from '../styles/Error.module.css';
-import Error from '../components/error/Error';
+import Error from '../components/error';
 
 export default function Custom500() {
   return (
@@ -7,8 +7,7 @@ export default function Custom500() {
       <Error
         code="500"
         description="Server Error"
-        text="Uh-uh something's wrong with the server. Refresh the page or come
-                back later."
+        text="Uh-uh something's wrong with the server. Refresh the page or come back later."
       />
     </div>
   );

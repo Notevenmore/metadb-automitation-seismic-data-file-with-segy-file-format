@@ -5,14 +5,14 @@ import {
   useEffect,
   useReducer,
 } from 'react';
+import {useScrollOffset} from '../HighlightViewer';
+import {draggableReducer} from './reducer';
 import {
   DraggableAct,
   DraggableAction,
   DraggableState,
   INITIAL_DRAGGABLE_STATE,
 } from './types';
-import {draggableReducer} from './reducer';
-import {useScrollOffset} from '../../pages/components/highlight_viewer';
 
 export type DraggableContextProps = {
   state: DraggableState;
