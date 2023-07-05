@@ -268,13 +268,9 @@ export default function MatchingGuided({config, setTitle}) {
         );
       }, 3000);
       await delay(5000);
-      setMessage(x => {
+      dispatch(setErrorMessage(x => {
         return {...x, show: false};
-      });
-      await delay(500);
-      setMessage(x => {
-        return {...x, show: false};
-      });
+      }));
       await delay(500);
       dispatch(setErrorMessage(x => {
         return {...x, message: '', color: ''};

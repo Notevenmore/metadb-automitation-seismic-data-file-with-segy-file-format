@@ -107,9 +107,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           }),
         );
         await delay(10000);
-        setMessage(x => {
+        dispatch(setErrorMessage(x => {
           return {...x, show: false};
-        });
+        }));
         await delay(300);
         dispatch(setErrorMessage(x => {
           return {...x, message: '', color: ''};
@@ -145,17 +145,17 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         router.events.emit('routeChangeComplete');
         if (triggerSave.includes('redirect')) {
           await delay(1000);
-          setMessage({
+          dispatch(setErrorMessage({
             message: 'Redirecting back to record list...',
             color: 'blue',
             show: true,
-          });
+          }));
           router.back();
         } else {
           await delay(3000);
-          setMessage(x => {
+          dispatch(setErrorMessage(x => {
             return {...x, show: false};
-          });
+          }));
           await delay(500);
           dispatch(setErrorMessage(x => {
             return {...x, message: '', color: ''};

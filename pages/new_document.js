@@ -64,17 +64,17 @@ export default function NewDocumentPage({setTitle, config}) {
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
-          setMessage({
+          dispatch(setErrorMessage({
             message: 'Redirecting to homepage...',
             color: 'blue',
             show: true,
-          });
+          }));
           router.push('/');
         } else {
           await delay(3000);
-          setMessage(x => {
+          dispatch(setErrorMessage(x => {
             return {...x, show: false};
-          });
+          }));
           await delay(500);
           dispatch(setErrorMessage(x => {
             return {...x, message: '', color: ''};
