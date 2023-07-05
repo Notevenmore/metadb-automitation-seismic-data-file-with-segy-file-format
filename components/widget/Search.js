@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -6,9 +7,8 @@ import {
   setSearchState,
   singleSearch,
 } from '../../store/searchSlice';
+import Input from '../Input';
 import Button from '../button';
-import Input from '../input_form/input';
-import Image from 'next/image';
 
 export default function SearchWidget() {
   const [expandSearch, setExpandSearch] = useState(false);

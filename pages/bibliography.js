@@ -1,13 +1,14 @@
-import {useState} from 'react';
-import Container from '../components/container';
-import Input from '../components/input_form/input';
-import TableComponent from '../components/table/table';
+import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import Image from 'next/image';
+import {useState} from 'react';
+import Input from '../components/Input';
+import Container from '../components/container';
+import TableComponent from '../components/table/table';
 
 const Bibliography = ({setTitle}) => {
   setTitle('Bibliography');
+
   const router = useRouter();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');

@@ -1,12 +1,12 @@
-import {useEffect, useState} from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import {getLayoutTop} from '../../layout/getLayout';
-import Container from '../../components/container';
-import {getProfiles, removeProfile} from '../../services/admin';
-import Input from '../../components/input_form/input';
+import Link from 'next/link';
+import {useEffect, useState} from 'react';
+import Input from '../../components/Input';
 import Button from '../../components/button';
+import Container from '../../components/container';
 import Toast from '../../components/toast/toast';
+import {getLayoutTop} from '../../layout/getLayout';
+import {getProfiles, removeProfile} from '../../services/admin';
 
 AdministratorPage.getLayout = getLayoutTop;
 
@@ -62,7 +62,7 @@ export default function AdministratorPage() {
           <div>
             <Input
               type="text"
-              additional_styles_input="h-[32px]"
+              additional_styles_input="h-8"
               placeholder="search user..."
               onChange={e => handleSearch(e)}
             />

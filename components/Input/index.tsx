@@ -12,7 +12,7 @@ interface InputProps extends React.ComponentProps<'input'> {
   additional_styles_menu_container?: string;
   additional_styles?: string;
   withSearch?: boolean;
-  setSelectedItem?;
+  setSelectedItem?: any;
 }
 
 const Input: React.FunctionComponent<InputProps> = ({
@@ -36,7 +36,7 @@ const Input: React.FunctionComponent<InputProps> = ({
   const selectorRef = useRef();
   const handleUnfocus = (e: {preventDefault: () => void}) => {
     e.preventDefault();
-    console.log(document.activeElement);
+
     // to close the dropdown items when the dropdown menu is clicked again
     if (document.activeElement === currentlyFocused) {
       (document.activeElement as HTMLElement).blur();
@@ -72,6 +72,7 @@ const Input: React.FunctionComponent<InputProps> = ({
       selector.value = selected;
       const event = new Event('input', {bubbles: true});
       const tracker = selector._valueTracker;
+
       if (tracker) {
         tracker.setValue(lastValue);
       }
@@ -106,7 +107,7 @@ const Input: React.FunctionComponent<InputProps> = ({
           className={twMerge(
             `rounded-md bg-gray-200 placeholder:text-gray-500
                          outline-none px-2 py-1.5 w-full hover:bg-gray-300
-                         focus:bg-gray-300 focus:outline-[2px] focus:outline-gray-400
+                         focus:bg-gray-300 focus:outline-2 focus:outline-gray-400
                          transition-all`,
             additional_styles_input,
           )}
@@ -117,7 +118,7 @@ const Input: React.FunctionComponent<InputProps> = ({
           tabIndex={0}
           className="group relative select-none w-full"
           onClick={handleUnfocus}
-          onBlur={e => {
+          onBlur={() => {
             setCurrentlyFocused(null);
             setDoSearch(null);
           }}>
@@ -126,7 +127,7 @@ const Input: React.FunctionComponent<InputProps> = ({
               `flex justify-between items-center rounded-md
                       bg-gray-200 placeholder:text-gray-500
                         outline-none px-2 py-1.5 w-full
-                      hover:bg-gray-300 focus:bg-gray-300 focus:outline-[2px]
+                      hover:bg-gray-300 focus:bg-gray-300 focus:outline-2
                       focus:outline-gray-400 transition-all`,
               additional_styles_input,
             )}>
@@ -153,7 +154,7 @@ const Input: React.FunctionComponent<InputProps> = ({
             className={twMerge(
               `${
                 doSearch ? 'block' : 'hidden'
-              } group-focus:block active:block z-[50] absolute bg-gray-200 shadow-lg drop-shadow-lg mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
+              } group-focus:block active:block z-50 absolute bg-gray-200 shadow-lg drop-shadow-lg mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
               additional_styles_menu_container,
             )}>
             {withSearch && dropdown_items.length > 0 && (

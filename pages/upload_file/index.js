@@ -1,17 +1,17 @@
 import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
 import {useEffect, useRef, useState} from 'react';
 import {useDispatch} from 'react-redux';
-import {parseCookies} from 'nookies';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
-import {storeFile, setUploadDocumentSettings} from '../../store/generalSlice';
-import Select from '../../public/icons/selection_tool.svg';
-import {datatypes} from '../../config';
-import {checkAfe} from '../../components/utility_functions';
 import Toast from '../../components/toast/toast';
-import getFileType from '../../utils/filetype';
+import {checkAfe} from '../../components/utility_functions';
+import {datatypes} from '../../config';
+import Select from '../../public/icons/selection_tool.svg';
 import {TokenExpired} from '../../services/admin';
+import {setUploadDocumentSettings, storeFile} from '../../store/generalSlice';
+import getFileType from '../../utils/filetype';
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();

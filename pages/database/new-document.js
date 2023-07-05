@@ -6,9 +6,9 @@ import {
   HeaderStatic,
   HeaderTable,
 } from '../../components/HeaderTable';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
 
 export default function NewDocumentPageDatabase() {
   const [detail, setDetail] = useState('');

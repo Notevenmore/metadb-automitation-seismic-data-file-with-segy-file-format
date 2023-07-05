@@ -1,10 +1,10 @@
 import {useState} from 'react';
+import Input from '../../components/Input';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
+import Toast from '../../components/toast/toast';
+import {defaultProfile} from '../../dummy-data/mime';
 import {getLayoutTop} from '../../layout/getLayout';
 import {addProfile} from '../../services/admin';
-import {defaultProfile} from '../../dummy-data/mime';
-import Toast from '../../components/toast/toast';
 
 AddNewUserPage.getLayout = getLayoutTop;
 

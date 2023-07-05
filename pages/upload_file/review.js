@@ -8,9 +8,9 @@ import {
   HeaderTable,
 } from '../../components/HeaderTable';
 import {ImageEditor} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
 import Sheets from '../../components/sheets/sheets';
 import Table from '../../components/table/table';
 import Toast from '../../components/toast/toast';

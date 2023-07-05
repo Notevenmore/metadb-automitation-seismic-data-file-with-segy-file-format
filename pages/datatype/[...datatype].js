@@ -1,17 +1,17 @@
 import Image from 'next/image';
-import {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
+import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useDispatch} from 'react-redux';
-import {parseCookies} from 'nookies';
-import Container from '../../components/container';
-import Input from '../../components/input_form/input';
-import TableComponent from '../../components/table/table';
+import Input from '../../components/Input';
 import Button from '../../components/button';
-import {setUploadDocumentSettings} from '../../store/generalSlice';
-import {checkAfe} from '../../components/utility_functions';
+import Container from '../../components/container';
+import TableComponent from '../../components/table/table';
 import Toast from '../../components/toast/toast';
+import {checkAfe} from '../../components/utility_functions';
 import {TokenExpired} from '../../services/admin';
+import {setUploadDocumentSettings} from '../../store/generalSlice';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
@@ -352,7 +352,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
               src="/icons/magnify.svg"
               width={20}
               height={20}
-              className="absolute top-[50%] right-3 translate-y-[-50%]"
+              className="absolute top-1/2 right-3 translate-y-[-50%]"
               alt="search"
             />
           </div>
@@ -413,7 +413,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           e.preventDefault;
           settoggleOverlay(true);
         }}>
-        <div className="flex items-center justify-center space-x-5 pl-[16px]">
+        <div className="flex items-center justify-center space-x-5 pl-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
