@@ -1,7 +1,13 @@
 import {configureStore} from '@reduxjs/toolkit';
-import generalReducer from './generalSlice';
-import searchReducer from './searchSlice';
-import userReducer from './userSlice';
+import generalReducer, { GeneralState } from './generalSlice';
+import searchReducer, { SearchState } from './searchSlice';
+import userReducer, { UserState } from './userSlice';
+
+export interface RootState {
+  general: GeneralState;
+  search: SearchState;
+  user: UserState;
+}
 
 const store = configureStore({
   reducer: {

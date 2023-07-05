@@ -1,6 +1,21 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 
-const initialState = {
+export interface SearchValue {
+  searchAll: string;
+  dataType: string;
+  dataClass: string;
+  subDataClassification: string;
+  type: string;
+  workingArea: string;
+  AFE: string;
+}
+
+export interface SearchState {
+  search: boolean;
+  value: SearchValue;
+}
+
+const initialState: SearchState = {
   search: false,
   value: {
     searchAll: '',
@@ -17,10 +32,10 @@ export const searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
-    applySearch: (state, action) => {
+    applySearch: (state, action: PayloadAction<SearchValue>) => {
       state.value = action.payload;
     },
-    singleSearch: (state, action) => {
+    singleSearch: (state, action: PayloadAction<string>) => {
       const newSearch = {
         ...state.value,
         searchAll: action.payload,
@@ -32,7 +47,7 @@ export const searchSlice = createSlice({
       }
       state.search = true;
     },
-    setSearchState: (state, action) => {
+    setSearchState: (state, action: PayloadAction<boolean>) => {
       state.search = action.payload;
     },
   },
