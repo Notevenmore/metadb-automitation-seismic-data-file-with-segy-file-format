@@ -7,7 +7,7 @@ import Mime from '../../dummy-data/mime';
 import MetaDB from '../../public/images/metadata3.png';
 import {logOut} from '../../store/userSlice';
 import {FloatDialog} from '../FloatDialog';
-import RoundImage from '../image/RoundImage';
+import RoundImage from '../RoundImage';
 
 export default function TopBar() {
   const user = useSelector(state => state.user.user);
@@ -65,7 +65,7 @@ export default function TopBar() {
           {...profileProps}>
           <RoundImage
             source={profile ? profile : '/images/unknown.jpg'}
-            size={{width: '30px'}}
+            width={30}
           />
         </FloatDialog>
       </div>

@@ -5,6 +5,9 @@ import Toast from '../../components/toast/toast';
 import {defaultProfile} from '../../dummy-data/mime';
 import {getLayoutTop} from '../../layout/getLayout';
 import {addProfile} from '../../services/admin';
+import Toast from '../../components/toast/toast';
+import { useDispatch } from 'react-redux';
+import { setErrorMessage } from '../../store/generalSlice';
 
 AddNewUserPage.getLayout = getLayoutTop;
 
@@ -32,6 +35,7 @@ export default function AddNewUserPage() {
     setDetail(prev => ({...prev, [name]: value}));
   };
 
+  const dispatch = useDispatch()
   const handleSubmit = async e => {
     e.preventDefault();
     const data = {
@@ -43,19 +47,32 @@ export default function AddNewUserPage() {
         console.log(res);
         if (res && res.response) {
           console.log(res.response.data.detail);
-          setMessage({
-            message: String(res),
-            color: 'red',
-            show: true,
-          });
+          dispatch(
+            setErrorMessage({
+              message: String(res),
+              color: 'red',
+              show: true,
+            }),
+          );
+          // setMessage({
+          //   message: String(res),
+          //   color: 'red',
+          //   show: true,
+          // });
           return;
         }
-
-        setMessage({
-          message: `Successfully created ${detail.userid} account.`,
-          color: 'blue',
-          show: true,
-        });
+        dispatch(
+          setErrorMessage({
+            message: `Successfully created ${detail.userid} account.`,
+            color: 'blue',
+            show: true,
+          }),
+        );
+        // setMessage({
+        //   message: `Successfully created ${detail.userid} account.`,
+        //   color: 'blue',
+        //   show: true,
+        // });
         setDetail({
           userid: '',
           type: 'Regular User',
@@ -65,12 +82,18 @@ export default function AddNewUserPage() {
         });
       },
       err => {
-        if (err.response.status === 409) {
-          setMessage({
+        if (err.response.status === 409) {dispatch(
+          setErrorMessage({
             message: String(err),
             color: 'red',
             show: true,
-          });
+          }),
+        );
+          // setMessage({
+          //   message: String(err),
+          //   color: 'red',
+          //   show: true,
+          // });
         }
       },
     );
@@ -144,9 +167,6 @@ export default function AddNewUserPage() {
           </button>
         </div>
       </form>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 }

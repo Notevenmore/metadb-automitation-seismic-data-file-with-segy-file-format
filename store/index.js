@@ -3,7 +3,7 @@ import generalReducer from './generalSlice';
 import searchReducer from './searchSlice';
 import userReducer from './userSlice';
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
     general: generalReducer,
     search: searchReducer,
@@ -14,3 +14,5 @@ export const store = configureStore({
       serializableCheck: false,
     }),
 });
+
+export {store}

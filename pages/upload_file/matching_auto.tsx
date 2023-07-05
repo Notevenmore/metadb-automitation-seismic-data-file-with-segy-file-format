@@ -11,7 +11,11 @@ import Container from '../../components/container';
 import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import {setDocumentSummary, setReviewData} from '../../store/generalSlice';
+import {
+  setDocumentSummary,
+  setErrorMessage,
+  setReviewData,
+} from '../../store/generalSlice';
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -492,15 +496,17 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           }
           setLoading('');
           setTimeout(() => {
-            setMessage({
-              message:
-                'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-              color: 'blue',
-              show: true,
-            });
+            dispatch(
+              setErrorMessage({
+                message:
+                  'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+                color: 'blue',
+                show: true,
+              }),
+            );
           }, 3000);
           await delay(5000);
-          setMessage({message: '', color: '', show: false});
+          dispatch(setErrorMessage({message: '', color: '', show: false}));
         } catch (error) {
           setError(String(error));
         }
@@ -688,9 +694,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           }}
         />
       </div>
-      <Toast message={Message} setmessage={setMessage}>
-        {Message.message}
-      </Toast>
     </Container>
   );
 }
