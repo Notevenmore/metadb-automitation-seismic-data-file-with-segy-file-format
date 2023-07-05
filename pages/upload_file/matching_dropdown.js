@@ -303,8 +303,9 @@ export default function MatchReview({config, setTitle}) {
   useEffect(() => {
     setTitle('Data Matching | Dropdown');
     const init = async () => {
-      router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
+      await delay(500);
+      router.events.emit('routeChangeStart');
       if (files.length < 1) {
         router.push('/upload_file');
         return;
@@ -352,18 +353,19 @@ export default function MatchReview({config, setTitle}) {
               headers: {
                 'Content-Type': 'application/json',
               },
-              // TODO change form_type to be dynamic later
-              // FINISHED
               body: JSON.stringify({
-                form_type: router.query?.form_type || 'basin',
+                form_type: router.query?.form_type,
               }),
             },
           )
             .then(response => {
               return response.json();
             })
-            .catch(error => {
-              throw error;
+            .then(response => {
+              if (response.status !== 200) {
+                throw response.response;
+              }
+              return response;
             });
 
           setLoading(
@@ -385,6 +387,7 @@ export default function MatchReview({config, setTitle}) {
           setLoading('');
         } catch (error) {
           setError(String(error));
+          setLoading('');
         }
       }
       router.events.emit('routeChangeComplete');
@@ -398,10 +401,18 @@ export default function MatchReview({config, setTitle}) {
         });
       }, 3000);
       await delay(5000);
-      setMessage({message: '', color: '', show: false});
+      setMessage(x => {
+        return {...x, show: false};
+      });
+      await delay(500);
+      setMessage(x => {
+        return {...x, message: '', color: ''};
+      });
     };
-    init();
-  }, [files]);
+    if (router.isReady) {
+      init();
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
