@@ -403,7 +403,7 @@ export default function MatchReview({config, setTitle}) {
       }
       router.events.emit('routeChangeComplete');
       setLoading('');
-      setTimeout(() => {
+      setTimeout(async () => {
         dispatch(
           setErrorMessage({
             message:
@@ -412,15 +412,11 @@ export default function MatchReview({config, setTitle}) {
             show: true,
           }),
         );
+        await delay(5000);
+        dispatch(setErrorMessage({show: false}));
+        await delay(500);
+        dispatch(setErrorMessage({message: '', color: ''}));
       }, 3000);
-      await delay(5000);
-      dispatch(setErrorMessage(x => {
-        return {...x, show: false};
-      }));
-      await delay(500);
-      dispatch(setErrorMessage(x => {
-        return {...x, message: '', color: ''};
-      }));
     };
     if (router.isReady) {
       init();

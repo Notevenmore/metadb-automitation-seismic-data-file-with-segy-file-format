@@ -499,7 +499,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           }
           setLoading('');
           router.events.emit('routeChangeComplete');
-          setTimeout(() => {
+          setTimeout(async () => {
             dispatch(
               setErrorMessage({
                 message:
@@ -508,9 +508,11 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                 show: true,
               }),
             );
+            await delay(5000);
+            dispatch(setErrorMessage({show: false}));
+            await delay(500);
+            dispatch(setErrorMessage({message: '', color: ''}));
           }, 3000);
-          await delay(5000);
-          dispatch(setErrorMessage({message: '', color: '', show: false}));
         } catch (error) {
           setError(String(error));
           setLoading('');

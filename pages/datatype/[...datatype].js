@@ -255,7 +255,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         },
       }).then(res => {
         if (res.status !== 200) {
-          TokenExpired(status);
+          TokenExpired(res.status);
           throw `Response returned with status code ${res.status}: ${res.statusText}`;
         }
       });
@@ -266,7 +266,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       init();
       router.events.emit('routeChangeComplete');
       await delay(2000);
-      dispatch(setErrorMessage({message: '', color: '', show: false}));
+      dispatch(setErrorMessage({show: false}));
+      await delay(500);
+      dispatch(setErrorMessage({message: '', color: ''}));
     } catch (error) {
       dispatch(
         setErrorMessage({message: String(error), color: 'red', show: true}),

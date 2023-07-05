@@ -150,17 +150,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           router.back();
         } else {
           await delay(3000);
-          dispatch(
-            setErrorMessage(x => {
-              return {...x, show: false};
-            }),
-          );
+          dispatch(setErrorMessage({show: false}));
           await delay(500);
-          dispatch(
-            setErrorMessage(x => {
-              return {...x, message: '', color: ''};
-            }),
-          );
+          dispatch(setErrorMessage({message: '', color: ''}));
         }
       }
     } catch (error) {

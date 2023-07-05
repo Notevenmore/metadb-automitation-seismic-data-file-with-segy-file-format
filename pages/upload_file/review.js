@@ -138,7 +138,9 @@ export default function UploadFileReview({setTitle, config}) {
           router.push('/');
         } else {
           await delay(3000);
-          dispatch(setErrorMessage({message: '', color: '', show: false}));
+          dispatch(setErrorMessage({show: false}));
+          await delay(500);
+          dispatch(setErrorMessage({message: '', color: ''}));
         }
       }
     } catch (error) {
@@ -161,7 +163,7 @@ export default function UploadFileReview({setTitle, config}) {
         dispatch(
           setErrorMessage({
             message:
-              'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+              'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
             color: 'blue',
             show: true,
           }),
@@ -173,7 +175,9 @@ export default function UploadFileReview({setTitle, config}) {
         //   show: true,
         // });
         await delay(10000);
-        dispatch(setErrorMessage({message: '', color: '', show: false}));
+        dispatch(setErrorMessage({show: false}));
+        await delay(500);
+        dispatch(setErrorMessage({message: '', color: ''}));
       }, 3000);
     }
   }, [spreadsheetReady]);

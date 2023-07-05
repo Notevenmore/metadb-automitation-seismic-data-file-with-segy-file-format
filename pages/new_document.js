@@ -64,21 +64,19 @@ export default function NewDocumentPage({setTitle, config}) {
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
-          dispatch(setErrorMessage({
-            message: 'Redirecting to homepage...',
-            color: 'blue',
-            show: true,
-          }));
+          dispatch(
+            setErrorMessage({
+              message: 'Redirecting to homepage...',
+              color: 'blue',
+              show: true,
+            }),
+          );
           router.push('/');
         } else {
           await delay(3000);
-          dispatch(setErrorMessage(x => {
-            return {...x, show: false};
-          }));
+          dispatch(setErrorMessage({show: false}));
           await delay(500);
-          dispatch(setErrorMessage(x => {
-            return {...x, message: '', color: ''};
-          }));
+          dispatch(setErrorMessage({message: '', color: ''}));
         }
       }
     } catch (error) {
@@ -101,13 +99,15 @@ export default function NewDocumentPage({setTitle, config}) {
         dispatch(
           setErrorMessage({
             message:
-              'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+              'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
             color: 'blue',
             show: true,
           }),
         );
         await delay(10000);
-        dispatch(setErrorMessage({message: '', color: '', show: false}));
+        dispatch(setErrorMessage({show: false}));
+        await delay(500);
+        dispatch(setErrorMessage({message: '', color: ''}));
       }, 3000);
     }
   }, [spreadsheetReady]);
