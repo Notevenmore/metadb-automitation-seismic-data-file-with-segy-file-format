@@ -8,7 +8,6 @@ import {ImageEditor, Tuple4} from '../../components/HighlightViewer';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import {
@@ -132,11 +131,6 @@ export default function MatchingGuided({config, setTitle}) {
 
   // utility states
   const [loading, setLoading] = useState('');
-  const [message, setMessage] = useState({
-    message: '',
-    color: '',
-    show: false,
-  });
   const [error, setError] = useState('');
 
   // @ts-ignore

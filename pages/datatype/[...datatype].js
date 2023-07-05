@@ -8,13 +8,12 @@ import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
+import {checkAfe} from '../../components/utility_functions';
+import {TokenExpired} from '../../services/admin';
 import {
   setErrorMessage,
   setUploadDocumentSettings,
 } from '../../store/generalSlice';
-import {checkAfe} from '../../components/utility_functions';
-import Toast from '../../components/toast/toast';
-import {TokenExpired} from '../../services/admin';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
@@ -29,7 +28,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     afe_number: '',
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
 

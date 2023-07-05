@@ -4,18 +4,15 @@ import {useEffect, useState} from 'react';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Toast from '../../components/toast/toast';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfiles, removeProfile} from '../../services/admin';
-import { setErrorMessage } from '../../store/generalSlice';
+import {setErrorMessage} from '../../store/generalSlice';
 
 AdministratorPage.getLayout = getLayoutTop;
 
 export default function AdministratorPage() {
   const [list, setList] = useState([]);
   const [filteredList, setFilteredList] = useState(list);
-
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
 
   const handleProfiles = async () => {
     const res = await getProfiles();
@@ -32,7 +29,8 @@ export default function AdministratorPage() {
   const handleRemove = async userId => {
     await removeProfile(userId).then(
       () => {
-        handleProfiles();dispatch(
+        handleProfiles();
+        dispatch(
           setErrorMessage({
             message: `${userId} acount successfully deleted.`,
             color: 'blue',
@@ -40,13 +38,14 @@ export default function AdministratorPage() {
           }),
         );
       },
-      err => {dispatch(
-        setErrorMessage({
+      err => {
+        dispatch(
+          setErrorMessage({
             message: String(err),
             color: 'red',
             show: true,
-        }),
-      );
+          }),
+        );
       },
     );
   };

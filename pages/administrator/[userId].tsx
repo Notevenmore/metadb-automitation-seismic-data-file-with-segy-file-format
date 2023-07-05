@@ -2,12 +2,10 @@ import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import Input from '../../components/Input';
 import Container from '../../components/container';
-import Toast from '../../components/toast/toast';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfile, removeProfile, updateProfile} from '../../services/admin';
-import Toast from '../../components/toast/toast';
-import { useDispatch } from 'react-redux';
-import { setErrorMessage } from '../../store/generalSlice';
+import {useDispatch} from 'react-redux';
+import {setErrorMessage} from '../../store/generalSlice';
 
 UserPage.getLayout = getLayoutTop;
 
@@ -21,11 +19,10 @@ interface Detail {
 
 export default function UserPage() {
   const [detail, setDetail] = useState<Detail>();
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const router = useRouter();
   const {userId} = router.query;
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const handleProfile = async () => {
     const res = await getProfile(userId).then(
       res => {
@@ -69,13 +66,14 @@ export default function UserPage() {
           }),
         );
       },
-      err => {dispatch(
-        setErrorMessage({
-          message: String(err),
-          color: 'red',
-          show: true,
-        }),
-      );
+      err => {
+        dispatch(
+          setErrorMessage({
+            message: String(err),
+            color: 'red',
+            show: true,
+          }),
+        );
       },
     );
   };

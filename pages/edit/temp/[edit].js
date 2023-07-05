@@ -6,13 +6,11 @@ import Button from '../../../components/button';
 import Container from '../../../components/container';
 import Sheets from '../../../components/sheets/sheets';
 import TableComponent from '../../../components/table/table';
-import Toast from '../../../components/toast/toast';
 import {
   downloadWorkspace,
   init_data,
   saveDocument,
 } from '../../../components/utility_functions';
-import Toast from '../../../components/toast/toast';
 import {useDispatch} from 'react-redux';
 import {setErrorMessage} from '../../../store/generalSlice';
 

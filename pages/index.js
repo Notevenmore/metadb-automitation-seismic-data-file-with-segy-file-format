@@ -7,13 +7,15 @@ import Input from '../components/Input';
 import Button from '../components/button';
 import Container from '../components/container';
 import TableComponent from '../components/table/table';
-import Toast from '../components/toast/toast';
 import {checkAfe} from '../components/utility_functions';
 import {datatypes} from '../config';
 import draft from '../dummy-data/draft';
 import FileIcon from '../public/icons/file.svg';
 import {TokenExpired} from '../services/admin';
-import {setErrorMessage, setUploadDocumentSettings} from '../store/generalSlice';
+import {
+  setErrorMessage,
+  setUploadDocumentSettings,
+} from '../store/generalSlice';
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
@@ -36,7 +38,6 @@ const HomeSection = ({config}) => {
     afe_number: '',
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
 

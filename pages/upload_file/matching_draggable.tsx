@@ -11,7 +11,6 @@ import Container from '../../components/container';
 import {DraggableBox, DroppableBox} from '../../components/draggable/component';
 import {DraggableProvider} from '../../components/draggable/provider';
 import {Tuple2} from '../../components/draggable/types';
-import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import {
@@ -386,7 +385,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const imageRef = useRef();
   const {dim: naturalDim, reload: naturalReload} = useNaturalImageDim(imageRef);
   const {dim: actualDim, reload: actualReload} = useElementDim(imageRef);
