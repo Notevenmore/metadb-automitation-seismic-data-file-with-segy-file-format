@@ -1,19 +1,18 @@
 import {useRouter} from 'next/router';
-import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   HeaderDivider,
   HeaderInput,
   HeaderTable,
 } from '../components/HeaderTable';
+import Input from '../components/Input';
 import Button from '../components/button';
 import Container from '../components/container';
-import Input from '../components/input_form/input';
 import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
-import Toast from '../components/toast/toast';
 import {saveDocument} from '../components/utility_functions';
-import { setErrorMessage } from '../store/generalSlice';
+import {setErrorMessage} from '../store/generalSlice';
 
 export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
@@ -52,27 +51,30 @@ export default function NewDocumentPage({setTitle, config}) {
         spreadsheetID,
         workspaceData,
         setMessage,
-        dispatch
+        dispatch,
       );
       if (save_result.success) {
-
-        dispatch(setErrorMessage({
-          message: 'Record successfully saved',
-          color: 'blue',
-          show: true,
-        }))
-          router.events.emit('routeChangeComplete');
+        dispatch(
+          setErrorMessage({
+            message: 'Record successfully saved',
+            color: 'blue',
+            show: true,
+          }),
+        );
+        router.events.emit('routeChangeComplete');
         await delay(3000);
         dispatch(setErrorMessage({message: '', color: '', show: false}));
       }
     } catch (error) {
-      dispatch(setErrorMessage({
-        message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      }));
+      dispatch(
+        setErrorMessage({
+          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -80,15 +82,16 @@ export default function NewDocumentPage({setTitle, config}) {
   useEffect(() => {
     if (spreadsheetReady) {
       setTimeout(async () => {
-        dispatch(setErrorMessage({
-          message:
-            'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-          color: 'blue',
-          show: true,
-        }));
+        dispatch(
+          setErrorMessage({
+            message:
+              'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+            color: 'blue',
+            show: true,
+          }),
+        );
         await delay(10000);
         dispatch(setErrorMessage({message: '', color: '', show: false}));
-
       }, 3000);
     }
   }, [spreadsheetReady]);

@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import Button from '../components/button';
 import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
-import Input from '../components/input_form/input';
+import Input from '../components/Input';
 import Container from '../components/container';
 
 const DocEditor = () => {

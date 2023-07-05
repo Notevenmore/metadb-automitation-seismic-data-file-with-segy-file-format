@@ -1,21 +1,18 @@
-import {useEffect, useState} from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import {getLayoutTop} from '../../layout/getLayout';
-import Container from '../../components/container';
-import {getProfiles, removeProfile} from '../../services/admin';
-import Input from '../../components/input_form/input';
+import Link from 'next/link';
+import {useEffect, useState} from 'react';
+import Input from '../../components/Input';
 import Button from '../../components/button';
-import Toast from '../../components/toast/toast';
-import { setErrorMessage } from '../../store/generalSlice';
+import Container from '../../components/container';
+import {getLayoutTop} from '../../layout/getLayout';
+import {getProfiles, removeProfile} from '../../services/admin';
+import {setErrorMessage} from '../../store/generalSlice';
 
 AdministratorPage.getLayout = getLayoutTop;
 
 export default function AdministratorPage() {
   const [list, setList] = useState([]);
   const [filteredList, setFilteredList] = useState(list);
-
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
 
   const handleProfiles = async () => {
     const res = await getProfiles();
@@ -32,7 +29,8 @@ export default function AdministratorPage() {
   const handleRemove = async userId => {
     await removeProfile(userId).then(
       () => {
-        handleProfiles();dispatch(
+        handleProfiles();
+        dispatch(
           setErrorMessage({
             message: `${userId} acount successfully deleted.`,
             color: 'blue',
@@ -40,13 +38,14 @@ export default function AdministratorPage() {
           }),
         );
       },
-      err => {dispatch(
-        setErrorMessage({
+      err => {
+        dispatch(
+          setErrorMessage({
             message: String(err),
             color: 'red',
             show: true,
-        }),
-      );
+          }),
+        );
       },
     );
   };
@@ -65,7 +64,7 @@ export default function AdministratorPage() {
           <div>
             <Input
               type="text"
-              additional_styles_input="h-[32px]"
+              additional_styles_input="h-8"
               placeholder="search user..."
               onChange={e => handleSearch(e)}
             />

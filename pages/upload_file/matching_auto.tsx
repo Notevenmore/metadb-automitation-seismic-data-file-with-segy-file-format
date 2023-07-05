@@ -5,10 +5,9 @@ import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {ImageEditor} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
-import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import {
@@ -326,7 +325,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState<string>('');
   const [error, setError] = useState<string>('');
 

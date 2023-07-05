@@ -1,13 +1,13 @@
 import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
 import {useEffect, useRef, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {ImageEditor} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
-import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import {
@@ -15,7 +15,6 @@ import {
   setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
-import {parseCookies} from 'nookies';
 
 function uuidv4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -259,7 +258,6 @@ export default function MatchReview({config, setTitle}) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState('');
   const [error, setError] = useState('');
 

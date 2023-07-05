@@ -1,11 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
+import ReactMarkdown from 'react-markdown';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import nightOwl from 'react-syntax-highlighter/dist/cjs/styles/hljs/night-owl';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
-import ReactMarkdown from 'react-markdown';
+import Input from '../../components/Input';
 import Button from '../../components/button';
-import Input from '../../components/input_form/input';
 import data from '../../dummy-data/help_editor_data';
 
 const Editor = () => {

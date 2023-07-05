@@ -1,6 +1,6 @@
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
+import Input from '../../components/Input';
 
 export default function Database() {
   const additional_styles_label = 'w-[20%]';
@@ -11,7 +11,7 @@ export default function Database() {
       <form
         className="flex flex-col items-center justify-center h-full w-full gap-y-3"
         onSubmit={() => console.log('submit')}>
-        <div className="w-full text-[12px] lg:w-[710px] lg:text-[16px] flex flex-col gap-y-3">
+        <div className="w-full text-xs lg:w-[710px] lg:text-base flex flex-col gap-y-3">
           <Input
             label="Connection method"
             label_loc="beside"
