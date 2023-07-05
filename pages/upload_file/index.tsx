@@ -313,6 +313,7 @@ export default function UploadFilePage({config, setTitle}) {
             <div>
               <div className="flex space-x-2 items-center justify-center">
                 <Button
+                  type="button"
                   path=""
                   additional_styles="bg-gray-300 hover:bg-gray-400/60 font-bold"
                   button_description="Choose a file"
