@@ -1,6 +1,6 @@
 import {useRouter} from 'next/router';
 import {parseCookies} from 'nookies';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
@@ -11,6 +11,7 @@ import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
+import CloseThin from '../../public/icons/close-thin.svg';
 import {
   setDocumentSummary,
   setErrorMessage,
@@ -329,6 +330,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [awaitingUpdate, setAwaitingUpdate] = useState(false);
 
   // @ts-ignore
   const files: FileList = useSelector(state => state.general.file);
@@ -338,11 +340,14 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
-  const setDocId = (newDocId: string) => {
-    if (docId === null) {
-      _setDocId(_ => newDocId);
-    }
-  };
+  const setDocId = useCallback((newDocId: string) => {
+    _setDocId(id => {
+      if (id === null) {
+        return newDocId;
+      }
+      return id;
+    });
+  }, [_setDocId]);
 
   const nextPage = () => {
     if (pageNo < totalPageNo) {
@@ -361,7 +366,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       }
     };
     onPageChange();
-  }, [pageNo]);
+  }, [docId, pageNo]);
 
   const prevPage = () => {
     if (pageNo > 1) {
@@ -373,7 +378,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.query.form_type) {
       setformType(String(router.query.form_type));
     }
-  }, [router]);
+  }, [router, setformType]);
 
   const delay = delay_amount_ms =>
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
@@ -466,6 +471,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setState(temp_obj);
 
           setLoading('Awaiting state update...');
+          setAwaitingUpdate(true);
           // continue to the useeffect hook directly below this one
         } catch (error) {
           setError(String(error));
@@ -473,27 +479,37 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       }
     };
     init();
-  }, [files]);
+  }, [config.services.sheets, dispatch, files, pageNo, router, setDocId, setTitle, setLoading, setAwaitingUpdate]);
 
   // continue here to ensure that the state has been updated based on the
   // requested data type before proceeding to do any matching prediction tasks
   useEffect(() => {
-    if (state?.length > 0 && Loading === 'Awaiting state update...') {
-      const predict_matches = async () => {
-        try {
-          for (let pageNo = 1; pageNo <= totalPageNo; pageNo++) {
-            setLoading(
-              `Predicting matches for page ${pageNo}, this may take a while...`,
-            );
-            const autoFillResponse = await fetchAutoFill(docId, pageNo);
+    setAwaitingUpdate(_awaitingUpdate => {
+      if (state?.length > 0 && _awaitingUpdate) {
+
+        let completed = 0;
+        setLoading(`Starting prediction for ${totalPageNo} pages. This may take a while...`);
+
+        const promises: Promise<AutoFillResponse>[] = [];
+        for (let pageNo = 1; pageNo <= totalPageNo; pageNo++) {
+          const autoFill = fetchAutoFill(docId, pageNo);
+          promises.push(autoFill);
+          autoFill.then((autoFillResponse) => {
             const _pairs = autoFillResponse.body?.pairs;
             console.log(_pairs);
             if (!_pairs) {
               throw 'Something went wrong while generating data pairs. autoFillResponse returned null.';
             }
+            completed++;
+            setLoading(
+              `Matches for page ${pageNo} predicted. Progress: ${completed}/${totalPageNo} pages completed...`,
+            );
             const pairs: Map<string, string> = new Map(Object.entries(_pairs));
             setPairs(pairs, pageNo);
-          }
+          })
+        }
+
+        Promise.all(promises).then(async () => {
           setLoading('');
           setTimeout(() => {
             dispatch(
@@ -507,13 +523,14 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           }, 3000);
           await delay(5000);
           dispatch(setErrorMessage({message: '', color: '', show: false}));
-        } catch (error) {
-          setError(String(error));
-        }
-      };
-      predict_matches();
-    }
-  }, [state, Loading]);
+        }).catch((err) => {
+          setError(String(err));
+        });
+        return false;
+      }
+      return _awaitingUpdate;
+    })
+  }, [state, dispatch, totalPageNo, docId, setAwaitingUpdate]);
 
   const setValueForId = (id: number, pageNo: number, value: string) => {
     setState(state => {
@@ -589,19 +606,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             onClick={() => {
               setValueForId(data.id, pageNo, '');
             }}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <CloseThin className="w-5 h-5" />
           </Button>
         </div>
       </div>
