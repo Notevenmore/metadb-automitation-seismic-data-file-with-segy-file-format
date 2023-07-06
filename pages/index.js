@@ -3,17 +3,19 @@ import {parseCookies} from 'nookies';
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Divider} from '../components/Divider';
+import Input from '../components/Input';
 import Button from '../components/button';
 import Container from '../components/container';
-import Input from '../components/input_form/input';
 import TableComponent from '../components/table/table';
-import Toast from '../components/toast/toast';
 import {checkAfe} from '../components/utility_functions';
 import {datatypes} from '../config';
 import draft from '../dummy-data/draft';
 import FileIcon from '../public/icons/file.svg';
 import {TokenExpired} from '../services/admin';
-import {setErrorMessage, setUploadDocumentSettings} from '../store/generalSlice';
+import {
+  setErrorMessage,
+  setUploadDocumentSettings,
+} from '../store/generalSlice';
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
@@ -36,7 +38,6 @@ const HomeSection = ({config}) => {
     afe_number: '',
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
 
@@ -98,13 +99,19 @@ const HomeSection = ({config}) => {
             }
           });
         dispatch(setUploadDocumentSettings(newWorkspace));
-        dispatch(
-          setErrorMessage({
-            message: 'Success. Redirecting to the next page...',
-            color: 'blue',
-            show: true,
-          }),
-        );
+        setTimeout(async () => {
+          dispatch(
+            setErrorMessage({
+              message: 'Success. Redirecting to the next page...',
+              color: 'blue',
+              show: true,
+            }),
+          );
+          await delay(1500);
+          dispatch(setErrorMessage({show: false}));
+          await delay(500);
+          dispatch(setErrorMessage({message: '', color: ''}));
+        }, 0);
         router.events.emit('routeChangeComplete');
         await delay(1500);
         router.push({
@@ -134,12 +141,15 @@ const HomeSection = ({config}) => {
     }
     settoggleOverlay(false);
     setdataType('');
-    setnewWorkspace({
-      workspace_name: '',
-      kkks_name: '',
-      working_area: '',
-      afe_number: '',
-      submission_type: '',
+    setnewWorkspace(x => {
+      return {
+        ...x,
+        workspace_name: '',
+        kkks_name: '',
+        working_area: '',
+        afe_number: '',
+        submission_type: '',
+      };
     });
     setpopupMessage({message: '', color: ''});
   };
@@ -316,7 +326,7 @@ const HomeSection = ({config}) => {
                       popupMessage.message
                         ? 'visible opacity-100'
                         : 'invsible opacity-0 -translate-x-2'
-                    } absolute ml-4 left-[100%] -translate-y-[50%] top-[50%] border-2 ${
+                    } absolute ml-4 left-full -translate-y-[50%] top-1/2 border-2 ${
                       popupMessage.color === 'red'
                         ? 'bg-red-100 border-red-500'
                         : 'bg-searchbg border-blue-500'
@@ -330,7 +340,7 @@ const HomeSection = ({config}) => {
                       popupMessage.message
                         ? 'visible opacity-100'
                         : 'invsible opacity-0 -translate-x-2'
-                    } absolute ml-3 left-[100%] -translate-y-[50%] top-[50%] border-2 rotate-45 h-2 w-2 ${
+                    } absolute ml-3 left-full -translate-y-[50%] top-1/2 border-2 rotate-45 h-2 w-2 ${
                       popupMessage.color === 'red'
                         ? 'bg-red-500 border-red-500'
                         : 'bg-blue-500 border-blue-500'

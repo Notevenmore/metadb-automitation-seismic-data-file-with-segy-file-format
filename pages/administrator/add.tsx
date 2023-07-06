@@ -1,12 +1,11 @@
 import {useState} from 'react';
+import {useDispatch} from 'react-redux';
+import Input from '../../components/Input';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
+import {defaultProfile} from '../../dummy-data/mime';
 import {getLayoutTop} from '../../layout/getLayout';
 import {addProfile} from '../../services/admin';
-import {defaultProfile} from '../../dummy-data/mime';
-import Toast from '../../components/toast/toast';
-import { useDispatch } from 'react-redux';
-import { setErrorMessage } from '../../store/generalSlice';
+import {setErrorMessage} from '../../store/generalSlice';
 
 AddNewUserPage.getLayout = getLayoutTop;
 
@@ -27,14 +26,13 @@ export default function AddNewUserPage() {
     affiliation: '',
     password: '',
   });
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
 
   const handleChange = e => {
     const {name, value} = e.target;
     setDetail(prev => ({...prev, [name]: value}));
   };
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const handleSubmit = async e => {
     e.preventDefault();
     const data = {
@@ -81,13 +79,14 @@ export default function AddNewUserPage() {
         });
       },
       err => {
-        if (err.response.status === 409) {dispatch(
-          setErrorMessage({
-            message: String(err),
-            color: 'red',
-            show: true,
-          }),
-        );
+        if (err.response.status === 409) {
+          dispatch(
+            setErrorMessage({
+              message: String(err),
+              color: 'red',
+              show: true,
+            }),
+          );
           // setMessage({
           //   message: String(err),
           //   color: 'red',

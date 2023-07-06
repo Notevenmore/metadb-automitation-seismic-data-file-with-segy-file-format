@@ -1,24 +1,23 @@
-import {useRouter} from 'next/router';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import { useRouter } from 'next/router';
+import { parseCookies } from 'nookies';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Highlight from 'react-highlight';
-import {useDispatch, useSelector} from 'react-redux';
-import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
-import {ImageEditor} from '../../components/HighlightViewer';
+import { useDispatch, useSelector } from 'react-redux';
+import { HeaderDivider, HeaderTable } from '../../components/HeaderTable';
+import { ImageEditor } from '../../components/HighlightViewer';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
-import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
+import { RootState } from '../../store';
 import {
   FileListType,
   setDocumentSummary,
   setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
-import {parseCookies} from 'nookies';
-import { RootState } from '../../store';
 
 function uuidv4() {
   // @ts-ignore dosa! dosa! dosa! dosa! dosa! dosa! dosa! dosa! dosa!
@@ -303,7 +302,6 @@ export default function MatchReview({config, setTitle}) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState('');
   const [error, setError] = useState('');
 
@@ -361,8 +359,9 @@ export default function MatchReview({config, setTitle}) {
   useEffect(() => {
     setTitle('Data Matching | Dropdown');
     const init = async () => {
-      router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
+      await delay(500);
+      router.events.emit('routeChangeStart');
       if (files.length < 1) {
         router.push('/upload_file');
         return;
@@ -413,18 +412,19 @@ export default function MatchReview({config, setTitle}) {
                   JSON.parse(parseCookies().user_data).access_token
                 }`,
               },
-              // TODO change form_type to be dynamic later
-              // FINISHED
               body: JSON.stringify({
-                form_type: router.query?.form_type || 'basin',
+                form_type: router.query?.form_type,
               }),
             },
           )
             .then(response => {
               return response.json();
             })
-            .catch(error => {
-              throw error;
+            .then(response => {
+              if (response.status !== 200) {
+                throw response.response;
+              }
+              return response;
             });
 
           setLoading(
@@ -446,11 +446,12 @@ export default function MatchReview({config, setTitle}) {
           setLoading('');
         } catch (error) {
           setError(String(error));
+          setLoading('');
         }
       }
       router.events.emit('routeChangeComplete');
       setLoading('');
-      setTimeout(() => {
+      setTimeout(async () => {
         dispatch(
           setErrorMessage({
             message:
@@ -459,12 +460,14 @@ export default function MatchReview({config, setTitle}) {
             show: true,
           }),
         );
+        await delay(5000);
+        dispatch(setErrorMessage({show: false, message: '', color: ''}));
       }, 3000);
-      await delay(5000);
-      dispatch(setErrorMessage({message: '', color: '', show: false}));
     };
-    init();
-  }, [config.services.sheets, dispatch, files, pageNo, router, setDocId, setTitle]);
+    if (router.isReady) {
+      init();
+    }
+  }, [router.isReady, config.services.sheets, dispatch, files, pageNo, router, setDocId, setTitle]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);

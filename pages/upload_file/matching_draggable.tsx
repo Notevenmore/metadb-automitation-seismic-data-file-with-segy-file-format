@@ -5,13 +5,12 @@ import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {Tuple4, useNaturalImageDim} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import {DraggableBox, DroppableBox} from '../../components/draggable/component';
 import {DraggableProvider} from '../../components/draggable/provider';
 import {Tuple2} from '../../components/draggable/types';
-import Input from '../../components/input_form/input';
-import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
@@ -390,7 +389,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const imageRef = useRef();
   const {dim: naturalDim, reload: naturalReload} = useNaturalImageDim(imageRef);
   const {dim: actualDim, reload: actualReload} = useElementDim(imageRef);
@@ -484,8 +482,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   useEffect(() => {
     setTitle('Data Matching | Drag and Drop');
     const init = async () => {
-      router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
+      await delay(500);
+      router.events.emit('routeChangeStart');
       if (files.length < 1) {
         router.push('/upload_file');
         return;
@@ -559,18 +558,19 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                   JSON.parse(parseCookies().user_data).access_token
                 }`,
               },
-              // TODO change form_type to be dynamic later
-              // FINISHED
               body: JSON.stringify({
-                form_type: router.query?.form_type || 'basin',
+                form_type: router.query?.form_type,
               }),
             },
           )
             .then(response => {
               return response.json();
             })
-            .catch(error => {
-              throw error;
+            .then(response => {
+              if (response.status !== 200) {
+                throw response.response;
+              }
+              return response;
             });
 
           setLoading(
@@ -592,11 +592,12 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setLoading('');
         } catch (error) {
           setError(String(error));
+          setLoading('');
         }
       }
       router.events.emit('routeChangeComplete');
       setLoading('');
-      setTimeout(() => {
+      setTimeout(async () => {
         dispatch(
           setErrorMessage({
             message:
@@ -605,12 +606,14 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             show: true,
           }),
         );
+        await delay(5000);
+        dispatch(setErrorMessage({show: false, message: '', color: ''}));
       }, 3000);
-      await delay(5000);
-      dispatch(setErrorMessage({message: '', color: '', show: false}));
     };
-    init();
-  }, [config.services.sheets, dispatch, files, pageNo, router, setDocId, setTitle]);
+    if (router.isReady) {
+      init();
+    }
+  }, [config.services.sheets, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);

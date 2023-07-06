@@ -1,23 +1,22 @@
-import {useRouter} from 'next/router';
-import React, {ChangeEvent, EventHandler, FormEvent, WheelEvent, WheelEventHandler, useEffect, useRef, useState} from 'react';
-import {useDispatch} from 'react-redux';
-import {parseCookies} from 'nookies';
+import { useRouter } from 'next/router';
+import { parseCookies } from 'nookies';
+import React, { ChangeEvent, FormEvent, WheelEvent, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
-import {storeFile, setUploadDocumentSettings, setErrorMessage, UploadDocumentSettings} from '../../store/generalSlice';
-import Select from '../../public/icons/selection_tool.svg';
-import Upload from '../../public/icons/upload.svg';
+import { checkAfe } from '../../components/utility_functions';
+import { datatypes } from '../../config';
 import CloseThin from '../../public/icons/close-thin.svg';
+import DropFile from '../../public/icons/drop-file.svg';
+import Hand from '../../public/icons/hand.svg';
 import List from '../../public/icons/list.svg';
 import Robot from '../../public/icons/robot.svg';
-import Hand from '../../public/icons/hand.svg';
-import DropFile from '../../public/icons/drop-file.svg';
-import {datatypes} from '../../config';
-import {checkAfe} from '../../components/utility_functions';
-import Toast from '../../components/toast/toast';
+import Select from '../../public/icons/selection_tool.svg';
+import Upload from '../../public/icons/upload.svg';
+import { TokenExpired } from '../../services/admin';
+import { UploadDocumentSettings, setErrorMessage, setUploadDocumentSettings, storeFile } from '../../store/generalSlice';
 import getFileType from '../../utils/filetype';
-import {TokenExpired} from '../../services/admin';
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -36,7 +35,6 @@ export default function UploadFilePage({config, setTitle}) {
     Method: '',
   });
   const [toggleOverlay, settoggleOverlay] = useState(false);
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -189,14 +187,18 @@ export default function UploadFilePage({config, setTitle}) {
           return res.text();
         });
         if (post_workspace === 'OK') {
-          dispatch(
-            setErrorMessage({
-              message:
-                'Success. A new record has been created. Redirecting to the next page...',
-              color: 'blue',
-              show: true,
-            }),
-          );
+          setTimeout(async () => {
+            dispatch(
+              setErrorMessage({
+                message:
+                  'Success. A new record has been created. Redirecting to the next page...',
+                color: 'blue',
+                show: true,
+              }),
+            );
+            await delay(1500);
+            dispatch(setErrorMessage({show: false, message: '', color: ''}));
+          }, 0);
           router.events.emit('routeChangeComplete');
           await delay(1000);
           router.push({
@@ -592,6 +594,7 @@ export default function UploadFilePage({config, setTitle}) {
             onClick={handleSubmit}
             disabled={
               fileUpload.length < 1 ||
+              afeExist ||
               Object.values(UplSettings).some(x => {
                 return x === null || x === '';
               })

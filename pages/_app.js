@@ -1,12 +1,12 @@
-import '../styles/globals.css';
-import {Provider} from 'react-redux';
 import Head from 'next/head';
 import {useRouter} from 'next/router';
-import {useState, useEffect} from 'react';
-import {store} from '../store';
+import {useEffect, useState} from 'react';
+import {Provider} from 'react-redux';
 import ProgressBar from '../components/progress_bar/progress_bar';
-import {getLayoutIcon} from '../layout/getLayout';
 import Toast from '../components/toast/toast';
+import {getLayoutIcon} from '../layout/getLayout';
+import {store} from '../store';
+import '../styles/globals.css';
 
 function MyApp({Component, pageProps}) {
   const getLayout = Component.getLayout || getLayoutIcon;

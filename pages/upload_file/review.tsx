@@ -10,10 +10,9 @@ import {
   HeaderInput,
   HeaderTable,
 } from '../../components/HeaderTable';
-import Input from '../../components/input_form/input';
+import Input from '../../components/Input';
 import Sheets from '../../components/sheets/sheets';
 import Table from '../../components/table/table';
-import Toast from '../../components/toast/toast';
 import {saveDocument} from '../../components/utility_functions';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
@@ -52,12 +51,14 @@ export default function UploadFileReview({setTitle, config}) {
     // ---| NEW WORKFLOW |---
     const init = async () => {
       try {
+        setloading(`Reformatting OCR data`);
+        await delay(500);
+        router.events.emit('routeChangeStart');
         setImageURL(
           `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${
             document_summary?.document_id
           }/${PageNo + 1}`,
         );
-        setloading(`Reformatting OCR data`);
         let final = [];
         for (let idx = 0; idx < document_summary.body.page_count; idx++) {
           let row = {};
@@ -71,6 +72,7 @@ export default function UploadFileReview({setTitle, config}) {
       } catch (error) {
         setloading('');
         setError(String(error));
+        router.events.emit('routeChangeComplete');
       }
     };
     if (files.length < 1) {
@@ -127,18 +129,22 @@ export default function UploadFileReview({setTitle, config}) {
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
-          dispatch(
-            setErrorMessage({
-              message: 'Redirecting to homepage...',
-              color: 'blue',
-              show: true,
-            }),
-          );
+          setTimeout(async () => {
+            dispatch(
+              setErrorMessage({
+                message: 'Redirecting to homepage...',
+                color: 'blue',
+                show: true,
+              }),
+            );
+            await delay(1500);
+            dispatch(setErrorMessage({show: false, message: '', color: ''}));
+          }, 0);
           await delay(1000);
           router.push('/');
         } else {
           await delay(3000);
-          dispatch(setErrorMessage({message: '', color: '', show: false}));
+          dispatch(setErrorMessage({show: false, message: '', color: ''}));
         }
       }
     } catch (error) {
@@ -157,26 +163,21 @@ export default function UploadFileReview({setTitle, config}) {
 
   useEffect(() => {
     if (spreadsheetReady) {
+      router.events.emit('routeChangeComplete');
       setTimeout(async () => {
         dispatch(
           setErrorMessage({
             message:
-              'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+              'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
             color: 'blue',
             show: true,
           }),
         );
-        // setMessage({
-        //   message:
-        //     'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-        //   color: 'blue',
-        //   show: true,
-        // });
         await delay(10000);
-        dispatch(setErrorMessage({message: '', color: '', show: false}));
+        dispatch(setErrorMessage({show: false, message: '', color: ''}));
       }, 3000);
     }
-  }, [dispatch, spreadsheetReady]);
+  }, [dispatch, router.events, spreadsheetReady]);
 
   return error ? (
     <div className="w-full h-full flex flex-col p-10 space-y-4">
@@ -290,7 +291,6 @@ export default function UploadFileReview({setTitle, config}) {
                 <Button
                   button_description="Hide image"
                   additional_styles="bg-white"
-                  path=""
                   onClick={e => {
                     e.preventDefault();
                     setImageReview('');
@@ -300,7 +300,6 @@ export default function UploadFileReview({setTitle, config}) {
                 <Button
                   button_description="View uploaded picture below"
                   additional_styles="bg-white"
-                  path=""
                   onClick={e => {
                     e.preventDefault();
                     setImageReview(ImageURL);
@@ -343,7 +342,6 @@ export default function UploadFileReview({setTitle, config}) {
                 <Button
                   button_description="Hide image"
                   additional_styles="bg-white"
-                  path=""
                   onClick={e => {
                     setImageReview('');
                   }}
@@ -362,7 +360,6 @@ export default function UploadFileReview({setTitle, config}) {
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
             <Button
-              path=""
               title="Previous page"
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
@@ -383,7 +380,6 @@ export default function UploadFileReview({setTitle, config}) {
               <p className="w-5 h-5">{PageNo + 1}</p>
             </div>
             <Button
-              path=""
               title="Next page"
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
@@ -405,19 +401,42 @@ export default function UploadFileReview({setTitle, config}) {
       )}
       <div className="flex space-x-3 py-4">
         <Button
-          path=""
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
           onClick={saveDocumentHandler}
           disabled={
             !spreadsheetID || Message.message || !spreadsheetReady
               ? true
               : false
           }>
-          Save changes
+          <div className="flex space-x-2 items-center">
+            <svg
+              width="18"
+              height="18"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M8.6 9H15.4C15.7314 9 16 8.73137 16 8.4V3.6C16 3.26863 15.7314 3 15.4 3H8.6C8.26863 3 8 3.26863 8 3.6V8.4C8 8.73137 8.26863 9 8.6 9Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M6 13.6V21H18V13.6C18 13.2686 17.7314 13 17.4 13H6.6C6.26863 13 6 13.2686 6 13.6Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+            </svg>
+            <p>Save changes</p>
+          </div>
         </Button>
         <Button
-          path=""
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
           onClick={e => {
             saveDocumentHandler(e, true);
           }}
@@ -426,7 +445,32 @@ export default function UploadFileReview({setTitle, config}) {
               ? true
               : false
           }>
-          Save and exit
+          <div className="flex space-x-2 items-center">
+            <svg
+              width="18"
+              height="18"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M8.6 9H15.4C15.7314 9 16 8.73137 16 8.4V3.6C16 3.26863 15.7314 3 15.4 3H8.6C8.26863 3 8 3.26863 8 3.6V8.4C8 8.73137 8.26863 9 8.6 9Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M6 13.6V21H18V13.6C18 13.2686 17.7314 13 17.4 13H6.6C6.26863 13 6 13.2686 6 13.6Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+            </svg>
+            <p>Save and exit</p>
+          </div>
         </Button>
       </div>
     </Container>

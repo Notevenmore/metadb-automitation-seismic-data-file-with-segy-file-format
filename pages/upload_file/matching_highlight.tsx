@@ -5,10 +5,9 @@ import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {ImageEditor, Tuple4} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
-import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
@@ -135,11 +134,6 @@ export default function MatchingGuided({config, setTitle}) {
 
   // utility states
   const [loading, setLoading] = useState('');
-  const [message, setMessage] = useState({
-    message: '',
-    color: '',
-    show: false,
-  });
   const [error, setError] = useState('');
 
   const files = useSelector<RootState, FileListType>(state => state.general.file);
@@ -176,8 +170,9 @@ export default function MatchingGuided({config, setTitle}) {
   useEffect(() => {
     setTitle('Data Matching | Highlight');
     const init = async () => {
-      router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
+      await delay(500);
+      router.events.emit('routeChangeStart');
       if (files.length < 1) {
         router.push('/upload_file');
       } else {
@@ -218,15 +213,18 @@ export default function MatchingGuided({config, setTitle}) {
                 }`,
               },
               body: JSON.stringify({
-                form_type: router.query?.form_type || 'basin',
+                form_type: router.query?.form_type,
               }),
             },
           )
             .then(response => {
               return response.json();
             })
-            .catch(error => {
-              throw error;
+            .then(response => {
+              if (response.status !== 200) {
+                throw response.response;
+              }
+              return response;
             });
 
           setLoading(
@@ -248,11 +246,12 @@ export default function MatchingGuided({config, setTitle}) {
           setLoading(null);
         } catch (error) {
           setError(String(error));
+          setLoading(null);
         }
       }
       router.events.emit('routeChangeComplete');
       setLoading(null);
-      setTimeout(() => {
+      setTimeout(async () => {
         dispatch(
           setErrorMessage({
             message:
@@ -261,12 +260,14 @@ export default function MatchingGuided({config, setTitle}) {
             show: true,
           }),
         );
+        await delay(5000);
+        dispatch(setErrorMessage({show: false, message: '', color: ''}));
       }, 3000);
-      await delay(5000);
-      dispatch(setErrorMessage({message: '', color: '', show: false}));
     };
-    init();
-  }, [config.services.sheets, dispatch, files, pageNo, router, setTitle]);
+    if (router.isReady) {
+      init();
+    }
+  }, [router.isReady, config.services.sheets, dispatch, files, pageNo, router, setTitle]);
 
   useEffect(() => {
     // save the edited state to redux for final review later

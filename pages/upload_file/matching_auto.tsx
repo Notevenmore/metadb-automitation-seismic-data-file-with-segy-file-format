@@ -5,10 +5,9 @@ import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {ImageEditor} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/input_form/input';
-import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
@@ -329,7 +328,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [totalPageNo, setTotalPageNo] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [Loading, setLoading] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [formType, setformType] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [awaitingUpdate, setAwaitingUpdate] = useState(false);
@@ -387,8 +385,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   useEffect(() => {
     setTitle('Data Matching | Automatic');
     const init = async () => {
-      router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
+      await delay(500);
+      router.events.emit('routeChangeStart');
       if (files.length < 1) {
         router.push('/upload_file');
         return;
@@ -440,18 +439,19 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                   JSON.parse(parseCookies().user_data).access_token
                 }`,
               },
-              // TODO change form_type to be dynamic later
-              // FINISHED
               body: JSON.stringify({
-                form_type: router.query?.form_type || 'basin',
+                form_type: router.query?.form_type,
               }),
             },
           )
             .then(response => {
               return response.json();
             })
-            .catch(error => {
-              throw error;
+            .then(response => {
+              if (response.status !== 200) {
+                throw response.response;
+              }
+              return response;
             });
 
           setLoading(
@@ -470,17 +470,20 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             temp_obj.push(temp);
           }
           setState(temp_obj);
-
           setLoading('Awaiting state update...');
           setAwaitingUpdate(true);
           // continue to the useeffect hook directly below this one
         } catch (error) {
           setError(String(error));
+          setLoading('');
+          router.events.emit('routeChangeComplete');
         }
       }
     };
-    init();
-  }, [config.services.sheets, dispatch, files, pageNo, router, setDocId, setTitle, setLoading, setAwaitingUpdate]);
+    if (router.isReady) {
+      init();
+    }
+  }, [config.services.sheets, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
 
   // continue here to ensure that the state has been updated based on the
   // requested data type before proceeding to do any matching prediction tasks
@@ -512,7 +515,8 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
 
         Promise.all(promises).then(async () => {
           setLoading('');
-          setTimeout(() => {
+          router.events.emit('routeChangeComplete');
+          setTimeout(async () => {
             dispatch(
               setErrorMessage({
                 message:
@@ -531,7 +535,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       }
       return _awaitingUpdate;
     })
-  }, [state, dispatch, totalPageNo, docId, setAwaitingUpdate]);
+  }, [state, dispatch, totalPageNo, docId, setAwaitingUpdate, router.events]);
 
   const setValueForId = (id: number, pageNo: number, value: string) => {
     setState(state => {

@@ -78,7 +78,6 @@ export const generalSlice = createSlice({
       state.review_data = action.payload;
     },
     setErrorMessage: (state, action: PayloadAction<ErrorToastState>) => {
-      // console.log(action.payload)
       state.error = action.payload;
     }
   },

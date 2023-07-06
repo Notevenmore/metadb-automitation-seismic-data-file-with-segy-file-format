@@ -1,19 +1,18 @@
 import {useRouter} from 'next/router';
-import {useDispatch, useSelector} from 'react-redux';
 import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   HeaderDivider,
   HeaderInput,
   HeaderTable,
 } from '../components/HeaderTable';
+import Input from '../components/Input';
 import Button from '../components/button';
 import Container from '../components/container';
-import Input from '../components/input_form/input';
 import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
-import Toast from '../components/toast/toast';
 import {saveDocument} from '../components/utility_functions';
-import { setErrorMessage } from '../store/generalSlice';
+import {setErrorMessage} from '../store/generalSlice';
 
 export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
@@ -39,9 +38,13 @@ export default function NewDocumentPage({setTitle, config}) {
       }
     }
     setTitle('New document');
+    setTimeout(async () => {
+      await delay(500);
+      router.events.emit('routeChangeStart');
+    }, 0);
   }, []);
 
-  const saveDocumentHandler = async e => {
+  const saveDocumentHandler = async (e, redirect = false) => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     try {
@@ -52,43 +55,71 @@ export default function NewDocumentPage({setTitle, config}) {
         spreadsheetID,
         workspaceData,
         setMessage,
-        dispatch
+        dispatch,
       );
       if (save_result.success) {
-
-        dispatch(setErrorMessage({
-          message: 'Record successfully saved',
-          color: 'blue',
-          show: true,
-        }))
-          router.events.emit('routeChangeComplete');
-        await delay(3000);
-        dispatch(setErrorMessage({message: '', color: '', show: false}));
+        dispatch(
+          setErrorMessage({
+            message: 'Record successfully saved',
+            color: 'blue',
+            show: true,
+          }),
+        );
+        router.events.emit('routeChangeComplete');
+        if (redirect) {
+          await delay(1000);
+          setTimeout(async () => {
+            dispatch(
+              setErrorMessage({
+                message: 'Redirecting to homepage...',
+                color: 'blue',
+                show: true,
+              }),
+            );
+            await delay(1500);
+            dispatch(setErrorMessage({show: false}));
+            await delay(500);
+            dispatch(setErrorMessage({message: '', color: ''}));
+          }, 0);
+          await delay(1000);
+          router.push('/');
+        } else {
+          await delay(3000);
+          dispatch(setErrorMessage({show: false}));
+          await delay(500);
+          dispatch(setErrorMessage({message: '', color: ''}));
+        }
       }
     } catch (error) {
-      dispatch(setErrorMessage({
-        message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-          error,
-        )}`,
-        color: 'red',
-        show: true,
-      }));
+      dispatch(
+        setErrorMessage({
+          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            error,
+          )}`,
+          color: 'red',
+          show: true,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
 
   useEffect(() => {
     if (spreadsheetReady) {
+      router.events.emit('routeChangeComplete');
       setTimeout(async () => {
-        dispatch(setErrorMessage({
-          message:
-            'Please use DD-MM-YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-          color: 'blue',
-          show: true,
-        }));
+        dispatch(
+          setErrorMessage({
+            message:
+              'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+            color: 'blue',
+            show: true,
+          }),
+        );
         await delay(10000);
-        dispatch(setErrorMessage({message: '', color: '', show: false}));
-
+        dispatch(setErrorMessage({show: false}));
+        await delay(500);
+        dispatch(setErrorMessage({message: '', color: ''}));
       }, 3000);
     }
   }, [spreadsheetReady]);
@@ -211,18 +242,74 @@ export default function NewDocumentPage({setTitle, config}) {
       </div>
       <div className="flex space-x-2 py-10">
         <Button
-          path=""
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
+          title="Save this record to the database"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
           onClick={saveDocumentHandler}
           disabled={Message.message || !spreadsheetReady ? true : false}>
-          Save changes
+          <div className="flex space-x-2 items-center">
+            <svg
+              width="18"
+              height="18"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M8.6 9H15.4C15.7314 9 16 8.73137 16 8.4V3.6C16 3.26863 15.7314 3 15.4 3H8.6C8.26863 3 8 3.26863 8 3.6V8.4C8 8.73137 8.26863 9 8.6 9Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M6 13.6V21H18V13.6C18 13.2686 17.7314 13 17.4 13H6.6C6.26863 13 6 13.2686 6 13.6Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+            </svg>
+            <p>Save changes</p>
+          </div>
         </Button>
         <Button
-          path=""
-          additional_styles="text-error"
-          onClick={router.back}
-          disabled={Message.message || !spreadsheetReady ? true : false}>
-          Cancel
+          title="Save this record to the database and exit from this page"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
+          onClick={e => {
+            saveDocumentHandler(e, true);
+          }}
+          disabled={
+            !spreadsheetID || Message.message || !spreadsheetReady
+              ? true
+              : false
+          }>
+          <div className="flex space-x-2 items-center">
+            <svg
+              width="18"
+              height="18"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M8.6 9H15.4C15.7314 9 16 8.73137 16 8.4V3.6C16 3.26863 15.7314 3 15.4 3H8.6C8.26863 3 8 3.26863 8 3.6V8.4C8 8.73137 8.26863 9 8.6 9Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M6 13.6V21H18V13.6C18 13.2686 17.7314 13 17.4 13H6.6C6.26863 13 6 13.2686 6 13.6Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+            </svg>
+            <p>Save and exit</p>
+          </div>
         </Button>
       </div>
     </Container>

@@ -1,13 +1,12 @@
 import Image from 'next/image';
-import {useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
-import {useEffect} from 'react';
-import Input from '../../components/input_form/input';
+import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import {getLayoutBlank} from '../../layout/getLayout';
-import {setUser} from '../../store/userSlice';
 import {getLogin} from '../../services/user';
+import {setUser} from '../../store/userSlice';
 import { setErrorMessage } from '../../store/generalSlice';
 
 SignInPage.getLayout = getLayoutBlank;
