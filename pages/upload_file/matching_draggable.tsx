@@ -476,8 +476,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   useEffect(() => {
     setTitle('Data Matching | Drag and Drop');
     const init = async () => {
-      router.events.emit('routeChangeStart');
       setLoading('Reading data... Please wait for a moment');
+      await delay(500);
+      router.events.emit('routeChangeStart');
       if (files.length < 1) {
         router.push('/upload_file');
         return;
@@ -551,18 +552,19 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                   JSON.parse(parseCookies().user_data).access_token
                 }`,
               },
-              // TODO change form_type to be dynamic later
-              // FINISHED
               body: JSON.stringify({
-                form_type: router.query?.form_type || 'basin',
+                form_type: router.query?.form_type,
               }),
             },
           )
             .then(response => {
               return response.json();
             })
-            .catch(error => {
-              throw error;
+            .then(response => {
+              if (response.status !== 200) {
+                throw response.response;
+              }
+              return response;
             });
 
           setLoading(
@@ -584,11 +586,12 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setLoading('');
         } catch (error) {
           setError(String(error));
+          setLoading('');
         }
       }
       router.events.emit('routeChangeComplete');
       setLoading('');
-      setTimeout(() => {
+      setTimeout(async () => {
         dispatch(
           setErrorMessage({
             message:
@@ -597,12 +600,16 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             show: true,
           }),
         );
+        await delay(5000);
+        dispatch(setErrorMessage({show: false}));
+        await delay(500);
+        dispatch(setErrorMessage({message: '', color: ''}));
       }, 3000);
-      await delay(5000);
-      dispatch(setErrorMessage({message: '', color: '', show: false}));
     };
-    init();
-  }, [files]);
+    if (router.isReady) {
+      init();
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);

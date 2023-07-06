@@ -6,10 +6,10 @@ const initialState = {
   document_summary: null,
   review_data: null,
   error: {
-    message: "",
-    color: "",
-    show: false
-  }
+    message: '',
+    color: '',
+    show: false,
+  },
 };
 
 export const generalSlice = createSlice({
@@ -34,8 +34,12 @@ export const generalSlice = createSlice({
     },
     setErrorMessage: (state, action) => {
       // console.log(action.payload)
-      state.error = action.payload;
-    }
+      // state.error = action.payload;
+      // to allow update on only some fields (biar enak diliat pas toastnya otomatis ilang)
+      Object.keys(action.payload).forEach(key => {
+        state.error[key] = action.payload[key];
+      });
+    },
   },
 });
 
@@ -44,7 +48,7 @@ export const {
   setUploadDocumentSettings,
   setDocumentSummary,
   setReviewData,
-  setErrorMessage
+  setErrorMessage,
 } = generalSlice.actions;
 
 export default generalSlice.reducer;

@@ -193,14 +193,20 @@ export default function UploadFilePage({config, setTitle}) {
           return res.text();
         });
         if (post_workspace === 'OK') {
-          dispatch(
-            setErrorMessage({
-              message:
-                'Success. A new record has been created. Redirecting to the next page...',
-              color: 'blue',
-              show: true,
-            }),
-          );
+          setTimeout(async () => {
+            dispatch(
+              setErrorMessage({
+                message:
+                  'Success. A new record has been created. Redirecting to the next page...',
+                color: 'blue',
+                show: true,
+              }),
+            );
+            await delay(1500);
+            dispatch(setErrorMessage({show: false}));
+            await delay(500);
+            dispatch(setErrorMessage({message: '', color: ''}));
+          }, 0);
           router.events.emit('routeChangeComplete');
           await delay(1000);
           router.push({
@@ -653,6 +659,7 @@ export default function UploadFilePage({config, setTitle}) {
             onClick={handleSubmit}
             disabled={
               fileUpload.length < 1 ||
+              afeExist ||
               Object.values(UplSettings).some(x => {
                 return x === null || x === '';
               })

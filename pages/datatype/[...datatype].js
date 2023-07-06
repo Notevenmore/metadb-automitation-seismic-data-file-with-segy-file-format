@@ -2,7 +2,6 @@ import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {parseCookies} from 'nookies';
 import {useEffect, useState} from 'react';
-import Highlight from 'react-highlight';
 import {useDispatch} from 'react-redux';
 import Input from '../../components/Input';
 import Button from '../../components/button';
@@ -85,7 +84,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                     title="Edit record"
                     additional_styles="px-3"
                     className="flex"
-                    path={`/edit/temp/${workspace.workspace_name}`}
+                    path={`/edit/${workspace.workspace_name}`}
                     query={{
                       form_type: datatype,
                       workspace_data: workspace.afe_number,
@@ -212,13 +211,19 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           }
         });
       dispatch(setUploadDocumentSettings(newWorkspace));
-      dispatch(
-        setErrorMessage({
-          message: 'Success. Redirecting to the next page...',
-          color: 'blue',
-          show: true,
-        }),
-      );
+      setTimeout(async () => {
+        dispatch(
+          setErrorMessage({
+            message: 'Success. Redirecting to the next page...',
+            color: 'blue',
+            show: true,
+          }),
+        );
+        await delay(1500);
+        dispatch(setErrorMessage({show: false}));
+        await delay(500);
+        dispatch(setErrorMessage({message: '', color: ''}));
+      }, 0);
       router.events.emit('routeChangeComplete');
       await delay(1500);
       router.push({
@@ -256,7 +261,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         },
       }).then(res => {
         if (res.status !== 200) {
-          TokenExpired(status);
+          TokenExpired(res.status);
           throw `Response returned with status code ${res.status}: ${res.statusText}`;
         }
       });
@@ -267,7 +272,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       init();
       router.events.emit('routeChangeComplete');
       await delay(2000);
-      dispatch(setErrorMessage({message: '', color: '', show: false}));
+      dispatch(setErrorMessage({show: false}));
+      await delay(500);
+      dispatch(setErrorMessage({message: '', color: ''}));
     } catch (error) {
       dispatch(
         setErrorMessage({message: String(error), color: 'red', show: true}),
@@ -284,12 +291,15 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       }
     }
     settoggleOverlay(false);
-    setnewWorkspace({
-      workspace_name: '',
-      kkks_name: '',
-      working_area: '',
-      afe_number: '',
-      submission_type: '',
+    setnewWorkspace(x => {
+      return {
+        ...x,
+        workspace_name: '',
+        kkks_name: '',
+        working_area: '',
+        afe_number: '',
+        submission_type: '',
+      };
     });
     setpopupMessage({message: '', color: ''});
   };
@@ -420,7 +430,8 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         additional_styles="mb-20"
       />
       {error ? (
-        <Highlight className="html rounded-md border-2">{error}</Highlight>
+        // <Highlight className="html rounded-md border-2">{error}</Highlight>
+        <code className="rounded-md border-2 p-2">{error}</code>
       ) : null}
       <Button
         className="shadow-black/10 shadow-lg drop-shadow-lg hover:w-[170px] w-[60px] h-[60px] border rounded-full fixed bottom-9 right-12 bg-gray-200 flex items-center transition-all overflow-hidden outline-none"

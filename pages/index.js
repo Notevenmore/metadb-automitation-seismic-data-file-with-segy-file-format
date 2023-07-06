@@ -99,13 +99,19 @@ const HomeSection = ({config}) => {
             }
           });
         dispatch(setUploadDocumentSettings(newWorkspace));
-        dispatch(
-          setErrorMessage({
-            message: 'Success. Redirecting to the next page...',
-            color: 'blue',
-            show: true,
-          }),
-        );
+        setTimeout(async () => {
+          dispatch(
+            setErrorMessage({
+              message: 'Success. Redirecting to the next page...',
+              color: 'blue',
+              show: true,
+            }),
+          );
+          await delay(1500);
+          dispatch(setErrorMessage({show: false}));
+          await delay(500);
+          dispatch(setErrorMessage({message: '', color: ''}));
+        }, 0);
         router.events.emit('routeChangeComplete');
         await delay(1500);
         router.push({
@@ -135,12 +141,15 @@ const HomeSection = ({config}) => {
     }
     settoggleOverlay(false);
     setdataType('');
-    setnewWorkspace({
-      workspace_name: '',
-      kkks_name: '',
-      working_area: '',
-      afe_number: '',
-      submission_type: '',
+    setnewWorkspace(x => {
+      return {
+        ...x,
+        workspace_name: '',
+        kkks_name: '',
+        working_area: '',
+        afe_number: '',
+        submission_type: '',
+      };
     });
     setpopupMessage({message: '', color: ''});
   };
