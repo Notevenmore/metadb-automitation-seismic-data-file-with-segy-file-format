@@ -21,6 +21,8 @@ import {
   setReviewData,
 } from '../../store/generalSlice';
 import { toBase64 } from '../../utils/base64';
+import { getHeader } from '../../services/document';
+import { setValueForId } from '../../utils/document';
 
 export default function MatchingGuided({config, setTitle}) {
   const [state, setState] = useState({} as any);
@@ -101,30 +103,7 @@ export default function MatchingGuided({config, setTitle}) {
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
-          const row_names = await fetch(
-            `${config.services.sheets}/getHeaders`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
-              },
-              body: JSON.stringify({
-                form_type: router.query?.form_type,
-              }),
-            },
-          )
-            .then(response => {
-              return response.json();
-            })
-            .then(response => {
-              if (response.status !== 200) {
-                throw response.response;
-              }
-              return response;
-            });
+          const row_names = await getHeader(config, router.query?.form_type as string);
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -162,7 +141,7 @@ export default function MatchingGuided({config, setTitle}) {
     if (router.isReady) {
       init();
     }
-  }, [router.isReady, config.services.sheets, dispatch, files, pageNo, router, setTitle]);
+  }, [router.isReady, config, dispatch, files, pageNo, router, setTitle]);
 
   useEffect(() => {
     // save the edited state to redux for final review later
@@ -176,26 +155,9 @@ export default function MatchingGuided({config, setTitle}) {
     const bound = bounds[last];
     const response = await extractTextFromBounds(docId, pageNo, bound);
     if (response.status === 'success') {
-      setValueForId(selectedRow, response.body.word);
+      setValueForId(setState, pageNo, selectedRow, response.body.word);
     }
   }
-
-  const setValueForId = (id: number, value: string) => {
-    setState(state => {
-      // creating a copy to prevent direct mutation that causes error in redux
-      let final = {...state};
-      const index = final[pageNo - 1].findIndex(pair => pair.id === id);
-      const cpair = final[pageNo - 1].find(pair => pair.id === id);
-      const newPair = {...cpair, value};
-      final[pageNo - 1] = [
-        ...final[pageNo - 1].slice(0, index),
-        newPair,
-        ...final[pageNo - 1].slice(index + 1),
-      ];
-      console.log(final);
-      return {...final};
-    });
-  };
 
   const setDocId = (newDocId: string) => {
     _setDocId(newDocId);
@@ -234,14 +196,14 @@ export default function MatchingGuided({config, setTitle}) {
             selectedRow === data.id ? 'font-bold' : 'font-semibold'
           } cursor-pointer`}
           additional_styles="min-w-0 cursor-pointer"
-          onChange={e => setValueForId(data.id, e.target.value)}
+          onChange={e => setValueForId(setState, pageNo, data.id, e.target.value)}
         />
         <Button
           additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
           title="Reset input"
           disabled={data.value ? false : true}
           onClick={() => {
-            setValueForId(data.id, '');
+            setValueForId(setState, pageNo, data.id, '');
           }}>
           <CloseThin className="w-5 h-5" />
         </Button>
@@ -323,7 +285,6 @@ export default function MatchingGuided({config, setTitle}) {
         <Button
           button_description="View on sheets"
           path="/upload_file/review"
-          // @ts-ignore
           query={{form_type: formType}}
           additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           disabled={formType ? false : true}

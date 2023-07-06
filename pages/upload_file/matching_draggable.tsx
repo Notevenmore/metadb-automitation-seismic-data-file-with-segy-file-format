@@ -15,7 +15,7 @@ import { State, TableType, TableRow, WELL_SUMMARRY_TABLE_EMPTY } from '../../con
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
-import { fetchDocumentSummary, fetchDraggableData, generateDragImageSrc, generateImageUrl, postScrapeAnnotate, uploadImage } from '../../services/ocr';
+import { DraggableResponse, fetchDocumentSummary, fetchDraggableData, generateDragImageSrc, generateImageUrl, postScrapeAnnotate, uploadImage } from '../../services/ocr';
 import { RootState, useAppDispatch } from '../../store';
 import {
   FileListType,
@@ -24,6 +24,7 @@ import {
   setReviewData,
 } from '../../store/generalSlice';
 import { toBase64 } from '../../utils/base64';
+import { getHeader } from '../../services/document';
 
 interface MatchReviewProps {
   setTitle: (title: string) => void;
@@ -107,6 +108,27 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     }
   };
 
+  const makeDragData = useCallback((dragDataResponse: DraggableResponse) => {
+    const dragDataResponseBody = dragDataResponse.body;
+    const newDragData: DraggableData[] = dragDataResponseBody.map(it => {
+      const bound: Tuple4<number> = [
+        it.bound[0] - 5,
+        it.bound[1] - 5,
+        it.bound[2] + 5,
+        it.bound[3] + 5,
+      ];
+      const width = Math.abs(bound[0] - bound[2]);
+      const height = Math.abs(bound[1] - bound[3]);
+      return {
+        word: it.word,
+        dim: [width, height],
+        initialPos: [bound[1], bound[0]],
+        src: generateDragImageSrc(docId, pageNo, bound),
+      };
+    });
+    return newDragData;
+  }, [docId, pageNo]);
+
   useEffect(() => {
     const onPageChange = async () => {
       if (docId === null) return;
@@ -119,27 +141,10 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
 
       const dragDataResponse = await fetchDraggableData(docId, pageNo);
       if (dragDataResponse.body === null) return;
-      const dragDataResponseBody = dragDataResponse.body;
-      const newDragData: DraggableData[] = dragDataResponseBody.map(it => {
-        const bound: Tuple4<number> = [
-          it.bound[0] - 5,
-          it.bound[1] - 5,
-          it.bound[2] + 5,
-          it.bound[3] + 5,
-        ];
-        const width = Math.abs(bound[0] - bound[2]);
-        const height = Math.abs(bound[1] - bound[3]);
-        return {
-          word: it.word,
-          dim: [width, height],
-          initialPos: [bound[1], bound[0]],
-          src: generateDragImageSrc(docId, pageNo, bound),
-        };
-      });
-      setDragData(newDragData);
+      setDragData(makeDragData(dragDataResponse));
     };
     onPageChange();
-  }, [docId, pageNo, setImageBase64Str, setDropDownOptions, setDragData]);
+  }, [docId, pageNo, setImageBase64Str, setDropDownOptions, setDragData, makeDragData]);
 
   const prevPage = () => {
     if (pageNo > 1) {
@@ -202,53 +207,13 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           if (dragDataResponse.body === null) {
             throw 'Something went wrong with the OCR service. Response body returned null on populating draggable data.';
           }
-          const dragDataResponseBody = dragDataResponse.body;
-          const newDragData: DraggableData[] = dragDataResponseBody.map(it => {
-            const bound: Tuple4<number> = [
-              it.bound[0] - 5,
-              it.bound[1] - 5,
-              it.bound[2] + 5,
-              it.bound[3] + 5,
-            ];
-            const width = Math.abs(bound[0] - bound[2]);
-            const height = Math.abs(bound[1] - bound[3]);
-            return {
-              word: it.word,
-              dim: [width, height],
-              initialPos: [bound[1], bound[0]],
-              src: generateDragImageSrc(docId, pageNo, bound),
-            };
-          });
-          setDragData(newDragData);
+          setDragData(makeDragData(dragDataResponse));
           setDropDownOptions(_ => words);
 
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
-          const row_names = await fetch(
-            `${config.services.sheets}/getHeaders`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
-              },
-              body: JSON.stringify({
-                form_type: router.query?.form_type,
-              }),
-            },
-          )
-            .then(response => {
-              return response.json();
-            })
-            .then(response => {
-              if (response.status !== 200) {
-                throw response.response;
-              }
-              return response;
-            });
+          const row_names = await getHeader(config, router.query?.form_type as string);
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -286,7 +251,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.isReady) {
       init();
     }
-  }, [config.services.sheets, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
+  }, [config, dispatch, files, makeDragData, pageNo, router, setDocId, setTitle]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
@@ -304,34 +269,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         newPair,
         ...table.slice(index + 1),
       ] as TableType;
-      return [...state.slice(0, pageNo - 1), newTable, ...state.slice(pageNo)];
-    });
-  };
-
-  const setPairs = (pair: Map<string, string>, pageNo: number) => {
-    setState(state => {
-      const keys = Array.from(pair.keys());
-      const table = state[pageNo - 1];
-      if (!table) return state;
-      let indexes: number[] = [];
-      for (let i = 0; i < table.length; i++) {
-        const row = table[i];
-        if (!row) return state;
-        if (keys.includes(row.key)) {
-          indexes = indexes.concat(i);
-        }
-      }
-      let newTable = [...table];
-      for (const index of indexes) {
-        const cpair = newTable[index];
-        if (!cpair) return state;
-        const newPair = {...cpair, value: pair.get(cpair.key)} as TableRow;
-        newTable = [
-          ...newTable.slice(0, index),
-          newPair,
-          ...newTable.slice(index + 1),
-        ];
-      }
       return [...state.slice(0, pageNo - 1), newTable, ...state.slice(pageNo)];
     });
   };

@@ -20,6 +20,7 @@ import {
   setReviewData,
 } from '../../store/generalSlice';
 import { toBase64 } from '../../utils/base64';
+import { getHeader } from '../../services/document';
 
 interface MatchReviewProps {
   setTitle: (title: string) => void;
@@ -145,30 +146,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
-          const row_names = await fetch(
-            `${config.services.sheets}/getHeaders`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
-              },
-              body: JSON.stringify({
-                form_type: router.query?.form_type,
-              }),
-            },
-          )
-            .then(response => {
-              return response.json();
-            })
-            .then(response => {
-              if (response.status !== 200) {
-                throw response.response;
-              }
-              return response;
-            });
+          const row_names = await getHeader(config, router.query?.form_type as string);
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -199,7 +177,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.isReady) {
       init();
     }
-  }, [config.services.sheets, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
+  }, [config, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
 
   // continue here to ensure that the state has been updated based on the
   // requested data type before proceeding to do any matching prediction tasks

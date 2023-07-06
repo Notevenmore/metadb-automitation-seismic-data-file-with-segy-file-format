@@ -178,7 +178,7 @@ interface DraggableItemResponse {
   word: string;
 }
 
-type DraggableResponse = ApiCallResponse<DraggableItemResponse[]>;
+export type DraggableResponse = ApiCallResponse<DraggableItemResponse[]>;
 
 export const fetchDraggableData = async (
   docId: string,

@@ -20,6 +20,8 @@ import {
 } from '../../store/generalSlice';
 import { fetchDocumentSummary, generateImageUrl, postScrapeAnnotate, uploadImage } from '../../services/ocr';
 import { toBase64 } from '../../utils/base64';
+import { getHeader } from '../../services/document';
+import { setValueForId } from '../../utils/document';
 
 export default function MatchReview({config, setTitle}) {
   const [state, setState] = useState({});
@@ -129,30 +131,7 @@ export default function MatchReview({config, setTitle}) {
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
-          const row_names = await fetch(
-            `${config.services.sheets}/getHeaders`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
-              },
-              body: JSON.stringify({
-                form_type: router.query?.form_type,
-              }),
-            },
-          )
-            .then(response => {
-              return response.json();
-            })
-            .then(response => {
-              if (response.status !== 200) {
-                throw response.response;
-              }
-              return response;
-            });
+          const row_names = await getHeader(config, router.query?.form_type as string);
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -190,7 +169,7 @@ export default function MatchReview({config, setTitle}) {
     if (router.isReady) {
       init();
     }
-  }, [router.isReady, config.services.sheets, dispatch, files, pageNo, router, setDocId, setTitle]);
+  }, [router.isReady, dispatch, files, pageNo, router, setDocId, setTitle, config]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
@@ -216,23 +195,6 @@ export default function MatchReview({config, setTitle}) {
     }
   };
 
-  const setValueForId = (id, value) => {
-    setState(state => {
-      // creating a copy to prevent direct mutation that causes error in redux
-      let final = {...state};
-      const index = final[pageNo - 1].findIndex(pair => pair.id === id);
-      const cpair = final[pageNo - 1].find(pair => pair.id === id);
-      const newPair = {...cpair, value};
-      final[pageNo - 1] = [
-        ...final[pageNo - 1].slice(0, index),
-        newPair,
-        ...final[pageNo - 1].slice(index + 1),
-      ];
-      console.log(final);
-      return {...final};
-    });
-  };
-
   // TODO CHANGE THIS TO USE REDUX
   useEffect(() => {
     console.log(state);
@@ -244,6 +206,7 @@ export default function MatchReview({config, setTitle}) {
       <HeaderDivider additional_styles="border-gray-300" />
       <div className="py-2.5 grid grid-cols-[1fr_auto] items-center space-x-2">
         <Input
+          type="dropdown"
           label={data.key
             .replace(/\_/g, ' ')
             .split(' ')
@@ -251,14 +214,13 @@ export default function MatchReview({config, setTitle}) {
             .join(' ')}
           label_loc="beside"
           value={data.value}
-          type="dropdown"
           name={'submissionType'}
           placeholder={'Selected data will be shown here'}
           dropdown_items={dropDownOptions}
           required={true}
           additional_styles="w-full"
           additional_styles_input_dropdown="placeholder:text-gray-400"
-          onChange={e => setValueForId(data.id, e.target.value)}
+          onChange={e => setValueForId(setState, pageNo, data.id, e.target.value)}
           withSearch
         />
         <Button
@@ -266,7 +228,7 @@ export default function MatchReview({config, setTitle}) {
           title="Reset input"
           disabled={data.value ? false : true}
           onClick={() => {
-            setValueForId(data.id, '');
+            setValueForId(setState, pageNo, data.id, '');
           }}>
           <CloseThin className="w-5 h-5" />
         </Button>

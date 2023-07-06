@@ -2,6 +2,7 @@ import {parseCookies} from 'nookies';
 import {TokenExpired} from '../services/admin';
 import {setErrorMessage} from '../store/generalSlice';
 import {store} from './../store/index'
+import { getHeader } from '../services/document';
 
 export const init_data = async (config, router, workspaceData) => {
   if (!workspaceData.afe_number) {
@@ -219,32 +220,14 @@ export const saveDocument = async (
   const old_data = await init_data(config, router, workspaceData);
 
   // Fetch header from spreadsheet
-  const spreadsheet_header = await fetch(
-    `${config.services.sheets}/getHeaders`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${
-          JSON.parse(parseCookies().user_data).access_token
-        }`,
-      },
-      body: JSON.stringify({
-        form_type: router.query.form_type,
-      }),
-    },
-  )
-    .then(response => {
-      return response.json();
-    })
-    .then(response => {
-      // Handle non-200 response status
-      if (response.status !== 200) {
-        TokenExpired(response.status);
-        throw `Service returned with status ${response.status} on spreadsheet GET headers: ${response.response}`;
-      }
-      return response;
-    });
+  const spreadsheet_header = await getHeader(config, router.query.form_type)
+  .then((response) => {
+    if (response.status !== 200) {
+      TokenExpired(response.status);
+      throw `Service returned with status ${response.status} on spreadsheet GET headers: ${response.response}`;
+    }
+    return response;
+  });
 
   // Fetch spreadsheet data from the server
   const spreadsheet_data = await fetch(`${config.services.sheets}/getRows`, {

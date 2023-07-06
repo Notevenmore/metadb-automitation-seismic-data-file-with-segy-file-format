@@ -69,6 +69,9 @@ export interface DisplayErrorType {
 const CLEAR_ERROR_WAIT = 500;
 
 let currentMessageTimeout: NodeJS.Timeout | undefined = undefined;
+// Use this to display error message instead of setErrorMessage.
+// If this function is called multiple times, it is safe because the
+// setTimeout is reset if it is happening each time it is called.
 export const displayErrorMessage = createAsyncThunk<void, DisplayErrorType>(
   'general/displayErrorMessage',
   async ({color, duration, message}: DisplayErrorType, {dispatch}) => {
