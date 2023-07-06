@@ -17,7 +17,7 @@ import Toast from '../../components/toast/toast';
 import {saveDocument} from '../../components/utility_functions';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import {DocumentSummary, FileListType, ReviewData, Table as TableType, UploadDocumentSettings, setErrorMessage} from '../../store/generalSlice';
+import {DocumentSummary, FileListType, ReviewData, Table as TableType, UploadDocumentSettings, setErrorMessage, setUploadDocumentSettings} from '../../store/generalSlice';
 import { RootState } from '../../store';
 
 export default function UploadFileReview({setTitle, config}) {
@@ -30,14 +30,6 @@ export default function UploadFileReview({setTitle, config}) {
   const [spreadsheetID, setspreadsheetID] = useState('');
   const [loading, setloading] = useState('');
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
-  const [workspaceData, setworkspaceData] = useState<UploadDocumentSettings>({
-    workspace_name: '',
-    kkks_name: '',
-    working_area: '',
-    submission_type: '',
-    afe_number: '',
-    email: '',
-  });
 
   const dispatch = useDispatch();
 
@@ -61,10 +53,9 @@ export default function UploadFileReview({setTitle, config}) {
     const init = async () => {
       try {
         setImageURL(
-          _ =>
-            `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${
-              document_summary?.document_id
-            }/${PageNo + 1}`,
+          `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${
+            document_summary?.document_id
+          }/${PageNo + 1}`,
         );
         setloading(`Reformatting OCR data`);
         let final = [];
@@ -76,15 +67,6 @@ export default function UploadFileReview({setTitle, config}) {
           final.push(row);
         }
         setReviewData(final);
-        const workspace_data = {
-          afe_number: upload_document_settings.afe_number,
-          workspace_name: upload_document_settings.workspace_name,
-          kkks_name: upload_document_settings.kkks_name,
-          working_area: upload_document_settings.working_area,
-          submission_type: upload_document_settings.submission_type,
-          email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
-        };
-        setworkspaceData(workspace_data);
         setloading('');
       } catch (error) {
         setloading('');
@@ -99,7 +81,7 @@ export default function UploadFileReview({setTitle, config}) {
 
     // ---| OLD WORKFLOW |---
     // check github
-  }, [PageNo, document_summary.body.page_count, document_summary?.document_id, files.length, review_data, router, upload_document_settings.afe_number, upload_document_settings.kkks_name, upload_document_settings.submission_type, upload_document_settings.working_area, upload_document_settings.workspace_name]);
+  }, [PageNo, document_summary.body.page_count, document_summary?.document_id, files.length, review_data, router]);
 
   useEffect(() => {
     setImageURL(
@@ -112,6 +94,15 @@ export default function UploadFileReview({setTitle, config}) {
 
   const delay = delay_amount_ms =>
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
+
+  const workspaceData = (({afe_number, kkks_name, workspace_name, working_area, submission_type}: UploadDocumentSettings) => ({
+    afe_number,
+    kkks_name,
+    workspace_name,
+    working_area,
+    submission_type,
+    email: "john.richardson@gtn.id"
+  }))(upload_document_settings);
 
   const saveDocumentHandler = async (e, redirect = false) => {
     router.events.emit('routeChangeStart');
@@ -214,7 +205,10 @@ export default function UploadFileReview({setTitle, config}) {
             required={true}
             additional_styles="w-full"
             onChange={e =>
-              setworkspaceData({...workspaceData, kkks_name: e.target.value})
+              setUploadDocumentSettings({
+                ...workspaceData,
+                kkks_name: e.target.value
+              })
             }
           />
         </HeaderInput>
@@ -228,7 +222,10 @@ export default function UploadFileReview({setTitle, config}) {
             required={true}
             additional_styles="w-full"
             onChange={e =>
-              setworkspaceData({...workspaceData, working_area: e.target.value})
+              setUploadDocumentSettings({
+                ...workspaceData,
+                working_area: e.target.value
+              })
             }
           />
         </HeaderInput>
@@ -254,9 +251,9 @@ export default function UploadFileReview({setTitle, config}) {
             required={true}
             additional_styles="w-full"
             onChange={e =>
-              setworkspaceData({
+              setUploadDocumentSettings({
                 ...workspaceData,
-                submission_type: e.target.value,
+                submission_type: e.target.value
               })
             }
             withSearch
