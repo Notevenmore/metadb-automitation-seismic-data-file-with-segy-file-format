@@ -2,7 +2,7 @@ import {useRouter} from 'next/router';
 import {parseCookies} from 'nookies';
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {ImageEditor, Tuple4} from '../../components/HighlightViewer';
 import Input from '../../components/Input';
@@ -13,11 +13,11 @@ import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
 import {
   FileListType,
+  displayErrorMessage,
   setDocumentSummary,
-  setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
-import { RootState } from '../../store';
+import { RootState, useAppDispatch } from '../../store';
 
 interface TableRow {
   id: number;
@@ -138,7 +138,7 @@ export default function MatchingGuided({config, setTitle}) {
 
   const files = useSelector<RootState, FileListType>(state => state.general.file);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
@@ -250,19 +250,15 @@ export default function MatchingGuided({config, setTitle}) {
         }
       }
       router.events.emit('routeChangeComplete');
-      setLoading(null);
-      setTimeout(async () => {
-        dispatch(
-          setErrorMessage({
-            message:
-              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-            color: 'blue',
-            show: true,
-          }),
-        );
-        await delay(5000);
-        dispatch(setErrorMessage({show: false, message: '', color: ''}));
-      }, 3000);
+      setLoading('');
+      dispatch(
+        displayErrorMessage({
+          message:
+            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+          color: 'blue',
+          duration: 5000
+        }),
+      );
     };
     if (router.isReady) {
       init();

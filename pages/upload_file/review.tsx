@@ -1,7 +1,7 @@
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {ImageEditor} from '../../components/HighlightViewer';
 import Button from '../../components/button';
 import Container from '../../components/container';
@@ -16,8 +16,8 @@ import Table from '../../components/table/table';
 import {saveDocument} from '../../components/utility_functions';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import {DocumentSummary, FileListType, ReviewData, Table as TableType, UploadDocumentSettings, setErrorMessage, setUploadDocumentSettings} from '../../store/generalSlice';
-import { RootState } from '../../store';
+import {DocumentSummary, FileListType, ReviewData, Table as TableType, UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings} from '../../store/generalSlice';
+import { RootState, useAppDispatch } from '../../store';
 
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
@@ -30,7 +30,7 @@ export default function UploadFileReview({setTitle, config}) {
   const [loading, setloading] = useState('');
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const router = useRouter();
   const path_query =
@@ -83,7 +83,7 @@ export default function UploadFileReview({setTitle, config}) {
 
     // ---| OLD WORKFLOW |---
     // check github
-  }, [PageNo, document_summary.body.page_count, document_summary?.document_id, files.length, review_data, router]);
+  }, [PageNo, document_summary?.body.page_count, document_summary?.document_id, files.length, review_data, router]);
 
   useEffect(() => {
     setImageURL(
@@ -120,41 +120,33 @@ export default function UploadFileReview({setTitle, config}) {
       );
       if (save_result.success) {
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message: 'Record successfully saved',
             color: 'blue',
-            show: true,
+            duration: 3000
           }),
         );
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
-          setTimeout(async () => {
-            dispatch(
-              setErrorMessage({
-                message: 'Redirecting to homepage...',
-                color: 'blue',
-                show: true,
-              }),
-            );
-            await delay(1500);
-            dispatch(setErrorMessage({show: false, message: '', color: ''}));
-          }, 0);
+          dispatch(
+            displayErrorMessage({
+              message: 'Redirecting to homepage...',
+              color: 'blue',
+              duration: 1500,
+            }),
+          );
           await delay(1000);
           router.push('/');
-        } else {
-          await delay(3000);
-          dispatch(setErrorMessage({show: false, message: '', color: ''}));
         }
       }
     } catch (error) {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
             error,
           )}`,
           color: 'red',
-          show: true,
         }),
       );
     }
@@ -164,18 +156,14 @@ export default function UploadFileReview({setTitle, config}) {
   useEffect(() => {
     if (spreadsheetReady) {
       router.events.emit('routeChangeComplete');
-      setTimeout(async () => {
-        dispatch(
-          setErrorMessage({
-            message:
-              'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-            color: 'blue',
-            show: true,
-          }),
-        );
-        await delay(10000);
-        dispatch(setErrorMessage({show: false, message: '', color: ''}));
-      }, 3000);
+      dispatch(
+        displayErrorMessage({
+          message:
+            'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+          color: 'blue',
+          duration: 10000
+        }),
+      );
     }
   }, [dispatch, router.events, spreadsheetReady]);
 

@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import { parseCookies } from 'nookies';
 import React, { ChangeEvent, FormEvent, WheelEvent, useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
@@ -15,8 +14,9 @@ import Robot from '../../public/icons/robot.svg';
 import Select from '../../public/icons/selection_tool.svg';
 import Upload from '../../public/icons/upload.svg';
 import { TokenExpired } from '../../services/admin';
-import { UploadDocumentSettings, setErrorMessage, setUploadDocumentSettings, storeFile } from '../../store/generalSlice';
+import { UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings, storeFile } from '../../store/generalSlice';
 import getFileType from '../../utils/filetype';
+import { useAppDispatch } from '../../store';
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -29,7 +29,7 @@ export default function UploadFilePage({config, setTitle}) {
     kkks_name: '',
     working_area: '',
     submission_type: '',
-    afe_number: '',
+    afe_number: 0,
     DataType: '',
     FileFormat: '',
     Method: '',
@@ -38,7 +38,7 @@ export default function UploadFilePage({config, setTitle}) {
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const fileUploadRef = useRef(null);
 
   useEffect(() => {
@@ -145,11 +145,10 @@ export default function UploadFilePage({config, setTitle}) {
       settoggleOverlay(false);
       if (submit) {
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message:
               "Creating a new record... Please don't leave this page or click anything",
             color: 'blue',
-            show: true,
           }),
         );
         if (
@@ -171,7 +170,7 @@ export default function UploadFilePage({config, setTitle}) {
               }`,
             },
             body: JSON.stringify({
-              afe_number: parseInt(UplSettings.afe_number),
+              afe_number: UplSettings.afe_number,
               workspace_name: UplSettings.workspace_name,
               kkks_name: UplSettings.kkks_name,
               working_area: UplSettings.working_area,
@@ -187,18 +186,14 @@ export default function UploadFilePage({config, setTitle}) {
           return res.text();
         });
         if (post_workspace === 'OK') {
-          setTimeout(async () => {
-            dispatch(
-              setErrorMessage({
-                message:
-                  'Success. A new record has been created. Redirecting to the next page...',
-                color: 'blue',
-                show: true,
-              }),
-            );
-            await delay(1500);
-            dispatch(setErrorMessage({show: false, message: '', color: ''}));
-          }, 0);
+          dispatch(
+            displayErrorMessage({
+              message:
+                'Success. A new record has been created. Redirecting to the next page...',
+              color: 'blue',
+              duration: 1500
+            }),
+          );
           router.events.emit('routeChangeComplete');
           await delay(1000);
           router.push({
@@ -216,23 +211,21 @@ export default function UploadFilePage({config, setTitle}) {
           });
         } else {
           dispatch(
-            setErrorMessage({
+            displayErrorMessage({
               message:
                 'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
               color: 'red',
-              show: true,
             }),
           );
         }
       }
     } catch (error) {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: `Failed to create a new record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
             error,
           )}`,
           color: 'red',
-          show: true,
         }),
       );
     }
@@ -278,12 +271,11 @@ export default function UploadFilePage({config, setTitle}) {
       }
     } catch (error) {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
             error,
           )}`,
           color: 'red',
-          show: true,
         }),
       );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
@@ -393,7 +385,7 @@ export default function UploadFilePage({config, setTitle}) {
               type="number"
               name={'AFE_Number'}
               placeholder={'Input AFE number'}
-              value={UplSettings.afe_number}
+              value={UplSettings.afe_number || ""}
               required={true}
               additional_styles="w-full"
               additional_styles_label={additional_styles_label}
@@ -402,7 +394,7 @@ export default function UploadFilePage({config, setTitle}) {
                 UplSettings.DataType
                   ? setUplSettings({
                       ...UplSettings,
-                      afe_number: String(parseInt(e.target.value)),
+                      afe_number: parseInt(e.target.value, 10),
                       workspace_name: `record_${e.target.value}`,
                     })
                   : null

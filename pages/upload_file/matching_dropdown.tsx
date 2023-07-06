@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { parseCookies } from 'nookies';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Highlight from 'react-highlight';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { HeaderDivider, HeaderTable } from '../../components/HeaderTable';
 import { ImageEditor } from '../../components/HighlightViewer';
 import Input from '../../components/Input';
@@ -11,11 +11,11 @@ import Container from '../../components/container';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
-import { RootState } from '../../store';
+import { RootState, useAppDispatch } from '../../store';
 import {
   FileListType,
+  displayErrorMessage,
   setDocumentSummary,
-  setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
 
@@ -310,7 +310,7 @@ export default function MatchReview({config, setTitle}) {
   // @ts-ignore
   const files = useSelector<RootState, FileListType>(state => state.general.file);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
@@ -451,18 +451,14 @@ export default function MatchReview({config, setTitle}) {
       }
       router.events.emit('routeChangeComplete');
       setLoading('');
-      setTimeout(async () => {
-        dispatch(
-          setErrorMessage({
-            message:
-              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-            color: 'blue',
-            show: true,
-          }),
-        );
-        await delay(5000);
-        dispatch(setErrorMessage({show: false, message: '', color: ''}));
-      }, 3000);
+      dispatch(
+        displayErrorMessage({
+          message:
+            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+          color: 'blue',
+          duration: 5000,
+        }),
+      );
     };
     if (router.isReady) {
       init();
