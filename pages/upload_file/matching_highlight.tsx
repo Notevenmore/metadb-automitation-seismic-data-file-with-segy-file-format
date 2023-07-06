@@ -1,124 +1,29 @@
-import {useRouter} from 'next/router';
-import {parseCookies} from 'nookies';
-import {useEffect, useState} from 'react';
+import { useRouter } from 'next/router';
+import { parseCookies } from 'nookies';
+import { useEffect, useState } from 'react';
 import Highlight from 'react-highlight';
-import {useDispatch, useSelector} from 'react-redux';
-import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
-import {ImageEditor, Tuple4} from '../../components/HighlightViewer';
+import { useSelector } from 'react-redux';
+import { HeaderDivider, HeaderTable } from '../../components/HeaderTable';
+import { ImageEditor, Tuple4 } from '../../components/HighlightViewer';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
+import { TableRow } from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
+import CloseThin from '../../public/icons/close-thin.svg';
+import { extractTextFromBounds, fetchDocumentSummary, generateImageUrl, uploadImage } from '../../services/ocr';
+import { RootState, useAppDispatch } from '../../store';
 import {
+  FileListType,
+  displayErrorMessage,
   setDocumentSummary,
-  setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
-
-interface TableRow {
-  id: number;
-  key: string;
-  value: string | null;
-}
-
-export const toBase64 = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result.toString());
-    reader.onerror = error => reject(error);
-  });
-
-async function extractTextFromBounds(
-  doc_id: string,
-  page_no: number,
-  bound: Tuple4<number>,
-) {
-  var myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append(
-    'Authorization',
-    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
-  );
-  var raw = JSON.stringify({
-    bounds: bound,
-  });
-
-  const requestOptions: RequestInit = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/scrape-bounds/${doc_id}/${page_no}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: null};
-  }
-}
-
-const uploadImage = async (imageBase64Str: string) => {
-  var myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append(
-    'Authorization',
-    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
-  );
-
-  var raw = JSON.stringify({
-    base64str: imageBase64Str,
-  });
-
-  var requestOptions: RequestInit = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: e};
-  }
-};
-
-const fetchDocumentSummary = async (docId: string) => {
-  var requestOptions: RequestInit = {
-    method: 'GET',
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: e};
-  }
-};
-
-const generateImageUrl = (docId: string, page: number) => {
-  return `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`;
-};
+import { toBase64 } from '../../utils/base64';
+import { getHeader } from '../../services/document';
+import { setValueForId } from '../../utils/document';
+import { delay } from '../../utils/common';
 
 export default function MatchingGuided({config, setTitle}) {
   const [state, setState] = useState({} as any);
@@ -133,10 +38,9 @@ export default function MatchingGuided({config, setTitle}) {
   const [loading, setLoading] = useState('');
   const [error, setError] = useState('');
 
-  // @ts-ignore
-  const files = useSelector(state => state.general.file);
+  const files = useSelector<RootState, FileListType>(state => state.general.file);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
@@ -152,14 +56,6 @@ export default function MatchingGuided({config, setTitle}) {
     }
   };
 
-  // Page change use effect
-  useEffect(() => {
-    const onPageChange = async () => {
-      if (docId === null) return;
-    };
-    onPageChange();
-  }, [pageNo]);
-
   useEffect(() => {
     console.log(imageUrl);
   }, [imageUrl]);
@@ -169,9 +65,6 @@ export default function MatchingGuided({config, setTitle}) {
       setformType(String(router.query.form_type));
     }
   }, [router]);
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
     setTitle('Data Matching | Highlight');
@@ -208,30 +101,7 @@ export default function MatchingGuided({config, setTitle}) {
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
-          const row_names = await fetch(
-            `${config.services.sheets}/getHeaders`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
-              },
-              body: JSON.stringify({
-                form_type: router.query?.form_type,
-              }),
-            },
-          )
-            .then(response => {
-              return response.json();
-            })
-            .then(response => {
-              if (response.status !== 200) {
-                throw response.response;
-              }
-              return response;
-            });
+          const row_names = await getHeader(config, router.query?.form_type as string);
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -256,31 +126,25 @@ export default function MatchingGuided({config, setTitle}) {
         }
       }
       router.events.emit('routeChangeComplete');
-      setLoading(null);
-      setTimeout(async () => {
-        dispatch(
-          setErrorMessage({
-            message:
-              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-            color: 'blue',
-            show: true,
-          }),
-        );
-        await delay(5000);
-        dispatch(setErrorMessage({show: false}));
-        await delay(500);
-        dispatch(setErrorMessage({message: '', color: ''}));
-      }, 3000);
+      setLoading('');
+      dispatch(
+        displayErrorMessage({
+          message:
+            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+          color: 'blue',
+          duration: 5000
+        }),
+      );
     };
     if (router.isReady) {
       init();
     }
-  }, [router.isReady]);
+  }, [router.isReady, config, dispatch, files, pageNo, router, setTitle]);
 
   useEffect(() => {
     // save the edited state to redux for final review later
     dispatch(setReviewData(state));
-  }, [state]);
+  }, [dispatch, state]);
 
   async function boundsObserver(bounds: Tuple4<number>[]) {
     if (bounds.length === 0) return;
@@ -289,26 +153,9 @@ export default function MatchingGuided({config, setTitle}) {
     const bound = bounds[last];
     const response = await extractTextFromBounds(docId, pageNo, bound);
     if (response.status === 'success') {
-      setValueForId(selectedRow, response.body.word);
+      setValueForId(setState, pageNo, selectedRow, response.body.word);
     }
   }
-
-  const setValueForId = (id: number, value: string) => {
-    setState(state => {
-      // creating a copy to prevent direct mutation that causes error in redux
-      let final = {...state};
-      const index = final[pageNo - 1].findIndex(pair => pair.id === id);
-      const cpair = final[pageNo - 1].find(pair => pair.id === id);
-      const newPair = {...cpair, value};
-      final[pageNo - 1] = [
-        ...final[pageNo - 1].slice(0, index),
-        newPair,
-        ...final[pageNo - 1].slice(index + 1),
-      ];
-      console.log(final);
-      return {...final};
-    });
-  };
 
   const setDocId = (newDocId: string) => {
     _setDocId(newDocId);
@@ -347,28 +194,16 @@ export default function MatchingGuided({config, setTitle}) {
             selectedRow === data.id ? 'font-bold' : 'font-semibold'
           } cursor-pointer`}
           additional_styles="min-w-0 cursor-pointer"
-          onChange={e => setValueForId(data.id, e.target.value)}
+          onChange={e => setValueForId(setState, pageNo, data.id, e.target.value)}
         />
         <Button
           additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
           title="Reset input"
           disabled={data.value ? false : true}
           onClick={() => {
-            setValueForId(data.id, '');
+            setValueForId(setState, pageNo, data.id, '');
           }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseThin className="w-5 h-5" />
         </Button>
       </div>
     </div>
@@ -448,7 +283,6 @@ export default function MatchingGuided({config, setTitle}) {
         <Button
           button_description="View on sheets"
           path="/upload_file/review"
-          // @ts-ignore
           query={{form_type: formType}}
           additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           disabled={formType ? false : true}
@@ -468,19 +302,7 @@ export default function MatchingGuided({config, setTitle}) {
           onClick={() => {
             setError('');
           }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseThin className="w-5 h-5" />
         </Button>
       </div>
     </Container>

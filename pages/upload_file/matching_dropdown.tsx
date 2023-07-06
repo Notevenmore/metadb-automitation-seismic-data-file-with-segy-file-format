@@ -1,256 +1,30 @@
-import {useRouter} from 'next/router';
-import {parseCookies} from 'nookies';
-import {useEffect, useRef, useState} from 'react';
+import { useRouter } from 'next/router';
+import { parseCookies } from 'nookies';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Highlight from 'react-highlight';
-import {useDispatch, useSelector} from 'react-redux';
-import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
-import {ImageEditor} from '../../components/HighlightViewer';
+import { useSelector } from 'react-redux';
+import { HeaderDivider, HeaderTable } from '../../components/HeaderTable';
+import { ImageEditor } from '../../components/HighlightViewer';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
+import CloseThin from '../../public/icons/close-thin.svg';
+import { RootState, useAppDispatch } from '../../store';
 import {
+  FileListType,
+  displayErrorMessage,
   setDocumentSummary,
-  setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
-
-function uuidv4() {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (
-      c ^
-      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-    ).toString(16),
-  );
-}
-
-export const toBase64 = file =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result.toString());
-    reader.onerror = error => reject(error);
-  });
-
-const newDefaultPair = {
-  id: 0,
-  key: null,
-  value: null,
-};
-
-const generateKeyValuePair = () => {
-  const newPair = {...newDefaultPair};
-  newPair.id = uuidv4();
-  return newPair;
-};
-
-const uploadImage = async imageBase64Str => {
-  var myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append(
-    'Authorization',
-    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
-  );
-
-  var raw = JSON.stringify({
-    base64str: imageBase64Str,
-  });
-
-  var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: null};
-  }
-};
-
-const postScrapeAnnotate = async (docId, page) => {
-  var myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append(
-    'Authorization',
-    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
-  );
-
-  var requestOptions = {
-    method: 'GET',
-    headers: myHeaders,
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/scrape/${docId}/${page}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: null};
-  }
-};
-
-const fetchDocumentSummary = async docId => {
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: null};
-  }
-};
-
-const generateImageUrl = (docId, page) => {
-  return `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/annotate/${docId}/${page}`;
-};
+import { fetchDocumentSummary, generateImageUrl, postScrapeAnnotate, uploadImage } from '../../services/ocr';
+import { toBase64 } from '../../utils/base64';
+import { getHeader } from '../../services/document';
+import { setValueForId } from '../../utils/document';
+import { delay } from '../../utils/common';
 
 export default function MatchReview({config, setTitle}) {
-  const initialState = [
-    {
-      id: 0,
-      key: 'NO',
-      value: '',
-    },
-    {
-      id: 1,
-      key: 'BA_LONG_NAME',
-      value: '',
-    },
-    {
-      id: 2,
-      key: 'BA_TYPE',
-      value: '',
-    },
-    {
-      id: 3,
-      key: 'AREA_ID',
-      value: '',
-    },
-    {
-      id: 4,
-      key: 'AREA_TYPE',
-      value: '',
-    },
-    {
-      id: 5,
-      key: 'FIELD_NAME',
-      value: '',
-    },
-    {
-      id: 6,
-      key: 'WELL_NAME',
-      value: '',
-    },
-    {
-      id: 7,
-      key: 'UWI',
-      value: '',
-    },
-    {
-      id: 8,
-      key: 'TITLE',
-      value: '',
-    },
-    {
-      id: 9,
-      key: 'CREATOR_NAME',
-      value: '',
-    },
-    {
-      id: 10,
-      key: 'CREATE_DATE',
-      value: '',
-    },
-    {
-      id: 11,
-      key: 'MEDIA_TYPE',
-      value: '',
-    },
-    {
-      id: 12,
-      key: 'DOCUMENT_TYPE',
-      value: '',
-    },
-    {
-      id: 13,
-      key: 'ITEM_CATEGORY',
-      value: '',
-    },
-    {
-      id: 14,
-      key: 'ITEM_SUB_CATEGORY',
-      value: '',
-    },
-    {
-      id: 15,
-      key: 'PAGE_COUNT',
-      value: '',
-    },
-    {
-      id: 16,
-      key: 'REMARK',
-      value: '',
-    },
-    {
-      id: 17,
-      key: 'BA_LONG_NAME',
-      value: '',
-    },
-    {
-      id: 18,
-      key: 'BA_TYPE',
-      value: '',
-    },
-    {
-      id: 19,
-      key: 'DATA_STORE_NAME',
-      value: '',
-    },
-    {
-      id: 20,
-      key: 'DATA_STORE_TYPE',
-      value: '',
-    },
-    {
-      id: 21,
-      key: 'SOURCE',
-      value: '',
-    },
-    {
-      id: 22,
-      key: 'QC_STATUS',
-      value: '',
-    },
-    {
-      id: 23,
-      key: 'CHECKED_BY_BA_ID',
-      value: '',
-    },
-  ];
-
   const [state, setState] = useState({});
   const [dropDownOptions, setDropDownOptions] = useState([]);
   const [imageBase64Str, setImageBase64Str] = useState('');
@@ -263,17 +37,21 @@ export default function MatchReview({config, setTitle}) {
 
   const inputFileRef = useRef(null);
 
-  const files = useSelector(state => state.general.file);
+  // @ts-ignore
+  const files = useSelector<RootState, FileListType>(state => state.general.file);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
-  const setDocId = newDocId => {
-    if (docId === null) {
-      _setDocId(_ => newDocId);
-    }
-  };
+    const setDocId = useCallback((newDocId: string) => {
+      _setDocId(id => {
+        if (id === null) {
+          return newDocId;
+        }
+        return id;
+      });
+    }, []);
 
   const nextPage = () => {
     if (pageNo < totalPageNo) {
@@ -297,16 +75,13 @@ export default function MatchReview({config, setTitle}) {
       }
     };
     onPageChange();
-  }, [pageNo]);
+  }, [docId, pageNo]);
 
   const prevPage = () => {
     if (pageNo > 1) {
       setPageNo(oldPageNo => oldPageNo - 1);
     }
   };
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
     setTitle('Data Matching | Dropdown');
@@ -354,30 +129,7 @@ export default function MatchReview({config, setTitle}) {
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
-          const row_names = await fetch(
-            `${config.services.sheets}/getHeaders`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
-              },
-              body: JSON.stringify({
-                form_type: router.query?.form_type,
-              }),
-            },
-          )
-            .then(response => {
-              return response.json();
-            })
-            .then(response => {
-              if (response.status !== 200) {
-                throw response.response;
-              }
-              return response;
-            });
+          const row_names = await getHeader(config, router.query?.form_type as string);
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -403,25 +155,19 @@ export default function MatchReview({config, setTitle}) {
       }
       router.events.emit('routeChangeComplete');
       setLoading('');
-      setTimeout(async () => {
-        dispatch(
-          setErrorMessage({
-            message:
-              'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-            color: 'blue',
-            show: true,
-          }),
-        );
-        await delay(5000);
-        dispatch(setErrorMessage({show: false}));
-        await delay(500);
-        dispatch(setErrorMessage({message: '', color: ''}));
-      }, 3000);
+      dispatch(
+        displayErrorMessage({
+          message:
+            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+          color: 'blue',
+          duration: 5000,
+        }),
+      );
     };
     if (router.isReady) {
       init();
     }
-  }, [router.isReady]);
+  }, [router.isReady, dispatch, files, pageNo, router, setDocId, setTitle, config]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
@@ -436,7 +182,7 @@ export default function MatchReview({config, setTitle}) {
     if (files !== null) {
       const file = files[0];
       const imageBase64Str = await toBase64(file);
-      const result = await postScrapeAnnotate(imageBase64Str);
+      const result = await postScrapeAnnotate(imageBase64Str, pageNo);
       console.log(result);
 
       if (result.status === 'success') {
@@ -447,57 +193,18 @@ export default function MatchReview({config, setTitle}) {
     }
   };
 
-  const setKeyForId = (id, key) => {
-    setState(state => {
-      const index = state.findIndex(pair => pair.id === id);
-      const cpair = state.find(pair => pair.id === id);
-      const newPair = {...cpair, key};
-      return [...state.slice(0, index), newPair, ...state.slice(index + 1)];
-    });
-  };
-
-  const setValueForId = (id, value) => {
-    setState(state => {
-      // creating a copy to prevent direct mutation that causes error in redux
-      let final = {...state};
-      const index = final[pageNo - 1].findIndex(pair => pair.id === id);
-      const cpair = final[pageNo - 1].find(pair => pair.id === id);
-      const newPair = {...cpair, value};
-      final[pageNo - 1] = [
-        ...final[pageNo - 1].slice(0, index),
-        newPair,
-        ...final[pageNo - 1].slice(index + 1),
-      ];
-      console.log(final);
-      return {...final};
-    });
-  };
-
   // TODO CHANGE THIS TO USE REDUX
   useEffect(() => {
     console.log(state);
     dispatch(setReviewData(state));
-  }, [state]);
-
-  const removePair = id => {
-    setState(state => {
-      const index = state.findIndex(pair => pair.id === id);
-      return [...state.slice(0, index), ...state.slice(index + 1)];
-    });
-  };
-
-  const addPair = () => {
-    setState(state => {
-      const newPair = generateKeyValuePair();
-      return [...state, newPair];
-    });
-  };
+  }, [dispatch, state]);
 
   const toRowComponent = data => (
     <div key={data.id}>
       <HeaderDivider additional_styles="border-gray-300" />
       <div className="py-2.5 grid grid-cols-[1fr_auto] items-center space-x-2">
         <Input
+          type="dropdown"
           label={data.key
             .replace(/\_/g, ' ')
             .split(' ')
@@ -505,14 +212,13 @@ export default function MatchReview({config, setTitle}) {
             .join(' ')}
           label_loc="beside"
           value={data.value}
-          type="dropdown"
           name={'submissionType'}
           placeholder={'Selected data will be shown here'}
           dropdown_items={dropDownOptions}
           required={true}
           additional_styles="w-full"
           additional_styles_input_dropdown="placeholder:text-gray-400"
-          onChange={e => setValueForId(data.id, e.target.value)}
+          onChange={e => setValueForId(setState, pageNo, data.id, e.target.value)}
           withSearch
         />
         <Button
@@ -520,21 +226,9 @@ export default function MatchReview({config, setTitle}) {
           title="Reset input"
           disabled={data.value ? false : true}
           onClick={() => {
-            setValueForId(data.id, '');
+            setValueForId(setState, pageNo, data.id, '');
           }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseThin className="w-5 h-5" />
         </Button>
       </div>
     </div>

@@ -1,10 +1,11 @@
 import Link from 'next/link';
+import { ParsedUrlQueryInput } from 'querystring';
 import {twMerge} from 'tailwind-merge';
 
 interface ButtonProps extends React.ComponentProps<'button'> {
   path?: string;
   title?: string;
-  query?: string;
+  query?: string | ParsedUrlQueryInput;
   button_description?: string;
   additional_styles?: string;
   withPath?: boolean;

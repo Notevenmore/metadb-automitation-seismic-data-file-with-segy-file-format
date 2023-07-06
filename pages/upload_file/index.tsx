@@ -1,33 +1,36 @@
-import {useRouter} from 'next/router';
-import {parseCookies} from 'nookies';
-import {useEffect, useRef, useState} from 'react';
-import {useDispatch} from 'react-redux';
+import { useRouter } from 'next/router';
+import { parseCookies } from 'nookies';
+import React, { ChangeEvent, FormEvent, WheelEvent, useEffect, useRef, useState } from 'react';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import {checkAfe} from '../../components/utility_functions';
-import {datatypes} from '../../config';
+import { checkAfe } from '../../components/utility_functions';
+import { datatypes } from '../../config';
+import CloseThin from '../../public/icons/close-thin.svg';
+import DropFile from '../../public/icons/drop-file.svg';
+import Hand from '../../public/icons/hand.svg';
+import List from '../../public/icons/list.svg';
+import Robot from '../../public/icons/robot.svg';
 import Select from '../../public/icons/selection_tool.svg';
-import {TokenExpired} from '../../services/admin';
-import {
-  setErrorMessage,
-  setUploadDocumentSettings,
-  storeFile,
-} from '../../store/generalSlice';
+import Upload from '../../public/icons/upload.svg';
+import { TokenExpired } from '../../services/admin';
+import { UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings, storeFile } from '../../store/generalSlice';
 import getFileType from '../../utils/filetype';
+import { useAppDispatch } from '../../store';
+import { delay } from '../../utils/common';
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
-  const additional_styles_label = 'w-[20%] font-semibold';
-  const [fileUpload, setFileUpload] = useState([]);
-  const [UplSettings, setUplSettings] = useState({
+  const additional_styles_label = 'w-1/5 font-semibold';
+  const [fileUpload, setFileUpload] = useState<FileList | []>([]);
+  const [UplSettings, setUplSettings] = useState<UploadDocumentSettings>({
     workspace_name: '',
     kkks_name: '',
     working_area: '',
     submission_type: '',
-    afe_number: '',
+    afe_number: 0,
     DataType: '',
     FileFormat: '',
     Method: '',
@@ -36,26 +39,18 @@ export default function UploadFilePage({config, setTitle}) {
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
   const [afeExist, setafeExist] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const fileUploadRef = useRef(null);
 
   useEffect(() => {
     console.log('detail', dragActive);
   }, [dragActive]);
 
-  useEffect(() => {
-    const workflow_container = document.getElementById(
-      'workflow_type_container',
-    );
-    workflow_container.addEventListener('wheel', e =>
-      horizontal_scroll(e, workflow_container),
-    );
-  }, []);
-
-  const changeFile = e => {
+  const changeFile = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files.length == 0) setFileUpload([]);
     else setFileUpload(e.target.files);
   };
+
   useEffect(() => {
     if (fileUpload.length <= 0) {
       setUplSettings(prev => ({...prev, FileFormat: ''}));
@@ -66,7 +61,7 @@ export default function UploadFilePage({config, setTitle}) {
     setUplSettings(prev => ({...prev, FileFormat: fileType}));
   }, [fileUpload]);
 
-  const handleDrop = e => {
+  const handleDrop = (e: React.DragEvent) => {
     e.stopPropagation();
     e.preventDefault();
     fileUploadRef.current.files = e.dataTransfer.files;
@@ -74,7 +69,7 @@ export default function UploadFilePage({config, setTitle}) {
     setDragActive(false);
   };
 
-  const handleDrag = e => {
+  const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === 'dragenter' || e.type === 'dragover') {
@@ -84,21 +79,18 @@ export default function UploadFilePage({config, setTitle}) {
     }
   };
 
-  const horizontal_scroll = (evt, workflow_container) => {
+  const horizontal_scroll = (evt: WheelEvent) => {
     evt.preventDefault();
-    workflow_container.scrollLeft += evt.deltaY;
+    (evt.target as HTMLDivElement).scrollLeft += evt.deltaY;
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     dispatch(storeFile(fileUpload));
     dispatch(setUploadDocumentSettings(UplSettings));
     settoggleOverlay(true);
     return true;
   };
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   // TODO: DEBUG ONLY, COMMENT ON PRODUCTION AND PROPER TESTING
   // AND UNCOMMENT THE COMMENTED METHOD WITH THE SAME NAME
@@ -135,7 +127,7 @@ export default function UploadFilePage({config, setTitle}) {
   // TODO: UNCOMMENT ON TESTING AND PRODUCTION AND COMMENT THE OTHER METHOD WITH THE
   // SAME NAME
 
-  const proceed = async (e, submit = false, element = false) => {
+  const proceed = async (e: React.MouseEvent<HTMLElement>, submit = false, element = false) => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     try {
@@ -143,7 +135,7 @@ export default function UploadFilePage({config, setTitle}) {
         const comparator = document.getElementById('overlay');
         const comparator_parent = document.getElementById('overlay_parent');
         console.log(e.target, comparator, e.target !== comparator);
-        if (![comparator, comparator_parent].includes(e.target)) {
+        if (![comparator, comparator_parent].includes(e.target as HTMLElement)) {
           router.events.emit('routeChangeComplete');
           return;
         }
@@ -151,11 +143,10 @@ export default function UploadFilePage({config, setTitle}) {
       settoggleOverlay(false);
       if (submit) {
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message:
               "Creating a new record... Please don't leave this page or click anything",
             color: 'blue',
-            show: true,
           }),
         );
         if (
@@ -177,7 +168,7 @@ export default function UploadFilePage({config, setTitle}) {
               }`,
             },
             body: JSON.stringify({
-              afe_number: parseInt(UplSettings.afe_number),
+              afe_number: UplSettings.afe_number,
               workspace_name: UplSettings.workspace_name,
               kkks_name: UplSettings.kkks_name,
               working_area: UplSettings.working_area,
@@ -193,20 +184,14 @@ export default function UploadFilePage({config, setTitle}) {
           return res.text();
         });
         if (post_workspace === 'OK') {
-          setTimeout(async () => {
-            dispatch(
-              setErrorMessage({
-                message:
-                  'Success. A new record has been created. Redirecting to the next page...',
-                color: 'blue',
-                show: true,
-              }),
-            );
-            await delay(1500);
-            dispatch(setErrorMessage({show: false}));
-            await delay(500);
-            dispatch(setErrorMessage({message: '', color: ''}));
-          }, 0);
+          dispatch(
+            displayErrorMessage({
+              message:
+                'Success. A new record has been created. Redirecting to the next page...',
+              color: 'blue',
+              duration: 1500
+            }),
+          );
           router.events.emit('routeChangeComplete');
           await delay(1000);
           router.push({
@@ -224,23 +209,21 @@ export default function UploadFilePage({config, setTitle}) {
           });
         } else {
           dispatch(
-            setErrorMessage({
+            displayErrorMessage({
               message:
                 'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
               color: 'red',
-              show: true,
             }),
           );
         }
       }
     } catch (error) {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: `Failed to create a new record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
             error,
           )}`,
           color: 'red',
-          show: true,
         }),
       );
     }
@@ -248,7 +231,7 @@ export default function UploadFilePage({config, setTitle}) {
     router.events.emit('routeChangeComplete');
   };
 
-  const handleAfeChange = async (e, focused) => {
+  const handleAfeChange = async (e: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>, focused: boolean) => {
     e.preventDefault();
     try {
       if (focused) {
@@ -270,7 +253,7 @@ export default function UploadFilePage({config, setTitle}) {
           false,
           config,
           datatypes[UplSettings.DataType],
-          parseInt(e.target.value),
+          parseInt((e.target as HTMLInputElement).value),
         );
         if (result !== 'null') {
           setafeExist(true);
@@ -286,12 +269,11 @@ export default function UploadFilePage({config, setTitle}) {
       }
     } catch (error) {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
             error,
           )}`,
           color: 'red',
-          show: true,
         }),
       );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
@@ -302,12 +284,12 @@ export default function UploadFilePage({config, setTitle}) {
 
   useEffect(() => {
     setTitle('Upload file');
-  }, []);
+  }, [setTitle]);
 
   return (
     <Container
       additional_class="full-height relative"
-      onDragEnter={e => handleDrag(e)}>
+      onDragEnter={handleDrag}>
       <Container.Title back>
         <div className="-space-y-2">
           <p className="capitalize text-sm font-normal">{path_query}</p>
@@ -316,28 +298,14 @@ export default function UploadFilePage({config, setTitle}) {
       </Container.Title>
       <form
         className="flex flex-col items-center justify-center gap-y-4 w-full"
-        onSubmit={e => {
-          handleSubmit();
-          console.log('aaa');
-        }}>
-        <div className="border-dashed border-2 border-black/30 rounded-lg p-10 flex space-x-3 items-center w-[80%] bg-searchbg/[.5]">
-          <svg
-            className="w-16 h-16"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-            />
-          </svg>
+        onSubmit={handleSubmit}>
+        <div className="border-dashed border-2 border-black/30 rounded-lg p-10 flex space-x-3 items-center w-4/5 bg-searchbg/[.5]">
+          <Upload className="w-16 h-16"/>
           <div className="w-full">
             <div>
               <div className="flex space-x-2 items-center justify-center">
                 <Button
+                  type="button"
                   path=""
                   additional_styles="bg-gray-300 hover:bg-gray-400/60 font-bold"
                   button_description="Choose a file"
@@ -355,19 +323,7 @@ export default function UploadFilePage({config, setTitle}) {
                     additional_styles="px-1 py-1 bg-black/20 hover:bg-red-600 hover:text-white"
                     title="Remove file"
                     onClick={() => setFileUpload([])}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-5 h-5">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    <CloseThin className="w-5 h-5"/>
                   </Button>
                 </div>
               )}
@@ -380,14 +336,14 @@ export default function UploadFilePage({config, setTitle}) {
               className="hidden"
               ref={fileUploadRef}
               accept="image/png, application/pdf, application/vnd.openxmlformats-officedocument.presentationml.presentation, text/csv, .las"
-              onChange={e => changeFile(e)}
+              onChange={changeFile}
             />
           </div>
         </div>
         <h2 className="text-xl font-bold py-3">
           Input the correct settings for the uploaded file and the new record
         </h2>
-        <div className="w-[100%] lg:w-[80%] flex flex-col gap-y-3">
+        <div className="w-full lg:w-4/5 flex flex-col gap-y-3">
           <Input
             label="File format"
             label_loc="beside"
@@ -427,7 +383,7 @@ export default function UploadFilePage({config, setTitle}) {
               type="number"
               name={'AFE_Number'}
               placeholder={'Input AFE number'}
-              value={UplSettings.afe_number}
+              value={UplSettings.afe_number || ""}
               required={true}
               additional_styles="w-full"
               additional_styles_label={additional_styles_label}
@@ -436,7 +392,7 @@ export default function UploadFilePage({config, setTitle}) {
                 UplSettings.DataType
                   ? setUplSettings({
                       ...UplSettings,
-                      afe_number: parseInt(e.target.value),
+                      afe_number: parseInt(e.target.value, 10),
                       workspace_name: `record_${e.target.value}`,
                     })
                   : null
@@ -518,9 +474,9 @@ export default function UploadFilePage({config, setTitle}) {
         <h2 className="text-xl font-bold py-3">
           Choose your preferred method of data matching
         </h2>
-        <div className="w-[80%] max-w-[80%] flex items-center justify-center">
+        <div className="w-4/5 max-w-[80%] flex items-center justify-center">
           <div
-            id="workflow_type_container"
+            onWheel={horizontal_scroll}
             className="flex space-x-3 overflow-auto">
             <Button
               id="dropdown"
@@ -533,19 +489,7 @@ export default function UploadFilePage({config, setTitle}) {
                 setUplSettings({...UplSettings, Method: 'dropdown'});
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-10 h-10">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                  />
-                </svg>
+                <List className="w-10 h-10"/>
                 <section className="w-[150px]">
                   <h3 className="text-lg font-bold">Drop down</h3>
                   <p className="text-sm">
@@ -585,19 +529,7 @@ export default function UploadFilePage({config, setTitle}) {
                 setUplSettings({...UplSettings, Method: 'dragdrop'});
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
-                <svg
-                  className="w-10 h-10"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M10.05 4.575a1.575 1.575 0 10-3.15 0v3m3.15-3v-1.5a1.575 1.575 0 013.15 0v1.5m-3.15 0l.075 5.925m3.075.75V4.575m0 0a1.575 1.575 0 013.15 0V15M6.9 7.575a1.575 1.575 0 10-3.15 0v8.175a6.75 6.75 0 006.75 6.75h2.018a5.25 5.25 0 003.712-1.538l1.732-1.732a5.25 5.25 0 001.538-3.712l.003-2.024a.668.668 0 01.198-.471 1.575 1.575 0 10-2.228-2.228 3.818 3.818 0 00-1.12 2.687M6.9 7.575V12m6.27 4.318A4.49 4.49 0 0116.35 15m.002 0h-.002"
-                  />
-                </svg>
+                <Hand className="w-10 h-10"/>
                 <section className="w-[150px]">
                   <h3 className="text-lg font-bold">Drag and drop</h3>
                   <p className="text-sm">
@@ -617,14 +549,7 @@ export default function UploadFilePage({config, setTitle}) {
                 setUplSettings({...UplSettings, Method: 'automatic'});
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
-                <svg
-                  role="img"
-                  className="w-10 h-10"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <title>Robot Framework</title>
-                  <path d="M4.9565 10.2246c0-1.8766 1.5257-3.4023 3.4-3.4023 1.8766 0 3.4024 1.5257 3.4024 3.4023 0 .6838-.5526 1.2364-1.2341 1.2364-.6818 0-1.2344-.5526-1.2344-1.2364 0-.513-.4185-.9296-.9338-.9296-.5129 0-.9317.4165-.9317.9296 0 .6838-.5523 1.2364-1.234 1.2364-.6818 0-1.2344-.5526-1.2344-1.2364m14.0868 5.717c0 .6842-.5524 1.2363-1.2341 1.2363H6.3575c-.6818 0-1.2344-.552-1.2344-1.2363 0-.6837.5526-1.2363 1.2344-1.2363h11.4517c.6817 0 1.234.5526 1.234 1.2363m-5.351-5.0244c-.3814-.5657-.2323-1.3328.3334-1.7143l2.8628-1.9334c.5613-.3902 1.3329-.2324 1.7144.3289.3815.5654.2323 1.3329-.3334 1.7144l-2.8628 1.9333c-.5442.3831-1.3348.2379-1.7144-.3289zm7.8393 7.6018a.8815.8815 0 0 1-.258.6227l-2.1277 2.1277a.8822.8822 0 0 1-.623.258H5.4772a.8822.8822 0 0 1-.623-.258l-2.1277-2.1277a.8815.8815 0 0 1-.258-.6227V5.4818a.8797.8797 0 0 1 .258-.6228l2.1277-2.1282a.8816.8816 0 0 1 .623-.2578h13.0456a.8816.8816 0 0 1 .623.2578l2.1277 2.1282a.8797.8797 0 0 1 .258.6228V18.519zm1.811-15.0835L20.5644.6577A2.2454 2.2454 0 0 0 18.9775 0H5.0207A2.2445 2.2445 0 0 0 3.433.658L.657 3.4359A2.2449 2.2449 0 0 0 0 5.0228v13.9547c0 .5953.2366 1.1667.6575 1.5872l2.778 2.7779c.421.421.9918.6573 1.5871.6573h13.9548a2.2448 2.2448 0 0 0 1.5872-.6573l2.7779-2.7779A2.2436 2.2436 0 0 0 24 18.9775V5.023a2.2451 2.2451 0 0 0-.6575-1.5875z" />
-                </svg>
+                <Robot className="w-10 h-10"/>
                 <section className="w-[150px]">
                   <h3 className="text-lg font-bold">Automatic</h3>
                   <p className="text-sm">
@@ -685,7 +610,7 @@ export default function UploadFilePage({config, setTitle}) {
         }}>
         <div
           id="overlay"
-          className="flex items-center justify-center w-[50%] h-full">
+          className="flex items-center justify-center w-1/2 h-full">
           <div
             className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${
               toggleOverlay ? '' : '-translate-y-10 opacity-0'
@@ -695,19 +620,7 @@ export default function UploadFilePage({config, setTitle}) {
               additional_styles="absolute top-2 right-2 px-1 py-1 text-black"
               title="Cancel"
               onClick={proceed}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <CloseThin className="w-5 h-5" />
             </Button>
             <h1 className="font-bold text-3xl">Re-check the inputted data</h1>
             <hr />
@@ -734,28 +647,16 @@ export default function UploadFilePage({config, setTitle}) {
       </div>
       {dragActive && (
         <div
-          className="absolute w-full full-height top-0 right-0 z-[50] bg-searchbg/[20%] flex items-center justify-center backdrop-blur-md"
-          onDragEnter={e => handleDrag(e)}
-          onDragLeave={e => handleDrag(e)}
-          onDragOver={e => handleDrag(e)}
-          onDrop={e => handleDrop(e)}>
-          <div className="border-dashed border-4 border-black/30 rounded-lg p-10 flex flex-col justify-center space-y-3 items-center w-[80%] bg-searchbg/[.5] h-[550px]">
+          className="absolute w-full full-height top-0 right-0 z-50 bg-searchbg/[20%] flex items-center justify-center backdrop-blur-md"
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}>
+          <div className="border-dashed border-4 border-black/30 rounded-lg p-10 flex flex-col justify-center space-y-3 items-center w-4/5 bg-searchbg/[.5] h-[550px]">
             <div className="w-full text-center">
               <p className="text-4xl font-bold">Drop your file here</p>
             </div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-16 h-16">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0l-3-3m3 3l3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
-              />
-            </svg>
+            <DropFile className="w-16 h-16" />
           </div>
         </div>
       )}
