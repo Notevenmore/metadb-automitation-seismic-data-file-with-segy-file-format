@@ -1,5 +1,5 @@
 import {useRouter} from 'next/router';
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
@@ -10,14 +10,18 @@ import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
+import CloseThin from '../../public/icons/close-thin.svg';
 import {
+  FileListType,
   setDocumentSummary,
   setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
 import {parseCookies} from 'nookies';
+import { RootState } from '../../store';
 
 function uuidv4() {
+  // @ts-ignore dosa! dosa! dosa! dosa! dosa! dosa! dosa! dosa! dosa!
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (
       c ^
@@ -26,13 +30,19 @@ function uuidv4() {
   );
 }
 
-export const toBase64 = file =>
+export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result.toString());
+    reader.onload = () => {
+      if (reader.result) {
+        resolve(reader.result.toString());
+      } else {
+        reject(reader.result);
+      }
+    };
     reader.onerror = error => reject(error);
-  });
+});
 
 const newDefaultPair = {
   id: 0,
@@ -46,7 +56,20 @@ const generateKeyValuePair = () => {
   return newPair;
 };
 
-const uploadImage = async imageBase64Str => {
+interface ApiCallResponse<Body> {
+  status: 'success' | 'failed';
+  body: Body | null;
+}
+
+interface UploadFileResponseBody {
+  doc_id: string;
+}
+
+type UploadFileResponse = ApiCallResponse<UploadFileResponseBody>;
+
+const uploadImage = async (
+  imageBase64Str: string,
+): Promise<UploadFileResponse> => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
   myHeaders.append(
@@ -58,7 +81,7 @@ const uploadImage = async imageBase64Str => {
     base64str: imageBase64Str,
   });
 
-  var requestOptions = {
+  var requestOptions: RequestInit = {
     method: 'POST',
     headers: myHeaders,
     body: raw,
@@ -67,18 +90,30 @@ const uploadImage = async imageBase64Str => {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/upload/base64`,
       requestOptions,
     );
     const result = await response.text();
     return {status: 'success', body: {...JSON.parse(result)}};
   } catch (e) {
     console.log(e);
-    return {status: 'failed', body: null};
+    return {status: 'failed', body: null} as UploadFileResponse;
   }
 };
 
-const postScrapeAnnotate = async (docId, page) => {
+interface ScrapeResponseBody {
+  page: number;
+  words: string[];
+  base64str: string;
+  dropdown: any[];
+}
+
+type ScrapeResponse = ApiCallResponse<ScrapeResponseBody>;
+
+const postScrapeAnnotate = async (
+  docId: string,
+  page: number,
+): Promise<ScrapeResponse> => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
   myHeaders.append(
@@ -86,7 +121,7 @@ const postScrapeAnnotate = async (docId, page) => {
     `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
   );
 
-  var requestOptions = {
+  var requestOptions: RequestInit = {
     method: 'GET',
     headers: myHeaders,
     redirect: 'follow',
@@ -94,7 +129,7 @@ const postScrapeAnnotate = async (docId, page) => {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/scrape/${docId}/${page}`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/scrape/${docId}/${page}`,
       requestOptions,
     );
     const result = await response.text();
@@ -105,15 +140,24 @@ const postScrapeAnnotate = async (docId, page) => {
   }
 };
 
-const fetchDocumentSummary = async docId => {
-  var requestOptions = {
+interface DocumentSummaryResponseBody {
+  file_type: string;
+  page_count: number;
+}
+
+type DocumentSummaryResponse = ApiCallResponse<DocumentSummaryResponseBody>;
+
+const fetchDocumentSummary = async (
+  docId: string,
+): Promise<DocumentSummaryResponse> => {
+  var requestOptions: RequestInit = {
     method: 'GET',
     redirect: 'follow',
   };
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
+      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/summary/${docId}`,
       requestOptions,
     );
     const result = await response.text();
@@ -265,17 +309,21 @@ export default function MatchReview({config, setTitle}) {
 
   const inputFileRef = useRef(null);
 
-  const files = useSelector(state => state.general.file);
+  // @ts-ignore
+  const files = useSelector<RootState, FileListType>(state => state.general.file);
   const router = useRouter();
   const dispatch = useDispatch();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
-  const setDocId = newDocId => {
-    if (docId === null) {
-      _setDocId(_ => newDocId);
-    }
-  };
+    const setDocId = useCallback((newDocId: string) => {
+      _setDocId(id => {
+        if (id === null) {
+          return newDocId;
+        }
+        return id;
+      });
+    }, []);
 
   const nextPage = () => {
     if (pageNo < totalPageNo) {
@@ -299,7 +347,7 @@ export default function MatchReview({config, setTitle}) {
       }
     };
     onPageChange();
-  }, [pageNo]);
+  }, [docId, pageNo]);
 
   const prevPage = () => {
     if (pageNo > 1) {
@@ -416,7 +464,7 @@ export default function MatchReview({config, setTitle}) {
       dispatch(setErrorMessage({message: '', color: '', show: false}));
     };
     init();
-  }, [files]);
+  }, [config.services.sheets, dispatch, files, pageNo, router, setDocId, setTitle]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
@@ -431,7 +479,7 @@ export default function MatchReview({config, setTitle}) {
     if (files !== null) {
       const file = files[0];
       const imageBase64Str = await toBase64(file);
-      const result = await postScrapeAnnotate(imageBase64Str);
+      const result = await postScrapeAnnotate(imageBase64Str, pageNo);
       console.log(result);
 
       if (result.status === 'success') {
@@ -440,15 +488,6 @@ export default function MatchReview({config, setTitle}) {
       }
     } else {
     }
-  };
-
-  const setKeyForId = (id, key) => {
-    setState(state => {
-      const index = state.findIndex(pair => pair.id === id);
-      const cpair = state.find(pair => pair.id === id);
-      const newPair = {...cpair, key};
-      return [...state.slice(0, index), newPair, ...state.slice(index + 1)];
-    });
   };
 
   const setValueForId = (id, value) => {
@@ -472,21 +511,7 @@ export default function MatchReview({config, setTitle}) {
   useEffect(() => {
     console.log(state);
     dispatch(setReviewData(state));
-  }, [state]);
-
-  const removePair = id => {
-    setState(state => {
-      const index = state.findIndex(pair => pair.id === id);
-      return [...state.slice(0, index), ...state.slice(index + 1)];
-    });
-  };
-
-  const addPair = () => {
-    setState(state => {
-      const newPair = generateKeyValuePair();
-      return [...state, newPair];
-    });
-  };
+  }, [dispatch, state]);
 
   const toRowComponent = data => (
     <div key={data.id}>
@@ -517,19 +542,7 @@ export default function MatchReview({config, setTitle}) {
           onClick={() => {
             setValueForId(data.id, '');
           }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseThin className="w-5 h-5" />
         </Button>
       </div>
     </div>

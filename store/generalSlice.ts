@@ -6,9 +6,7 @@ interface TableRow {
   value: string;
 }
 
-type Table = TableRow[];
-
-
+export type Table = TableRow[];
 
 export interface ErrorToastState {
   message: string;

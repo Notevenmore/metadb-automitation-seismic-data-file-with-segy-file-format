@@ -17,7 +17,8 @@ import Toast from '../../components/toast/toast';
 import {saveDocument} from '../../components/utility_functions';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import {setErrorMessage} from '../../store/generalSlice';
+import {DocumentSummary, FileListType, ReviewData, Table as TableType, UploadDocumentSettings, setErrorMessage} from '../../store/generalSlice';
+import { RootState } from '../../store';
 
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
@@ -29,7 +30,14 @@ export default function UploadFileReview({setTitle, config}) {
   const [spreadsheetID, setspreadsheetID] = useState('');
   const [loading, setloading] = useState('');
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
-  const [workspaceData, setworkspaceData] = useState();
+  const [workspaceData, setworkspaceData] = useState<UploadDocumentSettings>({
+    workspace_name: '',
+    kkks_name: '',
+    working_area: '',
+    submission_type: '',
+    afe_number: '',
+    email: '',
+  });
 
   const dispatch = useDispatch();
 
@@ -37,16 +45,16 @@ export default function UploadFileReview({setTitle, config}) {
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
-  const files = useSelector(state => state.general.file);
-  const review_data = useSelector(state => state.general.review_data);
-  const document_summary = useSelector(state => state.general.document_summary);
-  const upload_document_settings = useSelector(
+  const files = useSelector<RootState, FileListType>(state => state.general.file);
+  const review_data = useSelector<RootState, ReviewData>(state => state.general.review_data);
+  const document_summary = useSelector<RootState, DocumentSummary>(state => state.general.document_summary);
+  const upload_document_settings = useSelector<RootState, UploadDocumentSettings>(
     state => state.general.upload_document_settings,
   );
 
   useEffect(() => {
     setTitle('Review - Upload Document');
-  }, []);
+  }, [setTitle]);
 
   useEffect(() => {
     // ---| NEW WORKFLOW |---
@@ -62,14 +70,14 @@ export default function UploadFileReview({setTitle, config}) {
         let final = [];
         for (let idx = 0; idx < document_summary.body.page_count; idx++) {
           let row = {};
-          Object.values(review_data[idx]).map(item => {
+          Object.values(review_data[idx] as TableType).map(item => {
             row[item.key.toLowerCase()] = item.value;
           });
           final.push(row);
         }
         setReviewData(final);
         const workspace_data = {
-          afe_number: parseInt(upload_document_settings.afe_number),
+          afe_number: upload_document_settings.afe_number,
           workspace_name: upload_document_settings.workspace_name,
           kkks_name: upload_document_settings.kkks_name,
           working_area: upload_document_settings.working_area,
@@ -91,7 +99,7 @@ export default function UploadFileReview({setTitle, config}) {
 
     // ---| OLD WORKFLOW |---
     // check github
-  }, []);
+  }, [PageNo, document_summary.body.page_count, document_summary?.document_id, files.length, review_data, router, upload_document_settings.afe_number, upload_document_settings.kkks_name, upload_document_settings.submission_type, upload_document_settings.working_area, upload_document_settings.workspace_name]);
 
   useEffect(() => {
     setImageURL(
@@ -100,7 +108,7 @@ export default function UploadFileReview({setTitle, config}) {
           document_summary?.document_id
         }/${PageNo + 1}`,
     );
-  }, [PageNo]);
+  }, [PageNo, document_summary?.document_id]);
 
   const delay = delay_amount_ms =>
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
@@ -177,7 +185,7 @@ export default function UploadFileReview({setTitle, config}) {
         dispatch(setErrorMessage({message: '', color: '', show: false}));
       }, 3000);
     }
-  }, [spreadsheetReady]);
+  }, [dispatch, spreadsheetReady]);
 
   return error ? (
     <div className="w-full h-full flex flex-col p-10 space-y-4">
@@ -269,7 +277,7 @@ export default function UploadFileReview({setTitle, config}) {
           <Input
             type="text"
             name={'dataType'}
-            value={router.query.form_type?.replace(/\_/g, ' ') || 'basin'}
+            value={(router.query.form_type as string)?.replace(/\_/g, ' ') || 'basin'}
             additional_styles="w-full"
             additional_styles_input="font-semibold capitalize"
             disabled
@@ -279,8 +287,7 @@ export default function UploadFileReview({setTitle, config}) {
       <div className="pt-3">
         <Table
           header={[
-            // eslint-disable-next-line react/jsx-key
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center" key={1}>
               <p>Data</p>
               {ImageReview ? (
                 <Button
@@ -307,9 +314,8 @@ export default function UploadFileReview({setTitle, config}) {
           ]}
           content={[
             [
-              // eslint-disable-next-line react/jsx-key
-              <div className="h-[750px]">
-                {loading && !ReviewData.length >= 1 ? (
+              <div className="h-[750px]" key={1}>
+                {loading && !(ReviewData.length >= 1) ? (
                   <div className="flex flex-col items-center justify-center space-y-2 h-full">
                     <div className="w-5 h-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
                     <p>{loading}</p>
@@ -335,8 +341,7 @@ export default function UploadFileReview({setTitle, config}) {
         <div className="pt-3 bg-">
           <Table
             header={[
-              // eslint-disable-next-line react/jsx-key
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center" key={1}>
                 <p>Data</p>
                 <Button
                   button_description="Hide image"
@@ -349,8 +354,7 @@ export default function UploadFileReview({setTitle, config}) {
               </div>,
             ]}
             content={[
-              // eslint-disable-next-line react/jsx-key
-              [<ImageEditor boundsObserver={() => {}} imageUrl={ImageURL} />],
+              [<ImageEditor key={1} boundsObserver={() => {}} imageUrl={ImageURL} />],
             ]}
             additional_styles="overflow-hidden"
             additional_styles_row="p-0"

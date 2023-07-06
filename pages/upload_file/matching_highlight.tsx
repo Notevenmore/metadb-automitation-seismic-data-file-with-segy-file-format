@@ -11,11 +11,14 @@ import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
+import CloseThin from '../../public/icons/close-thin.svg';
 import {
+  FileListType,
   setDocumentSummary,
   setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
+import { RootState } from '../../store';
 
 interface TableRow {
   id: number;
@@ -139,8 +142,7 @@ export default function MatchingGuided({config, setTitle}) {
   });
   const [error, setError] = useState('');
 
-  // @ts-ignore
-  const files = useSelector(state => state.general.file);
+  const files = useSelector<RootState, FileListType>(state => state.general.file);
   const router = useRouter();
   const dispatch = useDispatch();
   const path_query =
@@ -157,14 +159,6 @@ export default function MatchingGuided({config, setTitle}) {
       setPageNo(oldPageNo => oldPageNo + 1);
     }
   };
-
-  // Page change use effect
-  useEffect(() => {
-    const onPageChange = async () => {
-      if (docId === null) return;
-    };
-    onPageChange();
-  }, [pageNo]);
 
   useEffect(() => {
     console.log(imageUrl);
@@ -272,12 +266,12 @@ export default function MatchingGuided({config, setTitle}) {
       dispatch(setErrorMessage({message: '', color: '', show: false}));
     };
     init();
-  }, []);
+  }, [config.services.sheets, dispatch, files, pageNo, router, setTitle]);
 
   useEffect(() => {
     // save the edited state to redux for final review later
     dispatch(setReviewData(state));
-  }, [state]);
+  }, [dispatch, state]);
 
   async function boundsObserver(bounds: Tuple4<number>[]) {
     if (bounds.length === 0) return;
@@ -353,19 +347,7 @@ export default function MatchingGuided({config, setTitle}) {
           onClick={() => {
             setValueForId(data.id, '');
           }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseThin className="w-5 h-5" />
         </Button>
       </div>
     </div>
@@ -465,19 +447,7 @@ export default function MatchingGuided({config, setTitle}) {
           onClick={() => {
             setError('');
           }}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseThin className="w-5 h-5" />
         </Button>
       </div>
     </Container>

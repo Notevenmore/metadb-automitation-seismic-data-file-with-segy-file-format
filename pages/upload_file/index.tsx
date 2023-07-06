@@ -5,7 +5,7 @@ import {parseCookies} from 'nookies';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import Input from '../../components/input_form/input';
-import {storeFile, setUploadDocumentSettings, setErrorMessage} from '../../store/generalSlice';
+import {storeFile, setUploadDocumentSettings, setErrorMessage, UploadDocumentSettings} from '../../store/generalSlice';
 import Select from '../../public/icons/selection_tool.svg';
 import Upload from '../../public/icons/upload.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
@@ -25,7 +25,7 @@ export default function UploadFilePage({config, setTitle}) {
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
   const additional_styles_label = 'w-1/5 font-semibold';
   const [fileUpload, setFileUpload] = useState<FileList | []>([]);
-  const [UplSettings, setUplSettings] = useState({
+  const [UplSettings, setUplSettings] = useState<UploadDocumentSettings>({
     workspace_name: '',
     kkks_name: '',
     working_area: '',

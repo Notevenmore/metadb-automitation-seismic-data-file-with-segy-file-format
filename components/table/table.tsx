@@ -1,6 +1,18 @@
 import {twMerge} from 'tailwind-merge';
 import {useState, useEffect} from 'react';
 
+interface TableComponentProps {
+  header: any,
+  content: any,
+  with_checkbox?: boolean,
+  additional_styles?: string,
+  additional_styles_header?: string,
+  additional_styles_row?: string,
+  additional_styles_column?: string,
+  setSelectedRows?: any,
+  contentAlignWithHeader?: boolean,
+}
+
 const TableComponent = ({
   header,
   content,
@@ -10,8 +22,8 @@ const TableComponent = ({
   additional_styles_row = '',
   additional_styles_column = '',
   setSelectedRows,
-  contentAlignWithHeader,
-}) => {
+  contentAlignWithHeader = false,
+}: TableComponentProps) => {
   const [Selected, setSelected] = useState([]);
   const tableData = {
     header: header,

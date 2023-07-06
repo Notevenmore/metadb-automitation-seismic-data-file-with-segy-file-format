@@ -1,6 +1,6 @@
 import {useRouter} from 'next/router';
 import {parseCookies} from 'nookies';
-import {MutableRefObject, useEffect, useRef, useState} from 'react';
+import {MutableRefObject, useCallback, useEffect, useRef, useState} from 'react';
 import Highlight from 'react-highlight';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
@@ -14,11 +14,15 @@ import Input from '../../components/input_form/input';
 import Toast from '../../components/toast/toast';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
+import CloseThin from '../../public/icons/close-thin.svg';
 import {
+  FileListType,
   setDocumentSummary,
   setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
+import Image from 'next/image';
+import { RootState } from '../../store';
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -32,7 +36,7 @@ export const toBase64 = (file: File): Promise<string> =>
       }
     };
     reader.onerror = error => reject(error);
-  });
+});
 
 interface ApiCallResponse<Body> {
   status: 'success' | 'failed';
@@ -362,7 +366,7 @@ export const useElementDim = (ref: MutableRefObject<null>) => {
     setCheck(t => !t);
   }
   useEffect(() => {
-    const element = ref.current as unknown as HTMLElement;
+    const element = ref.current as HTMLElement;
     if (!element) return;
     const {width, height} = element.getBoundingClientRect();
     console.log(`element dim called: ${width}, ${height}`);
@@ -407,18 +411,20 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     console.log(`actualDim: ${actualDim}`);
   }, [actualDim, naturalDim]);
 
-  // @ts-ignore
-  const files: FileList = useSelector(state => state.general.file);
+  const files = useSelector<RootState, FileListType>(state => state.general.file);
   const router = useRouter();
   const dispatch = useDispatch();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
-  const setDocId = (newDocId: string) => {
-    if (docId === null) {
-      _setDocId(_ => newDocId);
-    }
-  };
+  const setDocId = useCallback((newDocId: string) => {
+    _setDocId(id => {
+      if (id === null) {
+        return newDocId;
+      }
+      return id;
+    });
+  }, []);
 
   const nextPage = () => {
     if (pageNo < totalPageNo) {
@@ -458,7 +464,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       setDragData(newDragData);
     };
     onPageChange();
-  }, [pageNo]);
+  }, [docId, pageNo, setImageBase64Str, setDropDownOptions, setDragData]);
 
   const prevPage = () => {
     if (pageNo > 1) {
@@ -604,7 +610,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       dispatch(setErrorMessage({message: '', color: '', show: false}));
     };
     init();
-  }, [files]);
+  }, [config.services.sheets, dispatch, files, pageNo, router, setDocId, setTitle]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
@@ -687,19 +693,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               setValueForId(data.id, pageNo, '');
             }}
             withPath={false}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <CloseThin className="w-5 h-5" />
           </Button>
         </div>
       </div>
@@ -724,6 +718,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                 width: `${it.dim[0] * sw}px`,
                 height: `${it.dim[1] * sh}px`,
               }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={it.src}
                 alt=""
@@ -780,6 +775,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           </HeaderTable>
           <div className="h-[calc(100vh-55px)] rounded-lg border border-gray-300 sticky top-0">
             <Draggables />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imageBase64Str}
               alt=""
@@ -835,7 +831,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           <Button
             button_description="View on sheets"
             path="/upload_file/review"
-            // @ts-ignore
             query={{form_type: formType}}
             additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
             disabled={formType ? false : true}

@@ -13,10 +13,12 @@ import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
 import {
+  FileListType,
   setDocumentSummary,
   setErrorMessage,
   setReviewData,
 } from '../../store/generalSlice';
+import { RootState } from '../../store';
 
 export const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -332,8 +334,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [error, setError] = useState<string>('');
   const [awaitingUpdate, setAwaitingUpdate] = useState(false);
 
-  // @ts-ignore
-  const files: FileList = useSelector(state => state.general.file);
+  const files = useSelector<RootState, FileListType>(state => state.general.file);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -347,7 +348,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       }
       return id;
     });
-  }, [_setDocId]);
+  }, []);
 
   const nextPage = () => {
     if (pageNo < totalPageNo) {

@@ -3,7 +3,7 @@ import {twMerge} from 'tailwind-merge';
 import Arrow from '../../public/icons/arrow_notrail.svg';
 
 interface InputProps extends React.ComponentProps<'input'> {
-  label: string;
+  label?: string;
   label_loc?: string;
   dropdown_items?: string[];
   additional_styles_label?: string;
