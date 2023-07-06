@@ -22,6 +22,7 @@ import { fetchDocumentSummary, generateImageUrl, postScrapeAnnotate, uploadImage
 import { toBase64 } from '../../utils/base64';
 import { getHeader } from '../../services/document';
 import { setValueForId } from '../../utils/document';
+import { delay } from '../../utils/common';
 
 export default function MatchReview({config, setTitle}) {
   const [state, setState] = useState({});
@@ -81,9 +82,6 @@ export default function MatchReview({config, setTitle}) {
       setPageNo(oldPageNo => oldPageNo - 1);
     }
   };
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
     setTitle('Data Matching | Dropdown');

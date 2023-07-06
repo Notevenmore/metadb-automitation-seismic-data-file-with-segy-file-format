@@ -21,6 +21,7 @@ import {
 } from '../../store/generalSlice';
 import { toBase64 } from '../../utils/base64';
 import { getHeader } from '../../services/document';
+import { delay } from '../../utils/common';
 
 interface MatchReviewProps {
   setTitle: (title: string) => void;
@@ -95,9 +96,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       setformType(String(router.query.form_type));
     }
   }, [router, setformType]);
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
     setTitle('Data Matching | Automatic');

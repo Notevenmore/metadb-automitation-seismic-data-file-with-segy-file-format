@@ -23,6 +23,7 @@ import {
 import { toBase64 } from '../../utils/base64';
 import { getHeader } from '../../services/document';
 import { setValueForId } from '../../utils/document';
+import { delay } from '../../utils/common';
 
 export default function MatchingGuided({config, setTitle}) {
   const [state, setState] = useState({} as any);
@@ -64,9 +65,6 @@ export default function MatchingGuided({config, setTitle}) {
       setformType(String(router.query.form_type));
     }
   }, [router]);
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   useEffect(() => {
     setTitle('Data Matching | Highlight');

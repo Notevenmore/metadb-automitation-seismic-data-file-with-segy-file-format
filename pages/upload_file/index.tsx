@@ -17,6 +17,7 @@ import { TokenExpired } from '../../services/admin';
 import { UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings, storeFile } from '../../store/generalSlice';
 import getFileType from '../../utils/filetype';
 import { useAppDispatch } from '../../store';
+import { delay } from '../../utils/common';
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -90,9 +91,6 @@ export default function UploadFilePage({config, setTitle}) {
     settoggleOverlay(true);
     return true;
   };
-
-  const delay = (delay_amount_ms: number) =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   // TODO: DEBUG ONLY, COMMENT ON PRODUCTION AND PROPER TESTING
   // AND UNCOMMENT THE COMMENTED METHOD WITH THE SAME NAME

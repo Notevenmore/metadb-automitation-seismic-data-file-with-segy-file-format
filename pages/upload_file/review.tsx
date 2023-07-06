@@ -20,6 +20,7 @@ import Save from '../../public/icons/save.svg';
 import {DocumentSummary, FileListType, ReviewData, UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings} from '../../store/generalSlice';
 import { RootState, useAppDispatch } from '../../store';
 import { TableType } from '../../constants/table';
+import { delay } from '../../utils/common';
 
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
@@ -95,9 +96,6 @@ export default function UploadFileReview({setTitle, config}) {
         }/${PageNo + 1}`,
     );
   }, [PageNo, document_summary?.document_id]);
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   const workspaceData = (({afe_number, kkks_name, workspace_name, working_area, submission_type}: UploadDocumentSettings) => ({
     afe_number,
