@@ -1,127 +1,26 @@
-import {useRouter} from 'next/router';
-import {parseCookies} from 'nookies';
-import {useEffect, useState} from 'react';
+import { useRouter } from 'next/router';
+import { parseCookies } from 'nookies';
+import { useEffect, useState } from 'react';
 import Highlight from 'react-highlight';
-import {useSelector} from 'react-redux';
-import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
-import {ImageEditor, Tuple4} from '../../components/HighlightViewer';
+import { useSelector } from 'react-redux';
+import { HeaderDivider, HeaderTable } from '../../components/HeaderTable';
+import { ImageEditor, Tuple4 } from '../../components/HighlightViewer';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
+import { TableRow } from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
+import { extractTextFromBounds, fetchDocumentSummary, generateImageUrl, uploadImage } from '../../services/ocr';
+import { RootState, useAppDispatch } from '../../store';
 import {
   FileListType,
   displayErrorMessage,
   setDocumentSummary,
   setReviewData,
 } from '../../store/generalSlice';
-import { RootState, useAppDispatch } from '../../store';
-
-interface TableRow {
-  id: number;
-  key: string;
-  value: string | null;
-}
-
-export const toBase64 = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result.toString());
-    reader.onerror = error => reject(error);
-  });
-
-async function extractTextFromBounds(
-  doc_id: string,
-  page_no: number,
-  bound: Tuple4<number>,
-) {
-  var myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append(
-    'Authorization',
-    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
-  );
-  var raw = JSON.stringify({
-    bounds: bound,
-  });
-
-  const requestOptions: RequestInit = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/scrape-bounds/${doc_id}/${page_no}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: null};
-  }
-}
-
-const uploadImage = async (imageBase64Str: string) => {
-  var myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append(
-    'Authorization',
-    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
-  );
-
-  var raw = JSON.stringify({
-    base64str: imageBase64Str,
-  });
-
-  var requestOptions: RequestInit = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/upload/base64`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: e};
-  }
-};
-
-const fetchDocumentSummary = async (docId: string) => {
-  var requestOptions: RequestInit = {
-    method: 'GET',
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/summary/${docId}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: e};
-  }
-};
-
-const generateImageUrl = (docId: string, page: number) => {
-  return `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${docId}/${page}`;
-};
+import { toBase64 } from '../../utils/base64';
 
 export default function MatchingGuided({config, setTitle}) {
   const [state, setState] = useState({} as any);

@@ -1,357 +1,34 @@
-import {useRouter} from 'next/router';
-import {parseCookies} from 'nookies';
-import {MutableRefObject, useCallback, useEffect, useRef, useState} from 'react';
+import { useRouter } from 'next/router';
+import { parseCookies } from 'nookies';
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import Highlight from 'react-highlight';
-import {useSelector} from 'react-redux';
-import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
-import {Tuple4, useNaturalImageDim} from '../../components/HighlightViewer';
+import { useSelector } from 'react-redux';
+import { HeaderDivider, HeaderTable } from '../../components/HeaderTable';
+import { Tuple4, useNaturalImageDim } from '../../components/HighlightViewer';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import {DraggableBox, DroppableBox} from '../../components/draggable/component';
-import {DraggableProvider} from '../../components/draggable/provider';
-import {Tuple2} from '../../components/draggable/types';
+import { DraggableBox, DroppableBox } from '../../components/draggable/component';
+import { DraggableProvider } from '../../components/draggable/provider';
+import { Tuple2 } from '../../components/draggable/types';
+import { State, TableType, TableRow, WELL_SUMMARRY_TABLE_EMPTY } from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
+import { fetchDocumentSummary, fetchDraggableData, generateDragImageSrc, generateImageUrl, postScrapeAnnotate, uploadImage } from '../../services/ocr';
+import { RootState, useAppDispatch } from '../../store';
 import {
   FileListType,
   displayErrorMessage,
   setDocumentSummary,
   setReviewData,
 } from '../../store/generalSlice';
-import Image from 'next/image';
-import { RootState, useAppDispatch } from '../../store';
-
-export const toBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      if (reader.result) {
-        resolve(reader.result.toString());
-      } else {
-        reject(reader.result);
-      }
-    };
-    reader.onerror = error => reject(error);
-});
-
-interface ApiCallResponse<Body> {
-  status: 'success' | 'failed';
-  body: Body | null;
-}
-
-interface UploadFileResponseBody {
-  doc_id: string;
-}
-
-type UploadFileResponse = ApiCallResponse<UploadFileResponseBody>;
-
-const uploadImage = async (
-  imageBase64Str: string,
-): Promise<UploadFileResponse> => {
-  var myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append(
-    'Authorization',
-    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
-  );
-
-  var raw = JSON.stringify({
-    base64str: imageBase64Str,
-  });
-
-  var requestOptions: RequestInit = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/upload/base64`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: null} as UploadFileResponse;
-  }
-};
-
-interface ScrapeResponseBody {
-  page: number;
-  words: string[];
-}
-
-type ScrapeResponse = ApiCallResponse<ScrapeResponseBody>;
-
-const postScrapeAnnotate = async (
-  docId: string,
-  page: number,
-): Promise<ScrapeResponse> => {
-  var myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-  myHeaders.append(
-    'Authorization',
-    `Bearer ${JSON.parse(parseCookies().user_data).access_token}`,
-  );
-
-  var requestOptions: RequestInit = {
-    method: 'GET',
-    headers: myHeaders,
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/scrape/${docId}/${page}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: null};
-  }
-};
-
-interface DocumentSummaryResponseBody {
-  file_type: string;
-  page_count: number;
-}
-
-type DocumentSummaryResponse = ApiCallResponse<DocumentSummaryResponseBody>;
-
-const fetchDocumentSummary = async (
-  docId: string,
-): Promise<DocumentSummaryResponse> => {
-  var requestOptions: RequestInit = {
-    method: 'GET',
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/summary/${docId}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: null};
-  }
-};
-
-interface AutoFillResponseBody {
-  pairs: Map<string, string>;
-}
-
-type AutoFillResponse = ApiCallResponse<AutoFillResponseBody>;
-
-const fetchAutoFill = async (
-  docId: string,
-  pageNo: number,
-): Promise<AutoFillResponse> => {
-  var requestOptions: RequestInit = {
-    method: 'GET',
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/auto/${docId}/${pageNo}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: {...JSON.parse(result)}};
-  } catch (e) {
-    console.log(e);
-    return {status: 'failed', body: null};
-  }
-};
-
-interface DraggableItemResponse {
-  bound: Tuple4<number>;
-  word: string;
-}
-
-type DraggableResponse = ApiCallResponse<DraggableItemResponse[]>;
-
-const fetchDraggableData = async (
-  docId: string,
-  pageNo: number,
-): Promise<DraggableResponse> => {
-  const requestOptions: RequestInit = {
-    method: 'GET',
-    redirect: 'follow',
-  };
-
-  try {
-    const response = await fetch(
-      `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/draggables/${docId}/${pageNo}`,
-      requestOptions,
-    );
-    const result = await response.text();
-    return {status: 'success', body: JSON.parse(result)};
-  } catch (e) {
-    return {status: 'failed', body: null};
-  }
-};
-
-const generateImageUrl = (docId: string, page: number) => {
-  return `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/image/${docId}/${page}`;
-};
-
-const generateDragImageSrc = (
-  docId: string,
-  pageNo: number,
-  bound: Tuple4<number>,
-) => {
-  return `${process.env['NEXT_PUBLIC_OCR_SERVICE_URL']}/ocr_service/v1/crop/${docId}/${pageNo}/${bound[0]}/${bound[1]}/${bound[2]}/${bound[3]}`;
-};
+import { toBase64 } from '../../utils/base64';
 
 interface MatchReviewProps {
   setTitle: (title: string) => void;
   config: any;
 }
-
-interface TableRow {
-  id: number;
-  key: string;
-  value: string;
-}
-
-type Table = TableRow[];
-
-const WELL_SUMMARRY_TABLE_EMPTY: Table = [
-  {
-    id: 0,
-    key: 'NO',
-    value: '',
-  },
-  {
-    id: 1,
-    key: 'BA_LONG_NAME',
-    value: '',
-  },
-  {
-    id: 2,
-    key: 'BA_TYPE',
-    value: '',
-  },
-  {
-    id: 3,
-    key: 'AREA_ID',
-    value: '',
-  },
-  {
-    id: 4,
-    key: 'AREA_TYPE',
-    value: '',
-  },
-  {
-    id: 5,
-    key: 'FIELD_NAME',
-    value: '',
-  },
-  {
-    id: 6,
-    key: 'WELL_NAME',
-    value: '',
-  },
-  {
-    id: 7,
-    key: 'UWI',
-    value: '',
-  },
-  {
-    id: 8,
-    key: 'TITLE',
-    value: '',
-  },
-  {
-    id: 9,
-    key: 'CREATOR_NAME',
-    value: '',
-  },
-  {
-    id: 10,
-    key: 'CREATE_DATE',
-    value: '',
-  },
-  {
-    id: 11,
-    key: 'MEDIA_TYPE',
-    value: '',
-  },
-  {
-    id: 12,
-    key: 'DOCUMENT_TYPE',
-    value: '',
-  },
-  {
-    id: 13,
-    key: 'ITEM_CATEGORY',
-    value: '',
-  },
-  {
-    id: 14,
-    key: 'ITEM_SUB_CATEGORY',
-    value: '',
-  },
-  {
-    id: 15,
-    key: 'PAGE_COUNT',
-    value: '',
-  },
-  {
-    id: 16,
-    key: 'REMARK',
-    value: '',
-  },
-  {
-    id: 17,
-    key: 'BA_LONG_NAME',
-    value: '',
-  },
-  {
-    id: 18,
-    key: 'BA_TYPE',
-    value: '',
-  },
-  {
-    id: 19,
-    key: 'DATA_STORE_NAME',
-    value: '',
-  },
-  {
-    id: 20,
-    key: 'DATA_STORE_TYPE',
-    value: '',
-  },
-  {
-    id: 21,
-    key: 'SOURCE',
-    value: '',
-  },
-  {
-    id: 22,
-    key: 'QC_STATUS',
-    value: '',
-  },
-  {
-    id: 23,
-    key: 'CHECKED_BY_BA_ID',
-    value: '',
-  },
-];
-
-type State = Table[];
 
 const INITIAL_STATE: State = [
   WELL_SUMMARRY_TABLE_EMPTY,
@@ -626,7 +303,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         ...table.slice(0, index),
         newPair,
         ...table.slice(index + 1),
-      ] as Table;
+      ] as TableType;
       return [...state.slice(0, pageNo - 1), newTable, ...state.slice(pageNo)];
     });
   };

@@ -1,12 +1,5 @@
 import {PayloadAction, createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-
-interface TableRow {
-  id: number;
-  key: string;
-  value: string;
-}
-
-export type Table = TableRow[];
+import { TableType } from '../constants/table';
 
 export interface ErrorToastState {
   message: string;
@@ -35,7 +28,7 @@ export interface DocumentSummary {
 export type FileListType = FileList | [];
 
 // TODO: Type's still weird
-export type ReviewData = Table[] | {};
+export type ReviewData = TableType[] | {};
 
 export interface GeneralState {
   file: FileListType;

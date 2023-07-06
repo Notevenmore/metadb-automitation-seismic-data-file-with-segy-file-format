@@ -16,8 +16,9 @@ import Table from '../../components/table/table';
 import {saveDocument} from '../../components/utility_functions';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
-import {DocumentSummary, FileListType, ReviewData, Table as TableType, UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings} from '../../store/generalSlice';
+import {DocumentSummary, FileListType, ReviewData, UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings} from '../../store/generalSlice';
 import { RootState, useAppDispatch } from '../../store';
+import { TableType } from '../../constants/table';
 
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
