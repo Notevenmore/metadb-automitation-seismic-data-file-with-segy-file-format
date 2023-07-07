@@ -71,7 +71,7 @@ export default function AdministratorPage() {
               onChange={e => handleSearch(e)}
             />
           </div>
-          <Button path="/administrator/add" additional_styles="bg-primary h-8">
+          <Button path="/administrator/add" additional_styles="bg-primary/[.8] hover:bg-primary h-8">
             Add User
           </Button>
         </div>
