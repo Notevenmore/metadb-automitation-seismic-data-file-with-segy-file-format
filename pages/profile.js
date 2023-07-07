@@ -2,7 +2,6 @@ import moment from 'moment/moment';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {FloatDialog} from '../components/FloatDialog';
 import Button from '../components/button';
 import Container from '../components/container';
@@ -10,16 +9,17 @@ import TableComponent from '../components/table/table';
 import Mime from '../dummy-data/mime';
 import ProfilePic from '../dummy-data/profile_pic';
 import {updateProfile} from '../services/admin';
+import {useAppDispatch, useAppSelector} from '../store';
 import {logOut, setUser} from '../store/userSlice';
 
 const Profile = ({setTitle}) => {
   setTitle('Profile');
-  const user = useSelector(state => state.user.user);
+  const user = useAppSelector(state => state.user.user);
   const router = useRouter();
   const [currentUser, setcurrentUser] = useState({
     ...user,
   });
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [content, setContent] = useState([]);
   useEffect(() => {
@@ -132,7 +132,7 @@ const Profile = ({setTitle}) => {
                   src="/icons/pencil.svg"
                   width={25}
                   height={15}
-                  className="w-[25px] h-[15px] alt='' "
+                  className="alt='' "
                   alt="icon"
                 />
               </Button>

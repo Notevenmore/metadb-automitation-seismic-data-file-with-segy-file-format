@@ -1,14 +1,14 @@
 import {useRouter} from 'next/router';
-import {useDispatch, useSelector} from 'react-redux';
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 import {getProfile} from '../services/admin';
-import {setUser} from '../store/userSlice';
+import {useAppDispatch, useAppSelector} from '../store';
 import {setErrorMessage} from '../store/generalSlice';
+import {setUser} from '../store/userSlice';
 
 function CheckAuth() {
-  const user = useSelector(state => state.user.user);
+  const user = useAppSelector(state => state.user.user);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleProfile = async () => {
     console.log(user.userid);
@@ -39,13 +39,13 @@ function CheckAuth() {
   }, [
     user.userid,
     router.events,
-    useSelector(state => state.user.user.userid),
+    useAppSelector(state => state.user.user.userid),
   ]);
 }
 
 function CheckUser(userType) {
   const router = useRouter();
-  const user = useSelector(state => state.user.user);
+  const user = useAppSelector(state => state.user.user);
 
   useEffect(() => {
     if (user.type !== userType) {

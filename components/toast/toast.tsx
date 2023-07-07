@@ -1,6 +1,6 @@
-import {useDispatch, useSelector} from 'react-redux';
 import {useMeasure} from 'react-use';
 import {twMerge} from 'tailwind-merge';
+import {useAppDispatch, useAppSelector} from '../../store';
 import {setErrorMessage} from '../../store/generalSlice';
 import Button from '../button';
 
@@ -28,8 +28,8 @@ const Toast = ({additional_styles = ''}: {additional_styles?: string}) => {
   const delay = delay_amount_ms =>
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
-  const dispatch = useDispatch();
-  const errMsg = useSelector((state: any) => state.general.error);
+  const dispatch = useAppDispatch();
+  const errMsg = useAppSelector((state: any) => state.general.error);
   const hide = async e => {
     if (e) {
       e.preventDefault();

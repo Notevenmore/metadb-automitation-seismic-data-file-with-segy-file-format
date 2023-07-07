@@ -1,4 +1,4 @@
-const routing_list = [
+const ROUTING_LIST = [
   {
     name: 'General Information',
     icon: '/icons/layers-outline.svg',
@@ -183,4 +183,4 @@ const routing_list = [
     icon: '/icons/bibliography.svg',
   },
 ];
-export default routing_list;
+export default ROUTING_LIST;

@@ -4,7 +4,7 @@ import Input from '../../components/Input';
 import Container from '../../components/container';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfile, removeProfile, updateProfile} from '../../services/admin';
-import {useDispatch} from 'react-redux';
+import {useAppDispatch} from '../../store';
 import {setErrorMessage} from '../../store/generalSlice';
 
 UserPage.getLayout = getLayoutTop;
@@ -22,7 +22,7 @@ export default function UserPage() {
   const router = useRouter();
   const {userId} = router.query;
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const handleProfile = async () => {
     const res = await getProfile(userId).then(
       res => {

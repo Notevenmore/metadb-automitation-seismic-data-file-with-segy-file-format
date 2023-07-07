@@ -2,15 +2,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import Mime from '../../dummy-data/mime';
 import MetaDB from '../../public/images/metadata3.png';
+import {useAppDispatch, useAppSelector} from '../../store';
 import {logOut} from '../../store/userSlice';
 import {FloatDialog} from '../FloatDialog';
 import RoundImage from '../RoundImage';
 
 export default function TopBar() {
-  const user = useSelector(state => state.user.user);
+  const user = useAppSelector(state => state.user.user);
   const router = useRouter();
   const [profile, setProfile] = useState('');
   console.log(user);
@@ -42,6 +42,7 @@ export default function TopBar() {
           ],
         };
   const [profileProps, setProfileProps] = useState({});
+
   useEffect(() => {
     setProfileProps({
       float_title: (
@@ -58,7 +59,7 @@ export default function TopBar() {
     setProfile(Mime(user.profile_picture || '')); // TODO CHANGE TO NOT USE HARDCODED STRING LATER
   }, [user]);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const handleSignOut = () => {
     dispatch(logOut());
     router.push('/');
