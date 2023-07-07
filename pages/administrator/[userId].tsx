@@ -143,10 +143,12 @@ export default function UserPage() {
             type="password"
             label="Password: "
             name="password"
+            autoComplete='off'
             label_loc="beside"
             onChange={e => {
               handleChange(e);
             }}
+            placeholder='Password'
           />
           <Input
             type="text"
