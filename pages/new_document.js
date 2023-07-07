@@ -1,6 +1,5 @@
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {
   HeaderDivider,
   HeaderInput,
@@ -12,6 +11,7 @@ import Container from '../components/container';
 import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
 import {saveDocument} from '../components/utility_functions';
+import {useAppDispatch, useAppSelector} from '../store';
 import {setErrorMessage} from '../store/generalSlice';
 
 export default function NewDocumentPage({setTitle, config}) {
@@ -21,8 +21,8 @@ export default function NewDocumentPage({setTitle, config}) {
   const [workspaceData, setworkspaceData] = useState();
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
 
-  const dispatch = useDispatch();
-  const upload_document_settings = useSelector(
+  const dispatch = useAppDispatch();
+  const upload_document_settings = useAppSelector(
     state => state.general.upload_document_settings,
   );
 

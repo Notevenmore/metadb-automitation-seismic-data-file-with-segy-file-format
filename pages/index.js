@@ -1,7 +1,6 @@
 import {useRouter} from 'next/router';
 import {parseCookies} from 'nookies';
 import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import {Divider} from '../components/Divider';
 import Input from '../components/Input';
 import Button from '../components/button';
@@ -12,6 +11,7 @@ import {datatypes} from '../config';
 import draft from '../dummy-data/draft';
 import FileIcon from '../public/icons/file.svg';
 import {TokenExpired} from '../services/admin';
+import {useAppDispatch, useAppSelector} from '../store';
 import {
   setErrorMessage,
   setUploadDocumentSettings,
@@ -23,7 +23,7 @@ export default function HomePage({setTitle, config}) {
   }, []);
 
   // if the search state is true change the view of the home page
-  const searches = useSelector(state => state.search.search);
+  const searches = useAppSelector(state => state.search.search);
   return <>{!searches ? <HomeSection config={config} /> : <SearchResult />}</>;
 }
 
@@ -42,7 +42,7 @@ const HomeSection = ({config}) => {
   const [afeExist, setafeExist] = useState(false);
 
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const handleDrag = e => {
     e.preventDefault();
     e.stopPropagation();
@@ -438,7 +438,7 @@ const HomeSection = ({config}) => {
 
 const SearchResult = () => {
   const [data, setData] = useState(draft.content);
-  const searches = useSelector(state => state.search.value);
+  const searches = useAppSelector(state => state.search.value);
 
   useEffect(() => {
     const name = searches.searchAll.toLocaleLowerCase();

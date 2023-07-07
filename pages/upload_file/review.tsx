@@ -1,26 +1,29 @@
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import {useSelector} from 'react-redux';
-import {ImageEditor} from '../../components/HighlightViewer';
-import Button from '../../components/button';
-import Container from '../../components/container';
 import {
   HeaderDivider,
   HeaderInput,
   HeaderTable,
 } from '../../components/HeaderTable';
+import {ImageEditor} from '../../components/HighlightViewer';
 import Input from '../../components/Input';
+import Button from '../../components/button';
+import Container from '../../components/container';
 import Sheets from '../../components/sheets/sheets';
 import Table from '../../components/table/table';
 import {saveDocument} from '../../components/utility_functions';
+import {TableType} from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import Save from '../../public/icons/save.svg';
-import {DocumentSummary, FileListType, ReviewData, UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings} from '../../store/generalSlice';
-import { RootState, useAppDispatch } from '../../store';
-import { TableType } from '../../constants/table';
-import { delay } from '../../utils/common';
+import {useAppDispatch, useAppSelector} from '../../store';
+import {
+  UploadDocumentSettings,
+  displayErrorMessage,
+  setUploadDocumentSettings,
+} from '../../store/generalSlice';
+import {delay} from '../../utils/common';
 
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
@@ -39,10 +42,12 @@ export default function UploadFileReview({setTitle, config}) {
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
-  const files = useSelector<RootState, FileListType>(state => state.general.file);
-  const review_data = useSelector<RootState, ReviewData>(state => state.general.review_data);
-  const document_summary = useSelector<RootState, DocumentSummary>(state => state.general.document_summary);
-  const upload_document_settings = useSelector<RootState, UploadDocumentSettings>(
+  const files = useAppSelector(state => state.general.file);
+  const review_data = useAppSelector(state => state.general.review_data);
+  const document_summary = useAppSelector(
+    state => state.general.document_summary,
+  );
+  const upload_document_settings = useAppSelector(
     state => state.general.upload_document_settings,
   );
 
@@ -86,7 +91,14 @@ export default function UploadFileReview({setTitle, config}) {
 
     // ---| OLD WORKFLOW |---
     // check github
-  }, [PageNo, document_summary?.body.page_count, document_summary?.document_id, files.length, review_data, router]);
+  }, [
+    PageNo,
+    document_summary?.body.page_count,
+    document_summary?.document_id,
+    files.length,
+    review_data,
+    router,
+  ]);
 
   useEffect(() => {
     setImageURL(
@@ -97,13 +109,19 @@ export default function UploadFileReview({setTitle, config}) {
     );
   }, [PageNo, document_summary?.document_id]);
 
-  const workspaceData = (({afe_number, kkks_name, workspace_name, working_area, submission_type}: UploadDocumentSettings) => ({
+  const workspaceData = (({
     afe_number,
     kkks_name,
     workspace_name,
     working_area,
     submission_type,
-    email: "john.richardson@gtn.id"
+  }: UploadDocumentSettings) => ({
+    afe_number,
+    kkks_name,
+    workspace_name,
+    working_area,
+    submission_type,
+    email: 'john.richardson@gtn.id',
   }))(upload_document_settings);
 
   const saveDocumentHandler = async (e, redirect = false) => {
@@ -123,7 +141,7 @@ export default function UploadFileReview({setTitle, config}) {
           displayErrorMessage({
             message: 'Record successfully saved',
             color: 'blue',
-            duration: 3000
+            duration: 3000,
           }),
         );
         router.events.emit('routeChangeComplete');
@@ -161,7 +179,7 @@ export default function UploadFileReview({setTitle, config}) {
           message:
             'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
           color: 'blue',
-          duration: 10000
+          duration: 10000,
         }),
       );
     }
@@ -196,7 +214,7 @@ export default function UploadFileReview({setTitle, config}) {
             onChange={e =>
               setUploadDocumentSettings({
                 ...workspaceData,
-                kkks_name: e.target.value
+                kkks_name: e.target.value,
               })
             }
           />
@@ -213,7 +231,7 @@ export default function UploadFileReview({setTitle, config}) {
             onChange={e =>
               setUploadDocumentSettings({
                 ...workspaceData,
-                working_area: e.target.value
+                working_area: e.target.value,
               })
             }
           />
@@ -242,7 +260,7 @@ export default function UploadFileReview({setTitle, config}) {
             onChange={e =>
               setUploadDocumentSettings({
                 ...workspaceData,
-                submission_type: e.target.value
+                submission_type: e.target.value,
               })
             }
             withSearch
@@ -263,7 +281,9 @@ export default function UploadFileReview({setTitle, config}) {
           <Input
             type="text"
             name={'dataType'}
-            value={(router.query.form_type as string)?.replace(/\_/g, ' ') || 'basin'}
+            value={
+              (router.query.form_type as string)?.replace(/\_/g, ' ') || 'basin'
+            }
             additional_styles="w-full"
             additional_styles_input="font-semibold capitalize"
             disabled
@@ -337,7 +357,13 @@ export default function UploadFileReview({setTitle, config}) {
               </div>,
             ]}
             content={[
-              [<ImageEditor key={1} boundsObserver={() => {}} imageUrl={ImageURL} />],
+              [
+                <ImageEditor
+                  key={1}
+                  boundsObserver={() => {}}
+                  imageUrl={ImageURL}
+                />,
+              ],
             ]}
             additional_styles="overflow-hidden"
             additional_styles_row="p-0"

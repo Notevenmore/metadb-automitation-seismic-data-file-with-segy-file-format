@@ -1,10 +1,10 @@
 import {useState} from 'react';
-import {useDispatch} from 'react-redux';
 import Input from '../../components/Input';
 import Container from '../../components/container';
 import {defaultProfile} from '../../dummy-data/mime';
 import {getLayoutTop} from '../../layout/getLayout';
 import {addProfile} from '../../services/admin';
+import {useAppDispatch} from '../../store';
 import {setErrorMessage} from '../../store/generalSlice';
 
 AddNewUserPage.getLayout = getLayoutTop;
@@ -32,7 +32,7 @@ export default function AddNewUserPage() {
     setDetail(prev => ({...prev, [name]: value}));
   };
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const handleSubmit = async e => {
     e.preventDefault();
     const data = {

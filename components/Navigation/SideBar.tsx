@@ -1,10 +1,11 @@
 import {useState} from 'react';
-import {Item} from './navigation_item/Item';
-import List from '../../router/List';
+import ROUTING_LIST from '../../router/List';
 import SearchWidget from '../widget/Search';
+import {NavigationItem} from './Item';
 
 export const SideBar = () => {
   const [iconCollapse, setIconCollapse] = useState(false);
+
   return (
     <div
       className={`float-left justify-between full-height ${
@@ -13,7 +14,7 @@ export const SideBar = () => {
       <div className="overflow-y-auto pb-10 overflow-x-hidden">
         {iconCollapse ? (
           <div>
-            <Item icon="/icons/magnify.svg" collapse={iconCollapse} />
+            <NavigationItem icon="/icons/magnify.svg" collapse={iconCollapse} />
             <div className="border-b border-b-[#dddddd]" />
           </div>
         ) : (
@@ -22,7 +23,7 @@ export const SideBar = () => {
           </div>
         )}
         <div onClick={() => setIconCollapse(prev => !prev)}>
-          <Item
+          <NavigationItem
             name="Collapse"
             icon={
               iconCollapse
@@ -32,8 +33,8 @@ export const SideBar = () => {
             collapse={iconCollapse}
           />
         </div>
-        {List.map(router => (
-          <Item
+        {ROUTING_LIST.map(router => (
+          <NavigationItem
             name={router.name}
             icon={router.icon}
             child={router.child}
@@ -47,7 +48,7 @@ export const SideBar = () => {
       <div
         className={`min-h-[35px] ${
           iconCollapse ? 'hidden' : 'w-[314px]'
-        } flex items-center justify-center text-[12px] text-[#a3a3a3] bg-side_bar`}>
+        } flex items-center justify-center text-xs text-[#a3a3a3] bg-side_bar`}>
         <div>&copy; PT Geodwipa Teknika Nusantara</div>
       </div>
     </div>

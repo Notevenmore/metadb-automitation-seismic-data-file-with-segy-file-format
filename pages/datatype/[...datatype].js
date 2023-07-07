@@ -2,13 +2,13 @@ import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {parseCookies} from 'nookies';
 import {useEffect, useState} from 'react';
-import {useDispatch} from 'react-redux';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
 import {checkAfe} from '../../components/utility_functions';
 import {TokenExpired} from '../../services/admin';
+import {useAppDispatch} from '../../store';
 import {
   setErrorMessage,
   setUploadDocumentSettings,
@@ -31,7 +31,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [afeExist, setafeExist] = useState(false);
 
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const path_query =
     'Home' + router.asPath.replace(/\//g, ' > ').replace(/\_/g, ' ');

@@ -1,27 +1,31 @@
-import { useRouter } from 'next/router';
-import { parseCookies } from 'nookies';
-import { useCallback, useEffect, useState } from 'react';
+import {useRouter} from 'next/router';
+import {useCallback, useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import { useSelector } from 'react-redux';
-import { HeaderDivider, HeaderTable } from '../../components/HeaderTable';
-import { ImageEditor } from '../../components/HighlightViewer';
+import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
+import {ImageEditor} from '../../components/HighlightViewer';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
-import { AutoFillResponse, fetchAutoFill, fetchDocumentSummary, generateImageUrl, postScrapeAnnotate, uploadImage } from '../../services/ocr';
-import { RootState, useAppDispatch } from '../../store';
+import {getHeader} from '../../services/document';
 import {
-  FileListType,
+  AutoFillResponse,
+  fetchAutoFill,
+  fetchDocumentSummary,
+  generateImageUrl,
+  postScrapeAnnotate,
+  uploadImage,
+} from '../../services/ocr';
+import {useAppDispatch, useAppSelector} from '../../store';
+import {
   displayErrorMessage,
   setDocumentSummary,
   setReviewData,
 } from '../../store/generalSlice';
-import { toBase64 } from '../../utils/base64';
-import { getHeader } from '../../services/document';
-import { delay } from '../../utils/common';
+import {toBase64} from '../../utils/base64';
+import {delay} from '../../utils/common';
 
 interface MatchReviewProps {
   setTitle: (title: string) => void;
@@ -50,7 +54,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const [error, setError] = useState<string>('');
   const [awaitingUpdate, setAwaitingUpdate] = useState(false);
 
-  const files = useSelector<RootState, FileListType>(state => state.general.file);
+  const files = useAppSelector(state => state.general.file);
 
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -144,7 +148,10 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
-          const row_names = await getHeader(config, router.query?.form_type as string);
+          const row_names = await getHeader(
+            config,
+            router.query?.form_type as string,
+          );
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -175,22 +182,32 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.isReady) {
       init();
     }
-  }, [config, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
+  }, [
+    config,
+    dispatch,
+    files,
+    pageNo,
+    router,
+    router.isReady,
+    setDocId,
+    setTitle,
+  ]);
 
   // continue here to ensure that the state has been updated based on the
   // requested data type before proceeding to do any matching prediction tasks
   useEffect(() => {
     setAwaitingUpdate(_awaitingUpdate => {
       if (state?.length > 0 && _awaitingUpdate) {
-
         let completed = 0;
-        setLoading(`Starting prediction for ${totalPageNo} pages. This may take a while...`);
+        setLoading(
+          `Starting prediction for ${totalPageNo} pages. This may take a while...`,
+        );
 
         const promises: Promise<AutoFillResponse>[] = [];
         for (let pageNo = 1; pageNo <= totalPageNo; pageNo++) {
           const autoFill = fetchAutoFill(docId, pageNo);
           promises.push(autoFill);
-          autoFill.then((autoFillResponse) => {
+          autoFill.then(autoFillResponse => {
             const _pairs = autoFillResponse.body?.pairs;
             console.log(_pairs);
             if (!_pairs) {
@@ -202,27 +219,29 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             );
             const pairs: Map<string, string> = new Map(Object.entries(_pairs));
             setPairs(pairs, pageNo);
-          })
+          });
         }
 
-        Promise.all(promises).then(async () => {
-          setLoading('');
-          router.events.emit('routeChangeComplete');
-          dispatch(
-            displayErrorMessage({
-              message:
-                'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-              color: 'blue',
-              duration: 5000,
-            }),
-          );
-        }).catch((err) => {
-          setError(String(err));
-        });
+        Promise.all(promises)
+          .then(async () => {
+            setLoading('');
+            router.events.emit('routeChangeComplete');
+            dispatch(
+              displayErrorMessage({
+                message:
+                  'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+                color: 'blue',
+                duration: 5000,
+              }),
+            );
+          })
+          .catch(err => {
+            setError(String(err));
+          });
         return false;
       }
       return _awaitingUpdate;
-    })
+    });
   }, [state, dispatch, totalPageNo, docId, setAwaitingUpdate, router.events]);
 
   const setValueForId = (id: number, pageNo: number, value: string) => {
@@ -295,7 +314,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           <Button
             additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
             title="Reset input"
-            disabled={data.value ? false : true}
+            disabled={!data.value}
             onClick={() => {
               setValueForId(data.id, pageNo, '');
             }}>
@@ -352,7 +371,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={prevPage}
-              disabled={pageNo > 1 ? false : true}>
+              disabled={!(pageNo > 1)}>
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
@@ -372,7 +391,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={nextPage}
-              disabled={pageNo >= totalPageNo ? true : false}>
+              disabled={pageNo >= totalPageNo}>
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
@@ -386,7 +405,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           path="/upload_file/review"
           query={formType}
           additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
-          disabled={formType ? false : true}
+          disabled={!formType}
           onClick={() => {
             dispatch(setReviewData(state));
           }}

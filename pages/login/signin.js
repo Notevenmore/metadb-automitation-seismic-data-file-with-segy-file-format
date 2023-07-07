@@ -1,25 +1,25 @@
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import {getLayoutBlank} from '../../layout/getLayout';
 import {getLogin} from '../../services/user';
+import {useAppDispatch, useAppSelector} from '../../store';
+import {setErrorMessage} from '../../store/generalSlice';
 import {setUser} from '../../store/userSlice';
-import { setErrorMessage } from '../../store/generalSlice';
 
 SignInPage.getLayout = getLayoutBlank;
 
 export default function SignInPage({setTitle}) {
-  const user = useSelector(state => state.user.user);
+  const user = useAppSelector(state => state.user.user);
   const router = useRouter();
   const [Error, setError] = useState('');
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
   });
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (user.email) {
