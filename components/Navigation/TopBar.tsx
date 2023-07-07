@@ -13,21 +13,34 @@ export default function TopBar() {
   const user = useAppSelector(state => state.user.user);
   const router = useRouter();
   const [profile, setProfile] = useState('');
-  const profileItem = {
-    type: '',
-    contents: [
-      {
-        section_title: 'Account settings',
-        section_content: '',
-        link: '/profile',
-      },
-      {
-        section_title: 'Sign out',
-        section_content: '',
-        handleClick: () => handleSignOut(),
-      },
-    ],
-  };
+  console.log(user);
+  const profileItem =
+    user.type === 'Administrator'
+      ? {
+          type: '',
+          contents: [
+            {
+              section_title: 'Sign out',
+              section_content: '',
+              handleClick: () => handleSignOut(),
+            },
+          ],
+        }
+      : {
+          type: '',
+          contents: [
+            {
+              section_title: 'Account settings',
+              section_content: '',
+              link: '/profile',
+            },
+            {
+              section_title: 'Sign out',
+              section_content: '',
+              handleClick: () => handleSignOut(),
+            },
+          ],
+        };
   const [profileProps, setProfileProps] = useState({});
 
   useEffect(() => {

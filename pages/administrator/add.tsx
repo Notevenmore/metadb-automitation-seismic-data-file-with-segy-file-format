@@ -82,7 +82,7 @@ export default function AddNewUserPage() {
         if (err.response.status === 409) {
           dispatch(
             setErrorMessage({
-              message: String(err),
+              message: "Inputted userid already exist",
               color: 'red',
               show: true,
             }),

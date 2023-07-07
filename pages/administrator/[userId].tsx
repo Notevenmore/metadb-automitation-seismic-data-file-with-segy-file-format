@@ -78,9 +78,18 @@ export default function UserPage() {
     );
   };
 
-  const handleRemove = async () => {
-    await removeProfile(userId);
-    router.replace('/administrator');
+  const handleRemove = async (e) => {
+    e.preventDefault()
+    await removeProfile(userId).then(() => {
+      dispatch(
+        setErrorMessage({
+          message: `${userId} data successfully deleted.`,
+          color: 'blue',
+          show: true,
+        }),
+      );
+      router.replace('/administrator');
+    });
   };
 
   return (
@@ -129,6 +138,17 @@ export default function UserPage() {
             onChange={e => {
               handleChange(e);
             }}
+          />
+          <Input
+            type="password"
+            label="Password: "
+            name="password"
+            autoComplete='off'
+            label_loc="beside"
+            onChange={e => {
+              handleChange(e);
+            }}
+            placeholder='Password'
           />
           <Input
             type="text"
