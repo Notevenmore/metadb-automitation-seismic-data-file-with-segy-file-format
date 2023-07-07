@@ -7,6 +7,7 @@ import Container from '../../components/container';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfiles, removeProfile} from '../../services/admin';
 import {setErrorMessage} from '../../store/generalSlice';
+import { useAppDispatch } from '../../store';
 
 AdministratorPage.getLayout = getLayoutTop;
 
@@ -26,6 +27,7 @@ export default function AdministratorPage() {
     handleProfiles();
   }, []);
 
+  const dispatch = useAppDispatch()
   const handleRemove = async userId => {
     await removeProfile(userId).then(
       () => {
