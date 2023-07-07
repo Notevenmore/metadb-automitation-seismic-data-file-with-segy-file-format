@@ -1,29 +1,31 @@
-import { useRouter } from 'next/router';
-import { parseCookies } from 'nookies';
-import { useEffect, useState } from 'react';
+import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
-import { useSelector } from 'react-redux';
-import { HeaderDivider, HeaderTable } from '../../components/HeaderTable';
-import { ImageEditor, Tuple4 } from '../../components/HighlightViewer';
+import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
+import {ImageEditor, Tuple4} from '../../components/HighlightViewer';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import { TableRow } from '../../constants/table';
+import {TableRow} from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
-import { extractTextFromBounds, fetchDocumentSummary, generateImageUrl, uploadImage } from '../../services/ocr';
-import { RootState, useAppDispatch } from '../../store';
+import {getHeader} from '../../services/document';
 import {
-  FileListType,
+  extractTextFromBounds,
+  fetchDocumentSummary,
+  generateImageUrl,
+  uploadImage,
+} from '../../services/ocr';
+import {useAppDispatch, useAppSelector} from '../../store';
+import {
   displayErrorMessage,
   setDocumentSummary,
   setReviewData,
 } from '../../store/generalSlice';
-import { toBase64 } from '../../utils/base64';
-import { getHeader } from '../../services/document';
-import { setValueForId } from '../../utils/document';
-import { delay } from '../../utils/common';
+import {toBase64} from '../../utils/base64';
+import {delay} from '../../utils/common';
+import {setValueForId} from '../../utils/document';
 
 export default function MatchingGuided({config, setTitle}) {
   const [state, setState] = useState({} as any);
@@ -38,7 +40,7 @@ export default function MatchingGuided({config, setTitle}) {
   const [loading, setLoading] = useState('');
   const [error, setError] = useState('');
 
-  const files = useSelector<RootState, FileListType>(state => state.general.file);
+  const files = useAppSelector(state => state.general.file);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const path_query =
@@ -101,7 +103,10 @@ export default function MatchingGuided({config, setTitle}) {
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
-          const row_names = await getHeader(config, router.query?.form_type as string);
+          const row_names = await getHeader(
+            config,
+            router.query?.form_type as string,
+          );
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -132,7 +137,7 @@ export default function MatchingGuided({config, setTitle}) {
           message:
             'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
           color: 'blue',
-          duration: 5000
+          duration: 5000,
         }),
       );
     };
@@ -194,12 +199,14 @@ export default function MatchingGuided({config, setTitle}) {
             selectedRow === data.id ? 'font-bold' : 'font-semibold'
           } cursor-pointer`}
           additional_styles="min-w-0 cursor-pointer"
-          onChange={e => setValueForId(setState, pageNo, data.id, e.target.value)}
+          onChange={e =>
+            setValueForId(setState, pageNo, data.id, e.target.value)
+          }
         />
         <Button
           additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
           title="Reset input"
-          disabled={data.value ? false : true}
+          disabled={!data.value}
           onClick={() => {
             setValueForId(setState, pageNo, data.id, '');
           }}>
@@ -253,7 +260,7 @@ export default function MatchingGuided({config, setTitle}) {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={prevPage}
-              disabled={pageNo > 1 ? false : true}>
+              disabled={!(pageNo > 1)}>
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
@@ -271,7 +278,7 @@ export default function MatchingGuided({config, setTitle}) {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={nextPage}
-              disabled={pageNo >= totalPageNo ? true : false}>
+              disabled={pageNo >= totalPageNo}>
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
@@ -285,7 +292,7 @@ export default function MatchingGuided({config, setTitle}) {
           path="/upload_file/review"
           query={{form_type: formType}}
           additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
-          disabled={formType ? false : true}
+          disabled={!formType}
           onClick={() => {
             dispatch(setReviewData(state));
           }}

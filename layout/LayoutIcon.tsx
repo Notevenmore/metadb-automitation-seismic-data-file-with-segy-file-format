@@ -1,5 +1,5 @@
-import {SideBar} from '../components/navigation_bar/SideBar';
-import TopBar from '../components/navigation_bar/Topbar';
+import {SideBar} from '../components/Navigation/SideBar';
+import TopBar from '../components/Navigation/TopBar';
 import {CheckAuth, CheckUser} from '../utils/check';
 
 export default function LayoutIcon({children}) {

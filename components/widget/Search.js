@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../store';
 import {
   applySearch,
   setSearchState,
@@ -16,8 +16,8 @@ export default function SearchWidget() {
     'bg-searchbg text-black text-[14.5px] py-0 w-full';
   // search function when expand = false will directly go to the slice
   // implement search to store after apply filter
-  const dispatch = useDispatch();
-  const searches = useSelector(state => state.search.value);
+  const dispatch = useAppDispatch();
+  const searches = useAppSelector(state => state.search.value);
   const [searchValues, setSearchValues] = useState(searches);
   const handleChange = e => {
     const {name, value} = e.target;
@@ -59,7 +59,7 @@ export default function SearchWidget() {
   }, [expandSearch]);
 
   // if the search state is true redirect to home
-  const searchState = useSelector(state => state.search.search);
+  const searchState = useAppSelector(state => state.search.search);
   const router = useRouter();
   useEffect(() => {
     if (searchState) router.push('/');

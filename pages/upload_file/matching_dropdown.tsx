@@ -1,28 +1,30 @@
-import { useRouter } from 'next/router';
-import { parseCookies } from 'nookies';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {useRouter} from 'next/router';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import Highlight from 'react-highlight';
-import { useSelector } from 'react-redux';
-import { HeaderDivider, HeaderTable } from '../../components/HeaderTable';
-import { ImageEditor } from '../../components/HighlightViewer';
+import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
+import {ImageEditor} from '../../components/HighlightViewer';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
 import CloseThin from '../../public/icons/close-thin.svg';
-import { RootState, useAppDispatch } from '../../store';
+import {getHeader} from '../../services/document';
 import {
-  FileListType,
+  fetchDocumentSummary,
+  generateImageUrl,
+  postScrapeAnnotate,
+  uploadImage,
+} from '../../services/ocr';
+import {useAppDispatch, useAppSelector} from '../../store';
+import {
   displayErrorMessage,
   setDocumentSummary,
   setReviewData,
 } from '../../store/generalSlice';
-import { fetchDocumentSummary, generateImageUrl, postScrapeAnnotate, uploadImage } from '../../services/ocr';
-import { toBase64 } from '../../utils/base64';
-import { getHeader } from '../../services/document';
-import { setValueForId } from '../../utils/document';
-import { delay } from '../../utils/common';
+import {toBase64} from '../../utils/base64';
+import {delay} from '../../utils/common';
+import {setValueForId} from '../../utils/document';
 
 export default function MatchReview({config, setTitle}) {
   const [state, setState] = useState({});
@@ -37,21 +39,20 @@ export default function MatchReview({config, setTitle}) {
 
   const inputFileRef = useRef(null);
 
-  // @ts-ignore
-  const files = useSelector<RootState, FileListType>(state => state.general.file);
+  const files = useAppSelector(state => state.general.file);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
-    const setDocId = useCallback((newDocId: string) => {
-      _setDocId(id => {
-        if (id === null) {
-          return newDocId;
-        }
-        return id;
-      });
-    }, []);
+  const setDocId = useCallback((newDocId: string) => {
+    _setDocId(id => {
+      if (id === null) {
+        return newDocId;
+      }
+      return id;
+    });
+  }, []);
 
   const nextPage = () => {
     if (pageNo < totalPageNo) {
@@ -129,7 +130,10 @@ export default function MatchReview({config, setTitle}) {
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
-          const row_names = await getHeader(config, router.query?.form_type as string);
+          const row_names = await getHeader(
+            config,
+            router.query?.form_type as string,
+          );
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -167,7 +171,16 @@ export default function MatchReview({config, setTitle}) {
     if (router.isReady) {
       init();
     }
-  }, [router.isReady, dispatch, files, pageNo, router, setDocId, setTitle, config]);
+  }, [
+    router.isReady,
+    dispatch,
+    files,
+    pageNo,
+    router,
+    setDocId,
+    setTitle,
+    config,
+  ]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
@@ -218,13 +231,15 @@ export default function MatchReview({config, setTitle}) {
           required={true}
           additional_styles="w-full"
           additional_styles_input_dropdown="placeholder:text-gray-400"
-          onChange={e => setValueForId(setState, pageNo, data.id, e.target.value)}
+          onChange={e =>
+            setValueForId(setState, pageNo, data.id, e.target.value)
+          }
           withSearch
         />
         <Button
           additional_styles="px-1 py-1 text-black hover:bg-red-500 hover:text-white"
           title="Reset input"
-          disabled={data.value ? false : true}
+          disabled={!data.value}
           onClick={() => {
             setValueForId(setState, pageNo, data.id, '');
           }}>
@@ -291,7 +306,7 @@ export default function MatchReview({config, setTitle}) {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={prevPage}
-              disabled={pageNo > 1 ? false : true}>
+              disabled={!(pageNo > 1)}>
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
@@ -309,7 +324,7 @@ export default function MatchReview({config, setTitle}) {
               button_description=""
               additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
               onClick={nextPage}
-              disabled={pageNo >= totalPageNo ? true : false}>
+              disabled={pageNo >= totalPageNo}>
               <div className="w-5 h-5">
                 <ChevronRight />
               </div>
@@ -323,7 +338,7 @@ export default function MatchReview({config, setTitle}) {
           path="/upload_file/review"
           query={{form_type: formType}}
           additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
-          disabled={formType ? false : true}
+          disabled={!formType}
           onClick={() => {
             dispatch(setReviewData(state));
           }}

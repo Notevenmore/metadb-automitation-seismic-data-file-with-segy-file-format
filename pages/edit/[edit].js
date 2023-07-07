@@ -10,7 +10,7 @@ import {
   init_data,
   saveDocument,
 } from '../../components/utility_functions';
-import {useDispatch} from 'react-redux';
+import {useAppDispatch} from '../../store';
 import {setErrorMessage} from '../../store/generalSlice';
 
 const DocEditor = ({workspace_name, setTitle, config}) => {
@@ -24,7 +24,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
   const [spreadsheetId, setspreadsheetId] = useState();
   const [triggerSave, settriggerSave] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const warningText =
     'You have unsaved changes - Are you sure you want to leave this page?';
