@@ -8,39 +8,14 @@ import {useAppDispatch, useAppSelector} from '../../store';
 import {logOut} from '../../store/userSlice';
 import {FloatDialog} from '../FloatDialog';
 import RoundImage from '../RoundImage';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 export default function TopBar() {
   const user = useAppSelector(state => state.user.user);
+  const [helpLink, setHelpLink] = useState('');
   const router = useRouter();
   const [profile, setProfile] = useState('');
-  console.log(user);
-  const profileItem =
-    user.type === 'Administrator'
-      ? {
-          type: '',
-          contents: [
-            {
-              section_title: 'Sign out',
-              section_content: '',
-              handleClick: () => handleSignOut(),
-            },
-          ],
-        }
-      : {
-          type: '',
-          contents: [
-            {
-              section_title: 'Account settings',
-              section_content: '',
-              link: '/profile',
-            },
-            {
-              section_title: 'Sign out',
-              section_content: '',
-              handleClick: () => handleSignOut(),
-            },
-          ],
-        };
+  const [profileItem, setProfileItem] = useState({type:"", contents: []});
   const [profileProps, setProfileProps] = useState({});
 
   useEffect(() => {
@@ -53,10 +28,39 @@ export default function TopBar() {
         </>
       ),
     });
-  }, [user]);
 
-  useEffect(() => {
     setProfile(Mime(user.profile_picture || '')); // TODO CHANGE TO NOT USE HARDCODED STRING LATER
+
+    if (user.type === 'Administrator') {
+      setHelpLink('/administrator/help');
+      setProfileItem({
+        type: '',
+        contents: [
+          {
+            section_title: 'Sign out',
+            section_content: '',
+            handleClick: () => handleSignOut(),
+          },
+        ],
+      });
+    } else {
+      setHelpLink('/help');
+      setProfileItem({
+        type: '',
+        contents: [
+          {
+            section_title: 'Account settings',
+            section_content: '',
+            link: '/profile',
+          },
+          {
+            section_title: 'Sign out',
+            section_content: '',
+            handleClick: () => handleSignOut(),
+          },
+        ],
+      });
+    }
   }, [user]);
 
   const dispatch = useAppDispatch();
@@ -72,6 +76,12 @@ export default function TopBar() {
         <h1 className="text-xl font-bold">MetaDB</h1>
       </Link>
       <div className="flex items-center gap-x-3">
+        <Link href={helpLink}>
+          <InfoOutlinedIcon
+            className="text-gray-600 cursor-pointer"
+            fontSize="small"
+          />
+        </Link>
         <FloatDialog
           items={profileItem}
           className={`right-0 top-[50px]`}
