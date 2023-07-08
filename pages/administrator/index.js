@@ -1,17 +1,21 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {useEffect, useState} from 'react';
-import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfiles, removeProfile} from '../../services/admin';
 import {setErrorMessage} from '../../store/generalSlice';
-import { useAppDispatch } from '../../store';
+import {useAppDispatch} from '../../store';
+import Popup from '../../components/popup';
+import Input from '@components/Input';
+import {PopupContext} from '@contexts/PopupContext';
+import {useContext} from 'react';
 
 AdministratorPage.getLayout = getLayoutTop;
 
 export default function AdministratorPage() {
+  let {openPopup} = useContext(PopupContext);
   const [list, setList] = useState([]);
   const [filteredList, setFilteredList] = useState(list);
 
@@ -27,29 +31,35 @@ export default function AdministratorPage() {
     handleProfiles();
   }, []);
 
-  const dispatch = useAppDispatch()
-  const handleRemove = async userId => {
-    await removeProfile(userId).then(
-      () => {
-        handleProfiles();
-        dispatch(
-          setErrorMessage({
-            message: `${userId} acount successfully deleted.`,
-            color: 'blue',
-            show: true,
-          }),
+  const dispatch = useAppDispatch();
+  const handleRemove = userId => {
+    openPopup({
+      message: `Are you sure you want to delete ${userId} account?`,
+      title: 'Delete Confirmation',
+      onConfirm: async () => {
+        await removeProfile(userId).then(
+          () => {
+            handleProfiles();
+            dispatch(
+              setErrorMessage({
+                message: `${userId} acount successfully deleted.`,
+                color: 'blue',
+                show: true,
+              }),
+            );
+          },
+          err => {
+            dispatch(
+              setErrorMessage({
+                message: String(err),
+                color: 'red',
+                show: true,
+              }),
+            );
+          },
         );
       },
-      err => {
-        dispatch(
-          setErrorMessage({
-            message: String(err),
-            color: 'red',
-            show: true,
-          }),
-        );
-      },
-    );
+    });
   };
 
   const handleSearch = e => {
@@ -71,7 +81,9 @@ export default function AdministratorPage() {
               onChange={e => handleSearch(e)}
             />
           </div>
-          <Button path="/administrator/add" additional_styles="bg-primary/[.8] hover:bg-primary h-8">
+          <Button
+            path="/administrator/add"
+            additional_styles="bg-primary/[.8] hover:bg-primary h-8">
             Add User
           </Button>
         </div>
