@@ -1,11 +1,12 @@
 import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import Input from '../../components/Input';
 import Container from '../../components/container';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfile, removeProfile, updateProfile} from '../../services/admin';
 import {useAppDispatch} from '../../store';
 import {setErrorMessage} from '../../store/generalSlice';
+import {PopupContext} from '@contexts/PopupContext';
 
 UserPage.getLayout = getLayoutTop;
 
@@ -21,6 +22,7 @@ export default function UserPage() {
   const [detail, setDetail] = useState<Detail>();
   const router = useRouter();
   const {userId} = router.query;
+  let {openPopup} = useContext(PopupContext);
 
   const dispatch = useAppDispatch();
   const handleProfile = async () => {
@@ -78,17 +80,23 @@ export default function UserPage() {
     );
   };
 
-  const handleRemove = async (e) => {
-    e.preventDefault()
-    await removeProfile(userId).then(() => {
-      dispatch(
-        setErrorMessage({
-          message: `${userId} data successfully deleted.`,
-          color: 'blue',
-          show: true,
-        }),
-      );
-      router.replace('/administrator');
+  const handleRemove = e => {
+    e.preventDefault();
+    openPopup({
+      message: `Are you sure you want to delete ${userId} account?`,
+      title: 'Delete Confirmation',
+      onConfirm: async () => {
+        await removeProfile(userId).then(() => {
+          dispatch(
+            setErrorMessage({
+              message: `${userId} data successfully deleted.`,
+              color: 'blue',
+              show: true,
+            }),
+          );
+          router.replace('/administrator');
+        });
+      },
     });
   };
 
@@ -143,12 +151,12 @@ export default function UserPage() {
             type="password"
             label="Password: "
             name="password"
-            autoComplete='off'
+            autoComplete="off"
             label_loc="beside"
             onChange={e => {
               handleChange(e);
             }}
-            placeholder='Password'
+            placeholder="Password"
           />
           <Input
             type="text"
