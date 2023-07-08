@@ -2,6 +2,12 @@ FROM node:alpine
 COPY . /frontend
 WORKDIR /frontend
 RUN npm install
+ARG NEXT_PUBLIC_OCR_SERVICE_URL
+ARG NEXT_PUBLIC_BACKEND_AUTH
+ARG ENDPOINTS
+RUN echo "ENDPOINTS=${ENDPOINTS//[$'\n']}" >> .env
+RUN echo "NEXT_PUBLIC_OCR_SERVICE_URL=${NEXT_PUBLIC_OCR_SERVICE_URL//[$'\n']}" >> .env
+RUN echo "NEXT_PUBLIC_BACKEND_AUTH=${NEXT_PUBLIC_BACKEND_AUTH//[$'\n']}" >> .env
 RUN npm run build
 EXPOSE 3000
 # CMD npm run dev
