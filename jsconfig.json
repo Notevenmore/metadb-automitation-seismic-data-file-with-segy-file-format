@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/components/*": ["./components/*"],
-      "@/store/*": ["./store/*"]
+      "@components/*": ["./components/*"],
+      "@store/*": ["./store/*"],
+      "@utils/*": ["./utils/*"],
+      "@services/*": ["./services/*"],
+      "@contexts/*": ["./contexts/*"],
     }
   }
 }

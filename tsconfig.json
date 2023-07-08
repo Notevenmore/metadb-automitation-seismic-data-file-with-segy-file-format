@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -16,7 +12,14 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "paths": {
+      "@components/*": ["./components/*"],
+      "@store/*": ["./store/*"],
+      "@utils/*": ["./utils/*"],
+      "@services/*": ["./services/*"],
+      "@contexts/*": ["./contexts/*"],
+    }
   },
   "include": [
     "next-env.d.ts",
@@ -24,17 +27,7 @@
     "**/*.tsx",
     "utils/check.js",
     "components/toast/toast.tsx",
-    "svg.d.ts",
+    "svg.d.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ],
-  "paths": {
-    "@/components/*": [
-      "./components/*"
-    ],
-    "@/store/*": [
-      "./store/*"
-    ]
-  }
+  "exclude": ["node_modules"]
 }
