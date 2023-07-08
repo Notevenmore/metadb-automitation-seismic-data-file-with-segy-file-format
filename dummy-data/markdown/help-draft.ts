@@ -1,7 +1,5 @@
 export default `# Help Page Draft
 
-- Table of Contents
-
 # About
 
 MetaDB is a web application design with modern and intuitive user interface that uses the power of AI to automate the management of metadata that is associated with subsurface oil and gas resources.
