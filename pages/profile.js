@@ -6,7 +6,7 @@ import {FloatDialog} from '../components/FloatDialog';
 import Button from '../components/button';
 import Container from '../components/container';
 import TableComponent from '../components/table/table';
-import Mime from '../dummy-data/mime';
+import Mime from '../utils/mime';
 import ProfilePic from '../dummy-data/profile_pic';
 import {updateProfile} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';

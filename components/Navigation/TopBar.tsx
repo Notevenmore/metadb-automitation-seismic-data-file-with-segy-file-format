@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
-import Mime from '../../dummy-data/mime';
+import Mime from '../../utils/mime';
 import MetaDB from '../../public/images/metadata3.png';
 import {useAppDispatch, useAppSelector} from '../../store';
 import {logOut} from '../../store/userSlice';
