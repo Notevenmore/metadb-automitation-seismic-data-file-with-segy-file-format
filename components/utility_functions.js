@@ -259,6 +259,40 @@ export const saveDocument = async (
       throw err;
     });
 
+    // for 2d_seismic_field_digital_data only (for now)
+    let field_types_final = {}
+    if (router.query.form_type === "2d_seismic_field_digital_data"){
+      dispatch(
+        setErrorMessage({
+          message:
+            "Getting information about column types...",
+          color: 'blue',
+          show: true,
+        }),
+      );
+      const field_types = await fetch(`${config[router.query.form_type]['view'].slice(0, -1)}-column/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
+        },
+      },).then(res => Promise.all([res.status, res.status !== 200 ? res.text() : res.json()]))
+      .then(([status, res]) => {
+        if (status !== 200) {
+          TokenExpired(status);
+          throw `Service returned with status ${status} on column type GET: ${res}`;
+        }
+        return res
+      });
+
+      Object.keys(field_types).forEach(key => {
+        field_types_final[key.toLowerCase()] = field_types[key]
+      });
+
+      console.log(field_types_final)
+    }
     
   dispatch(
     setErrorMessage({
@@ -283,12 +317,23 @@ export const saveDocument = async (
         // a try catch was put here to avoid new data being undefined if its length is shorter than old data
         try {
           if (!row[header.toLowerCase()]) {
-            if (header.toLowerCase().includes('page')) {
-              row[header.toLowerCase()] =
-                spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
+            // TODO temporary only for 2d seismic digital data, change later for all data types
+            if (router.query.form_type === "2d_seismic_field_digital_data") {
+              if (/int|float/g.test(field_types_final[header.toLowerCase()])) {
+                row[header.toLowerCase()] =
+                  spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
+              } else {
+                row[header.toLowerCase()] =
+                  spreadsheet_data?.response[idx_row][idx_col] || null;
+              }
             } else {
-              row[header.toLowerCase()] =
-                spreadsheet_data?.response[idx_row][idx_col] || null;
+              if (header.toLowerCase().includes('page')) {
+                row[header.toLowerCase()] =
+                  spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
+              } else {
+                row[header.toLowerCase()] =
+                  spreadsheet_data?.response[idx_row][idx_col] || null;
+              }
             }
             if (row[header.toLowerCase()] === '') {
               throw 'Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types.';
