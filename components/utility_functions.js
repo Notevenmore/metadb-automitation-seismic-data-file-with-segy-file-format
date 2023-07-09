@@ -647,6 +647,7 @@ export const downloadWorkspace = async (
       }),
     );
   }
+  return {success: true}
 };
 
 export const checkAfe = async (e, config, data_type, afe_number) => {
