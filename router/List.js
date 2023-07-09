@@ -25,6 +25,11 @@ const ROUTING_LIST = [
     icon: '/icons/seismic.svg',
     child: [
       {
+        name: '2D Seismic Field Digital Data',
+        link: '/datatype/seismic_data/2d_seismic_field_digital_data',
+        icon: '/icons/seismic.svg',
+      },
+      {
         name: '2D Seismic',
         link: '',
         icon: '/icons/seismic.svg',
