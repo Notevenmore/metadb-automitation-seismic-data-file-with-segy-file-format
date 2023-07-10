@@ -1,8 +1,16 @@
-import helpDraft from '../../dummy-data/markdown/help-draft';
 import Markdown from '@components/markdown';
+import fetchPublic from '@utils/fetchPublic';
+import {useState} from 'react'
 
 export default function HelpPage() {
-  return (
-    <Markdown text={helpDraft} />
-  );
+  const [fileContent, setFileContent] = useState('');
+
+  const getText = async () => {
+    const res = await fetchPublic('/helpDraft.md')
+    setFileContent(res)
+  }
+
+  getText()
+
+  return <Markdown text={fileContent} />;
 }
