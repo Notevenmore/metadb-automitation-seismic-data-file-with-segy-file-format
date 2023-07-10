@@ -35,13 +35,25 @@ export default function AddNewUserPage() {
   const dispatch = useAppDispatch();
   const handleSubmit = async e => {
     e.preventDefault();
+
+    if (detail.userid && /\s/.test(detail.userid)) {
+      dispatch(
+        setErrorMessage({
+          message: "Inputted userid cannot contain space. Please retype.",
+          color: 'red',
+          show: true,
+        }),
+      );
+      return;
+    } 
+    
+
     const data = {
       ...detail,
       profile_picture: defaultProfile(),
     };
     await addProfile(data).then(
       res => {
-        console.log(res);
         if (res && res.response) {
           console.log(res.response.data.detail);
           dispatch(
@@ -51,11 +63,6 @@ export default function AddNewUserPage() {
               show: true,
             }),
           );
-          // setMessage({
-          //   message: String(res),
-          //   color: 'red',
-          //   show: true,
-          // });
           return;
         }
         dispatch(
@@ -65,11 +72,6 @@ export default function AddNewUserPage() {
             show: true,
           }),
         );
-        // setMessage({
-        //   message: `Successfully created ${detail.userid} account.`,
-        //   color: 'blue',
-        //   show: true,
-        // });
         setDetail({
           userid: '',
           type: 'Regular User',
@@ -87,11 +89,6 @@ export default function AddNewUserPage() {
               show: true,
             }),
           );
-          // setMessage({
-          //   message: String(err),
-          //   color: 'red',
-          //   show: true,
-          // });
         }
       },
     );

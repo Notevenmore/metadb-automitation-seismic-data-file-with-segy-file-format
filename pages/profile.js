@@ -6,14 +6,13 @@ import {FloatDialog} from '../components/FloatDialog';
 import Button from '../components/button';
 import Container from '../components/container';
 import TableComponent from '../components/table/table';
-import Mime from '../utils/mime';
+import Mime, {defaultProfile} from '../utils/mime';
 import ProfilePic from '../dummy-data/profile_pic';
 import {updateProfile} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
 import {logOut, setUser} from '../store/userSlice';
 
 const Profile = ({setTitle}) => {
-  setTitle('Profile');
   const user = useAppSelector(state => state.user.user);
   const router = useRouter();
   const [currentUser, setcurrentUser] = useState({
@@ -23,6 +22,7 @@ const Profile = ({setTitle}) => {
 
   const [content, setContent] = useState([]);
   useEffect(() => {
+    setTitle('Profile');
     setContent([
       ['Email', user.name],
       ['Date joined', moment(user.date_joined).format('DD - MM - YYYY')],
@@ -66,7 +66,7 @@ const Profile = ({setTitle}) => {
     router.events.emit('routeChangeStart');
     console.log('start');
     await updateProfile({
-      userid: user.name,
+      userid: user.userid,
       profile_picture: currentUser.profile_picture,
     }).then(
       () => {
@@ -86,6 +86,8 @@ const Profile = ({setTitle}) => {
 
   const handleRemovePhoto = async () => {
     router.events.emit('routeChangeStart');
+
+    setcurrentUser(prev => ({...prev, profile_picture: defaultProfile()}));
     router.events.emit('routeChangeComplete');
   };
 
