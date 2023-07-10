@@ -1,8 +1,8 @@
 import {parseCookies} from 'nookies';
 import {TokenExpired} from '../services/admin';
 import {setErrorMessage} from '../store/generalSlice';
-import {store} from './../store/index'
-import { getHeader } from '../services/document';
+import {store} from './../store/index';
+import {getHeader} from '../services/document';
 
 export const init_data = async (config, router, workspaceData) => {
   if (!workspaceData.afe_number) {
@@ -112,7 +112,7 @@ export const saveDocument = async (
   spreadsheetId,
   workspaceData,
   setMessage,
-  dispatch
+  dispatch,
 ) => {
   if (e) {
     e.preventDefault();
@@ -131,15 +131,15 @@ export const saveDocument = async (
     return;
   }
 
-  // Set saving message 
+  // Set saving message
   dispatch(
-      setErrorMessage({
-        message:
-          "Checking changes in record information... Please don't leave this page or click anything",
-        color: 'blue',
-        show: true,
-      }),
-    );
+    setErrorMessage({
+      message:
+        "Checking changes in record information... Please don't leave this page or click anything",
+      color: 'blue',
+      show: true,
+    }),
+  );
 
   // check for changes in the workspace data, if there are any then push the updates to the db
   let workspace_data_changed = false;
@@ -220,8 +220,10 @@ export const saveDocument = async (
   const old_data = await init_data(config, router, workspaceData);
 
   // Fetch header from spreadsheet
-  const spreadsheet_header = await getHeader(config, router.query.form_type)
-  .then((response) => {
+  const spreadsheet_header = await getHeader(
+    config,
+    router.query.form_type,
+  ).then(response => {
     if (response.status !== 200) {
       TokenExpired(response.status);
       throw `Service returned with status ${response.status} on spreadsheet GET headers: ${response.response}`;
@@ -259,18 +261,20 @@ export const saveDocument = async (
       throw err;
     });
 
-    // for 2d_seismic_field_digital_data only (for now)
-    let field_types_final = {}
-    if (router.query.form_type === "2d_seismic_field_digital_data"){
-      dispatch(
-        setErrorMessage({
-          message:
-            "Getting information about column types...",
-          color: 'blue',
-          show: true,
-        }),
-      );
-      const field_types = await fetch(`${config[router.query.form_type]['view'].slice(0, -1)}-column/`, {
+  // for 2d_seismic_field_digital_data only (for now)
+  let field_types_final = {};
+  // if (router.query.form_type === "2d_seismic_field_digital_data"){
+  if (true) {
+    dispatch(
+      setErrorMessage({
+        message: 'Getting information about column types...',
+        color: 'blue',
+        show: true,
+      }),
+    );
+    const field_types = await fetch(
+      `${config[router.query.form_type]['view'].slice(0, -1)}-column/`,
+      {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -278,22 +282,26 @@ export const saveDocument = async (
             JSON.parse(parseCookies().user_data).access_token
           }`,
         },
-      },).then(res => Promise.all([res.status, res.status !== 200 ? res.text() : res.json()]))
+      },
+    )
+      .then(res =>
+        Promise.all([res.status, res.status !== 200 ? res.text() : res.json()]),
+      )
       .then(([status, res]) => {
         if (status !== 200) {
           TokenExpired(status);
           throw `Service returned with status ${status} on column type GET: ${res}`;
         }
-        return res
+        return res;
       });
 
-      Object.keys(field_types).forEach(key => {
-        field_types_final[key.toLowerCase()] = field_types[key]
-      });
+    Object.keys(field_types).forEach(key => {
+      field_types_final[key.toLowerCase()] = field_types[key];
+    });
 
-      console.log(field_types_final)
-    }
-    
+    console.log(field_types_final);
+  }
+
   dispatch(
     setErrorMessage({
       message:
@@ -318,23 +326,26 @@ export const saveDocument = async (
         try {
           if (!row[header.toLowerCase()]) {
             // TODO temporary only for 2d seismic digital data, change later for all data types
-            if (router.query.form_type === "2d_seismic_field_digital_data") {
-              if (/int|float/g.test(field_types_final[header.toLowerCase()])) {
-                row[header.toLowerCase()] =
-                  spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
-              } else {
-                row[header.toLowerCase()] =
-                  spreadsheet_data?.response[idx_row][idx_col] || null;
-              }
+            // if (router.query.form_type === "2d_seismic_field_digital_data") {
+
+            // } else {
+            //   if (header.toLowerCase().includes('page')) {
+            //     row[header.toLowerCase()] =
+            //       spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
+            //   } else {
+            //     row[header.toLowerCase()] =
+            //       spreadsheet_data?.response[idx_row][idx_col] || null;
+            //   }
+            // }
+
+            if (/int|float/g.test(field_types_final[header.toLowerCase()])) {
+              row[header.toLowerCase()] =
+                spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
             } else {
-              if (header.toLowerCase().includes('page')) {
-                row[header.toLowerCase()] =
-                  spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
-              } else {
-                row[header.toLowerCase()] =
-                  spreadsheet_data?.response[idx_row][idx_col] || null;
-              }
+              row[header.toLowerCase()] =
+                spreadsheet_data?.response[idx_row][idx_col] || null;
             }
+
             if (row[header.toLowerCase()] === '') {
               throw 'Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types.';
             }
@@ -387,6 +398,7 @@ export const saveDocument = async (
         // try checking if the data is different. if index out of range it means that the size of the array of either
         // the old data has surpassed the new data, or vice versa, so skip the step.
         // a try catch was put here to avoid old data being undefined if its length is shorter than new data
+
         try {
           if (header.toLowerCase().includes('date')) {
             let old_date =
@@ -409,11 +421,13 @@ export const saveDocument = async (
           }
           if (
             !changed &&
-            (row[header.toLowerCase()]?.replace(/[^\x00-\x7F]/g, '') ||
+            (String(row[header.toLowerCase()])?.replace(/[^\x00-\x7F]/g, '') ||
               null) !==
-              (old_data.data_content[idx_row][header.toLowerCase()] ||
-                old_data.data_content[idx_row][header] ||
-                null)
+              String(
+                old_data.data_content[idx_row][header.toLowerCase()] ||
+                  old_data.data_content[idx_row][header] ||
+                  null,
+              )
           ) {
             changed = true;
           }
@@ -576,7 +590,7 @@ export const downloadWorkspace = async (
   spreadsheetId,
   workspaceData,
   setMessage,
-  dispatch
+  dispatch,
 ) => {
   dispatch(
     setErrorMessage({
@@ -647,7 +661,7 @@ export const downloadWorkspace = async (
       }),
     );
   }
-  return {success: true}
+  return {success: true};
 };
 
 export const checkAfe = async (e, config, data_type, afe_number) => {
