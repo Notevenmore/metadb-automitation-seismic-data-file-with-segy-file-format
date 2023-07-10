@@ -11,7 +11,7 @@ import Button from '@components/button';
 import Image from 'next/image';
 import {FloatDialog} from '@components/FloatDialog';
 import ProfilePic from '../../dummy-data/profile_pic';
-import Mime from '../../utils/mime';
+import Mime, { defaultProfile } from '../../utils/mime';
 
 UserPage.getLayout = getLayoutTop;
 
@@ -137,6 +137,9 @@ export default function UserPage() {
   const handleRemovePhoto = async () => {
     router.events.emit('routeChangeStart');
     router.events.emit('routeChangeComplete');
+
+    
+    setDetail(prev => ({...prev, profile_picture: defaultProfile()}))
   };
 
   console.log(detail);

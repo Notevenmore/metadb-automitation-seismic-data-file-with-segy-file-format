@@ -6,7 +6,7 @@ import {FloatDialog} from '../components/FloatDialog';
 import Button from '../components/button';
 import Container from '../components/container';
 import TableComponent from '../components/table/table';
-import Mime from '../utils/mime';
+import Mime, { defaultProfile } from '../utils/mime';
 import ProfilePic from '../dummy-data/profile_pic';
 import {updateProfile} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
@@ -87,6 +87,8 @@ const Profile = ({setTitle}) => {
   const handleRemovePhoto = async () => {
     router.events.emit('routeChangeStart');
     router.events.emit('routeChangeComplete');
+
+    setcurrentUser(prev => ({...prev, profile_picture: defaultProfile()}))
   };
 
   return (
