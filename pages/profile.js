@@ -66,7 +66,7 @@ const Profile = ({setTitle}) => {
     router.events.emit('routeChangeStart');
     console.log('start');
     await updateProfile({
-      userid: user.name,
+      userid: user.userid,
       profile_picture: currentUser.profile_picture,
     }).then(
       () => {
