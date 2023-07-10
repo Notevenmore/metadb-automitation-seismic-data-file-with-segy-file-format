@@ -2,7 +2,7 @@ import Head from 'next/head';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {Provider} from 'react-redux';
-import ProgressBar from '../components/progress_bar/progress_bar';
+import ProgressBar from '../components/ProgressBar';
 import Toast from '../components/toast/toast';
 import {getLayoutIcon} from '../layout/getLayout';
 import {store} from '../store';
