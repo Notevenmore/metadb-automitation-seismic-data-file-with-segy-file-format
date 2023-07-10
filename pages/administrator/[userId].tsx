@@ -267,11 +267,7 @@ export default function UserPage() {
                 className="px-3 py-1 rounded-[5px] hover:drop-shadow-lg bg-primary">
                 Update
               </button>
-              <button
-                className="bg-error text-white px-3 py-1 rounded-[5px] hover:drop-shadow-lg"
-                onClick={handleRemove}>
-                Delete
-              </button>
+              <Button button_description='Delete' additional_styles='py-1' onClick={handleRemove} />
             </div>
           </form>
         </div>
