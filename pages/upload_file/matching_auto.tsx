@@ -182,16 +182,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.isReady) {
       init();
     }
-  }, [
-    config,
-    dispatch,
-    files,
-    pageNo,
-    router,
-    router.isReady,
-    setDocId,
-    setTitle,
-  ]);
+  }, [router.isReady]);
 
   // continue here to ensure that the state has been updated based on the
   // requested data type before proceeding to do any matching prediction tasks
@@ -242,7 +233,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       }
       return _awaitingUpdate;
     });
-  }, [state, dispatch, totalPageNo, docId, setAwaitingUpdate, router.events]);
+  }, [awaitingUpdate]);
 
   const setValueForId = (id: number, pageNo: number, value: string) => {
     setState(state => {

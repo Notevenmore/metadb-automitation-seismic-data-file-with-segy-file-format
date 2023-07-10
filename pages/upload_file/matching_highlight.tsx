@@ -144,7 +144,7 @@ export default function MatchingGuided({config, setTitle}) {
     if (router.isReady) {
       init();
     }
-  }, [router.isReady, config, dispatch, files, pageNo, router, setTitle]);
+  }, [router.isReady]);
 
   useEffect(() => {
     // save the edited state to redux for final review later

@@ -278,16 +278,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.isReady) {
       init();
     }
-  }, [
-    config,
-    dispatch,
-    files,
-    makeDragData,
-    pageNo,
-    router,
-    setDocId,
-    setTitle,
-  ]);
+  }, [router.isReady]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
