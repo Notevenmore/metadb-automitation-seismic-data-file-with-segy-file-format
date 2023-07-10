@@ -11,7 +11,7 @@ import Button from '@components/button';
 import Image from 'next/image';
 import {FloatDialog} from '@components/FloatDialog';
 import ProfilePic from '../../dummy-data/profile_pic';
-import Mime from '../../utils/mime';
+import Mime, { defaultProfile } from '@utils/mime';
 
 UserPage.getLayout = getLayoutTop;
 
@@ -122,7 +122,7 @@ export default function UserPage() {
               '',
             );
             // setcurrentUser({...currentUser, profile_picture: final});
-            setDetail(prev => ({...prev, profile_picture: final}))
+            setDetail(prev => ({...prev, profile_picture: final}));
           } else {
             alert('Please upload only image formatted file (JPG/PNG)');
             return;
@@ -136,6 +136,8 @@ export default function UserPage() {
 
   const handleRemovePhoto = async () => {
     router.events.emit('routeChangeStart');
+
+    setDetail(prev => ({...prev, profile_picture: defaultProfile()}));
     router.events.emit('routeChangeComplete');
   };
 
@@ -149,7 +151,9 @@ export default function UserPage() {
           <div className="flex flex-col items-center space-y-3">
             <Image
               src={
-                detail.profile_picture ? Mime(detail.profile_picture) : ProfilePic
+                detail.profile_picture
+                  ? Mime(detail.profile_picture)
+                  : ProfilePic
               }
               alt="image"
               width={500}
