@@ -54,7 +54,6 @@ export default function AddNewUserPage() {
     };
     await addProfile(data).then(
       res => {
-        console.log(res);
         if (res && res.response) {
           console.log(res.response.data.detail);
           dispatch(
