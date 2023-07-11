@@ -1,5 +1,5 @@
 import {useRouter} from 'next/router';
-import {useEffect} from 'react';
+import {useCallback, useEffect} from 'react';
 import {getProfile} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
 import {setErrorMessage} from '../store/generalSlice';
