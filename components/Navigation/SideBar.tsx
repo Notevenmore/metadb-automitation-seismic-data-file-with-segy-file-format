@@ -1,10 +1,34 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import ROUTING_LIST from '../../router/List';
 import SearchWidget from '../widget/Search';
 import {NavigationItem} from './Item';
+import {useAppSelector} from '@store/index';
 
 export const SideBar = () => {
   const [iconCollapse, setIconCollapse] = useState(false);
+
+  const {search, value} = useAppSelector(state => state.search);
+  const [list, setList] = useState(ROUTING_LIST);
+
+  function deepFilter(nodes, cb) {
+    return nodes
+      .map(node => {
+        if (cb(node)) return node;
+        let children = deepFilter(node.child || [], cb);
+        console.log(node)
+        return children.length && {...node, child: children};
+      })
+      .filter(Boolean);
+  }
+
+  useEffect(() => {
+    if (search) {
+      const result = deepFilter(ROUTING_LIST, node =>
+        node.name.toLowerCase().includes(value.searchAll.toLowerCase()),
+      );
+      setList(result)
+    }
+  }, [search, value.searchAll]);
 
   return (
     <div
@@ -33,7 +57,7 @@ export const SideBar = () => {
             collapse={iconCollapse}
           />
         </div>
-        {ROUTING_LIST.map(router => (
+        {list.map(router => (
           <NavigationItem
             name={router.name}
             icon={router.icon}
