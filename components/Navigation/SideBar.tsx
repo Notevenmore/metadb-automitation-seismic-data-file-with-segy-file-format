@@ -27,7 +27,10 @@ export const SideBar = () => {
         node.name.toLowerCase().includes(value.searchAll.toLowerCase()),
       );
       setList(result)
+      return
     }
+
+    setList(ROUTING_LIST)
   }, [search, value.searchAll]);
 
   return (
