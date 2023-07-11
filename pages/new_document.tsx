@@ -12,13 +12,14 @@ import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
 import {saveDocument} from '../components/utility_functions';
 import {useAppDispatch, useAppSelector} from '../store';
-import {setErrorMessage} from '../store/generalSlice';
+import {UploadDocumentSettings, displayErrorMessage} from '../store/generalSlice';
+import Save from '../public/icons/save.svg';
 
 export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
   const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [spreadsheetID, setspreadsheetID] = useState();
-  const [workspaceData, setworkspaceData] = useState();
+  const [workspaceData, setworkspaceData] = useState<UploadDocumentSettings>();
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -42,7 +43,7 @@ export default function NewDocumentPage({setTitle, config}) {
       await delay(500);
       router.events.emit('routeChangeStart');
     }, 0);
-  }, []);
+  }, [router, setTitle, upload_document_settings]);
 
   const saveDocumentHandler = async (e, redirect = false) => {
     e.preventDefault();
@@ -59,10 +60,10 @@ export default function NewDocumentPage({setTitle, config}) {
       );
       if (save_result.success) {
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message: 'Record successfully saved',
             color: 'blue',
-            show: true,
+            duration: 3000
           }),
         );
         router.events.emit('routeChangeComplete');
@@ -70,34 +71,24 @@ export default function NewDocumentPage({setTitle, config}) {
           await delay(1000);
           setTimeout(async () => {
             dispatch(
-              setErrorMessage({
+              displayErrorMessage({
                 message: 'Redirecting to homepage...',
                 color: 'blue',
-                show: true,
+                duration: 1500
               }),
             );
-            await delay(1500);
-            dispatch(setErrorMessage({show: false}));
-            await delay(500);
-            dispatch(setErrorMessage({message: '', color: ''}));
           }, 0);
           await delay(1000);
           router.push('/');
-        } else {
-          await delay(3000);
-          dispatch(setErrorMessage({show: false}));
-          await delay(500);
-          dispatch(setErrorMessage({message: '', color: ''}));
         }
       }
     } catch (error) {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
             error,
           )}`,
           color: 'red',
-          show: true,
         }),
       );
     }
@@ -109,20 +100,16 @@ export default function NewDocumentPage({setTitle, config}) {
       router.events.emit('routeChangeComplete');
       setTimeout(async () => {
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message:
               'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
             color: 'blue',
-            show: true,
+            duration: 10000
           }),
         );
-        await delay(10000);
-        dispatch(setErrorMessage({show: false}));
-        await delay(500);
-        dispatch(setErrorMessage({message: '', color: ''}));
       }, 3000);
     }
-  }, [spreadsheetReady]);
+  }, [dispatch, router.events, spreadsheetReady]);
 
   return workspaceData ? (
     <Container additional_class="full-height relative">
@@ -204,7 +191,7 @@ export default function NewDocumentPage({setTitle, config}) {
           <Input
             type="text"
             name={'dataType'}
-            value={router.query.form_type.replace(/\_/g, ' ')}
+            value={(router.query.form_type as string).replace(/\_/g, ' ')}
             additional_styles="w-full"
             additional_styles_input="font-semibold capitalize"
             disabled
@@ -219,7 +206,7 @@ export default function NewDocumentPage({setTitle, config}) {
               workspaceData && router.query.form_type ? (
                 <div className="h-[750px]">
                   <Sheets
-                    form_type={router.query.form_type}
+                    form_type={router.query.form_type as string}
                     type="new"
                     getSpreadsheetID={setspreadsheetID}
                     finishedInitializing={setspreadsheetReady}
@@ -247,29 +234,7 @@ export default function NewDocumentPage({setTitle, config}) {
           onClick={saveDocumentHandler}
           disabled={Message.message || !spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
-            <svg
-              width="18"
-              height="18"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-              <path
-                d="M8.6 9H15.4C15.7314 9 16 8.73137 16 8.4V3.6C16 3.26863 15.7314 3 15.4 3H8.6C8.26863 3 8 3.26863 8 3.6V8.4C8 8.73137 8.26863 9 8.6 9Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-              <path
-                d="M6 13.6V21H18V13.6C18 13.2686 17.7314 13 17.4 13H6.6C6.26863 13 6 13.2686 6 13.6Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-            </svg>
+            <Save className="w-4 h-4" />
             <p>Save changes</p>
           </div>
         </Button>
@@ -285,29 +250,7 @@ export default function NewDocumentPage({setTitle, config}) {
               : false
           }>
           <div className="flex space-x-2 items-center">
-            <svg
-              width="18"
-              height="18"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-              <path
-                d="M8.6 9H15.4C15.7314 9 16 8.73137 16 8.4V3.6C16 3.26863 15.7314 3 15.4 3H8.6C8.26863 3 8 3.26863 8 3.6V8.4C8 8.73137 8.26863 9 8.6 9Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-              <path
-                d="M6 13.6V21H18V13.6C18 13.2686 17.7314 13 17.4 13H6.6C6.26863 13 6 13.2686 6 13.6Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-            </svg>
+            <Save className="w-4 h-4" />
             <p>Save and exit</p>
           </div>
         </Button>

@@ -5,9 +5,8 @@ import Button from '../../components/button';
 import Container from '../../components/container';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfiles, removeProfile} from '../../services/admin';
-import {setErrorMessage} from '../../store/generalSlice';
+import {displayErrorMessage} from '../../store/generalSlice';
 import {useAppDispatch} from '../../store';
-import Popup from '../../components/popup';
 import Input from '@components/Input';
 import {PopupContext} from '@contexts/PopupContext';
 import {useContext} from 'react';
@@ -19,12 +18,13 @@ export default function AdministratorPage() {
   const [list, setList] = useState([]);
   const [filteredList, setFilteredList] = useState(list);
 
-  const handleProfiles = async () => {
-    const res = await getProfiles();
-    if (!res) return;
-    const users = res.filter(item => item.userid !== 'admin');
-    setList(users);
-    setFilteredList(users);
+  const handleProfiles = () => {
+    getProfiles().then((res) => {
+      if (!res) return;
+      const users = res.filter(item => item.userid !== 'admin');
+      setList(users);
+      setFilteredList(users);
+    })
   };
 
   useEffect(() => {
@@ -37,23 +37,21 @@ export default function AdministratorPage() {
       message: `Are you sure you want to delete ${userId} account?`,
       title: 'Delete Confirmation',
       onConfirm: async () => {
-        await removeProfile(userId).then(
+        removeProfile(userId).then(
           () => {
             handleProfiles();
             dispatch(
-              setErrorMessage({
+              displayErrorMessage({
                 message: `${userId} acount successfully deleted.`,
                 color: 'blue',
-                show: true,
               }),
             );
           },
           err => {
             dispatch(
-              setErrorMessage({
+              displayErrorMessage({
                 message: String(err),
                 color: 'red',
-                show: true,
               }),
             );
           },

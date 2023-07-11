@@ -3,7 +3,7 @@ import Container from '../../components/container';
 import Input from '../../components/Input';
 
 export default function Database() {
-  const additional_styles_label = 'w-[20%]';
+  const additional_styles_label = 'w-1/5';
 
   return (
     <Container>
@@ -40,7 +40,7 @@ export default function Database() {
               placeholder={'Port'}
               required={true}
               additional_styles="flex-1"
-              additional_styles_label="w-[20%] text-center"
+              additional_styles_label="w-1/5 text-center"
             />
           </div>
           <Input

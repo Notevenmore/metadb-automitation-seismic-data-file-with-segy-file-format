@@ -1,11 +1,11 @@
 import {useRouter} from 'next/router';
-import {useContext, useEffect, useState} from 'react';
+import {useCallback, useContext, useEffect, useState} from 'react';
 import Input from '../../components/Input';
 import Container from '../../components/container';
 import {getLayoutTop} from '../../layout/getLayout';
 import {getProfile, removeProfile, updateProfile} from '../../services/admin';
 import {useAppDispatch} from '../../store';
-import {setErrorMessage} from '../../store/generalSlice';
+import {displayErrorMessage} from '../../store/generalSlice';
 import {PopupContext} from '@contexts/PopupContext';
 import Button from '@components/button';
 import Image from 'next/image';
@@ -31,55 +31,49 @@ export default function UserPage() {
   let {openPopup} = useContext(PopupContext);
 
   const dispatch = useAppDispatch();
-  const handleProfile = async () => {
-    const res = await getProfile(userId).then(
-      res => {
-        return res;
-      },
+  const handleProfile = useCallback(() => {
+    getProfile(userId).then(
+      setDetail,
       err => {
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message: String(err),
             color: 'red',
-            show: true,
           }),
         );
         return;
       },
     );
-    setDetail(res);
-  };
+  }, [dispatch, userId]);
 
   useEffect(() => {
     if (!userId) return;
 
     handleProfile();
-  }, [userId]);
+  }, [handleProfile, userId]);
 
   const handleChange = e => {
     const {name, value} = e.target;
     setDetail(prev => ({...prev, [name]: value}));
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
     console.log(detail);
-    await updateProfile(detail).then(
+    updateProfile(detail).then(
       () => {
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message: `${userId} data successfully updated.`,
             color: 'blue',
-            show: true,
           }),
         );
       },
       err => {
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message: String(err),
             color: 'red',
-            show: true,
           }),
         );
       },
@@ -91,13 +85,12 @@ export default function UserPage() {
     openPopup({
       message: `Are you sure you want to delete ${userId} account?`,
       title: 'Delete Confirmation',
-      onConfirm: async () => {
-        await removeProfile(userId).then(() => {
+      onConfirm: () => {
+        removeProfile(userId).then(() => {
           dispatch(
-            setErrorMessage({
+            displayErrorMessage({
               message: `${userId} data successfully deleted.`,
               color: 'blue',
-              show: true,
             }),
           );
           router.replace('/administrator');

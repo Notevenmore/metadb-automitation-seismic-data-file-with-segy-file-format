@@ -28,7 +28,7 @@ const Profile = ({setTitle}) => {
       ['Date joined', moment(user.date_joined).format('DD - MM - YYYY')],
       ['Role', user.type],
     ]);
-  }, []);
+  }, [user.date_joined, user.name, user.type]);
 
   const uploadIMG = async () => {
     let reader = new FileReader();
@@ -40,8 +40,9 @@ const Profile = ({setTitle}) => {
       reader.onload = () => {
         if (reader.readyState === 2) {
           if (/^image\/[\w]+$/.exec(files.type)) {
-            const final = reader.result.replace(
-              /^(.+)(?=,)/.exec(reader.result)[0] + ',',
+            const result = reader.result as string;
+            const final = (result).replace(
+              /^(.+)(?=,)/.exec(result)[0] + ',',
               '',
             );
             setcurrentUser({...currentUser, profile_picture: final});
@@ -60,29 +61,25 @@ const Profile = ({setTitle}) => {
     dispatch(logOut());
   };
 
-  const handleUploadPhoto = async () => {
+  useEffect(() => {
     if (user === currentUser) return;
 
     router.events.emit('routeChangeStart');
     console.log('start');
-    await updateProfile({
-      userid: user.userid,
+    updateProfile({
+      userid: user.name,
       profile_picture: currentUser.profile_picture,
     }).then(
       () => {
         dispatch(setUser(currentUser));
         console.log('complete');
+        router.events.emit('routeChangeComplete');
       },
       err => {
         console.log(err);
       },
     );
-    router.events.emit('routeChangeComplete');
-  };
-
-  useEffect(() => {
-    handleUploadPhoto();
-  }, [currentUser]);
+  }, [currentUser, dispatch, router.events, user]);
 
   const handleRemovePhoto = async () => {
     router.events.emit('routeChangeStart');

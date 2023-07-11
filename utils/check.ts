@@ -10,9 +10,9 @@ function CheckAuth() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  const handleProfile = async () => {
+  const handleProfile = useCallback(() => {
     console.log(user.userid);
-    const res = await getProfile(user.userid).then(
+    getProfile(user.userid).then(
       res => {
         dispatch(setUser(res));
       },
@@ -27,20 +27,16 @@ function CheckAuth() {
         );
       },
     );
-  };
+  }, [dispatch, user.userid]);
 
   useEffect(() => {
     if (!user.userid) {
-      router.push('/login/signin');
+      router.push('/login');
       return;
     }
     if (user.type === 'Administrator') return;
     handleProfile();
-  }, [
-    user.userid,
-    router.events,
-    useAppSelector(state => state.user.user.userid),
-  ]);
+  }, [user.userid, router.events, user.type, handleProfile, router]);
 }
 
 function CheckUser(userType) {
@@ -49,10 +45,10 @@ function CheckUser(userType) {
 
   useEffect(() => {
     if (user.type !== userType) {
-      router.push('/login/signin');
+      router.push('/login');
       return;
     }
-  }, [router.asPath]);
+  }, [router, router.asPath, user.type, userType]);
 }
 
 export {CheckAuth, CheckUser};

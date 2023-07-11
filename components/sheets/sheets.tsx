@@ -50,7 +50,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
       console.log('You are not supposed to be here');
     }
     setSkipInitialization(false);
-  }, []);
+  }, [props]);
 
   const delay = (delay_amount_ms: number) =>
     new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
@@ -69,7 +69,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
       setLoading(false);
     };
     getInit();
-  }, [init]);
+  }, [init, props.form_type, props.type]);
 
   useEffect(() => {
     const updateSheet = async () => {
@@ -202,7 +202,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         updateSheet();
       }
     }
-  }, [sheetID, SkipInitialization]);
+  }, [sheetID, SkipInitialization, props]);
 
   return Loading ? (
     <div
