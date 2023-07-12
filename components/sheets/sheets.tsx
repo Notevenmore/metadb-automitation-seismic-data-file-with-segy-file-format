@@ -1,4 +1,5 @@
-import {useCallback, useEffect, useState} from 'react';
+import { delay } from '@utils/common';
+import {useEffect, useState} from 'react';
 
 interface IframeProps extends React.ComponentProps<'iframe'> {
   existingID?: any;
@@ -11,6 +12,8 @@ interface IframeProps extends React.ComponentProps<'iframe'> {
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
+  const {config, form_type, getSpreadsheetID, type, finishedInitializing, data, existingID} = props;
+
   const [sheetID, setsheetID] = useState();
   const [Loading, setLoading] = useState(true);
   const [LoadingMsg, setLoadingMsg] = useState('');
@@ -18,50 +21,42 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
   const [ErrorMessage, setErrorMessage] = useState('');
   const [SkipInitialization, setSkipInitialization] = useState(false);
 
-  const init = useCallback(async () => {
-    if (props.existingID) {
-      console.log(props.existingID);
-      setsheetID(props.existingID);
-      setSkipInitialization(true);
-      return;
-    }
-    const previousID = localStorage.getItem('spreadsheetID');
-    if (previousID) {
-      await fetch(`${props.config.services.sheets}/deleteSpreadsheet`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          spreadsheetID: previousID,
-        }),
-      }).catch(error => {
-        throw error;
-      });
-    }
-    const makeTemp = await fetch(
-      `${props.config.services.sheets}/createSpreadsheet`,
-    );
-    const spreadsheetID = await makeTemp.json();
-    setsheetID(spreadsheetID.response);
-    try {
-      props.getSpreadsheetID(spreadsheetID.response);
-    } catch (error) {
-      console.log('You are not supposed to be here');
-    }
-    setSkipInitialization(false);
-  }, [props]);
-
-  const delay = (delay_amount_ms: number) =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
-
   useEffect(() => {
-    console.log(props.type, props.form_type);
+    console.log(type, form_type);
     const getInit = async () => {
       setLoading(true);
       try {
         setLoadingMsg('Initializing sheets, please wait...');
-        await init();
+        if (existingID) {
+          setsheetID(existingID);
+          setSkipInitialization(true);
+          return;
+        }
+        const previousID = localStorage.getItem('spreadsheetID');
+        if (previousID) {
+          await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              spreadsheetID: previousID,
+            }),
+          }).catch(error => {
+            throw error;
+          });
+        }
+        const makeTemp = await fetch(
+          `${config.services.sheets}/createSpreadsheet`,
+          );
+        const spreadsheetID = await makeTemp.json();
+        setsheetID(spreadsheetID.response);
+        try {
+          getSpreadsheetID(spreadsheetID.response);
+        } catch (error) {
+          console.log('You are not supposed to be here');
+        }
+        setSkipInitialization(false);
       } catch (error) {
         sethasError(true);
         setErrorMessage(`{${error.message}}`);
@@ -69,22 +64,22 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
       setLoading(false);
     };
     getInit();
-  }, [init, props.form_type, props.type]);
+  }, [config.services.sheets, existingID, form_type, getSpreadsheetID, type]);
 
   useEffect(() => {
     const updateSheet = async () => {
       setLoading(true);
       setLoadingMsg(
-        `Initializing document form based on form type ${props.form_type}`,
+        `Initializing document form based on form type ${form_type}`,
       );
-      await fetch(`${props.config.services.sheets}/updateSpreadsheet/v2`, {
+      await fetch(`${config.services.sheets}/updateSpreadsheet/v2`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          type: props.type,
-          form_type: props.form_type,
+          type,
+          form_type,
           spreadsheetID: sheetID,
         }),
       })
@@ -102,7 +97,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         });
 
       // FIXME this type is not currently used, remove if unused later. 2
-      if (props.type === 'update') {
+      if (type === 'update') {
         setLoadingMsg(`Fetching from database`);
         delay(3000);
         const id = 'Laporan Data 2023';
@@ -120,13 +115,13 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         data.some(item => {
           final.push({no: '-', ...item});
         });
-        await fetch(`${props.config.services.sheets}/appendToSheets2`, {
+        await fetch(`${config.services.sheets}/appendToSheets2`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            form_type: props.form_type,
+            form_type: form_type,
             spreadsheetID: sheetID,
             data: JSON.stringify(final),
           }),
@@ -144,11 +139,10 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
           .catch(error => {
             throw error;
           });
-      } else if (props.type === 'review') {
+      } else if (type === 'review') {
         try {
           console.log('first');
           setLoadingMsg('Appending OCR data to the spreadsheet');
-          let data = props.data;
           console.log(data);
           if (!data) {
             throw new Error(
@@ -159,13 +153,13 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
           // TODO finish this new workflow
           // ---| NEW WORKFLOW |---
 
-          await fetch(`${props.config.services.sheets}/appendToSheets2`, {
+          await fetch(`${config.services.sheets}/appendToSheets2`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              form_type: props.form_type,
+              form_type: form_type,
               spreadsheetID: sheetID,
               data: JSON.stringify(data),
             }),
@@ -191,7 +185,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
       setLoadingMsg('All done');
       setLoading(false);
       try {
-        props.finishedInitializing(true);
+        finishedInitializing(true);
       } catch (error) {
         console.log('What are you still doing here');
       }
@@ -202,7 +196,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         updateSheet();
       }
     }
-  }, [sheetID, SkipInitialization, props]);
+  }, [sheetID, SkipInitialization, form_type, config.services.sheets, type, data, finishedInitializing]);
 
   return Loading ? (
     <div

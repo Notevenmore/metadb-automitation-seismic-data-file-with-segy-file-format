@@ -392,7 +392,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         <Button
           button_description="View on sheets"
           path="/upload_file/review"
-          query={formType}
+          query={{form_type: formType}}
           additional_styles="px-20 bg-searchbg/[.6] hover:bg-searchbg font-semibold"
           disabled={!formType}
           onClick={() => {
