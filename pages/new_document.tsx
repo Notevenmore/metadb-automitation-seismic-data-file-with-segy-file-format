@@ -208,7 +208,8 @@ export default function NewDocumentPage({setTitle, config}) {
                     getSpreadsheetID={setspreadsheetID}
                     finishedInitializing={setspreadsheetReady}
                     config={config}
-                  />
+                    data={undefined}
+                    />
                 </div>
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
