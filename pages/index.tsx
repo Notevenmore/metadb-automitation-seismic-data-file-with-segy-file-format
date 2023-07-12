@@ -10,10 +10,12 @@ import {checkAfe} from '../components/utility_functions';
 import {datatypes} from '../config';
 import draft from '../dummy-data/draft';
 import FileIcon from '../public/icons/file.svg';
+import Close from '../public/icons/close.svg';
 import {TokenExpired} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
 import {
-  setErrorMessage,
+  UploadDocumentSettings,
+  displayErrorMessage,
   setUploadDocumentSettings,
 } from '../store/generalSlice';
 import {delay} from '../utils/common';
@@ -21,7 +23,7 @@ import {delay} from '../utils/common';
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
     setTitle('Home');
-  }, []);
+  }, [setTitle]);
 
   // if the search state is true change the view of the home page
   const searches = useAppSelector(state => state.search.search);
@@ -31,12 +33,12 @@ export default function HomePage({setTitle, config}) {
 const HomeSection = ({config}) => {
   const [toggleOverlay, settoggleOverlay] = useState(false);
   const [dataType, setdataType] = useState('');
-  const [newWorkspace, setnewWorkspace] = useState({
+  const [newWorkspace, setnewWorkspace] = useState<UploadDocumentSettings>({
     workspace_name: '',
     kkks_name: '',
     working_area: '',
     submission_type: '',
-    afe_number: '',
+    afe_number: 0,
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
@@ -57,11 +59,10 @@ const HomeSection = ({config}) => {
       try {
         settoggleOverlay(false);
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message:
               "Creating a new record... Please don't leave this page or click anything",
             color: 'blue',
-            show: true,
           }),
         );
         await fetch(`${config[datatypes[dataType]]['afe']}`, {
@@ -97,18 +98,14 @@ const HomeSection = ({config}) => {
             }
           });
         dispatch(setUploadDocumentSettings(newWorkspace));
-        setTimeout(async () => {
+        setTimeout(() => {
           dispatch(
-            setErrorMessage({
+            displayErrorMessage({
               message: 'Success. Redirecting to the next page...',
               color: 'blue',
-              show: true,
+              duration: 1500
             }),
           );
-          await delay(1500);
-          dispatch(setErrorMessage({show: false}));
-          await delay(500);
-          dispatch(setErrorMessage({message: '', color: ''}));
         }, 0);
         router.events.emit('routeChangeComplete');
         await delay(1500);
@@ -119,10 +116,9 @@ const HomeSection = ({config}) => {
       } catch (error) {
         // Handle error and display error message
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message: String(error),
             color: 'red',
-            show: true,
           }),
         );
       }
@@ -130,7 +126,7 @@ const HomeSection = ({config}) => {
     }
   };
 
-  const reset = (element = false) => {
+  const reset = (element: HTMLElement = undefined) => {
     if (element) {
       const comparator = document.getElementById('overlay');
       if (element !== comparator) {
@@ -145,7 +141,7 @@ const HomeSection = ({config}) => {
         workspace_name: '',
         kkks_name: '',
         working_area: '',
-        afe_number: '',
+        afe_number: 0,
         submission_type: '',
       };
     });
@@ -190,12 +186,11 @@ const HomeSection = ({config}) => {
       }
     } catch (error) {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
             error,
           )}`,
           color: 'red',
-          show: true,
         }),
       );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
@@ -247,7 +242,7 @@ const HomeSection = ({config}) => {
         } transition-all`}
         onClick={e => {
           e.preventDefault();
-          reset(e.target);
+          reset(e.target as HTMLElement);
         }}>
         <div
           id="overlay"
@@ -264,19 +259,7 @@ const HomeSection = ({config}) => {
                 e.preventDefault();
                 reset();
               }}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <Close className="w-5 h-5" />
             </Button>
             <h1 className="font-bold text-3xl">New record</h1>
             <hr />
@@ -465,7 +448,7 @@ const SearchResult = () => {
   );
 };
 
-export async function getServerSideProps() {
+export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props
