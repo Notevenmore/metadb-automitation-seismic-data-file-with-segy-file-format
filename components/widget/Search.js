@@ -61,9 +61,9 @@ export default function SearchWidget() {
   // if the search state is true redirect to home
   const searchState = useAppSelector(state => state.search.search);
   const router = useRouter();
-  useEffect(() => {
-    if (searchState) router.push('/');
-  }, [searchState]);
+  // useEffect(() => {
+  //   if (searchState) router.push('/');
+  // }, [searchState]);
 
   return (
     <div className="w-full h-auto px-5 pt-1 text-[14.5px]">
@@ -85,7 +85,7 @@ export default function SearchWidget() {
             onChange={singleSearchChange}
             additional_styles_input="bg-transparent text-black text-[14.5px] indent-5 flex-1"
           />
-          <div
+          {/* <div
             className="select-none cursor-pointer flex items-center text-[11px] text-[#939393] bg-transparent hover:bg-gray-200 px-2 py-1 transition-all rounded-md"
             title="Expand"
             onClick={() => setExpandSearch(true)}>
@@ -97,7 +97,7 @@ export default function SearchWidget() {
               height={30}
               className="w-[.9rem] h-[22px] fill-[#939393]"
             />
-          </div>
+          </div> */}
         </div>
       ) : (
         <form

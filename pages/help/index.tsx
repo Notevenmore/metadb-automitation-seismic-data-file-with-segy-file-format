@@ -6,7 +6,7 @@ export default function HelpPage() {
   const [fileContent, setFileContent] = useState('');
 
   const getText = async () => {
-    const res = await fetchPublic('/helpDraft.md')
+    const res = await fetchPublic('/markdown/userHelp.md')
     setFileContent(res)
   }
 
