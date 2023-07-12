@@ -14,6 +14,7 @@ import {saveDocument} from '../components/utility_functions';
 import {useAppDispatch, useAppSelector} from '../store';
 import {UploadDocumentSettings, displayErrorMessage} from '../store/generalSlice';
 import Save from '../public/icons/save.svg';
+import {delay} from '../utils/common';
 
 export default function NewDocumentPage({setTitle, config}) {
   const router = useRouter();
@@ -27,9 +28,6 @@ export default function NewDocumentPage({setTitle, config}) {
     state => state.general.upload_document_settings,
   );
 
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
-
   useEffect(() => {
     if (!router.query.form_type) {
       router.push('/');
@@ -39,10 +37,9 @@ export default function NewDocumentPage({setTitle, config}) {
       }
     }
     setTitle('New document');
-    setTimeout(async () => {
-      await delay(500);
+    delay(500).then(() => {
       router.events.emit('routeChangeStart');
-    }, 0);
+    });
   }, [router, setTitle, upload_document_settings]);
 
   const saveDocumentHandler = async (e, redirect = false) => {
@@ -69,7 +66,7 @@ export default function NewDocumentPage({setTitle, config}) {
         router.events.emit('routeChangeComplete');
         if (redirect) {
           await delay(1000);
-          setTimeout(async () => {
+          setTimeout(() => {
             dispatch(
               displayErrorMessage({
                 message: 'Redirecting to homepage...',
@@ -98,7 +95,7 @@ export default function NewDocumentPage({setTitle, config}) {
   useEffect(() => {
     if (spreadsheetReady) {
       router.events.emit('routeChangeComplete');
-      setTimeout(async () => {
+      setTimeout(() => {
         dispatch(
           displayErrorMessage({
             message:
@@ -279,7 +276,7 @@ export default function NewDocumentPage({setTitle, config}) {
   );
 }
 
-export async function getServerSideProps() {
+export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

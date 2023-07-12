@@ -12,6 +12,7 @@ import {
 } from '../../components/utility_functions';
 import {useAppDispatch} from '../../store';
 import {setErrorMessage} from '../../store/generalSlice';
+import {delay} from '../../utils/common';
 
 const DocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
@@ -113,9 +114,6 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       }, 3000);
     }
   }, [spreadsheetReady]);
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   const saveDocumentHandler = async () => {
     router.events.emit('routeChangeStart');
@@ -275,13 +273,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           workspaceData?.kkks_name
             ? [
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2" key="kkks">
                     <p>Nama KKKS</p>
                     <p className="text-gray-400">(KKKS Name)</p>
                   </div>,
-                  // eslint-disable-next-line react/jsx-key
                   <Input
+                    key="kkks_input"
                     name="kkks_name"
                     type={'text'}
                     value={
@@ -291,13 +288,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2" key="working_area">
                     <p>Nama wilayah kerja</p>
                     <p className="text-gray-400">(Working area)</p>
                   </div>,
-                  // eslint-disable-next-line react/jsx-key
                   <Input
+                  key="working_area_input"
                     name="working_area"
                     type={'text'}
                     value={
@@ -308,13 +304,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2" key="submission_type">
                     <p>Jenis penyerahan data</p>
                     <p className="text-gray-400">(Submission type)</p>
                   </div>,
-                  // eslint-disable-next-line react/jsx-key
                   <Input
+                  key="submission_type_input"
                     name="submission_type"
                     type={'dropdown'}
                     value={workspaceData?.submission_type || 'Select an item'}
@@ -332,13 +327,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2" key="afe_number">
                     <p>Nomor AFE</p>
                     <p className="text-gray-400">(AFE number)</p>
                   </div>,
-                  // eslint-disable-next-line react/jsx-key
                   <Input
+                    key="afe_number_input"
                     name="afe_number"
                     type={'number'}
                     value={String(workspaceData?.afe_number) || '1'}
@@ -346,10 +340,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <p className="font-bold">Data type</p>,
-                  // eslint-disable-next-line react/jsx-key
+                  <p className="font-bold" key="data_type">Data type</p>,
                   <Input
+                    key="data_type_input"
                     type={'text'}
                     value={router.query.form_type.replace(/\_/g, ' ')}
                     additional_styles_input="capitalize font-semibold"
@@ -359,8 +352,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
               ]
             : [
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-3 justify-center items-center p-2">
+                  <div className="flex space-x-3 justify-center items-center p-2" key="loading">
                     <div className="w-5 h-5 border-t-transparent rounded-full border-2 border-black animate-spin" />
                     <p>Getting data... Please wait</p>
                   </div>,
@@ -371,16 +363,14 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       <div className="h-full">
         <TableComponent
           header={[
-            // eslint-disable-next-line react/jsx-key
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center" key="data_header">
               <p>Data</p>
             </div>,
           ]}
           content={[
             Data
               ? [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="h-[750px]">
+                  <div className="h-[750px]" key="sheet">
                     <Sheets
                       type="review"
                       form_type={router?.query.form_type || 'basin'}
@@ -392,8 +382,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   </div>,
                 ]
               : [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-3 justify-center items-center p-2">
+                  <div className="flex space-x-3 justify-center items-center p-2" key="loading">
                     <div className="w-5 h-5 border-t-transparent rounded-full border-2 border-black animate-spin" />
                     <p>Getting data... Please wait</p>
                   </div>,

@@ -41,7 +41,7 @@ function BackButton() {
   );
 }
 
-Container.Subtitle = ({children, additional_class, tab = false}) => {
+Container.Subtitle = ({children, additional_class = '', tab = false}) => {
   return (
     <div
       className={`text-xs -mt-10 lg:text-base mb-10 ${additional_class}`}

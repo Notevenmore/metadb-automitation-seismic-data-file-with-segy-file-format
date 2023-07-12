@@ -641,8 +641,6 @@ const Editor = () => {
         </div>
         <div className="border-2 rounded-md p-5 prose h-full break-words">
           <ReactMarkdown
-            // eslint-disable-next-line react/no-children-prop
-            children={Description}
             rehypePlugins={[rehypeRaw]}
             remarkPlugins={[remarkGfm]}
             components={{
@@ -650,14 +648,12 @@ const Editor = () => {
                 const match = /language-(\w+)/.exec(className || '');
                 return !inline && match ? (
                   <SyntaxHighlighter
-                    // eslint-disable-next-line react/no-children-prop
-                    children={String(children).replace(/\n$/, '')}
                     style={nightOwl}
                     language={match[1]}
                     PreTag="div"
                     customStyle={{background: 'none'}}
                     {...props}
-                  />
+                  >{String(children).replace(/\n$/, '')}</SyntaxHighlighter>
                 ) : (
                   <code className={className} {...props}>
                     {children}
@@ -665,7 +661,7 @@ const Editor = () => {
                 );
               },
             }}
-          />
+          >{Description}</ReactMarkdown>
         </div>
       </div>
     </div>

@@ -67,15 +67,13 @@ export default function MatchReview({config, setTitle}) {
   }, [router]);
 
   useEffect(() => {
-    const onPageChange = async () => {
-      if (docId === null) return;
-      setImageBase64Str(_ => generateImageUrl(docId, pageNo));
-      const responseWords = await postScrapeAnnotate(docId, pageNo);
+    if (docId === null) return;
+    setImageBase64Str(_ => generateImageUrl(docId, pageNo));
+    postScrapeAnnotate(docId, pageNo).then((responseWords) => {
       if (responseWords.status === 'success') {
         setDropDownOptions(_ => responseWords.body.words);
       }
-    };
-    onPageChange();
+    });
   }, [docId, pageNo]);
 
   const prevPage = () => {
@@ -171,7 +169,7 @@ export default function MatchReview({config, setTitle}) {
     if (router.isReady) {
       init();
     }
-  }, [router.isReady]);
+  }, [config, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
@@ -339,7 +337,7 @@ export default function MatchReview({config, setTitle}) {
   );
 }
 
-export async function getServerSideProps() {
+export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

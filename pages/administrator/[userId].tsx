@@ -12,6 +12,7 @@ import Image from 'next/image';
 import {FloatDialog} from '@components/FloatDialog';
 import ProfilePic from '../../dummy-data/profile_pic';
 import Mime, { defaultProfile } from '@utils/mime';
+import { uploadIMG } from '@utils/image';
 
 UserPage.getLayout = getLayoutTop;
 
@@ -99,35 +100,8 @@ export default function UserPage() {
     });
   };
 
-  const uploadIMG = async () => {
-    let reader = new FileReader();
-    let input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = _this => {
-      let files = Array.from(input.files)[0];
-      reader.onload = event => {
-        const result = event.target?.result as string; // Type assertion applied here
-        if (reader.readyState === 2) {
-          if (/^image\/[\w]+$/.exec(files.type)) {
-            const final = result.replace(
-              /^(.+)(?=,)/.exec(result)[0] + ',',
-              '',
-            );
-            // setcurrentUser({...currentUser, profile_picture: final});
-            setDetail(prev => ({...prev, profile_picture: final}));
-          } else {
-            alert('Please upload only image formatted file (JPG/PNG)');
-            return;
-          }
-        }
-      };
-      reader.readAsDataURL(files);
-    };
-    input.click();
-  };
 
-  const handleRemovePhoto = async () => {
+  const handleRemovePhoto = () => {
     router.events.emit('routeChangeStart');
 
     setDetail(prev => ({...prev, profile_picture: defaultProfile()}));
@@ -161,7 +135,9 @@ export default function UserPage() {
                   {
                     section_title: 'Upload photo',
                     section_content: 'Maximum 1 MB',
-                    handleClick: () => uploadIMG(),
+                    handleClick: () => uploadIMG((final) => {
+                      setDetail(prev => ({...prev, profile_picture: final}));
+                    }),
                   },
                   {
                     section_title: 'Remove photo',

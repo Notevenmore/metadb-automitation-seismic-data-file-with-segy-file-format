@@ -16,6 +16,7 @@ import {
   displayErrorMessage,
   setUploadDocumentSettings,
 } from '../../store/generalSlice';
+import {delay} from '../../utils/common';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
@@ -201,9 +202,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     }
   };
 
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
-
   const makenew = async e => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
@@ -250,7 +248,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           }
         });
       dispatch(setUploadDocumentSettings(newWorkspace));
-      setTimeout(async () => {
+      setTimeout(() => {
         dispatch(
           displayErrorMessage({
             message: 'Sucess. Redirecting to the next page...',
@@ -602,7 +600,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   );
 };
 
-export async function getServerSideProps(context) {
+export function getServerSideProps(context) {
   const datatype = context.params.datatype;
   const config = JSON.parse(process.env.ENDPOINTS);
   return {

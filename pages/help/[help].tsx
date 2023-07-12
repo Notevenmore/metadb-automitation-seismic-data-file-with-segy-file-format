@@ -68,7 +68,7 @@ const Documentation = props => {
   );
 };
 
-export async function getServerSideProps(context) {
+export function getServerSideProps(context) {
   // get data from server
   console.log('id to be get from db: ' + context.params.help);
   // set the title and content to the one fetched from db

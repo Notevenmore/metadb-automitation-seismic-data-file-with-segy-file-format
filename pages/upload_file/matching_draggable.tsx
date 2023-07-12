@@ -278,7 +278,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.isReady) {
       init();
     }
-  }, [router.isReady]);
+  }, [config, dispatch, files, makeDragData, pageNo, router, router.isReady, setDocId, setTitle]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
@@ -484,7 +484,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   );
 }
 
-export async function getServerSideProps() {
+export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

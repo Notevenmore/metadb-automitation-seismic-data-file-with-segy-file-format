@@ -33,26 +33,24 @@ export default function AddNewUserPage() {
   };
 
   const dispatch = useAppDispatch();
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
 
     if (detail.userid && /\s/.test(detail.userid)) {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: "Inputted userid cannot contain space. Please retype.",
           color: 'red',
-          show: true,
         }),
       );
       return;
     } 
     
-
     const data = {
       ...detail,
       profile_picture: defaultProfile(),
     };
-    await addProfile(data).then(
+    addProfile(data).then(
       res => {
         if (res && res.response) {
           console.log(res.response.data.detail);

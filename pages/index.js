@@ -16,6 +16,7 @@ import {
   setErrorMessage,
   setUploadDocumentSettings,
 } from '../store/generalSlice';
+import {delay} from '../utils/common';
 
 export default function HomePage({setTitle, config}) {
   useEffect(() => {
@@ -48,9 +49,6 @@ const HomeSection = ({config}) => {
     e.stopPropagation();
     router.push('/upload_file');
   };
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
 
   const makenew = async e => {
     e.preventDefault();

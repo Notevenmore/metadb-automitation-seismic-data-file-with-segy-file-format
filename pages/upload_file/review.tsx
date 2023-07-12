@@ -449,7 +449,7 @@ export default function UploadFileReview({setTitle, config}) {
   );
 }
 
-export async function getServerSideProps() {
+export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

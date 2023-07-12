@@ -77,16 +77,14 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   };
 
   useEffect(() => {
-    const onPageChange = async () => {
-      if (docId === null) return;
-      setImageBase64Str(_ => generateImageUrl(docId, pageNo));
-      const responseWords = await postScrapeAnnotate(docId, pageNo);
+    if (docId === null) return;
+    setImageBase64Str(_ => generateImageUrl(docId, pageNo));
+    postScrapeAnnotate(docId, pageNo).then((responseWords) => {
       const words = responseWords.body?.words;
       if (words) {
         setDropDownOptions(_ => words);
       }
-    };
-    onPageChange();
+    });
   }, [docId, pageNo]);
 
   const prevPage = () => {
@@ -182,7 +180,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.isReady) {
       init();
     }
-  }, [router.isReady]);
+  }, [config, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
 
   // continue here to ensure that the state has been updated based on the
   // requested data type before proceeding to do any matching prediction tasks
@@ -214,7 +212,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         }
 
         Promise.all(promises)
-          .then(async () => {
+          .then(() => {
             setLoading('');
             router.events.emit('routeChangeComplete');
             dispatch(
@@ -233,7 +231,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       }
       return _awaitingUpdate;
     });
-  }, [awaitingUpdate]);
+  }, [awaitingUpdate, dispatch, docId, router.events, state?.length, totalPageNo]);
 
   const setValueForId = (id: number, pageNo: number, value: string) => {
     setState(state => {
@@ -406,7 +404,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   );
 }
 
-export async function getServerSideProps() {
+export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   const NEXT_PUBLIC_OCR_SERVICE_URL = process.env.NEXT_PUBLIC_OCR_SERVICE_URL;
   return {

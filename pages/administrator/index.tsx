@@ -36,7 +36,7 @@ export default function AdministratorPage() {
     openPopup({
       message: `Are you sure you want to delete ${userId} account?`,
       title: 'Delete Confirmation',
-      onConfirm: async () => {
+      onConfirm: () => {
         removeProfile(userId).then(
           () => {
             handleProfiles();

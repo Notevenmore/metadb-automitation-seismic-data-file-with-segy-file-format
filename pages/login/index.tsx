@@ -39,7 +39,7 @@ export default function SignInPage({setTitle}) {
     }));
   };
 
-  const handleSignIn = async e => {
+  const handleSignIn = e => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     if (!loginData.password || !loginData.email) {

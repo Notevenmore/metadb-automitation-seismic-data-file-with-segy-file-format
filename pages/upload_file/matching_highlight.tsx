@@ -144,22 +144,23 @@ export default function MatchingGuided({config, setTitle}) {
     if (router.isReady) {
       init();
     }
-  }, [router.isReady]);
+  }, [config, dispatch, files, pageNo, router, router.isReady, setTitle]);
 
   useEffect(() => {
     // save the edited state to redux for final review later
     dispatch(setReviewData(state));
   }, [dispatch, state]);
 
-  async function boundsObserver(bounds: Tuple4<number>[]) {
+  function boundsObserver(bounds: Tuple4<number>[]) {
     if (bounds.length === 0) return;
     if (selectedRow === -1) return;
     const last = bounds.length - 1;
     const bound = bounds[last];
-    const response = await extractTextFromBounds(docId, pageNo, bound);
-    if (response.status === 'success') {
-      setValueForId(setState, pageNo, selectedRow, response.body.word);
-    }
+    extractTextFromBounds(docId, pageNo, bound).then((response) => {
+      if (response.status === 'success') {
+        setValueForId(setState, pageNo, selectedRow, response.body.word);
+      }
+    });
   }
 
   const setDocId = (newDocId: string) => {
@@ -316,7 +317,7 @@ export default function MatchingGuided({config, setTitle}) {
   );
 }
 
-export async function getServerSideProps() {
+export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props
