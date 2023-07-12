@@ -9,7 +9,7 @@ export default function HelpPage() {
   const [fileContent, setFileContent] = useState('');
 
   const getText = () => {
-    fetchPublic('/helpDraft.md').then((res) => {
+    fetchPublic('/markdown/adminHelp.md').then((res) => {
       setFileContent(res);
     });
   }

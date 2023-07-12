@@ -26,8 +26,8 @@ export default function HomePage({setTitle, config}) {
   }, [setTitle]);
 
   // if the search state is true change the view of the home page
-  const searches = useAppSelector(state => state.search.search);
-  return <>{!searches ? <HomeSection config={config} /> : <SearchResult />}</>;
+  // const searches = useAppSelector(state => state.search.search);
+  return <HomeSection config={config} />;
 }
 
 const HomeSection = ({config}) => {
