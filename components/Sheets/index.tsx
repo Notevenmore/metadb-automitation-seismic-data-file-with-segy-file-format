@@ -1,4 +1,3 @@
-import { delay } from '@utils/common';
 import {useEffect, useState} from 'react';
 
 interface IframeProps extends React.ComponentProps<'iframe'> {
@@ -12,7 +11,15 @@ interface IframeProps extends React.ComponentProps<'iframe'> {
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
-  const {config, form_type, getSpreadsheetID, type, finishedInitializing, data, existingID} = props;
+  const {
+    config,
+    form_type,
+    getSpreadsheetID,
+    type,
+    finishedInitializing,
+    data,
+    existingID,
+  } = props;
 
   const [sheetID, setsheetID] = useState();
   const [Loading, setLoading] = useState(true);
@@ -48,7 +55,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         }
         const makeTemp = await fetch(
           `${config.services.sheets}/createSpreadsheet`,
-          );
+        );
         const spreadsheetID = await makeTemp.json();
         setsheetID(spreadsheetID.response);
         try {
@@ -96,50 +103,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
           throw error;
         });
 
-      // FIXME this type is not currently used, remove if unused later. 2
-      if (type === 'update') {
-        setLoadingMsg(`Fetching from database`);
-        delay(3000);
-        const id = 'Laporan Data 2023';
-        let data,
-          final = [];
-        const workspaces = JSON.parse(localStorage.getItem('workspaces'));
-        workspaces.some((workspace: {name: string}) => {
-          if (id === workspace.name) {
-            data = JSON.parse(localStorage.getItem(workspace.name));
-            return true;
-          }
-        });
-        console.log(workspaces);
-        console.log(data);
-        data.some(item => {
-          final.push({no: '-', ...item});
-        });
-        await fetch(`${config.services.sheets}/appendToSheets2`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            form_type: form_type,
-            spreadsheetID: sheetID,
-            data: JSON.stringify(final),
-          }),
-        })
-          .then(response => {
-            return response.json();
-          })
-          .then(response => {
-            if (response.status !== 200) {
-              sethasError(true);
-              setErrorMessage(response.response);
-              console.log(response);
-            }
-          })
-          .catch(error => {
-            throw error;
-          });
-      } else if (type === 'review') {
+      if (type === 'review') {
         try {
           console.log('first');
           setLoadingMsg('Appending OCR data to the spreadsheet');
@@ -196,7 +160,15 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         updateSheet();
       }
     }
-  }, [sheetID, SkipInitialization, form_type, config.services.sheets, type, data, finishedInitializing]);
+  }, [
+    sheetID,
+    SkipInitialization,
+    form_type,
+    config.services.sheets,
+    type,
+    data,
+    finishedInitializing,
+  ]);
 
   return Loading ? (
     <div

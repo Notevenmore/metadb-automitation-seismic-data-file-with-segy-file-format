@@ -1,20 +1,23 @@
+import Sheets from '@components/Sheets';
 import {useRouter} from 'next/router';
 import {useCallback, useEffect, useState} from 'react';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
 import {
   downloadWorkspace,
   init_data,
   saveDocument,
 } from '../../components/utility_functions';
-import {useAppDispatch} from '../../store';
-import {UploadDocumentSettings, displayErrorMessage} from '../../store/generalSlice';
-import {delay} from '../../utils/common';
-import Save from '../../public/icons/save.svg';
 import DownloadFolder from '../../public/icons/download-folder.svg';
+import Save from '../../public/icons/save.svg';
+import {useAppDispatch} from '../../store';
+import {
+  UploadDocumentSettings,
+  displayErrorMessage,
+} from '../../store/generalSlice';
+import {delay} from '../../utils/common';
 
 const DocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
@@ -40,7 +43,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       if (!IsSaved) return (e.returnValue = warningText);
       return;
     };
-  
+
     // This function handles navigation away from the current page by checking whether unsaved changes are present and displaying a warning dialog if necessary
     const handleBrowseAway = url => {
       if (!IsSaved) {
@@ -105,7 +108,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             message:
               'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
             color: 'blue',
-            duration: 10000
+            duration: 10000,
           }),
         );
       }, 3000);
@@ -122,46 +125,49 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       workspaceData,
       setMessage,
       dispatch,
-    ).then(async (result) => {
-      if (result.success) {
-        setIsSaved(true);
+    )
+      .then(async result => {
+        if (result.success) {
+          setIsSaved(true);
+          dispatch(
+            displayErrorMessage({
+              message: 'Record successfully saved',
+              color: 'blue',
+              duration: 3000,
+            }),
+          );
+          router.events.emit('routeChangeComplete');
+          if (triggerSave.includes('redirect')) {
+            await delay(1000);
+            setTimeout(() => {
+              dispatch(
+                displayErrorMessage({
+                  message: 'Redirecting back to record list...',
+                  color: 'blue',
+                  duration: 1500,
+                }),
+              );
+            }, 0);
+            await delay(1000);
+            router.back();
+          }
+        }
+      })
+      .then(() => {
+        router.events.emit('routeChangeComplete');
+        settriggerSave('');
+      })
+      .catch(error => {
+        // Handle error and display error message
         dispatch(
           displayErrorMessage({
-            message: 'Record successfully saved',
-            color: 'blue',
-            duration: 3000,
+            message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+              error,
+            )}`,
+            color: 'red',
           }),
         );
-        router.events.emit('routeChangeComplete');
-        if (triggerSave.includes('redirect')) {
-          await delay(1000);
-          setTimeout(() => {
-            dispatch(
-              displayErrorMessage({
-                message: 'Redirecting back to record list...',
-                color: 'blue',
-                duration: 1500,
-              }),
-            );
-          }, 0);
-          await delay(1000);
-          router.back();
-        }
-      }
-    }).then(() => {
-      router.events.emit('routeChangeComplete');
-      settriggerSave('');
-    }).catch((error) => {
-      // Handle error and display error message
-      dispatch(
-        displayErrorMessage({
-          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            error,
-          )}`,
-          color: 'red',
-        }),
-      );
-    });
+      });
   }, [config, dispatch, router, spreadsheetId, triggerSave, workspaceData]);
 
   const downloadWorkspaceHandler = useCallback(() => {
@@ -173,29 +179,32 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       workspaceData,
       setMessage,
       dispatch,
-    ).then((result) => {
-      if (result.success) {
+    )
+      .then(result => {
+        if (result.success) {
+          dispatch(
+            displayErrorMessage({
+              message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
+              color: 'blue',
+              duration: 3500,
+            }),
+          );
+          setIsSaved(false);
+          router.events.emit('routeChangeComplete');
+        }
+      })
+      .catch(error => {
         dispatch(
           displayErrorMessage({
-            message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
-            color: 'blue',
-            duration: 3500
+            message: `${String(error)}`,
+            color: 'red',
           }),
         );
-        setIsSaved(false);
+      })
+      .finally(() => {
         router.events.emit('routeChangeComplete');
-      }
-    }).catch((error) => {
-      dispatch(
-        displayErrorMessage({
-          message: `${String(error)}`,
-          color: 'red',
-        }),
-      );
-    }).finally(() => {
-      router.events.emit('routeChangeComplete');
-      settriggerSave('');
-    });
+        settriggerSave('');
+      });
   }, [config, dispatch, router, spreadsheetId, workspaceData]);
 
   useEffect(() => {
@@ -275,7 +284,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                     <p className="text-gray-400">(Working area)</p>
                   </div>,
                   <Input
-                  key="working_area_input"
+                    key="working_area_input"
                     name="working_area"
                     type={'text'}
                     value={
@@ -291,7 +300,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                     <p className="text-gray-400">(Submission type)</p>
                   </div>,
                   <Input
-                  key="submission_type_input"
+                    key="submission_type_input"
                     name="submission_type"
                     type={'dropdown'}
                     value={workspaceData?.submission_type || 'Select an item'}
@@ -322,11 +331,16 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
-                  <p className="font-bold" key="data_type">Data type</p>,
+                  <p className="font-bold" key="data_type">
+                    Data type
+                  </p>,
                   <Input
                     key="data_type_input"
                     type={'text'}
-                    value={(router.query.form_type as string).replace(/\_/g, ' ')}
+                    value={(router.query.form_type as string).replace(
+                      /\_/g,
+                      ' ',
+                    )}
                     additional_styles_input="capitalize font-semibold"
                     disabled
                   />,
@@ -334,7 +348,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
               ]
             : [
                 [
-                  <div className="flex space-x-3 justify-center items-center p-2" key="loading">
+                  <div
+                    className="flex space-x-3 justify-center items-center p-2"
+                    key="loading">
                     <div className="w-5 h-5 border-t-transparent rounded-full border-2 border-black animate-spin" />
                     <p>Getting data... Please wait</p>
                   </div>,
@@ -345,7 +361,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       <div className="h-full">
         <TableComponent
           header={[
-            <div className="flex justify-between items-center" key="data_header">
+            <div
+              className="flex justify-between items-center"
+              key="data_header">
               <p>Data</p>
             </div>,
           ]}
@@ -364,7 +382,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   </div>,
                 ]
               : [
-                  <div className="flex space-x-3 justify-center items-center p-2" key="loading">
+                  <div
+                    className="flex space-x-3 justify-center items-center p-2"
+                    key="loading">
                     <div className="w-5 h-5 border-t-transparent rounded-full border-2 border-black animate-spin" />
                     <p>Getting data... Please wait</p>
                   </div>,
@@ -384,7 +404,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] min-w-max justify-center"
           disabled={!spreadsheetReady || Message.message ? true : false}>
           <div className="flex space-x-2 items-center">
-            <Save className="w-5 h-5"/>
+            <Save className="w-5 h-5" />
             <p>Save changes</p>
           </div>
         </Button>
@@ -401,7 +421,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
               : false
           }>
           <div className="flex space-x-2 items-center">
-            <Save className="w-5 h-5"/>
+            <Save className="w-5 h-5" />
             <p>Save and exit</p>
           </div>
         </Button>
@@ -414,7 +434,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] min-w-max justify-center"
           disabled={!spreadsheetReady || Message.message ? true : false}>
           <div className="flex space-x-2 items-center">
-            <DownloadFolder className="w-5 h-5"/>
+            <DownloadFolder className="w-5 h-5" />
             <p>Download record</p>
           </div>
         </Button>

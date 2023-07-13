@@ -1,3 +1,4 @@
+import Sheets from '@components/Sheets';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {
@@ -8,12 +9,14 @@ import {
 import Input from '../components/Input';
 import Button from '../components/button';
 import Container from '../components/container';
-import Sheets from '../components/sheets/sheets';
 import TableComponent from '../components/table/table';
 import {saveDocument} from '../components/utility_functions';
-import {useAppDispatch, useAppSelector} from '../store';
-import {UploadDocumentSettings, displayErrorMessage} from '../store/generalSlice';
 import Save from '../public/icons/save.svg';
+import {useAppDispatch, useAppSelector} from '../store';
+import {
+  UploadDocumentSettings,
+  displayErrorMessage,
+} from '../store/generalSlice';
 import {delay} from '../utils/common';
 
 export default function NewDocumentPage({setTitle, config}) {
@@ -60,7 +63,7 @@ export default function NewDocumentPage({setTitle, config}) {
           displayErrorMessage({
             message: 'Record successfully saved',
             color: 'blue',
-            duration: 3000
+            duration: 3000,
           }),
         );
         router.events.emit('routeChangeComplete');
@@ -71,7 +74,7 @@ export default function NewDocumentPage({setTitle, config}) {
               displayErrorMessage({
                 message: 'Redirecting to homepage...',
                 color: 'blue',
-                duration: 1500
+                duration: 1500,
               }),
             );
           }, 0);
@@ -101,7 +104,7 @@ export default function NewDocumentPage({setTitle, config}) {
             message:
               'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
             color: 'blue',
-            duration: 10000
+            duration: 10000,
           }),
         );
       }, 3000);
@@ -209,7 +212,7 @@ export default function NewDocumentPage({setTitle, config}) {
                     finishedInitializing={setspreadsheetReady}
                     config={config}
                     data={undefined}
-                    />
+                  />
                 </div>
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center space-y-3">

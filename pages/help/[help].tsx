@@ -1,8 +1,7 @@
 import Image from 'next/image';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/Input';
-import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
 
 const Documentation = props => {

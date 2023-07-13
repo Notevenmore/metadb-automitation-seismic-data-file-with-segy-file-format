@@ -1,3 +1,4 @@
+import Sheets from '@components/Sheets';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
@@ -10,7 +11,6 @@ import {ImageEditor} from '../../components/HighlightViewer';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Sheets from '../../components/sheets/sheets';
 import Table from '../../components/table/table';
 import {saveDocument} from '../../components/utility_functions';
 import {TableType} from '../../constants/table';
