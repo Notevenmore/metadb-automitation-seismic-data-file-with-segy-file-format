@@ -69,6 +69,12 @@ export default function MatchingGuided({config, setTitle}) {
   }, [router]);
 
   useEffect(() => {
+    if (docId != null) {
+      setImageUrl(_ => generateImageUrl(docId, pageNo));
+    }
+  }, [docId, pageNo]);
+
+  useEffect(() => {
     setTitle('Data Matching | Highlight');
     const init = async () => {
       setLoading('Reading data... Please wait for a moment');
@@ -88,7 +94,6 @@ export default function MatchingGuided({config, setTitle}) {
           }
           const {doc_id: docId} = uploadResponse.body;
           setDocId(docId);
-          setImageUrl(_ => generateImageUrl(docId, pageNo));
           const summaryResponse = await fetchDocumentSummary(docId);
           if (summaryResponse.status !== 'success') {
             throw new Error(
@@ -144,7 +149,7 @@ export default function MatchingGuided({config, setTitle}) {
     if (router.isReady) {
       init();
     }
-  }, [config, dispatch, files, pageNo, router, router.isReady, setTitle]);
+  }, [config, dispatch, files, router, setTitle]);
 
   useEffect(() => {
     // save the edited state to redux for final review later

@@ -134,14 +134,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             setDocumentSummary({...summaryResponse, document_id: docId}),
           );
           setDocId(docId);
-          setLoading('Reading and populating data...');
-          const scrapeResponse = await postScrapeAnnotate(docId, pageNo);
-          const words = scrapeResponse.body?.words;
-          if (words === undefined) {
-            throw 'Something went wrong with the OCR service. Response body returned null on word scraping.';
-          }
-          setImageBase64Str(_ => generateImageUrl(docId, pageNo));
-          setDropDownOptions(_ => words);
 
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
@@ -180,7 +172,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.isReady) {
       init();
     }
-  }, [config, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
+  }, [config, dispatch, files, router, setDocId, setTitle]);
 
   // continue here to ensure that the state has been updated based on the
   // requested data type before proceeding to do any matching prediction tasks

@@ -117,14 +117,6 @@ export default function MatchReview({config, setTitle}) {
           );
           setDocId(docId);
 
-          setLoading('Populating drop down items...');
-          const result = await postScrapeAnnotate(docId, pageNo);
-          if (result.status !== 'success' || !result.body.words) {
-            throw 'Something went wrong with the OCR service. Response body returned null on word scraping.';
-          }
-          setImageBase64Str(_ => generateImageUrl(docId, pageNo));
-          setDropDownOptions(_ => result.body.words);
-
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
           );
@@ -169,7 +161,7 @@ export default function MatchReview({config, setTitle}) {
     if (router.isReady) {
       init();
     }
-  }, [config, dispatch, files, pageNo, router, router.isReady, setDocId, setTitle]);
+  }, [config, dispatch, files, router, setDocId, setTitle]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
