@@ -286,6 +286,8 @@ export default function UploadFilePage({config, setTitle}) {
     setTitle('Upload file');
   }, [setTitle]);
 
+  const activeStyle = "bg-searchbg/60 border-2 border-gray-400 box-border w-[254px] transition ease-in duration-500"
+
   return (
     <Container
       additional_class="full-height relative"
@@ -477,12 +479,12 @@ export default function UploadFilePage({config, setTitle}) {
         <div className="w-4/5 max-w-[80%] flex items-center justify-center">
           <div
             onWheel={horizontal_scroll}
-            className="flex space-x-3 overflow-auto">
+            className="flex space-x-3 overflow-auto h-auto">
             <Button
               id="dropdown"
               title=""
-              additional_styles={`h-full active:bg-gray-400/60 outline-none ${
-                UplSettings.Method === 'dropdown' ? 'bg-searchbg/60' : ''
+              additional_styles={`h-full active:bg-gray-400/60  ${
+                UplSettings.Method === 'dropdown' ? activeStyle : ''
               }`}
               onClick={e => {
                 e.preventDefault();
@@ -502,7 +504,7 @@ export default function UploadFilePage({config, setTitle}) {
               id="highlight"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
-                UplSettings.Method === 'highlight' ? 'bg-searchbg/60' : ''
+                UplSettings.Method === 'highlight' ? activeStyle : ''
               }`}
               onClick={e => {
                 e.preventDefault();
@@ -522,7 +524,7 @@ export default function UploadFilePage({config, setTitle}) {
               id="dragdrop"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
-                UplSettings.Method === 'dragdrop' ? 'bg-searchbg/60' : ''
+                UplSettings.Method === 'dragdrop' ? activeStyle : ''
               }`}
               onClick={e => {
                 e.preventDefault();
@@ -542,7 +544,7 @@ export default function UploadFilePage({config, setTitle}) {
               id="automatic"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
-                UplSettings.Method === 'automatic' ? 'bg-searchbg/60' : ''
+                UplSettings.Method === 'automatic' ? activeStyle : ''
               }`}
               onClick={e => {
                 e.preventDefault();
