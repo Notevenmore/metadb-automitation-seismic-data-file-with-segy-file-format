@@ -1,6 +1,6 @@
 const Test = () => {
-  const get_data_bibliography = async () => {
-    const data = await fetch(`http://localhost:9090/api/v1/bibliography`, {
+  const get_data_bibliography = () => {
+    fetch(`http://localhost:9090/api/v1/bibliography`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

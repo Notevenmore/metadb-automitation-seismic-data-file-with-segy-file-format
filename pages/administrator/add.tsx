@@ -5,7 +5,7 @@ import {defaultProfile} from '../../utils/mime';
 import {getLayoutTop} from '../../layout/getLayout';
 import {addProfile} from '../../services/admin';
 import {useAppDispatch} from '../../store';
-import {setErrorMessage} from '../../store/generalSlice';
+import {displayErrorMessage} from '../../store/generalSlice';
 
 AddNewUserPage.getLayout = getLayoutTop;
 
@@ -33,43 +33,39 @@ export default function AddNewUserPage() {
   };
 
   const dispatch = useAppDispatch();
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
 
     if (detail.userid && /\s/.test(detail.userid)) {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: "Inputted userid cannot contain space. Please retype.",
           color: 'red',
-          show: true,
         }),
       );
       return;
     } 
     
-
     const data = {
       ...detail,
       profile_picture: defaultProfile(),
     };
-    await addProfile(data).then(
+    addProfile(data).then(
       res => {
         if (res && res.response) {
           console.log(res.response.data.detail);
           dispatch(
-            setErrorMessage({
+            displayErrorMessage({
               message: String(res),
               color: 'red',
-              show: true,
             }),
           );
           return;
         }
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message: `Successfully created ${detail.userid} account.`,
             color: 'blue',
-            show: true,
           }),
         );
         setDetail({
@@ -83,10 +79,9 @@ export default function AddNewUserPage() {
       err => {
         if (err.response.status === 409) {
           dispatch(
-            setErrorMessage({
+            displayErrorMessage({
               message: "Inputted userid already exist",
               color: 'red',
-              show: true,
             }),
           );
         }

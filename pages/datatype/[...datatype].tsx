@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {parseCookies} from 'nookies';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
@@ -9,22 +9,26 @@ import TableComponent from '../../components/table/table';
 import {checkAfe} from '../../components/utility_functions';
 import {TokenExpired} from '../../services/admin';
 import {useAppDispatch} from '../../store';
+import Plus from '../../public/icons/plus.svg';
+import Close from '../../public/icons/close.svg';
 import {
-  setErrorMessage,
+  UploadDocumentSettings,
+  displayErrorMessage,
   setUploadDocumentSettings,
 } from '../../store/generalSlice';
+import {delay} from '../../utils/common';
 
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
   const [searchData, setsearchData] = useState([-1]); // for saving a backup when searching
   const [error, seterror] = useState('');
   const [toggleOverlay, settoggleOverlay] = useState(false);
-  const [newWorkspace, setnewWorkspace] = useState({
+  const [newWorkspace, setnewWorkspace] = useState<UploadDocumentSettings>({
     workspace_name: '',
     kkks_name: '',
     working_area: '',
     submission_type: '',
-    afe_number: '',
+    afe_number: 0,
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
@@ -37,14 +41,50 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     'Home' + router.asPath.replace(/\//g, ' > ').replace(/\_/g, ' ');
   let selectedTableData = [[]];
 
-  const init = async () => {
+  const deleteWorkspace = useCallback((e, afe_number) => {
+    e.preventDefault();
+    router.events.emit('routeChangeStart');
+    dispatch(
+      displayErrorMessage({
+        message:
+          "Deleting record... Please don't leave this page or click anything",
+        color: 'blue'
+      }),
+    );
+    return fetch(`${config[datatype]['afe']}${afe_number}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
+      },
+    }).then(res => {
+      if (res.status !== 200) {
+        TokenExpired(res.status);
+        throw `Response returned with status code ${res.status}: ${res.statusText}`;
+      }
+      dispatch(
+        displayErrorMessage({message: 'Success', color: 'blue', duration: 1000}),
+      );
+      reset_search();
+      router.events.emit('routeChangeComplete');
+    }).catch((error) => {
+      dispatch(
+        displayErrorMessage({message: String(error), color: 'red'}),
+      );
+      router.events.emit('routeChangeComplete');
+    });
+  }, [config, datatype, dispatch, router.events]);
+
+  const init = useCallback(() => {
     router.events.emit('routeChangeStart');
     try {
       // get workspaces
       // TODO: could later be used as a dynamic route for multiple data types,
       // meaning only need to change the fetch link and page title and it's good to go.
       // TODO 16/6/23: ye i changed it to dynamic huray
-      await fetch(`${config[datatype]['afe']}`, {
+      fetch(`${config[datatype]['afe']}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +144,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                     className="flex"
                     title="Delete record"
                     onClick={e => {
-                      deleteWorkspace(e, workspace.afe_number);
+                      deleteWorkspace(e, workspace.afe_number).then(() => {
+                        init();
+                      });
                     }}>
                     <div className="w-[18px] h-[18px] flex items-center">
                       <Image
@@ -126,7 +168,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       seterror(String(error));
     }
     router.events.emit('routeChangeComplete');
-  };
+  }, [config, datatype, deleteWorkspace, router.events]);
 
   useEffect(() => {
     setTitle(
@@ -141,12 +183,11 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     seterror('');
     reset_search();
     init();
-  }, [datatype]);
+  }, [datatype, init, setTitle]);
 
   const onSearch = e => {
     const name = e.target.value.toLowerCase();
-    let temp = data;
-    temp = temp.filter(item => {
+    let temp = data.filter(item => {
       return (
         item.KKKS.toLocaleLowerCase().includes(name) ||
         item['Working area'].toLocaleLowerCase().includes(name) ||
@@ -161,20 +202,16 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     }
   };
 
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
-
   const makenew = async e => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     try {
       settoggleOverlay(false);
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message:
             "Creating a new record... Please don't leave this page or click anything",
           color: 'blue',
-          show: true,
         }),
       );
       await fetch(`${config[datatype]['afe']}`, {
@@ -211,18 +248,14 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           }
         });
       dispatch(setUploadDocumentSettings(newWorkspace));
-      setTimeout(async () => {
+      setTimeout(() => {
         dispatch(
-          setErrorMessage({
-            message: 'Success. Redirecting to the next page...',
+          displayErrorMessage({
+            message: 'Sucess. Redirecting to the next page...',
             color: 'blue',
-            show: true,
-          }),
+            duration: 1500
+          })
         );
-        await delay(1500);
-        dispatch(setErrorMessage({show: false}));
-        await delay(500);
-        dispatch(setErrorMessage({message: '', color: ''}));
       }, 0);
       router.events.emit('routeChangeComplete');
       await delay(1500);
@@ -233,57 +266,13 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     } catch (error) {
       // Handle error and display error message
       dispatch(
-        setErrorMessage({message: String(error), color: 'red', show: true}),
+        displayErrorMessage({message: String(error), color: 'red'}),
       );
     }
     router.events.emit('routeChangeComplete');
   };
 
-  const deleteWorkspace = async (e, afe_number) => {
-    e.preventDefault();
-    router.events.emit('routeChangeStart');
-    try {
-      dispatch(
-        setErrorMessage({
-          message:
-            "Deleting record... Please don't leave this page or click anything",
-          color: 'blue',
-          show: true,
-        }),
-      );
-      await fetch(`${config[datatype]['afe']}${afe_number}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${
-            JSON.parse(parseCookies().user_data).access_token
-          }`,
-        },
-      }).then(res => {
-        if (res.status !== 200) {
-          TokenExpired(res.status);
-          throw `Response returned with status code ${res.status}: ${res.statusText}`;
-        }
-      });
-      dispatch(
-        setErrorMessage({message: 'Success', color: 'blue', show: true}),
-      );
-      reset_search();
-      init();
-      router.events.emit('routeChangeComplete');
-      await delay(2000);
-      dispatch(setErrorMessage({show: false}));
-      await delay(500);
-      dispatch(setErrorMessage({message: '', color: ''}));
-    } catch (error) {
-      dispatch(
-        setErrorMessage({message: String(error), color: 'red', show: true}),
-      );
-    }
-    router.events.emit('routeChangeComplete');
-  };
-
-  const reset = (element = false) => {
+  const reset = (element: HTMLElement = undefined) => {
     if (element) {
       const comparator = document.getElementById('overlay');
       if (element !== comparator) {
@@ -297,7 +286,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         workspace_name: '',
         kkks_name: '',
         working_area: '',
-        afe_number: '',
+        afe_number: 0,
         submission_type: '',
       };
     });
@@ -305,7 +294,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   };
 
   const reset_search = () => {
-    const search_input = document.getElementById('search_bar');
+    const search_input = document.getElementById('search_bar') as HTMLInputElement;
     search_input.value = '';
     setsearchData([-1]);
   };
@@ -339,12 +328,11 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       }
     } catch (error) {
       dispatch(
-        setErrorMessage({
-          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+        displayErrorMessage({
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
             error,
           )}`,
           color: 'red',
-          show: true,
         }),
       );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
@@ -361,7 +349,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             <p className="text-sm font-normal capitalize">{path_query}</p>
             <p className="capitalize">{datatype.split('_').join(' ')}</p>
           </div>
-          <div className="w-[80%] lg:w-[40%] relative">
+          <div className="w-4/5 lg:w-2/5 relative">
             <Input
               id="search_bar"
               label=""
@@ -377,7 +365,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
               src="/icons/magnify.svg"
               width={20}
               height={20}
-              className="absolute top-1/2 right-3 translate-y-[-50%]"
+              className="absolute top-1/2 right-3 -translate-y-1/2"
               alt="search"
             />
           </div>
@@ -440,19 +428,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           settoggleOverlay(true);
         }}>
         <div className="flex items-center justify-center space-x-5 pl-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
+          <Plus className="w-6 h-6" />
           <p className="whitespace-nowrap font-bold">New record</p>
         </div>
       </Button>
@@ -462,7 +438,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         } transition-all`}
         onClick={e => {
           e.preventDefault();
-          reset(e.target);
+          reset(e.target as HTMLElement);
         }}>
         <div
           id="overlay"
@@ -479,19 +455,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                 e.preventDefault();
                 reset();
               }}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <Close className="w-5 h-5" />
             </Button>
             <h1 className="font-bold text-3xl">New record</h1>
             <hr />
@@ -636,7 +600,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   );
 };
 
-export async function getServerSideProps(context) {
+export function getServerSideProps(context) {
   const datatype = context.params.datatype;
   const config = JSON.parse(process.env.ENDPOINTS);
   return {

@@ -1,7 +1,7 @@
+import Image from 'next/image';
+import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Input from '../../components/Input';
-import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
 
 const Documentation = props => {
@@ -43,7 +43,8 @@ const Documentation = props => {
           [
             <div key={2323}>
               <p>this table content with img</p>
-              <img
+              <Image
+                alt=""
                 src="https://m.media-amazon.com/images/I/61YtCpbZ0SL.jpg"
                 className="w-56"
               />
@@ -57,16 +58,16 @@ const Documentation = props => {
         additional_styles="overflow-visible"
       />
       <div className="h-[750px] border-2 rounded-md overflow-hidden">
-        <Sheets type="new" form_type="basin" />
+        {/* <Sheets type="new" form_type="basin" /> */}
       </div>
       <div className="h-[750px] border-2 rounded-md overflow-hidden">
-        <Sheets type="new" form_type="well_summary" />
+        {/* <Sheets type="new" form_type="well_summary" /> */}
       </div>
     </Container>
   );
 };
 
-export async function getServerSideProps(context) {
+export function getServerSideProps(context) {
   // get data from server
   console.log('id to be get from db: ' + context.params.help);
   // set the title and content to the one fetched from db

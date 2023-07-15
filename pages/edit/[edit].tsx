@@ -1,17 +1,23 @@
+import Sheets from '@components/Sheets';
 import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import Sheets from '../../components/sheets/sheets';
 import TableComponent from '../../components/table/table';
 import {
   downloadWorkspace,
   init_data,
   saveDocument,
 } from '../../components/utility_functions';
+import DownloadFolder from '../../public/icons/download-folder.svg';
+import Save from '../../public/icons/save.svg';
 import {useAppDispatch} from '../../store';
-import {setErrorMessage} from '../../store/generalSlice';
+import {
+  UploadDocumentSettings,
+  displayErrorMessage,
+} from '../../store/generalSlice';
+import {delay} from '../../utils/common';
 
 const DocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
@@ -20,9 +26,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
   const [Data, setData] = useState([-1]);
   const [dataContentDetails, setdataContentDetails] = useState([-1]);
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
-  const [workspaceData, setworkspaceData] = useState();
+  const [workspaceData, setworkspaceData] = useState<UploadDocumentSettings>();
   const [spreadsheetId, setspreadsheetId] = useState();
-  const [triggerSave, settriggerSave] = useState(false);
+  const [triggerSave, settriggerSave] = useState('');
 
   const dispatch = useAppDispatch();
 
@@ -31,28 +37,27 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
 
   const router = useRouter();
 
-  const handleWindowClose = e => {
-    e.preventDefault();
-    if (!IsSaved) return (e.returnValue = warningText);
-    return;
-  };
-
-  // This function handles navigation away from the current page by checking whether unsaved changes are present and displaying a warning dialog if necessary
-  const handleBrowseAway = url => {
-    if (!IsSaved) {
-      // If there are unsaved changes, prompt the user with a warning dialog
-      if (url === router.asPath || !window.confirm(warningText)) {
-        // Emit a routeChangeError event and throw an error to prevent navigation away from the page
-        history.go(1);
-        router.events.emit('routeChangeError');
-        throw 'routeChange aborted.';
-      }
-    }
-    // If there are no unsaved changes, allow navigation away from the page
-    return;
-  };
-
   useEffect(() => {
+    const handleWindowClose = e => {
+      e.preventDefault();
+      if (!IsSaved) return (e.returnValue = warningText);
+      return;
+    };
+
+    // This function handles navigation away from the current page by checking whether unsaved changes are present and displaying a warning dialog if necessary
+    const handleBrowseAway = url => {
+      if (!IsSaved) {
+        // If there are unsaved changes, prompt the user with a warning dialog
+        if (url === router.asPath || !window.confirm(warningText)) {
+          // Emit a routeChangeError event and throw an error to prevent navigation away from the page
+          history.go(1);
+          router.events.emit('routeChangeError');
+          throw 'routeChange aborted.';
+        }
+      }
+      // If there are no unsaved changes, allow navigation away from the page
+      return;
+    };
     window.addEventListener('beforeunload', handleWindowClose);
     router.events.on('beforeHistoryChange', handleBrowseAway);
     return () => {
@@ -79,7 +84,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         );
         setworkspaceData(initial_data.workspace_data);
         setTitle(
-          `${workspace_name} | ${router.query.form_type
+          `${workspace_name} | ${(router.query.form_type as string)
             .split('_')
             .map(x => {
               return x.charAt(0).toUpperCase() + x.slice(1);
@@ -93,130 +98,114 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       }
     };
     init_call();
-  }, [router.isReady]);
+  }, [config, router, router.isReady, setTitle, workspace_name]);
 
   useEffect(() => {
     if (spreadsheetReady) {
-      setTimeout(async () => {
+      setTimeout(() => {
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message:
               'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
             color: 'blue',
-            show: true,
+            duration: 10000,
           }),
         );
-        await delay(10000);
-        dispatch(setErrorMessage({show: false}));
-        await delay(300);
-        dispatch(setErrorMessage({message: '', color: ''}));
       }, 3000);
     }
-  }, [spreadsheetReady]);
+  }, [dispatch, spreadsheetReady]);
 
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
-
-  const saveDocumentHandler = async () => {
+  const saveDocumentHandler = useCallback(() => {
     router.events.emit('routeChangeStart');
-    try {
-      const result = await saveDocument(
-        null,
-        router,
-        config,
-        spreadsheetId,
-        workspaceData,
-        setMessage,
-        dispatch,
-      );
-      if (result.success) {
-        setIsSaved(true);
-        dispatch(
-          setErrorMessage({
-            message: 'Record successfully saved',
-            color: 'blue',
-            show: true,
-          }),
-        );
-        router.events.emit('routeChangeComplete');
-        if (triggerSave.includes('redirect')) {
-          await delay(1000);
-          setTimeout(async () => {
-            dispatch(
-              setErrorMessage({
-                message: 'Redirecting back to record list...',
-                color: 'blue',
-                show: true,
-              }),
-            );
-            await delay(1500);
-            dispatch(setErrorMessage({show: false}));
-            await delay(500);
-            dispatch(setErrorMessage({message: '', color: ''}));
-          }, 0);
-          await delay(1000);
-          router.back();
-        } else {
-          await delay(3000);
-          dispatch(setErrorMessage({show: false}));
-          await delay(500);
-          dispatch(setErrorMessage({message: '', color: ''}));
+    saveDocument(
+      null,
+      router,
+      config,
+      spreadsheetId,
+      workspaceData,
+      setMessage,
+      dispatch,
+    )
+      .then(async result => {
+        if (result.success) {
+          setIsSaved(true);
+          dispatch(
+            displayErrorMessage({
+              message: 'Record successfully saved',
+              color: 'blue',
+              duration: 3000,
+            }),
+          );
+          router.events.emit('routeChangeComplete');
+          if (triggerSave.includes('redirect')) {
+            await delay(1000);
+            setTimeout(() => {
+              dispatch(
+                displayErrorMessage({
+                  message: 'Redirecting back to record list...',
+                  color: 'blue',
+                  duration: 1500,
+                }),
+              );
+            }, 0);
+            await delay(1000);
+            router.back();
+          }
         }
-      }
-    } catch (error) {
-      // Handle error and display error message
-      dispatch(
-        setErrorMessage({
-          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          show: true,
-        }),
-      );
-    }
-    router.events.emit('routeChangeComplete');
-    settriggerSave('');
-  };
-
-  const downloadWorkspaceHandler = async () => {
-    router.events.emit('routeChangeStart');
-    try {
-      const result = await downloadWorkspace(
-        router,
-        config,
-        spreadsheetId,
-        workspaceData,
-        setMessage,
-        dispatch,
-      );
-      if (result.success) {
+      })
+      .then(() => {
+        router.events.emit('routeChangeComplete');
+        settriggerSave('');
+      })
+      .catch(error => {
+        // Handle error and display error message
         dispatch(
-          setErrorMessage({
-            message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
-            color: 'blue',
-            show: true,
+          displayErrorMessage({
+            message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+              error,
+            )}`,
+            color: 'red',
           }),
         );
-        setIsSaved(false);
+      });
+  }, [config, dispatch, router, spreadsheetId, triggerSave, workspaceData]);
+
+  const downloadWorkspaceHandler = useCallback(() => {
+    router.events.emit('routeChangeStart');
+    downloadWorkspace(
+      router,
+      config,
+      spreadsheetId,
+      workspaceData,
+      setMessage,
+      dispatch,
+    )
+      .then(result => {
+        if (result.success) {
+          dispatch(
+            displayErrorMessage({
+              message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
+              color: 'blue',
+              duration: 3500,
+            }),
+          );
+          setIsSaved(false);
+          router.events.emit('routeChangeComplete');
+        }
+      })
+      .catch(error => {
+        dispatch(
+          displayErrorMessage({
+            message: `${String(error)}`,
+            color: 'red',
+          }),
+        );
+      })
+      .finally(() => {
         router.events.emit('routeChangeComplete');
-        await delay(3500);
-        dispatch(setErrorMessage({show: false}));
-        await delay(500);
-        dispatch(setErrorMessage({message: '', color: ''}));
-      }
-    } catch (error) {
-      dispatch(
-        setErrorMessage({
-          message: `${String(error)}`,
-          color: 'red',
-          show: true,
-        }),
-      );
-    }
-    router.events.emit('routeChangeComplete');
-    settriggerSave('');
-  };
+        settriggerSave('');
+      });
+  }, [config, dispatch, router, spreadsheetId, workspaceData]);
 
   useEffect(() => {
     if (triggerSave && IsSaved) {
@@ -226,7 +215,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         saveDocumentHandler();
       }
     }
-  }, [triggerSave, IsSaved]);
+  }, [triggerSave, IsSaved, downloadWorkspaceHandler, saveDocumentHandler]);
 
   // detect changes in the workspace data inputs
   const handleWorkspaceChange = event => {
@@ -243,7 +232,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
     if ([Data, dataContentDetails, spreadsheetReady].every(x => x)) {
       router.events.emit('routeChangeComplete');
     }
-  }, [Data, dataContentDetails, spreadsheetReady]);
+  }, [Data, dataContentDetails, router.events, spreadsheetReady]);
 
   return error ? (
     <div className="w-full h-full flex flex-col p-10 space-y-4">
@@ -275,13 +264,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           workspaceData?.kkks_name
             ? [
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2" key="kkks">
                     <p>Nama KKKS</p>
                     <p className="text-gray-400">(KKKS Name)</p>
                   </div>,
-                  // eslint-disable-next-line react/jsx-key
                   <Input
+                    key="kkks_input"
                     name="kkks_name"
                     type={'text'}
                     value={
@@ -291,13 +279,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2" key="working_area">
                     <p>Nama wilayah kerja</p>
                     <p className="text-gray-400">(Working area)</p>
                   </div>,
-                  // eslint-disable-next-line react/jsx-key
                   <Input
+                    key="working_area_input"
                     name="working_area"
                     type={'text'}
                     value={
@@ -308,13 +295,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2" key="submission_type">
                     <p>Jenis penyerahan data</p>
                     <p className="text-gray-400">(Submission type)</p>
                   </div>,
-                  // eslint-disable-next-line react/jsx-key
                   <Input
+                    key="submission_type_input"
                     name="submission_type"
                     type={'dropdown'}
                     value={workspaceData?.submission_type || 'Select an item'}
@@ -332,13 +318,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2" key="afe_number">
                     <p>Nomor AFE</p>
                     <p className="text-gray-400">(AFE number)</p>
                   </div>,
-                  // eslint-disable-next-line react/jsx-key
                   <Input
+                    key="afe_number_input"
                     name="afe_number"
                     type={'number'}
                     value={String(workspaceData?.afe_number) || '1'}
@@ -346,12 +331,16 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   />,
                 ],
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <p className="font-bold">Data type</p>,
-                  // eslint-disable-next-line react/jsx-key
+                  <p className="font-bold" key="data_type">
+                    Data type
+                  </p>,
                   <Input
+                    key="data_type_input"
                     type={'text'}
-                    value={router.query.form_type.replace(/\_/g, ' ')}
+                    value={(router.query.form_type as string).replace(
+                      /\_/g,
+                      ' ',
+                    )}
                     additional_styles_input="capitalize font-semibold"
                     disabled
                   />,
@@ -359,8 +348,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
               ]
             : [
                 [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-3 justify-center items-center p-2">
+                  <div
+                    className="flex space-x-3 justify-center items-center p-2"
+                    key="loading">
                     <div className="w-5 h-5 border-t-transparent rounded-full border-2 border-black animate-spin" />
                     <p>Getting data... Please wait</p>
                   </div>,
@@ -371,16 +361,16 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       <div className="h-full">
         <TableComponent
           header={[
-            // eslint-disable-next-line react/jsx-key
-            <div className="flex justify-between items-center">
+            <div
+              className="flex justify-between items-center"
+              key="data_header">
               <p>Data</p>
             </div>,
           ]}
           content={[
             Data
               ? [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="h-[750px]">
+                  <div className="h-[750px]" key="sheet">
                     <Sheets
                       type="review"
                       form_type={router?.query.form_type || 'basin'}
@@ -392,8 +382,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                   </div>,
                 ]
               : [
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="flex space-x-3 justify-center items-center p-2">
+                  <div
+                    className="flex space-x-3 justify-center items-center p-2"
+                    key="loading">
                     <div className="w-5 h-5 border-t-transparent rounded-full border-2 border-black animate-spin" />
                     <p>Getting data... Please wait</p>
                   </div>,
@@ -413,29 +404,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] min-w-max justify-center"
           disabled={!spreadsheetReady || Message.message ? true : false}>
           <div className="flex space-x-2 items-center">
-            <svg
-              width="18"
-              height="18"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-              <path
-                d="M8.6 9H15.4C15.7314 9 16 8.73137 16 8.4V3.6C16 3.26863 15.7314 3 15.4 3H8.6C8.26863 3 8 3.26863 8 3.6V8.4C8 8.73137 8.26863 9 8.6 9Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-              <path
-                d="M6 13.6V21H18V13.6C18 13.2686 17.7314 13 17.4 13H6.6C6.26863 13 6 13.2686 6 13.6Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-            </svg>
+            <Save className="w-5 h-5" />
             <p>Save changes</p>
           </div>
         </Button>
@@ -452,29 +421,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
               : false
           }>
           <div className="flex space-x-2 items-center">
-            <svg
-              width="18"
-              height="18"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M3 19V5C3 3.89543 3.89543 3 5 3H16.1716C16.702 3 17.2107 3.21071 17.5858 3.58579L20.4142 6.41421C20.7893 6.78929 21 7.29799 21 7.82843V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-              <path
-                d="M8.6 9H15.4C15.7314 9 16 8.73137 16 8.4V3.6C16 3.26863 15.7314 3 15.4 3H8.6C8.26863 3 8 3.26863 8 3.6V8.4C8 8.73137 8.26863 9 8.6 9Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-              <path
-                d="M6 13.6V21H18V13.6C18 13.2686 17.7314 13 17.4 13H6.6C6.26863 13 6 13.2686 6 13.6Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-              />
-            </svg>
+            <Save className="w-5 h-5" />
             <p>Save and exit</p>
           </div>
         </Button>
@@ -487,19 +434,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] min-w-max justify-center"
           disabled={!spreadsheetReady || Message.message ? true : false}>
           <div className="flex space-x-2 items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 13.5l3 3m0 0l3-3m-3 3v-6m1.06-4.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"
-              />
-            </svg>
+            <DownloadFolder className="w-5 h-5" />
             <p>Download record</p>
           </div>
         </Button>
@@ -518,7 +453,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
   );
 };
 
-export async function getServerSideProps(context) {
+export function getServerSideProps(context) {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {

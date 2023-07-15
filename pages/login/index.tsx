@@ -6,7 +6,7 @@ import Button from '../../components/button';
 import {getLayoutBlank} from '../../layout/getLayout';
 import {getLogin} from '../../services/user';
 import {useAppDispatch, useAppSelector} from '../../store';
-import {setErrorMessage} from '../../store/generalSlice';
+import {displayErrorMessage} from '../../store/generalSlice';
 import {setUser} from '../../store/userSlice';
 
 SignInPage.getLayout = getLayoutBlank;
@@ -25,9 +25,11 @@ export default function SignInPage({setTitle}) {
     if (user.email) {
       router.push('/');
     }
-  }, []);
+  }, [router, user.email]);
 
-  setTitle('Sign in');
+  useEffect(() => {
+    setTitle('Sign in');
+  }, [setTitle]);
 
   const handleChange = e => {
     const {name, value} = e.target;
@@ -37,7 +39,7 @@ export default function SignInPage({setTitle}) {
     }));
   };
 
-  const handleSignIn = async e => {
+  const handleSignIn = e => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     if (!loginData.password || !loginData.email) {
@@ -54,30 +56,27 @@ export default function SignInPage({setTitle}) {
       // router.events.emit('routeChangeComplete');
       // return;
     }
-    try {
-      await getLogin(loginData.email, loginData.password).then(res => {
-        const {succeed, data} = res;
-        if (succeed) {
-          dispatch(setUser(data.data));
-          if (data.data.type === 'Administrator') {
-            router.push('/administrator', undefined, {shallow: true});
-            // router.reload("/administrator")
-            return;
-          }
-          router.push('/');
+    getLogin(loginData.email, loginData.password).then(res => {
+      const {succeed, data} = res;
+      if (succeed) {
+        dispatch(setUser(data.data));
+        if (data.data.type === 'Administrator') {
+          router.push('/administrator', undefined, {shallow: true});
+          // router.reload("/administrator")
           return;
         }
+        router.push('/');
         return;
-      });
-    } catch (error) {
+      }
+      return;
+    }).catch(error => {
       dispatch(
-        setErrorMessage({
+        displayErrorMessage({
           message: String(error),
           color: 'red',
-          show: true,
         }),
       );
-    }
+    });
     router.events.emit('routeChangeComplete');
   };
 

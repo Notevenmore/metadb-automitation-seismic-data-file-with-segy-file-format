@@ -221,18 +221,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           );
           setDocId(docId);
           setLoading('Populating draggable items...');
-          const scrapeResponse = await postScrapeAnnotate(docId, pageNo);
-          const words = scrapeResponse.body?.words;
-          if (words === undefined) {
-            throw 'Something went wrong with the OCR service. Response body returned null on word scraping.';
-          }
-          setImageBase64Str(_ => generateImageUrl(docId, pageNo));
-          const dragDataResponse = await fetchDraggableData(docId, pageNo);
-          if (dragDataResponse.body === null) {
-            throw 'Something went wrong with the OCR service. Response body returned null on populating draggable data.';
-          }
-          setDragData(makeDragData(dragDataResponse));
-          setDropDownOptions(_ => words);
 
           setLoading(
             `Getting appropriate properties for data type ${router.query.form_type}`,
@@ -278,7 +266,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
     if (router.isReady) {
       init();
     }
-  }, [router.isReady]);
+  }, [config, dispatch, files, router, router.isReady, setDocId, setTitle]);
 
   useEffect(() => {
     localStorage.setItem('reviewUploadedImage', imageBase64Str);
@@ -484,7 +472,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   );
 }
 
-export async function getServerSideProps() {
+export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
   return {
     props: {config: config}, // will be passed to the page component as props

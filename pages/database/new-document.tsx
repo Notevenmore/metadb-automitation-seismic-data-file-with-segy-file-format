@@ -15,8 +15,7 @@ export default function NewDocumentPageDatabase() {
 
   return (
     <Container
-      additional_class="full-height relative"
-      onDragEnter={e => handleDrag(e)}>
+      additional_class="full-height relative">
       <Container.Title>New document</Container.Title>
       <Input
         label="Name"

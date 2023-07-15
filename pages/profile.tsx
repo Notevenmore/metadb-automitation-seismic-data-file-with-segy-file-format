@@ -11,6 +11,7 @@ import ProfilePic from '../dummy-data/profile_pic';
 import {updateProfile} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
 import {logOut, setUser} from '../store/userSlice';
+import { uploadIMG } from '@utils/image';
 
 const Profile = ({setTitle}) => {
   const user = useAppSelector(state => state.user.user);
@@ -28,63 +29,33 @@ const Profile = ({setTitle}) => {
       ['Date joined', moment(user.date_joined).format('DD - MM - YYYY')],
       ['Role', user.type],
     ]);
-  }, []);
-
-  const uploadIMG = async () => {
-    let reader = new FileReader();
-    let input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = _this => {
-      let files = Array.from(input.files)[0];
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          if (/^image\/[\w]+$/.exec(files.type)) {
-            const final = reader.result.replace(
-              /^(.+)(?=,)/.exec(reader.result)[0] + ',',
-              '',
-            );
-            setcurrentUser({...currentUser, profile_picture: final});
-          } else {
-            alert('Please upload only image formatted file (JPG/PNG)');
-            return;
-          }
-        }
-      };
-      reader.readAsDataURL(files);
-    };
-    input.click();
-  };
+  }, [setTitle, user.date_joined, user.name, user.type]);
 
   const handleSignOut = () => {
     dispatch(logOut());
   };
 
-  const handleUploadPhoto = async () => {
+  useEffect(() => {
     if (user === currentUser) return;
 
     router.events.emit('routeChangeStart');
     console.log('start');
-    await updateProfile({
-      userid: user.userid,
+    updateProfile({
+      userid: user.name,
       profile_picture: currentUser.profile_picture,
     }).then(
       () => {
         dispatch(setUser(currentUser));
         console.log('complete');
+        router.events.emit('routeChangeComplete');
       },
       err => {
         console.log(err);
       },
     );
-    router.events.emit('routeChangeComplete');
-  };
+  }, [currentUser, dispatch, router.events, user]);
 
-  useEffect(() => {
-    handleUploadPhoto();
-  }, [currentUser]);
-
-  const handleRemovePhoto = async () => {
+  const handleRemovePhoto = () => {
     router.events.emit('routeChangeStart');
 
     setcurrentUser(prev => ({...prev, profile_picture: defaultProfile()}));
@@ -115,7 +86,9 @@ const Profile = ({setTitle}) => {
                   {
                     section_title: 'Upload photo',
                     section_content: 'Maximum 1 MB',
-                    handleClick: () => uploadIMG(),
+                    handleClick: () => uploadIMG((final) => {
+                      setcurrentUser({...currentUser, profile_picture: final});
+                    }),
                   },
                   {
                     section_title: 'Remove photo',

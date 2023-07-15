@@ -3,23 +3,24 @@ import ROUTING_LIST from '../../router/List';
 import SearchWidget from '../widget/Search';
 import {NavigationItem} from './Item';
 import {useAppSelector} from '@store/index';
+import Image from 'next/image';
+
+function deepFilter(nodes, cb) {
+  return nodes
+    .map(node => {
+      if (cb(node)) return node;
+      let children = deepFilter(node.child || [], cb);
+      console.log(node)
+      return children.length && {...node, child: children};
+    })
+    .filter(Boolean);
+}
 
 export const SideBar = () => {
   const [iconCollapse, setIconCollapse] = useState(false);
 
   const {search, value} = useAppSelector(state => state.search);
   const [list, setList] = useState(ROUTING_LIST);
-
-  function deepFilter(nodes, cb) {
-    return nodes
-      .map(node => {
-        if (cb(node)) return node;
-        let children = deepFilter(node.child || [], cb);
-        console.log(node)
-        return children.length && {...node, child: children};
-      })
-      .filter(Boolean);
-  }
 
   useEffect(() => {
     if (search) {
@@ -50,15 +51,20 @@ export const SideBar = () => {
           </div>
         )}
         <div onClick={() => setIconCollapse(prev => !prev)}>
-          <NavigationItem
-            name="Collapse"
-            icon={
-              iconCollapse
+          <div className="flex items-center px-5 py-2 gap-x-4 hover:bg-gray-200 relative transition-all cursor-pointer">
+            <Image
+              src={
+                iconCollapse
                 ? '/icons/chevron-double-right.svg'
                 : '/icons/chevron-double-left.svg'
+              }
+              width={14.4}
+              height={22}
+              alt="icon" />
+            {
+              !iconCollapse && <p className="text-[14.5px] w-[200px]">Collapse</p>
             }
-            collapse={iconCollapse}
-          />
+          </div>
         </div>
         {list.map(router => (
           <NavigationItem

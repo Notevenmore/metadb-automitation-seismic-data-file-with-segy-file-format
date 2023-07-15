@@ -10,13 +10,16 @@ export interface User {
   token_type: string;
   role_name: string;
   expiry_date: string;
+  date_joined: string;
+  email: string;
+  userid: string;
 }
 
 export interface UserState {
   user: User;
 }
 
-const user = {
+const user: User = {
   type: null,
   profile_picture: null,
   access_token: null,
@@ -25,6 +28,9 @@ const user = {
   token_type: null,
   role_name: null,
   expiry_date: null,
+  date_joined: null,
+  email: null,
+  userid: null,
 };
 
 const cookies = parseCookies().user_data;

@@ -1,14 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Input from '../components/Input';
 import Container from '../components/container';
 import TableComponent from '../components/table/table';
 
 const Bibliography = ({setTitle}) => {
-  setTitle('Bibliography');
-
   const router = useRouter();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
@@ -23,6 +21,10 @@ const Bibliography = ({setTitle}) => {
     let final = workspace_name.toLocaleLowerCase().replace(/\s/g, '_');
     return final;
   };
+
+  useEffect(() => {
+    setTitle('Bibliography');
+  }, [setTitle])
 
   let table_data = [
     {
@@ -134,7 +136,7 @@ const Bibliography = ({setTitle}) => {
             <p className="text-sm font-normal capitalize">{path_query}</p>
             <p>Bibliography</p>
           </div>
-          <div className="w-[80%] lg:w-[40%] relative">
+          <div className="w-4/5 lg:w-2/5 relative">
             <Input
               label=""
               type="text"
@@ -149,7 +151,7 @@ const Bibliography = ({setTitle}) => {
               src="/icons/magnify.svg"
               width="20"
               height="20"
-              className="absolute top-1/2 right-3 translate-y-[-50%]"
+              className="absolute top-1/2 right-3 -translate-y-1/2"
               alt="search"
             />
           </div>
