@@ -213,7 +213,7 @@ const HomeSection = ({config}) => {
         <div className="flex justify-center">
           <Button
             path={'/upload_file'}
-            button_description="Choose file manually"
+            button_description="Upload record file"
           />
         </div>
         <p className="text-center opacity-50">
@@ -228,7 +228,7 @@ const HomeSection = ({config}) => {
         <section className="flex flex-row gap-x-3">
           <Button
             path=""
-            button_description="Make a new record"
+            button_description="Input record manually"
             onClick={e => {
               e.preventDefault();
               settoggleOverlay(true);
