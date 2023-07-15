@@ -13,6 +13,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 export default function TopBar() {
   const user = useAppSelector(state => state.user.user);
   const [helpLink, setHelpLink] = useState('');
+  const [homeLink, setHomeLink] = useState("/")
   const router = useRouter();
   const [profile, setProfile] = useState('');
   const [profileItem, setProfileItem] = useState({type:"", contents: []});
@@ -33,6 +34,7 @@ export default function TopBar() {
 
     if (user.type === 'Administrator') {
       setHelpLink('/administrator/help');
+      setHomeLink("/administrator")
       setProfileItem({
         type: '',
         contents: [
@@ -71,7 +73,7 @@ export default function TopBar() {
 
   return (
     <nav className="w-full flex justify-between items-center py-3 px-5 border-b border-gray-300">
-      <Link href="/" className="flex items-center gap-x-4">
+      <Link href={homeLink} className="flex items-center gap-x-4">
         <Image src={MetaDB} width={30} height={50} alt="MetaDB Logo" />
         <h1 className="text-xl font-bold">MetaDB</h1>
       </Link>
