@@ -30,13 +30,78 @@ const ROUTING_LIST = [
         icon: '/icons/seismic.svg',
       },
       {
-        name: '2D Seismic',
-        link: '..',
+        name: '2D Seismic Summary',
+        link: '/datatype/seismic_data/2d_seismic_summary',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '2D Seismic Section',
+        link: '/datatype/seismic_data/section',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: 'Digital 2D Seismic Session',
+        link: '/datatype/seismic_data/digital_2d_seismic_session',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '2D Seismic Field Data Stored in Media',
+        link: '/datatype/seismic_data/2d_seismic_field_data_stored_in_media',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '2D Seismic Process Data Stored in Media',
+        link: '/datatype/seismic_data/2d_seismic_process_data_stored_in_media',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '2D Seismic Processed Digital Data',
+        link: '/datatype/seismic_data/2d_seismic_processed_digital_data',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '2D Seismic Navigation Digital Data',
+        link: '/datatype/seismic_data/2d_seismic_navigation_digital_data',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '2D Seismic Navigation Data Stored in Media',
+        link: '/datatype/seismic_data/2d_seismic_navigation_data_stored_in_media',
         icon: '/icons/seismic.svg',
       },
       {
         name: '3D Seismic',
-        link: '..',
+        link: '/datatype/seismic_data/3d_seismic_summary',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '3D Seismic Field Data Stored in Media',
+        link: '/datatype/seismic_data/3d_seismic_field_data_stored_in_media',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '3D Seismic Process Data Stored in Media',
+        link: '/datatype/seismic_data/3d_seismic_process_data_stored_in_media',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '3D Seismic Field Digital Data',
+        link: '/datatype/seismic_data/3d_seismic_field_digital_data',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '3D Seismic Processed Digital Data',
+        link: '/datatype/seismic_data/3d_seismic_processed_digital_data',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '3D Seismic Navigation Digital Data',
+        link: '/datatype/seismic_data/3d_seismic_navigation_digital_data',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: '3D Seismic Navigation Data Stored in Media',
+        link: '/datatype/seismic_data/3d_seismic_navigation_data_stored_in_media',
         icon: '/icons/seismic.svg',
       },
       {
@@ -47,6 +112,11 @@ const ROUTING_LIST = [
       {
         name: 'Digital 2D/3D Seismic Report',
         link: '/datatype/seismic_data/2d_3d_seismic_digital_report',
+        icon: '/icons/seismic.svg',
+      },
+      {
+        name: 'Seismic Interpretation Data',
+        link: '/datatype/seismic_data/seismic_interpretation_data',
         icon: '/icons/seismic.svg',
       },
     ],
@@ -92,13 +162,13 @@ const ROUTING_LIST = [
         icon: '/icons/well_data.svg',
       },
       {
-        name: 'Well Logs',
+        name: 'Printed Well Logs',
         link: '/datatype/well_data/printed_well_log',
         icon: '/icons/well_data.svg',
       },
       {
-        name: 'Well Report',
-        link: '/datatype/well_data/..',
+        name: 'Digital Well Logs',
+        link: '/datatype/well_data/digital_well_log',
         icon: '/icons/well_data.svg',
       },
       {
@@ -107,8 +177,23 @@ const ROUTING_LIST = [
         icon: '/icons/well_data.svg',
       },
       {
-        name: 'Well Seismic Profile',
-        link: '/datatype/well_data/..',
+        name: 'Digital Well Report',
+        link: '/datatype/well_data/digital_well_report',
+        icon: '/icons/well_data.svg',
+      },
+      {
+        name: 'Digital Image Well Log',
+        link: '/datatype/well_data/digital_image_well_log',
+        icon: '/icons/well_data.svg',
+      },
+      {
+        name: 'Digital Well Seismic Profile',
+        link: '/datatype/well_data/digital_well_seismic_profile',
+        icon: '/icons/well_data.svg',
+      },
+      {
+        name: 'Well Seismic Profile Stored in Media',
+        link: '/datatype/well_data/well_seismic_profile_stored_in_media',
         icon: '/icons/well_data.svg',
       },
     ],
