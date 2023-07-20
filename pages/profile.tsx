@@ -53,7 +53,7 @@ const Profile = ({setTitle}) => {
         console.log(err);
       },
     );
-  }, [currentUser, dispatch, router.events, user]);
+  }, [currentUser]);
 
   const handleRemovePhoto = () => {
     router.events.emit('routeChangeStart');
