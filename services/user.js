@@ -22,7 +22,10 @@ export async function getLogin(email, password) {
       return {data: res, succeed: true};
     })
     .catch(err => {
-      // console.log(err);
+      // console.log(err.response.status);
+      if(err.response.status === 404) {
+        throw new Error('Incorrent credentials. Try again or use a different account if the problem still persists')
+      }
       throw new Error(`${err.message}. Please contact maintainer.`);
     });
 

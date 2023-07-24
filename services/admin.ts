@@ -6,6 +6,7 @@ export function TokenExpired(err) {
   const code = typeof err === "number" ? err : ((err.response && err.response.status) ?? 400);
   if (code === 401 || code === 402) {
     Router.push('/login');
+    throw new Error("Token has expired, please login again.")
   }
 }
 
