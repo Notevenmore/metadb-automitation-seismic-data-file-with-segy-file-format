@@ -24,6 +24,13 @@ export default function AdministratorPage() {
       const users = res.filter(item => item.userid !== 'admin');
       setList(users);
       setFilteredList(users);
+    }).catch((err) => {
+      dispatch(
+        displayErrorMessage({
+          message: `${String(err)}`,
+          color: 'red',
+        }),
+      );
     })
   };
 

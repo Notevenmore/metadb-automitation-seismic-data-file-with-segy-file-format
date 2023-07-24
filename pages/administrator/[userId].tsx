@@ -108,8 +108,6 @@ export default function UserPage() {
     router.events.emit('routeChangeComplete');
   };
 
-  console.log(detail);
-
   return (
     <Container>
       <Container.Title back>User Detail: {userId}</Container.Title>
