@@ -26,7 +26,7 @@ const Profile = ({setTitle}) => {
     setTitle('Profile');
     setContent([
       ['Email', user.name],
-      ['Date joined', moment(user.date_joined).format('DD - MM - YYYY')],
+      ['Expiry Date', user.expiry_date],
       ['Role', user.type],
     ]);
   }, [setTitle, user.date_joined, user.name, user.type]);
