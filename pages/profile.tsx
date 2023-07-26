@@ -12,6 +12,7 @@ import {updateProfile} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
 import {logOut, setUser} from '../store/userSlice';
 import { uploadIMG } from '@utils/image';
+import RoundImage from '@components/RoundImage';
 
 const Profile = ({setTitle}) => {
   const user = useAppSelector(state => state.user.user);
@@ -69,16 +70,7 @@ const Profile = ({setTitle}) => {
         <div className="flex space-x-7">
           <div className="flex flex-col items-center justify-center space-y-2">
             {/* // TODO CHANGE THE LINE BELOW TO NOT USE HARDCODED PROFILE PICTURE STRING */}
-            <Image
-              src={
-                user.profile_picture ? Mime(user.profile_picture) : ProfilePic
-              }
-              alt="image"
-              width={500}
-              height={500}
-              className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full"
-              priority
-            />
+            <RoundImage source={user.profile_picture ? Mime(user.profile_picture) : ProfilePic} width={500} additionalClass={"min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full"} />
             <FloatDialog
               items={{
                 type: '',
