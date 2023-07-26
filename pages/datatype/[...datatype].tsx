@@ -41,51 +41,19 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     'Home' + router.asPath.replace(/\//g, ' > ').replace(/\_/g, ' ');
   let selectedTableData = [[]];
 
-  const deleteWorkspace = useCallback((e, afe_number) => {
-    e.preventDefault();
-    router.events.emit('routeChangeStart');
-    dispatch(
-      displayErrorMessage({
-        message:
-          "Deleting record... Please don't leave this page or click anything",
-        color: 'blue'
-      }),
-    );
-    return fetch(`${config[datatype]['afe']}${afe_number}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${
-          JSON.parse(parseCookies().user_data).access_token
-        }`,
-      },
-    }).then(res => {
-      if (res.status !== 200) {
-        TokenExpired(res.status);
-        throw `Response returned with status code ${res.status}: ${res.statusText}`;
-      }
+  const deleteWorkspace = useCallback(
+    (e, afe_number) => {
+      e.preventDefault();
+      router.events.emit('routeChangeStart');
       dispatch(
-        displayErrorMessage({message: 'Success', color: 'blue', duration: 1000}),
+        displayErrorMessage({
+          message:
+            "Deleting record... Please don't leave this page or click anything",
+          color: 'blue',
+        }),
       );
-      reset_search();
-      router.events.emit('routeChangeComplete');
-    }).catch((error) => {
-      dispatch(
-        displayErrorMessage({message: String(error), color: 'red'}),
-      );
-      router.events.emit('routeChangeComplete');
-    });
-  }, [config, datatype, dispatch, router.events]);
-
-  const init = useCallback(() => {
-    router.events.emit('routeChangeStart');
-    try {
-      // get workspaces
-      // TODO: could later be used as a dynamic route for multiple data types,
-      // meaning only need to change the fetch link and page title and it's good to go.
-      // TODO 16/6/23: ye i changed it to dynamic huray
-      fetch(`${config[datatype]['afe']}`, {
-        method: 'GET',
+      return fetch(`${config[datatype]['afe']}${afe_number}`, {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${
@@ -93,80 +61,116 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           }`,
         },
       })
-        .then(res =>
-          Promise.all([
-            res.status,
-            res.status !== 200 ? res.text() : res.json(),
-          ]),
-        )
-        .then(([status, res]) => {
-          if (status !== 200) {
-            TokenExpired(status);
-            throw `Service returned with status ${status}: ${res}`;
-          }
-          return res;
-        })
         .then(res => {
-          let final = [];
-          if (!res) {
-            setData([0]);
-            return;
+          if (res.status !== 200) {
+            TokenExpired(res.status);
+            throw `Response returned with status code ${res.status}: ${res.statusText}`;
           }
-          res.forEach(workspace => {
-            final.push({
-              KKKS: workspace.kkks_name,
-              'Working area': workspace.working_area,
-              AFE: workspace.afe_number,
-              Type: workspace.submission_type,
-              Action: (
-                <div className="flex flex-row gap-x-4 items-center">
-                  <Button
-                    title="Edit record"
-                    additional_styles="px-3"
-                    className="flex"
-                    path={`/edit/${workspace.workspace_name}`}
-                    query={{
-                      form_type: datatype,
-                      workspace_data: workspace.afe_number,
-                    }}>
-                    <div className="w-[18px] h-[18px] flex items-center">
-                      <Image
-                        src="/icons/pencil.svg"
-                        width={50}
-                        height={50}
-                        className="w-[25px] h-[15px] alt='' "
-                        alt="icon"
-                      />
-                    </div>
-                  </Button>
-                  <Button
-                    additional_styles="px-3 hover:bg-red-400"
-                    className="flex"
-                    title="Delete record"
-                    onClick={e => {
-                      deleteWorkspace(e, workspace.afe_number).then(() => {
-                        init();
-                      });
-                    }}>
-                    <div className="w-[18px] h-[18px] flex items-center">
-                      <Image
-                        src="/icons/delete.svg"
-                        width={50}
-                        height={50}
-                        className="w-[25px] h-[15px] alt='' "
-                        alt="icon"
-                      />
-                    </div>
-                  </Button>
-                </div>
-              ),
-            });
-          });
-          setData(final);
+          dispatch(
+            displayErrorMessage({
+              message: 'Success',
+              color: 'blue',
+              duration: 1000,
+            }),
+          );
+          reset_search();
+          router.events.emit('routeChangeComplete');
+        })
+        .catch(error => {
+          dispatch(displayErrorMessage({message: String(error), color: 'red'}));
+          router.events.emit('routeChangeComplete');
         });
-    } catch (error) {
-      seterror(String(error));
-    }
+    },
+    [config, datatype, dispatch, router.events],
+  );
+
+  const init = useCallback(() => {
+    router.events.emit('routeChangeStart');
+    // get workspaces
+    // TODO: could later be used as a dynamic route for multiple data types,
+    // meaning only need to change the fetch link and page title and it's good to go.
+    // TODO 16/6/23: ye i changed it to dynamic huray
+
+    fetch(`${config[datatype]['afe']}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
+      },
+    })
+      .then(res =>
+        Promise.all([res.status, res.status !== 200 ? res.text() : res.json()]),
+      )
+      .then(([status, res]) => {
+        if (status !== 200) {
+          TokenExpired(status);
+          throw `Service returned with status ${status}: ${res}`;
+        }
+        return res;
+      })
+      .then(res => {
+        let final = [];
+        if (!res) {
+          setData([0]);
+          return;
+        }
+        res.forEach(workspace => {
+          final.push({
+            KKKS: workspace.kkks_name,
+            'Working area': workspace.working_area,
+            AFE: workspace.afe_number,
+            Type: workspace.submission_type,
+            Action: (
+              <div className="flex flex-row gap-x-4 items-center">
+                <Button
+                  title="Edit record"
+                  additional_styles="px-3"
+                  className="flex"
+                  path={`/edit/${workspace.workspace_name}`}
+                  query={{
+                    form_type: datatype,
+                    workspace_data: workspace.afe_number,
+                  }}>
+                  <div className="w-[18px] h-[18px] flex items-center">
+                    <Image
+                      src="/icons/pencil.svg"
+                      width={50}
+                      height={50}
+                      className="w-[25px] h-[15px] alt='' "
+                      alt="icon"
+                    />
+                  </div>
+                </Button>
+                <Button
+                  additional_styles="px-3 hover:bg-red-400"
+                  className="flex"
+                  title="Delete record"
+                  onClick={e => {
+                    deleteWorkspace(e, workspace.afe_number).then(() => {
+                      init();
+                    });
+                  }}>
+                  <div className="w-[18px] h-[18px] flex items-center">
+                    <Image
+                      src="/icons/delete.svg"
+                      width={50}
+                      height={50}
+                      className="w-[25px] h-[15px] alt='' "
+                      alt="icon"
+                    />
+                  </div>
+                </Button>
+              </div>
+            ),
+          });
+        });
+        setData(final);
+      })
+      .catch(error => {
+        seterror(String(error));
+      });
     router.events.emit('routeChangeComplete');
   }, [config, datatype, deleteWorkspace, router.events]);
 
@@ -253,8 +257,8 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           displayErrorMessage({
             message: 'Sucess. Redirecting to the next page...',
             color: 'blue',
-            duration: 1500
-          })
+            duration: 1500,
+          }),
         );
       }, 0);
       router.events.emit('routeChangeComplete');
@@ -265,9 +269,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       });
     } catch (error) {
       // Handle error and display error message
-      dispatch(
-        displayErrorMessage({message: String(error), color: 'red'}),
-      );
+      dispatch(displayErrorMessage({message: String(error), color: 'red'}));
     }
     router.events.emit('routeChangeComplete');
   };
@@ -294,7 +296,9 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   };
 
   const reset_search = () => {
-    const search_input = document.getElementById('search_bar') as HTMLInputElement;
+    const search_input = document.getElementById(
+      'search_bar',
+    ) as HTMLInputElement;
     search_input.value = '';
     setsearchData([-1]);
   };
