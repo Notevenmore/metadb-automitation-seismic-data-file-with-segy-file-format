@@ -13,6 +13,7 @@ export interface UploadDocumentSettings {
   working_area: string;
   submission_type: string;
   afe_number: number;
+  afe_exist?: boolean;
   email?: string;
   DataType?: string;
   FileFormat?: string;
