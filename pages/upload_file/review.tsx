@@ -12,7 +12,7 @@ import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import Table from '../../components/table/table';
-import {saveDocument} from '../../components/utility_functions';
+import {init_data, saveDocument} from '../../components/utility_functions';
 import {TableType} from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
@@ -35,6 +35,7 @@ export default function UploadFileReview({setTitle, config}) {
   const [spreadsheetID, setspreadsheetID] = useState('');
   const [loading, setloading] = useState('');
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
+  // const [workspaceData, setworkspaceData] = useState<UploadDocumentSettings>();
 
   const dispatch = useAppDispatch();
 
@@ -67,14 +68,21 @@ export default function UploadFileReview({setTitle, config}) {
             document_summary?.document_id
           }/${PageNo + 1}`,
         );
-        let final = [];
-        for (let idx = 0; idx < document_summary.body.page_count; idx++) {
-          let row = {};
-          Object.values(review_data[idx] as TableType).map(item => {
-            row[item.key.toLowerCase()] = item.value;
+        let record_data: any[],
+          final = [];
+        if (upload_document_settings.afe_exist) {
+          const existing = await init_data(config, router, {
+            afe_number: upload_document_settings.afe_number,
           });
-          final.push(row);
+          record_data = existing.data_content;
+          console.log(record_data);
+          final.push(...record_data);
         }
+        let row = {};
+        Object.values(review_data as TableType).map(item => {
+          row[item.key.toLowerCase()] = item.value;
+        });
+        final.push(row);
         setReviewData(final);
         setloading('');
       } catch (error) {
