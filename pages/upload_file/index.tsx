@@ -1,11 +1,18 @@
-import { useRouter } from 'next/router';
-import { parseCookies } from 'nookies';
-import React, { ChangeEvent, FormEvent, WheelEvent, useEffect, useRef, useState } from 'react';
+import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
+import React, {
+  ChangeEvent,
+  FormEvent,
+  WheelEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import { checkAfe } from '../../components/utility_functions';
-import { datatypes } from '../../config';
+import {checkAfe} from '../../components/utility_functions';
+import {datatypes} from '../../config';
 import CloseThin from '../../public/icons/close-thin.svg';
 import DropFile from '../../public/icons/drop-file.svg';
 import Hand from '../../public/icons/hand.svg';
@@ -13,11 +20,23 @@ import List from '../../public/icons/list.svg';
 import Robot from '../../public/icons/robot.svg';
 import Select from '../../public/icons/selection_tool.svg';
 import Upload from '../../public/icons/upload.svg';
-import { TokenExpired } from '../../services/admin';
-import { UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings, storeFile } from '../../store/generalSlice';
+import {TokenExpired} from '../../services/admin';
+import {
+  UploadDocumentSettings,
+  displayErrorMessage,
+  setUploadDocumentSettings,
+  storeFile,
+} from '../../store/generalSlice';
 import getFileType from '../../utils/filetype';
-import { useAppDispatch } from '../../store';
-import { delay } from '../../utils/common';
+import {useAppDispatch} from '../../store';
+import {delay} from '../../utils/common';
+
+const routes = {
+  dropdown: '/upload_file/matching_dropdown',
+  highlight: '/upload_file/matching_highlight',
+  dragdrop: '/upload_file/matching_draggable',
+  automatic: '/upload_file/matching_auto',
+};
 
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
@@ -31,6 +50,7 @@ export default function UploadFilePage({config, setTitle}) {
     working_area: '',
     submission_type: '',
     afe_number: 0,
+    afe_exist: false,
     DataType: '',
     FileFormat: '',
     Method: '',
@@ -127,7 +147,11 @@ export default function UploadFilePage({config, setTitle}) {
   // TODO: UNCOMMENT ON TESTING AND PRODUCTION AND COMMENT THE OTHER METHOD WITH THE
   // SAME NAME
 
-  const proceed = async (e: React.MouseEvent<HTMLElement>, submit = false, element = false) => {
+  const proceed = async (
+    e: React.MouseEvent<HTMLElement>,
+    submit = false,
+    element = false,
+  ) => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     try {
@@ -135,13 +159,16 @@ export default function UploadFilePage({config, setTitle}) {
         const comparator = document.getElementById('overlay');
         const comparator_parent = document.getElementById('overlay_parent');
         console.log(e.target, comparator, e.target !== comparator);
-        if (![comparator, comparator_parent].includes(e.target as HTMLElement)) {
+        if (
+          ![comparator, comparator_parent].includes(e.target as HTMLElement)
+        ) {
           router.events.emit('routeChangeComplete');
           return;
         }
       }
       settoggleOverlay(false);
-      if (submit) {
+      let post_workspace: string;
+      if (submit && !afeExist) {
         dispatch(
           displayErrorMessage({
             message:
@@ -157,7 +184,7 @@ export default function UploadFilePage({config, setTitle}) {
         ) {
           throw 'Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.';
         }
-        const post_workspace = await fetch(
+        post_workspace = await fetch(
           `${config[datatypes[UplSettings.DataType]]['afe']}`,
           {
             method: 'POST',
@@ -183,39 +210,40 @@ export default function UploadFilePage({config, setTitle}) {
           }
           return res.text();
         });
-        if (post_workspace === 'OK') {
-          dispatch(
-            displayErrorMessage({
-              message:
-                'Success. A new record has been created. Redirecting to the next page...',
-              color: 'blue',
-              duration: 1500
-            }),
-          );
-          router.events.emit('routeChangeComplete');
-          await delay(1000);
-          router.push({
-            pathname:
-              UplSettings.Method === 'dropdown'
-                ? '/upload_file/matching_dropdown'
-                : UplSettings.Method === 'highlight'
-                ? '/upload_file/matching_highlight'
-                : UplSettings.Method === 'dragdrop'
-                ? '/upload_file/matching_draggable'
-                : '/upload_file/matching_auto',
-            query: {
-              form_type: datatypes[UplSettings.DataType],
-            },
-          });
-        } else {
-          dispatch(
-            displayErrorMessage({
-              message:
-                'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
-              color: 'red',
-            }),
-          );
-        }
+      }
+      if (post_workspace === 'OK' || afeExist) {
+        dispatch(
+          displayErrorMessage({
+            message: `${
+              !afeExist ? 'Success. A new record has been created.' : ''
+            } Redirecting to the next page...`,
+            color: 'blue',
+            duration: 1500,
+          }),
+        );
+        router.events.emit('routeChangeComplete');
+        await delay(1000);
+        router.push({
+          pathname:
+            UplSettings.Method === 'dropdown'
+              ? '/upload_file/matching_dropdown'
+              : UplSettings.Method === 'highlight'
+              ? '/upload_file/matching_highlight'
+              : UplSettings.Method === 'dragdrop'
+              ? '/upload_file/matching_draggable'
+              : '/upload_file/matching_auto',
+          query: {
+            form_type: datatypes[UplSettings.DataType],
+          },
+        });
+      } else {
+        dispatch(
+          displayErrorMessage({
+            message:
+              'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
+            color: 'red',
+          }),
+        );
       }
     } catch (error) {
       dispatch(
@@ -231,7 +259,10 @@ export default function UploadFilePage({config, setTitle}) {
     router.events.emit('routeChangeComplete');
   };
 
-  const handleAfeChange = async (e: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>, focused: boolean) => {
+  const handleAfeChange = async (
+    e: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>,
+    focused: boolean,
+  ) => {
     e.preventDefault();
     try {
       if (focused) {
@@ -249,18 +280,25 @@ export default function UploadFilePage({config, setTitle}) {
           return;
         }
 
-        const result = await checkAfe(
+        const result: string = await checkAfe(
           false,
           config,
           datatypes[UplSettings.DataType],
           parseInt((e.target as HTMLInputElement).value),
         );
         if (result !== 'null') {
+          const workspace_data: UploadDocumentSettings = JSON.parse(result)[0];
           setafeExist(true);
-
+          setUplSettings({
+            ...UplSettings,
+            kkks_name: workspace_data.kkks_name,
+            working_area: workspace_data.working_area,
+            submission_type: workspace_data.submission_type,
+            afe_exist: true,
+          });
           setpopupMessage({
-            message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Please choose a different one`,
-            color: 'red',
+            message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Data acquired from this file will be appended to the existing record. You can edit the fields below in the review section later on.`,
+            color: 'blue',
           });
         } else {
           setafeExist(false);
@@ -286,12 +324,11 @@ export default function UploadFilePage({config, setTitle}) {
     setTitle('Upload file');
   }, [setTitle]);
 
-  const activeStyle = "bg-searchbg/60 border-2 border-gray-400 box-border w-[254px] transition ease-in duration-500"
+  const activeStyle =
+    'bg-searchbg/60 border-2 border-gray-400 box-border w-[254px] transition ease-in duration-500';
 
   return (
-    <Container
-      additional_class="full-height relative"
-      onDragEnter={handleDrag}>
+    <Container additional_class="full-height relative" onDragEnter={handleDrag}>
       <Container.Title back>
         <div className="-space-y-2">
           <p className="capitalize text-sm font-normal">{path_query}</p>
@@ -302,7 +339,7 @@ export default function UploadFilePage({config, setTitle}) {
         className="flex flex-col items-center justify-center gap-y-4 w-full"
         onSubmit={handleSubmit}>
         <div className="border-dashed border-2 border-black/30 rounded-lg p-10 flex space-x-3 items-center w-4/5 bg-searchbg/[.5]">
-          <Upload className="w-16 h-16"/>
+          <Upload className="w-16 h-16" />
           <div className="w-full">
             <div>
               <div className="flex space-x-2 items-center justify-center">
@@ -325,7 +362,7 @@ export default function UploadFilePage({config, setTitle}) {
                     additional_styles="px-1 py-1 bg-black/20 hover:bg-red-600 hover:text-white"
                     title="Remove file"
                     onClick={() => setFileUpload([])}>
-                    <CloseThin className="w-5 h-5"/>
+                    <CloseThin className="w-5 h-5" />
                   </Button>
                 </div>
               )}
@@ -385,7 +422,7 @@ export default function UploadFilePage({config, setTitle}) {
               type="number"
               name={'AFE_Number'}
               placeholder={'Input AFE number'}
-              value={UplSettings.afe_number || ""}
+              value={UplSettings.afe_number || ''}
               required={true}
               additional_styles="w-full"
               additional_styles_label={additional_styles_label}
@@ -409,8 +446,10 @@ export default function UploadFilePage({config, setTitle}) {
                   ? 'p-1 max-h-[1000px] visible'
                   : 'max-h-[0px] -translate-y-1'
               } ${
-                popupMessage.color === 'red'
-                  ? 'border-2 border-red-500 bg-red-100'
+                popupMessage.message
+                  ? popupMessage.color === 'red'
+                    ? 'border-2 border-red-500 bg-red-100'
+                    : 'border-2 border-blue-500 bg-blue-100'
                   : ''
               } text-sm w-full text-center transition-all pointer-events-none`}>
               <p>{popupMessage.message}</p>
@@ -430,6 +469,7 @@ export default function UploadFilePage({config, setTitle}) {
             onChange={e =>
               setUplSettings({...UplSettings, kkks_name: e.target.value})
             }
+            disabled={afeExist}
           />
           <Input
             label="Working area"
@@ -445,11 +485,12 @@ export default function UploadFilePage({config, setTitle}) {
             onChange={e =>
               setUplSettings({...UplSettings, working_area: e.target.value})
             }
+            disabled={afeExist}
           />
           <Input
             label="Submission type"
             label_loc="beside"
-            type="dropdown"
+            type={afeExist ? 'text' : 'dropdown'}
             name={'submissionType'}
             placeholder={'Select a submission type'}
             value={UplSettings.submission_type}
@@ -465,12 +506,12 @@ export default function UploadFilePage({config, setTitle}) {
             ]}
             required={true}
             additional_styles="w-full"
-            additional_styles_input="placeholder: italic"
             additional_styles_label={additional_styles_label}
             onChange={e =>
               setUplSettings({...UplSettings, submission_type: e.target.value})
             }
             withSearch
+            disabled={afeExist}
           />
         </div>
         <h2 className="text-xl font-bold py-3">
@@ -491,7 +532,7 @@ export default function UploadFilePage({config, setTitle}) {
                 setUplSettings({...UplSettings, Method: 'dropdown'});
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
-                <List className="w-10 h-10"/>
+                <List className="w-10 h-10" />
                 <section className="w-[150px]">
                   <h3 className="text-lg font-bold">Drop down</h3>
                   <p className="text-sm">
@@ -531,7 +572,7 @@ export default function UploadFilePage({config, setTitle}) {
                 setUplSettings({...UplSettings, Method: 'dragdrop'});
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
-                <Hand className="w-10 h-10"/>
+                <Hand className="w-10 h-10" />
                 <section className="w-[150px]">
                   <h3 className="text-lg font-bold">Drag and drop</h3>
                   <p className="text-sm">
@@ -551,7 +592,7 @@ export default function UploadFilePage({config, setTitle}) {
                 setUplSettings({...UplSettings, Method: 'automatic'});
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
-                <Robot className="w-10 h-10"/>
+                <Robot className="w-10 h-10" />
                 <section className="w-[150px]">
                   <h3 className="text-lg font-bold">Automatic</h3>
                   <p className="text-sm">
@@ -567,17 +608,12 @@ export default function UploadFilePage({config, setTitle}) {
           <Button
             type="submit"
             path={
+              // all fields must not be empty check
               fileUpload.length <= 1 ||
               Object.values(UplSettings).some(x => {
                 return x === null || x === '';
               })
-                ? UplSettings.Method === 'dropdown'
-                  ? '/upload_file/matching_dropdown'
-                  : UplSettings.Method === 'highlight'
-                  ? '/upload_file/matching_highlight'
-                  : UplSettings.Method === 'dragdrop'
-                  ? '/upload_file/matching_draggable'
-                  : '/upload_file/matching_auto'
+                ? routes[UplSettings.Method]
                 : ''
             }
             query={{form_type: datatypes[UplSettings.DataType]}}
@@ -586,7 +622,6 @@ export default function UploadFilePage({config, setTitle}) {
             onClick={handleSubmit}
             disabled={
               fileUpload.length < 1 ||
-              afeExist ||
               Object.values(UplSettings).some(x => {
                 return x === null || x === '';
               })
@@ -624,15 +659,29 @@ export default function UploadFilePage({config, setTitle}) {
               onClick={proceed}>
               <CloseThin className="w-5 h-5" />
             </Button>
-            <h1 className="font-bold text-3xl">Re-check the inputted data</h1>
+            <h1 className="font-bold text-3xl">
+              {afeExist
+                ? 'Record already exists'
+                : 'Re-check the inputted data'}
+            </h1>
             <hr />
             <p>
-              Do you want to proceed? Make sure you have re-checked all the
-              inputs especially the ones for the new record.{' '}
-              <strong>
-                You won&quot;t be able to change AFE number and Data Type after
-                the new record has been created.
-              </strong>
+              {afeExist && (
+                <>
+                  A record with the same AFE number already exists.{' '}
+                  <strong>
+                    Data acquired from this file will be appended into the said
+                    record.{' '}
+                  </strong>
+                </>
+              )}
+              Do you want to proceed? Make sure all inputs are correct.{' '}
+              {!afeExist && (
+                <strong>
+                  You won&apos;t be able to change AFE number and Data Type
+                  after the new record has been created.
+                </strong>
+              )}
             </p>
             <section className="flex w-full items-center justify-center space-x-2">
               <Button

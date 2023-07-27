@@ -39,9 +39,11 @@ const Input: React.FunctionComponent<InputProps> = ({
 
     // to close the dropdown items when the dropdown menu is clicked again
     if (document.activeElement === currentlyFocused) {
-      (document.activeElement as HTMLElement).blur();
-      setCurrentlyFocused(null);
-      setDoSearch(null);
+      if (!doSearch) {
+        (document.activeElement as HTMLElement).blur();
+        setCurrentlyFocused(null);
+        setDoSearch(null);
+      }
     } else {
       setCurrentlyFocused(document.activeElement);
     }
@@ -154,7 +156,7 @@ const Input: React.FunctionComponent<InputProps> = ({
             className={twMerge(
               `${
                 doSearch ? 'block' : 'hidden'
-              } group-focus:block active:block z-50 absolute bg-gray-200 shadow-lg drop-shadow-lg mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
+              } group-focus:block focus-within:block active:block z-50 absolute bg-gray-200 shadow-lg drop-shadow-lg mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
               additional_styles_menu_container,
             )}>
             {withSearch && dropdown_items.length > 0 && (
