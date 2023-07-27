@@ -31,6 +31,13 @@ import getFileType from '../../utils/filetype';
 import {useAppDispatch} from '../../store';
 import {delay} from '../../utils/common';
 
+const routes = {
+  dropdown: '/upload_file/matching_dropdown',
+  highlight: '/upload_file/matching_highlight',
+  dragdrop: '/upload_file/matching_draggable',
+  automatic: '/upload_file/matching_auto',
+};
+
 export default function UploadFilePage({config, setTitle}) {
   const router = useRouter();
   const path_query =
@@ -290,7 +297,7 @@ export default function UploadFilePage({config, setTitle}) {
             afe_exist: true,
           });
           setpopupMessage({
-            message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Data acquired from this file will be appended to the existing record. You can edit below fields in the review section later on.`,
+            message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Data acquired from this file will be appended to the existing record. You can edit the fields below in the review section later on.`,
             color: 'blue',
           });
         } else {
@@ -601,17 +608,12 @@ export default function UploadFilePage({config, setTitle}) {
           <Button
             type="submit"
             path={
+              // all fields must not be empty check
               fileUpload.length <= 1 ||
               Object.values(UplSettings).some(x => {
                 return x === null || x === '';
               })
-                ? UplSettings.Method === 'dropdown'
-                  ? '/upload_file/matching_dropdown'
-                  : UplSettings.Method === 'highlight'
-                  ? '/upload_file/matching_highlight'
-                  : UplSettings.Method === 'dragdrop'
-                  ? '/upload_file/matching_draggable'
-                  : '/upload_file/matching_auto'
+                ? routes[UplSettings.Method]
                 : ''
             }
             query={{form_type: datatypes[UplSettings.DataType]}}
