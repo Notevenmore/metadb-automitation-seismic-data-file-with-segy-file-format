@@ -86,11 +86,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
 
   const init = useCallback(() => {
     router.events.emit('routeChangeStart');
-    // get workspaces
-    // TODO: could later be used as a dynamic route for multiple data types,
-    // meaning only need to change the fetch link and page title and it's good to go.
-    // TODO 16/6/23: ye i changed it to dynamic huray
-
     fetch(`${config[datatype]['afe']}`, {
       method: 'GET',
       headers: {
