@@ -6,7 +6,7 @@ import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
-import {checkAfe} from '../../components/utility_functions';
+import {checkAfe, downloadWorkspace} from '../../components/utility_functions';
 import {TokenExpired} from '../../services/admin';
 import {useAppDispatch} from '../../store';
 import Plus from '../../public/icons/plus.svg';
@@ -119,6 +119,53 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             Type: workspace.submission_type,
             Action: (
               <div className="flex flex-row gap-x-4 items-center">
+                <Button
+                  title="Download"
+                  additional_styles="px-3 hover:bg-green-300"
+                  className="flex"
+                  onClick={e => {
+                    downloadWorkspace(
+                      router,
+                      config,
+                      workspace.afe_number,
+                      dispatch,
+                    );
+                  }}>
+                  <div className="w-[18px] h-[18px]">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 256 256">
+                      <rect width="256" height="256" fill="none" />
+                      <polyline
+                        points="86 110 128 152 170 110"
+                        fill="none"
+                        stroke="#000"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="24"
+                      />
+                      <line
+                        x1="128"
+                        y1="40"
+                        x2="128"
+                        y2="152"
+                        fill="none"
+                        stroke="#000"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="24"
+                      />
+                      <path
+                        d="M216,152v56a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V152"
+                        fill="none"
+                        stroke="#000"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="24"
+                      />
+                    </svg>
+                  </div>
+                </Button>
                 <Button
                   title="Edit record"
                   additional_styles="px-3"
