@@ -141,7 +141,6 @@ export default function UploadFileReview({setTitle, config}) {
         config,
         spreadsheetID,
         workspaceData,
-        setMessage,
         dispatch,
       );
       if (save_result.success) {
