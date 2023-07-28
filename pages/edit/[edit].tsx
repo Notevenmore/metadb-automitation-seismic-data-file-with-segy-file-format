@@ -117,15 +117,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
 
   const saveDocumentHandler = useCallback(() => {
     router.events.emit('routeChangeStart');
-    saveDocument(
-      null,
-      router,
-      config,
-      spreadsheetId,
-      workspaceData,
-      setMessage,
-      dispatch,
-    )
+    saveDocument(null, router, config, spreadsheetId, workspaceData, dispatch)
       .then(async result => {
         if (result.success) {
           setIsSaved(true);
@@ -172,14 +164,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
 
   const downloadWorkspaceHandler = useCallback(() => {
     router.events.emit('routeChangeStart');
-    downloadWorkspace(
-      router,
-      config,
-      spreadsheetId,
-      workspaceData,
-      setMessage,
-      dispatch,
-    )
+    downloadWorkspace(router, config, workspaceData, dispatch)
       .then(result => {
         if (result.success) {
           dispatch(
