@@ -167,8 +167,7 @@ export default function UploadFilePage({config, setTitle}) {
         }
       }
       settoggleOverlay(false);
-      let post_workspace: string;
-      if (submit && !afeExist) {
+      if (submit) {
         dispatch(
           displayErrorMessage({
             message:
@@ -184,7 +183,7 @@ export default function UploadFilePage({config, setTitle}) {
         ) {
           throw 'Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.';
         }
-        post_workspace = await fetch(
+        const post_workspace = await fetch(
           `${config[datatypes[UplSettings.DataType]]['afe']}`,
           {
             method: 'POST',
@@ -210,40 +209,40 @@ export default function UploadFilePage({config, setTitle}) {
           }
           return res.text();
         });
-      }
-      if (post_workspace === 'OK' || afeExist) {
-        dispatch(
-          displayErrorMessage({
-            message: `${
-              !afeExist ? 'Success. A new record has been created.' : ''
-            } Redirecting to the next page...`,
-            color: 'blue',
-            duration: 1500,
-          }),
-        );
-        router.events.emit('routeChangeComplete');
-        await delay(1000);
-        router.push({
-          pathname:
-            UplSettings.Method === 'dropdown'
-              ? '/upload_file/matching_dropdown'
-              : UplSettings.Method === 'highlight'
-              ? '/upload_file/matching_highlight'
-              : UplSettings.Method === 'dragdrop'
-              ? '/upload_file/matching_draggable'
-              : '/upload_file/matching_auto',
-          query: {
-            form_type: datatypes[UplSettings.DataType],
-          },
-        });
-      } else {
-        dispatch(
-          displayErrorMessage({
-            message:
-              'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
-            color: 'red',
-          }),
-        );
+        if (post_workspace === 'OK' || afeExist) {
+          dispatch(
+            displayErrorMessage({
+              message: `${
+                !afeExist ? 'Success. A new record has been created.' : ''
+              } Redirecting to the next page...`,
+              color: 'blue',
+              duration: 1500,
+            }),
+          );
+          router.events.emit('routeChangeComplete');
+          await delay(1000);
+          router.push({
+            pathname:
+              UplSettings.Method === 'dropdown'
+                ? '/upload_file/matching_dropdown'
+                : UplSettings.Method === 'highlight'
+                ? '/upload_file/matching_highlight'
+                : UplSettings.Method === 'dragdrop'
+                ? '/upload_file/matching_draggable'
+                : '/upload_file/matching_auto',
+            query: {
+              form_type: datatypes[UplSettings.DataType],
+            },
+          });
+        } else {
+          dispatch(
+            displayErrorMessage({
+              message:
+                'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
+              color: 'red',
+            }),
+          );
+        }
       }
     } catch (error) {
       dispatch(
