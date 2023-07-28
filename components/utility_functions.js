@@ -1,7 +1,6 @@
 import { parseCookies } from 'nookies';
 import { TokenExpired } from '../services/admin';
-import { setErrorMessage } from '../store/generalSlice';
-import { store } from './../store/index';
+import { displayErrorMessage, setErrorMessage } from '../store/generalSlice';
 import { getHeader } from '../services/document';
 
 export const init_data = async (config, router, workspaceData) => {
@@ -107,7 +106,6 @@ export const saveDocument = async (
   config,
   spreadsheetId,
   workspaceData,
-  setMessage,
   dispatch,
 ) => {
   if (e) {
@@ -254,45 +252,39 @@ export const saveDocument = async (
       throw err;
     });
 
-  // for 2d_seismic_field_digital_data only (for now)
   let field_types_final = {};
-  // if (router.query.form_type === "2d_seismic_field_digital_data"){
-  if (true) {
-    dispatch(
-      setErrorMessage({
-        message: 'Getting information about column types...',
-        color: 'blue',
-        show: true,
-      }),
-    );
-    const field_types = await fetch(
-      `${config[router.query.form_type]['view'].slice(0, -1)}-column/`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-            }`,
-        },
+  dispatch(
+    setErrorMessage({
+      message: 'Getting information about column types...',
+      color: 'blue',
+      show: true,
+    }),
+  );
+  const field_types = await fetch(
+    `${config[router.query.form_type]['view'].slice(0, -1)}-column/`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+          }`,
       },
+    },
+  )
+    .then(res =>
+      Promise.all([res.status, res.status !== 200 ? res.text() : res.json()]),
     )
-      .then(res =>
-        Promise.all([res.status, res.status !== 200 ? res.text() : res.json()]),
-      )
-      .then(([status, res]) => {
-        if (status !== 200) {
-          TokenExpired(status);
-          throw `Service returned with status ${status} on column type GET: ${res}`;
-        }
-        return res;
-      });
-
-    Object.keys(field_types).forEach(key => {
-      field_types_final[key.toLowerCase()] = field_types[key];
+    .then(([status, res]) => {
+      if (status !== 200) {
+        TokenExpired(status);
+        throw `Service returned with status ${status} on column type GET: ${res}`;
+      }
+      return res;
     });
 
-    console.log(field_types_final);
-  }
+  Object.keys(field_types).forEach(key => {
+    field_types_final[key.toLowerCase()] = field_types[key];
+  });
 
   dispatch(
     setErrorMessage({
@@ -317,19 +309,6 @@ export const saveDocument = async (
         // a try catch was put here to avoid new data being undefined if its length is shorter than old data
         try {
           if (!row[header.toLowerCase()]) {
-            // TODO temporary only for 2d seismic digital data, change later for all data types
-            // if (router.query.form_type === "2d_seismic_field_digital_data") {
-
-            // } else {
-            //   if (header.toLowerCase().includes('page')) {
-            //     row[header.toLowerCase()] =
-            //       spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
-            //   } else {
-            //     row[header.toLowerCase()] =
-            //       spreadsheet_data?.response[idx_row][idx_col] || null;
-            //   }
-            // }
-
             if (/int|float/g.test(field_types_final[header.toLowerCase()])) {
               row[header.toLowerCase()] =
                 spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
@@ -575,15 +554,22 @@ export const downloadWorkspace = async (
   workspaceData,
   dispatch,
 ) => {
-  dispatch(
-    setErrorMessage({
-      message: 'Downloading record as XLSX file, please wait...',
-      color: 'blue',
-      show: true,
-    }),
-  );
   if (router.query.form_type && workspaceData.afe_number) {
+    dispatch(
+      setErrorMessage({
+        message: 'Getting record  data, please wait...',
+        color: 'blue',
+        show: true,
+      }),
+    );
     const record = await init_data(config, router, workspaceData)
+    dispatch(
+      setErrorMessage({
+        message: 'Processing record data, please wait...',
+        color: 'blue',
+        show: true,
+      }),
+    );
     const spreadsheet_download = await fetch(
       `${config.services.sheets}/downloadSheet`,
       {
@@ -613,6 +599,13 @@ export const downloadWorkspace = async (
     console.log(
       `new temp spreadsheet download: ${spreadsheet_download.response}`,
     );
+    dispatch(
+      setErrorMessage({
+        message: 'Downloading record as XLSX file, please wait...',
+        color: 'blue',
+        show: true,
+      }),
+    );
     await fetch(
       `https://docs.google.com/spreadsheets/d/${spreadsheet_download.response}/export?format=xlsx&id=${spreadsheet_download.response}`,
     )
@@ -636,12 +629,14 @@ export const downloadWorkspace = async (
       console.log(err);
     });
     dispatch(
-      setErrorMessage({
+      displayErrorMessage({
         message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
         color: 'blue',
-        show: true,
+        duration: 3000,
       }),
     );
+  } else {
+    throw "Failed to download record. Please send a report to application maintainer/developer"
   }
   return { success: true };
 };
@@ -668,3 +663,93 @@ export const checkAfe = async (e, config, data_type, afe_number) => {
     });
   return afe_exist;
 };
+
+export const getColumnBinder = (config, data_type) => {
+  return config[data_type]['column_binder']?.split('-').join(' ') || '!!NOT IMPLEMENTED YET!!'
+}
+
+export const getDataTypeNoUnderscore = (data_type) => {
+  return data_type.split("_").join(" ")
+}
+
+export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Image, datatype, config, dispatch, deleteWorkspace, init) => {
+  if (!workspaces_list) { return workspaces_list }
+  let final = []
+  workspaces_list.forEach(workspace => {
+    final.push({
+      KKKS: workspace.kkks_name,
+      'Working area': workspace.working_area,
+      AFE: workspace.afe_number,
+      Type: workspace.submission_type,
+      Action: (
+        <div className="flex flex-row gap-x-4 items-center">
+          <Button
+            title="Download"
+            additional_styles="px-3 hover:bg-green-300"
+            className="flex"
+            onClick={async e => {
+              try {
+                await downloadWorkspace(
+                  { query: { form_type: datatype } },
+                  config,
+                  workspace,
+                  dispatch,
+                );
+              } catch (error) {
+                dispatch(
+                  setErrorMessage({
+                    message: String(error),
+                    color: 'blue',
+                    show: true,
+                  }),
+                );
+              }
+            }}>
+            <div className="w-[18px] h-[18px]">
+              <DownloadCommon className="w-5 h-5" />
+            </div>
+          </Button>
+          <Button
+            title="Edit record"
+            additional_styles="px-3"
+            className="flex"
+            path={`/edit/${workspace.workspace_name}`}
+            query={{
+              form_type: datatype,
+              workspace_data: workspace.afe_number,
+            }}>
+            <div className="w-[18px] h-[18px] flex items-center">
+              <Image
+                src="/icons/pencil.svg"
+                width={50}
+                height={50}
+                className="w-[25px] h-[15px] alt='' "
+                alt="icon"
+              />
+            </div>
+          </Button>
+          <Button
+            additional_styles="px-3 hover:bg-red-400"
+            className="flex"
+            title="Delete record"
+            onClick={e => {
+              deleteWorkspace(e, workspace.afe_number).then(() => {
+                init();
+              });
+            }}>
+            <div className="w-[18px] h-[18px] flex items-center">
+              <Image
+                src="/icons/delete.svg"
+                width={50}
+                height={50}
+                className="w-[25px] h-[15px] alt='' "
+                alt="icon"
+              />
+            </div>
+          </Button>
+        </div>
+      ),
+    });
+  })
+  return final
+}
