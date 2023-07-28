@@ -55,7 +55,6 @@ export default function NewDocumentPage({setTitle, config}) {
         config,
         spreadsheetID,
         workspaceData,
-        setMessage,
         dispatch,
       );
       if (save_result.success) {
