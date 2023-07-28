@@ -373,7 +373,7 @@ export default function UploadFilePage({config, setTitle}) {
               type="file"
               className="hidden"
               ref={fileUploadRef}
-              accept="image/png, application/pdf, application/vnd.openxmlformats-officedocument.presentationml.presentation, text/csv, .las"
+              accept="image/png, application/pdf, application/vnd.openxmlformats-officedocument.presentationml.presentation, text/csv, .las, .txt"
               onChange={changeFile}
             />
           </div>

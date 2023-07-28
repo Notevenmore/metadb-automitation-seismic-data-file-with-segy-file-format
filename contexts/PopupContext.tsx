@@ -1,5 +1,6 @@
-import {ReactNode, createContext, useState} from 'react';
+import {ReactNode, createContext, useEffect, useState} from 'react';
 import Popup from '@components/popup';
+import { useRouter } from 'next/router';
 
 const PopupContext = createContext<any | null>(null);
 
@@ -36,6 +37,11 @@ function PopupProvider({children}: {children: ReactNode}) {
       title: '',
     });
   };
+
+  const router = useRouter();
+  useEffect(() => {
+    closePopup();
+  }, [router])
 
   return (
     <PopupContext.Provider
