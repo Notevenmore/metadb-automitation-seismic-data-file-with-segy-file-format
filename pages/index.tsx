@@ -103,7 +103,7 @@ const HomeSection = ({config}) => {
             displayErrorMessage({
               message: 'Success. Redirecting to the next page...',
               color: 'blue',
-              duration: 1500
+              duration: 1500,
             }),
           );
         }, 0);
@@ -307,7 +307,7 @@ const HomeSection = ({config}) => {
                       popupMessage.message
                         ? 'visible opacity-100'
                         : 'invsible opacity-0 -translate-x-2'
-                    } absolute ml-4 left-full -translate-y-[50%] top-1/2 border-2 ${
+                    } absolute ml-4 left-full -translate-y-1/2 top-1/2 border-2 ${
                       popupMessage.color === 'red'
                         ? 'bg-red-100 border-red-500'
                         : 'bg-searchbg border-blue-500'
@@ -321,7 +321,7 @@ const HomeSection = ({config}) => {
                       popupMessage.message
                         ? 'visible opacity-100'
                         : 'invsible opacity-0 -translate-x-2'
-                    } absolute ml-3 left-full -translate-y-[50%] top-1/2 border-2 rotate-45 h-2 w-2 ${
+                    } absolute ml-3 left-full -translate-y-1/2 top-1/2 border-2 rotate-45 h-2 w-2 ${
                       popupMessage.color === 'red'
                         ? 'bg-red-500 border-red-500'
                         : 'bg-blue-500 border-blue-500'

@@ -578,7 +578,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                       popupMessage.message
                         ? 'visible opacity-100'
                         : 'invsible opacity-0 -translate-x-2'
-                    } absolute ml-4 left-[100%] -translate-y-[50%] top-[50%] border-2 ${
+                    } absolute ml-4 left-[100%] -translate-y-1/2 top-1/2 border-2 ${
                       popupMessage.color === 'red'
                         ? 'bg-red-100 border-red-500'
                         : 'bg-searchbg border-blue-500'
@@ -592,7 +592,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                       popupMessage.message
                         ? 'visible opacity-100'
                         : 'invsible opacity-0 -translate-x-2'
-                    } absolute ml-3 left-[100%] -translate-y-[50%] top-[50%] border-2 rotate-45 h-2 w-2 ${
+                    } absolute ml-3 left-[100%] -translate-y-1/2 top-1/2 border-2 rotate-45 h-2 w-2 ${
                       popupMessage.color === 'red'
                         ? 'bg-red-500 border-red-500'
                         : 'bg-blue-500 border-blue-500'
@@ -713,7 +713,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             <hr />
             <div className="border-2 rounded-lg h-[85%] overflow-auto relative">
               <div className="flex justify-between items-center p-5 sticky top-0 bg-white">
-                <p className="font-semibold w-[50%] break-words">
+                <p className="font-semibold w-1/2 break-words">
                   <strong>Search by {getColumnBinder(config, datatype)}</strong>{' '}
                   to find {getDataTypeNoUnderscore(datatype)} record(s) you want
                   to download:
