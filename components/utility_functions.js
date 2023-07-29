@@ -713,7 +713,6 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
                 src="/icons/pencil.svg"
                 width={50}
                 height={50}
-                className="w-[25px] h-[15px] alt='' "
                 alt="icon"
               />
             </div>
@@ -732,7 +731,6 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
                 src="/icons/delete.svg"
                 width={50}
                 height={50}
-                className="w-[25px] h-[15px] alt='' "
                 alt="icon"
               />
             </div>
