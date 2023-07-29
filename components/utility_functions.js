@@ -1,6 +1,6 @@
 import { parseCookies } from 'nookies';
 import { TokenExpired } from '../services/admin';
-import { displayErrorMessage, setErrorMessage } from '../store/generalSlice';
+import { displayErrorMessage, displayErrorMessage } from '../store/generalSlice';
 import { getHeader } from '../services/document';
 
 export const init_data = async (config, router, workspaceData) => {
@@ -115,11 +115,10 @@ export const saveDocument = async (
   // Check if spreadsheetId is available
   if (!spreadsheetId) {
     dispatch(
-      setErrorMessage({
+      displayErrorMessage({
         message:
           'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
         color: 'red',
-        show: true,
       }),
     );
     return;
@@ -127,11 +126,10 @@ export const saveDocument = async (
 
   // Set saving message
   dispatch(
-    setErrorMessage({
+    displayErrorMessage({
       message:
         "Checking changes in record information... Please don't leave this page or click anything",
       color: 'blue',
-      show: true,
     }),
   );
 
@@ -168,11 +166,10 @@ export const saveDocument = async (
 
   if (workspace_data_changed) {
     dispatch(
-      setErrorMessage({
+      displayErrorMessage({
         message:
           "Saving record information... Please don't leave this page or click anything",
         color: 'blue',
-        show: true,
       }),
     );
     await fetch(
@@ -201,11 +198,10 @@ export const saveDocument = async (
   }
 
   dispatch(
-    setErrorMessage({
+    displayErrorMessage({
       message:
         "Checking changes in record data... Please don't leave this page or click anything",
       color: 'blue',
-      show: true,
     }),
   );
   // fetch original data from database
@@ -254,10 +250,9 @@ export const saveDocument = async (
 
   let field_types_final = {};
   dispatch(
-    setErrorMessage({
+    displayErrorMessage({
       message: 'Getting information about column types...',
       color: 'blue',
-      show: true,
     }),
   );
   const field_types = await fetch(
@@ -287,11 +282,10 @@ export const saveDocument = async (
   });
 
   dispatch(
-    setErrorMessage({
+    displayErrorMessage({
       message:
         "Saving record data... Please don't leave this page or click anything",
       color: 'blue',
-      show: true,
     }),
   );
   var idx_row = 0;
@@ -556,18 +550,16 @@ export const downloadWorkspace = async (
 ) => {
   if (router.query.form_type && workspaceData.afe_number) {
     dispatch(
-      setErrorMessage({
+      displayErrorMessage({
         message: 'Getting record  data, please wait...',
         color: 'blue',
-        show: true,
       }),
     );
     const record = await init_data(config, router, workspaceData)
     dispatch(
-      setErrorMessage({
+      displayErrorMessage({
         message: 'Processing record data, please wait...',
         color: 'blue',
-        show: true,
       }),
     );
     const spreadsheet_download = await fetch(
@@ -600,10 +592,9 @@ export const downloadWorkspace = async (
       `new temp spreadsheet download: ${spreadsheet_download.response}`,
     );
     dispatch(
-      setErrorMessage({
+      displayErrorMessage({
         message: 'Downloading record as XLSX file, please wait...',
         color: 'blue',
-        show: true,
       }),
     );
     await fetch(
@@ -697,10 +688,9 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
                 );
               } catch (error) {
                 dispatch(
-                  setErrorMessage({
+                  displayErrorMessage({
                     message: String(error),
                     color: 'blue',
-                    show: true,
                   }),
                 );
               }
