@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  mode: 'jit',
   content: [
     './app/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',
@@ -25,6 +26,15 @@ module.exports = {
           },
         },
       },
+      spacing: {
+        '18p': '18px',
+        '60p': '60px',
+        '170p': '170px',
+        '250p': '250px',
+        '60pc': "60%",
+        '85pc': "85%",
+        '90pc': "90%",
+      }
     },
   },
   plugins: [require('@tailwindcss/typography')],
