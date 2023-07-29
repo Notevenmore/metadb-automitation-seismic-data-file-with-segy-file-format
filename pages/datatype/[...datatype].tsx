@@ -8,7 +8,6 @@ import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
 import {
   checkAfe,
-  downloadWorkspace,
   formatWorkspaceList,
   getColumnBinder,
   getDataTypeNoUnderscore,
@@ -120,81 +119,10 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
           return res;
         })
         .then(res => {
-          // let final = [];
           if (!res) {
             setData([0]);
             return;
           }
-          // res.forEach(workspace => {
-          //   final.push({
-          //     KKKS: workspace.kkks_name,
-          //     'Working area': workspace.working_area,
-          //     AFE: workspace.afe_number,
-          //     Type: workspace.submission_type,
-          //     Action: (
-          //       <div className="flex flex-row gap-x-4 items-center">
-          //         <Button
-          //           title="Download"
-          //           additional_styles="px-3 hover:bg-green-300"
-          //           className="flex"
-          //           onClick={async e => {
-          //             try {
-          //               await downloadWorkspace(
-          //                 {query: {form_type: datatype}},
-          //                 config,
-          //                 workspace,
-          //                 dispatch,
-          //               );
-          //             } catch (error) {
-          //               seterror(String(error));
-          //             }
-          //           }}>
-          //           <div className="w-[18px] h-[18px]">
-          //             <DownloadCommon className="w-5 h-5" />
-          //           </div>
-          //         </Button>
-          //         <Button
-          //           title="Edit record"
-          //           additional_styles="px-3"
-          //           className="flex"
-          //           path={`/edit/${workspace.workspace_name}`}
-          //           query={{
-          //             form_type: datatype,
-          //             workspace_data: workspace.afe_number,
-          //           }}>
-          //           <div className="w-[18px] h-[18px] flex items-center">
-          //             <Image
-          //               src="/icons/pencil.svg"
-          //               width={50}
-          //               height={50}
-          //               className="w-[25px] h-[15px] alt='' "
-          //               alt="icon"
-          //             />
-          //           </div>
-          //         </Button>
-          //         <Button
-          //           additional_styles="px-3 hover:bg-red-400"
-          //           className="flex"
-          //           title="Delete record"
-          //           onClick={e => {
-          //             deleteWorkspace(e, workspace.afe_number).then(() => {
-          //               init();
-          //             });
-          //           }}>
-          //           <div className="w-[18px] h-[18px] flex items-center">
-          //             <Image
-          //               src="/icons/delete.svg"
-          //               width={50}
-          //               height={50}
-          //               className="w-[25px] h-[15px] alt='' "
-          //               alt="icon"
-          //             />
-          //           </div>
-          //         </Button>
-          //       </div>
-          //     ),
-          //   });
-          // });
           const final = formatWorkspaceList(
             res,
             Button,
@@ -520,30 +448,30 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       </Container.Title>
       <TableComponent
         header={
-          searchData[0] !== -1
-            ? searchData.length === 0
-              ? ['Search did not return any result']
-              : ['AFE', 'KKKS', 'Working area', 'Type', 'Action']
-            : data.length !== 0
-            ? data[0] === 0
-              ? ['No records have been created']
-              : ['AFE', 'KKKS', 'Working area', 'Type', 'Action']
-            : error
-            ? ['Connection error']
-            : ['Loading...']
+          searchData[0] !== -1 // if there exist search data
+            ? searchData.length === 0 // if search length of search data is 0
+              ? ['Search did not return any result'] // self explanatory
+              : ['AFE', 'KKKS', 'Working area', 'Type', 'Action'] // else display default headers
+            : data.length !== 0 // else if no search data and length of data is not 0
+            ? data[0] === 0 // if index 0 of data is 0
+              ? ['No records have been created'] // means that no record has been created
+              : ['AFE', 'KKKS', 'Working area', 'Type', 'Action'] // else display default headers
+            : error // else if there exist error
+            ? ['Connection error'] // means that there's a connection error
+            : ['Loading...'] // else it's loading
         }
         content={
-          searchData[0] !== -1
-            ? searchData.length === 0
+          searchData[0] !== -1 // if there exist search data
+            ? searchData.length === 0 // if length of search data is 0: no records found
               ? [
                   {
                     'Search did not return any result':
                       'No records found with such attributes',
                   },
                 ]
-              : searchData
-            : data.length === 0
-            ? error
+              : searchData // else display the search data
+            : data.length === 0 // else if no search data and length of data is 0
+            ? error // if there exist error: self explanatory
               ? [
                   {
                     'Connection error':
@@ -551,14 +479,14 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                   },
                 ]
               : [{'Loading...': 'Getting record list...'}]
-            : data[0] === 0
+            : data[0] === 0 // else if index 0 of data is 0: no record has been created
             ? [
                 {
                   'No records have been created':
                     'Heads up! Create a new record by clicking the + button below',
                 },
               ]
-            : data
+            : data // else display records list
         }
         setSelectedRows={selectedTableData}
         contentAlignWithHeader
