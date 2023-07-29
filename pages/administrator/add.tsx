@@ -39,13 +39,13 @@ export default function AddNewUserPage() {
     if (detail.userid && /\s/.test(detail.userid)) {
       dispatch(
         displayErrorMessage({
-          message: "Inputted userid cannot contain space. Please retype.",
+          message: 'Inputted userid cannot contain space. Please retype.',
           color: 'red',
         }),
       );
       return;
-    } 
-    
+    }
+
     const data = {
       ...detail,
       profile_picture: defaultProfile(),
@@ -80,7 +80,7 @@ export default function AddNewUserPage() {
         if (err.response.status === 409) {
           dispatch(
             displayErrorMessage({
-              message: "Inputted userid already exist",
+              message: 'Inputted userid already exist',
               color: 'red',
             }),
           );
@@ -152,7 +152,7 @@ export default function AddNewUserPage() {
         <div className="flex items-center gap-x-3">
           <button
             type="submit"
-            className="px-3 py-1 rounded-[5px] hover:drop-shadow-lg bg-primary">
+            className="px-3 py-1 rounded-5p hover:drop-shadow-lg bg-primary">
             Add User
           </button>
         </div>

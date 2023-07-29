@@ -32,7 +32,7 @@ const HeaderRow = ({children, ...props}) => {
   return (
     <div
       className="flex justify-center lg:items-center
-         lg:flex-row flex-col w-full py-[10px] lg:h-[55px]"
+         lg:flex-row flex-col w-full py-10p lg:h-55p"
       {...props}>
       {children}
     </div>
@@ -41,14 +41,11 @@ const HeaderRow = ({children, ...props}) => {
 
 const HeaderLabel = ({label1, label2}) => {
   return (
-    <div
-      className={
-        'flex flex-wrap space-x-2 lg:min-w-[325px] mb-[7px] lg:my-[5px]'
-      }>
+    <div className={'flex flex-wrap space-x-2 lg:min-w-325p mb-7p lg:my-5p'}>
       {label2 ? (
         <>
           <label>{label1}</label>
-          <label className="text-[#A3A3A3]">{label2}</label>
+          <label className="text-grayish">{label2}</label>
         </>
       ) : (
         <label className="font-semibold">{label1}</label>
@@ -61,12 +58,12 @@ export const HeaderStatic = ({label1, label2, content = ''}) => {
   return (
     <HeaderRow>
       {label2 ? (
-        <p className="font-semibold lg:min-w-[325px] max-lg:mb-2">
+        <p className="font-semibold lg:min-w-325p max-lg:mb-2">
           {label1}
-          <span className="font-light text-[#A3A3A3]"> {label2}</span>
+          <span className="font-light text-grayish"> {label2}</span>
         </p>
       ) : (
-        <p className="font-semibold min-w-[325px]">{label1}</p>
+        <p className="font-semibold min-w-325p">{label1}</p>
       )}
       <p className="inline lg:ml-2 w-full">{content}</p>
     </HeaderRow>

@@ -324,7 +324,7 @@ export default function UploadFilePage({config, setTitle}) {
   }, [setTitle]);
 
   const activeStyle =
-    'bg-searchbg/60 border-2 border-gray-400 box-border w-[254px] transition ease-in duration-500';
+    'bg-searchbg/60 border-2 border-gray-400 box-border w-254p transition ease-in duration-500';
 
   return (
     <Container additional_class="full-height relative" onDragEnter={handleDrag}>
@@ -443,7 +443,7 @@ export default function UploadFilePage({config, setTitle}) {
               className={`${
                 popupMessage.message
                   ? 'p-1 max-h-[1000px] visible'
-                  : 'max-h-[0px] -translate-y-1'
+                  : 'max-h-0 -translate-y-1'
               } ${
                 popupMessage.message
                   ? popupMessage.color === 'red'
@@ -532,7 +532,7 @@ export default function UploadFilePage({config, setTitle}) {
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
                 <List className="w-10 h-10" />
-                <section className="w-[150px]">
+                <section className="w-150p">
                   <h3 className="text-lg font-bold">Drop down</h3>
                   <p className="text-sm">
                     Choose the correct data matches using drop downs.
@@ -552,7 +552,7 @@ export default function UploadFilePage({config, setTitle}) {
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
                 <Select className="w-10 h-10" />
-                <section className="w-[150px]">
+                <section className="w-150p">
                   <h3 className="text-lg font-bold">Highlighting</h3>
                   <p className="text-sm">
                     Match the data by highlighting the document preview.
@@ -572,7 +572,7 @@ export default function UploadFilePage({config, setTitle}) {
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
                 <Hand className="w-10 h-10" />
-                <section className="w-[150px]">
+                <section className="w-150p">
                   <h3 className="text-lg font-bold">Drag and drop</h3>
                   <p className="text-sm">
                     Choose the correct data matches using drag and drop method.
@@ -592,7 +592,7 @@ export default function UploadFilePage({config, setTitle}) {
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
                 <Robot className="w-10 h-10" />
-                <section className="w-[150px]">
+                <section className="w-150p">
                   <h3 className="text-lg font-bold">Automatic</h3>
                   <p className="text-sm">
                     Automatically try to predict data and their respective
@@ -702,7 +702,7 @@ export default function UploadFilePage({config, setTitle}) {
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}>
-          <div className="border-dashed border-4 border-black/30 rounded-lg p-10 flex flex-col justify-center space-y-3 items-center w-4/5 bg-searchbg/[.5] h-[550px]">
+          <div className="border-dashed border-4 border-black/30 rounded-lg p-10 flex flex-col justify-center space-y-3 items-center w-4/5 bg-searchbg/[.5] h-550p">
             <div className="w-full text-center">
               <p className="text-4xl font-bold">Drop your file here</p>
             </div>

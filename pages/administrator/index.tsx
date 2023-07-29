@@ -19,19 +19,21 @@ export default function AdministratorPage() {
   const [filteredList, setFilteredList] = useState(list);
 
   const handleProfiles = () => {
-    getProfiles().then((res) => {
-      if (!res) return;
-      const users = res.filter(item => item.userid !== 'admin');
-      setList(users);
-      setFilteredList(users);
-    }).catch((err) => {
-      dispatch(
-        displayErrorMessage({
-          message: `${String(err)}`,
-          color: 'red',
-        }),
-      );
-    })
+    getProfiles()
+      .then(res => {
+        if (!res) return;
+        const users = res.filter(item => item.userid !== 'admin');
+        setList(users);
+        setFilteredList(users);
+      })
+      .catch(err => {
+        dispatch(
+          displayErrorMessage({
+            message: `${String(err)}`,
+            color: 'red',
+          }),
+        );
+      });
   };
 
   useEffect(() => {
@@ -92,7 +94,7 @@ export default function AdministratorPage() {
             Add User
           </Button>
         </div>
-        <div className="w-full h-auto border-gray-500 border-[1px] rounded-[5px] flex flex-col">
+        <div className="w-full h-auto border-gray-500 border rounded-5p flex flex-col">
           <ItemRow>
             <Item name="Name" /> <Item name="Actions" />
           </ItemRow>
@@ -107,7 +109,7 @@ export default function AdministratorPage() {
                       alt="image"
                       width={100}
                       height={100}
-                      className="w-[20px] h-[20px] cursor-pointer"
+                      className="w-20p h-20p cursor-pointer"
                       priority
                     />
                   </Link>
@@ -116,7 +118,7 @@ export default function AdministratorPage() {
                     alt="image"
                     width={100}
                     height={100}
-                    className="w-[20px] h-[20px] cursor-pointer"
+                    className="w-20p h-20p cursor-pointer"
                     priority
                     onClick={() => handleRemove(item.userid)}
                   />

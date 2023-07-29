@@ -98,7 +98,7 @@ const Input: React.FunctionComponent<InputProps> = ({
         className={twMerge(
           `${
             label.toLowerCase() !== 'none' ? 'block' : 'hidden'
-          } w-[45%]  border-black`,
+          } w-45pc border-black`,
           additional_styles_label,
         )}>
         {label}
@@ -143,7 +143,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                 handleUnfocus;
               }}
               className={twMerge(
-                'truncate w-[90%] bg-transparent outline-none cursor-default select-none placeholder:text-gray-500',
+                'truncate w-90pc bg-transparent outline-none cursor-default select-none placeholder:text-gray-500',
                 additional_styles_input_dropdown,
               )}
               value={selected || 'Select an item'}
@@ -171,7 +171,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                 onChange={onSearch}
               />
             )}
-            <ul className="list-none max-h-[230px]">
+            <ul className="list-none max-h-230p">
               {SearchData.length > 0
                 ? SearchData.map((item, index) => {
                     return (

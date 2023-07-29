@@ -46,16 +46,14 @@ export const FloatDialog = ({
           `${
             show ? 'opacity-100 visible' : '-translate-y-1 opacity-0 invisible'
           } bg-white absolute z-50
-            border-[1px] border-solid border-float_dialog rounded-[10px]
+            border border-solid border-float_dialog rounded-10p
             h-fit transition-all shadow-lg drop-shadow`,
           className,
         )}
         style={{width: width}}>
         {float_title && (
           <>
-            <h2 className="text-base font-bold my-[20px] px-3">
-              {float_title}
-            </h2>
+            <h2 className="text-base font-bold my-20p px-3">{float_title}</h2>
             <Divider />
           </>
         )}

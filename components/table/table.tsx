@@ -2,15 +2,15 @@ import {twMerge} from 'tailwind-merge';
 import {useState, useEffect} from 'react';
 
 interface TableComponentProps {
-  header: any,
-  content: any,
-  with_checkbox?: boolean,
-  additional_styles?: string,
-  additional_styles_header?: string,
-  additional_styles_row?: string,
-  additional_styles_column?: string,
-  setSelectedRows?: any,
-  contentAlignWithHeader?: boolean,
+  header: any;
+  content: any;
+  with_checkbox?: boolean;
+  additional_styles?: string;
+  additional_styles_header?: string;
+  additional_styles_row?: string;
+  additional_styles_column?: string;
+  setSelectedRows?: any;
+  contentAlignWithHeader?: boolean;
 }
 
 const TableComponent = ({
@@ -86,10 +86,7 @@ const TableComponent = ({
         <tr className="text-left">
           {with_checkbox && (
             <th
-              className={twMerge(
-                'pl-[14px] pt-1 w-5',
-                additional_styles_header,
-              )}>
+              className={twMerge('pl-14p pt-1 w-5', additional_styles_header)}>
               <input
                 type="checkbox"
                 id="checkbox_all"
@@ -117,7 +114,7 @@ const TableComponent = ({
             {with_checkbox && (
               <td
                 className={twMerge(
-                  'pl-[14px] pt-1 w-5 border-t-2 border-solid border-black/20',
+                  'pl-14p pt-1 w-5 border-t-2 border-solid border-black/20',
                   additional_styles_row,
                 )}>
                 <input

@@ -203,8 +203,8 @@ const HomeSection = ({config}) => {
     <section
       className="flex flex-col justify-center items-center w-full h-full"
       onDragEnter={e => handleDrag(e)}>
-      <section className="flex flex-col justify-around w-[944px] h-[426px] items-center">
-        <FileIcon className="w-[114px] h-[132px]" />
+      <section className="flex flex-col justify-around w-944p h-426p items-center">
+        <FileIcon className="w-114p h-132p" />
         <h1 className="text-[24px] leading-[30px] font-semibold opacity-50 text-center">
           Choose the record of which data type to be shown by selecting from the
           side bar,
@@ -221,9 +221,9 @@ const HomeSection = ({config}) => {
           CSV, XLSX, or LAS format.
         </p>
         <section className="flex justify-center items-center">
-          <Divider additional_styles={'w-[284px]'} />
-          <h1 className="text-[24px] font-semibold opacity-50 mx-[37px]">or</h1>
-          <Divider additional_styles={'w-[284px]'} />
+          <Divider additional_styles={'w-284p'} />
+          <h1 className="text-[24px] font-semibold opacity-50 mx-37p">or</h1>
+          <Divider additional_styles={'w-284p'} />
         </section>
         <section className="flex flex-row gap-x-3">
           <Button
@@ -311,7 +311,7 @@ const HomeSection = ({config}) => {
                       popupMessage.color === 'red'
                         ? 'bg-red-100 border-red-500'
                         : 'bg-searchbg border-blue-500'
-                    } w-[60%] z-[9999999] p-1 rounded-md pointer-events-none transition-all`}>
+                    } w-60pc z-[9999999] p-1 rounded-md pointer-events-none transition-all`}>
                     <p className="font-semibold text-sm">
                       {popupMessage.message}
                     </p>

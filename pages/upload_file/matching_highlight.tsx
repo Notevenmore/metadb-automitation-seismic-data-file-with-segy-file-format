@@ -246,7 +246,7 @@ export default function MatchingGuided({config, setTitle}) {
           <p>Data Matching - Highlight</p>
         </div>
       </Container.Title>
-      <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
+      <div className="grid grid-cols-2 gap-2 border-2 rounded-lg p-2">
         <HeaderTable>{state.map(toRowComponent)}</HeaderTable>
         <ImageEditor
           boundsObserver={boundsObserver}
