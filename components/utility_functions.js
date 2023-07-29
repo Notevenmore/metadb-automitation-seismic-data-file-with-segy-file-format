@@ -1,6 +1,6 @@
 import { parseCookies } from 'nookies';
 import { TokenExpired } from '../services/admin';
-import { displayErrorMessage, displayErrorMessage } from '../store/generalSlice';
+import { displayErrorMessage } from '../store/generalSlice';
 import { getHeader } from '../services/document';
 
 export const init_data = async (config, router, workspaceData) => {
@@ -695,7 +695,7 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
                 );
               }
             }}>
-            <div className="w-[18px] h-[18px]">
+            <div className="w-18p h-18p">
               <DownloadCommon className="w-5 h-5" />
             </div>
           </Button>
@@ -708,7 +708,7 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
               form_type: datatype,
               workspace_data: workspace.afe_number,
             }}>
-            <div className="w-[18px] h-[18px] flex items-center">
+            <div className="w-18p h-18p flex items-center">
               <Image
                 src="/icons/pencil.svg"
                 width={50}
@@ -726,7 +726,7 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
                 init();
               });
             }}>
-            <div className="w-[18px] h-[18px] flex items-center">
+            <div className="w-18p h-18p flex items-center">
               <Image
                 src="/icons/delete.svg"
                 width={50}
