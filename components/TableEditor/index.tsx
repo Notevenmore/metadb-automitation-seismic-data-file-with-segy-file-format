@@ -5,16 +5,15 @@ import {
 } from 'react-tabulator';
 import 'react-tabulator/lib/styles.css';
 import 'tabulator-tables/dist/css/tabulator.min.css'; //import Tabulator stylesheet
-import {omitID} from './Helper';
-import {RowObject} from './type';
+import {formatDate, omitID} from './Helper';
+import {RowObject} from './Type';
 import {ACCESS_TOKEN, BASE_URL} from './Constants';
 
 interface TableProps {
   data: RowObject[];
   columns: ColumnDefinition[];
-  columnData: string[];
+  columnData: string[] | undefined;
   afeNumber: number;
-  // tableRef: ReactTabulatorOptions;
   options: ReactTabulatorOptions;
 }
 
@@ -23,7 +22,6 @@ export default function TableEditor({
   columns,
   columnData,
   afeNumber,
-  // tableRef,
   options,
 }: TableProps) {
   const sendData = () => {
@@ -36,7 +34,13 @@ export default function TableEditor({
     for (const key of Object.keys(row)) {
       try {
         if (/int|float/g.test(columnData[key])) {
-          row[key] = row[key] * 1 || null;
+          row[key] = Number(row[key]) * 1 || null;
+        } else if (
+          key.includes('date') &&
+          row[key] !== null &&
+          row[key] !== undefined
+        ) {
+          row[key] = formatDate(row[key], false);
         }
       } catch (e) {
         console.log('Error in filterData');
@@ -79,22 +83,19 @@ export default function TableEditor({
     });
   };
 
-  const deleteData = async (id: number) => {
-    const response = await fetch(`${BASE_URL}/api/v1/print-well-report/${id}`, {
+  const deleteData = (id: number) => {
+    return fetch(`${BASE_URL}/api/v1/print-well-report/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${ACCESS_TOKEN}`,
       },
     });
-
-    const result = await response.text();
-    console.log(result);
   };
 
-  const putData = async (row: RowObject, id: number) => {
+  const putData = (row: RowObject, id: number) => {
     filterData(row);
-    const response = await fetch(`${BASE_URL}/api/v1/print-well-report/${id}`, {
+    return fetch(`${BASE_URL}/api/v1/print-well-report/${id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
@@ -102,9 +103,6 @@ export default function TableEditor({
       },
       body: JSON.stringify(row),
     });
-
-    const result = await response.text();
-    console.log(result);
   };
 
   const processData = (row: RowObject) => {
@@ -163,12 +161,8 @@ export default function TableEditor({
         data={data}
         columns={columns}
         layout={'fitData'}
-        // onRef={(r) => (tableRef = r)}
         options={options}
         events={{
-          dataLoaded: function (table: any) {
-            console.log('dataLoaded', table);
-          },
           ajaxError: function (error: any) {
             console.log('ajaxError', error);
           },
