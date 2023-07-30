@@ -246,7 +246,7 @@ export default function MatchingGuided({config, setTitle}) {
           <p>Data Matching - Highlight</p>
         </div>
       </Container.Title>
-      <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
+      <div className="grid grid-cols-2 gap-2 border-2 rounded-lg p-2">
         <HeaderTable>{state.map(toRowComponent)}</HeaderTable>
         <ImageEditor
           boundsObserver={boundsObserver}
@@ -301,7 +301,7 @@ export default function MatchingGuided({config, setTitle}) {
         />
       </div>
       <div
-        className={`flex items-center space-x-2 fixed top-5 left-1/2 translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
+        className={`flex items-center space-x-2 fixed top-5 left-1/2 -translate-x-1/2 bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
           error ? '' : '-translate-y-20'
         }`}>
         <p>{error}</p>

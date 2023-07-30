@@ -337,7 +337,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           <p>Data Matching - Automatic</p>
         </div>
       </Container.Title>
-      <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
+      <div className="grid grid-cols-2 gap-2 border-2 rounded-lg p-2">
         <HeaderTable>
           {state.map(toRowComponent)}
           <HeaderDivider additional_styles={undefined} />

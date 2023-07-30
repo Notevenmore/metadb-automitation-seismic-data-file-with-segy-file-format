@@ -55,8 +55,8 @@ const Toast = ({additional_styles = ''}: {additional_styles?: string}) => {
       ref={ref}
       className={twMerge(
         `flex items-center space-x-2 fixed left-1/2
-      translate-x-[-50%] text-white
-      px-3 rounded-lg py-2 transition-all duration-[230ms] z-[9999]`,
+      translate-x-1/2 text-white
+      px-3 rounded-lg py-2 transition-all duration-230 z-[9999]`,
         additional_styles,
       )}
       style={{

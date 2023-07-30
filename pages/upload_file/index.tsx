@@ -167,8 +167,7 @@ export default function UploadFilePage({config, setTitle}) {
         }
       }
       settoggleOverlay(false);
-      let post_workspace: string;
-      if (submit && !afeExist) {
+      if (submit) {
         dispatch(
           displayErrorMessage({
             message:
@@ -184,7 +183,7 @@ export default function UploadFilePage({config, setTitle}) {
         ) {
           throw 'Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.';
         }
-        post_workspace = await fetch(
+        const post_workspace = await fetch(
           `${config[datatypes[UplSettings.DataType]]['afe']}`,
           {
             method: 'POST',
@@ -210,40 +209,40 @@ export default function UploadFilePage({config, setTitle}) {
           }
           return res.text();
         });
-      }
-      if (post_workspace === 'OK' || afeExist) {
-        dispatch(
-          displayErrorMessage({
-            message: `${
-              !afeExist ? 'Success. A new record has been created.' : ''
-            } Redirecting to the next page...`,
-            color: 'blue',
-            duration: 1500,
-          }),
-        );
-        router.events.emit('routeChangeComplete');
-        await delay(1000);
-        router.push({
-          pathname:
-            UplSettings.Method === 'dropdown'
-              ? '/upload_file/matching_dropdown'
-              : UplSettings.Method === 'highlight'
-              ? '/upload_file/matching_highlight'
-              : UplSettings.Method === 'dragdrop'
-              ? '/upload_file/matching_draggable'
-              : '/upload_file/matching_auto',
-          query: {
-            form_type: datatypes[UplSettings.DataType],
-          },
-        });
-      } else {
-        dispatch(
-          displayErrorMessage({
-            message:
-              'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
-            color: 'red',
-          }),
-        );
+        if (post_workspace === 'OK' || afeExist) {
+          dispatch(
+            displayErrorMessage({
+              message: `${
+                !afeExist ? 'Success. A new record has been created.' : ''
+              } Redirecting to the next page...`,
+              color: 'blue',
+              duration: 1500,
+            }),
+          );
+          router.events.emit('routeChangeComplete');
+          await delay(1000);
+          router.push({
+            pathname:
+              UplSettings.Method === 'dropdown'
+                ? '/upload_file/matching_dropdown'
+                : UplSettings.Method === 'highlight'
+                ? '/upload_file/matching_highlight'
+                : UplSettings.Method === 'dragdrop'
+                ? '/upload_file/matching_draggable'
+                : '/upload_file/matching_auto',
+            query: {
+              form_type: datatypes[UplSettings.DataType],
+            },
+          });
+        } else {
+          dispatch(
+            displayErrorMessage({
+              message:
+                'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
+              color: 'red',
+            }),
+          );
+        }
       }
     } catch (error) {
       dispatch(
@@ -325,7 +324,7 @@ export default function UploadFilePage({config, setTitle}) {
   }, [setTitle]);
 
   const activeStyle =
-    'bg-searchbg/60 border-2 border-gray-400 box-border w-[254px] transition ease-in duration-500';
+    'bg-searchbg/60 border-2 border-gray-400 box-border w-254p transition ease-in duration-500';
 
   return (
     <Container additional_class="full-height relative" onDragEnter={handleDrag}>
@@ -444,7 +443,7 @@ export default function UploadFilePage({config, setTitle}) {
               className={`${
                 popupMessage.message
                   ? 'p-1 max-h-[1000px] visible'
-                  : 'max-h-[0px] -translate-y-1'
+                  : 'max-h-0 -translate-y-1'
               } ${
                 popupMessage.message
                   ? popupMessage.color === 'red'
@@ -533,7 +532,7 @@ export default function UploadFilePage({config, setTitle}) {
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
                 <List className="w-10 h-10" />
-                <section className="w-[150px]">
+                <section className="w-150p">
                   <h3 className="text-lg font-bold">Drop down</h3>
                   <p className="text-sm">
                     Choose the correct data matches using drop downs.
@@ -553,7 +552,7 @@ export default function UploadFilePage({config, setTitle}) {
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
                 <Select className="w-10 h-10" />
-                <section className="w-[150px]">
+                <section className="w-150p">
                   <h3 className="text-lg font-bold">Highlighting</h3>
                   <p className="text-sm">
                     Match the data by highlighting the document preview.
@@ -573,7 +572,7 @@ export default function UploadFilePage({config, setTitle}) {
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
                 <Hand className="w-10 h-10" />
-                <section className="w-[150px]">
+                <section className="w-150p">
                   <h3 className="text-lg font-bold">Drag and drop</h3>
                   <p className="text-sm">
                     Choose the correct data matches using drag and drop method.
@@ -593,7 +592,7 @@ export default function UploadFilePage({config, setTitle}) {
               }}>
               <div className="flex space-x-2 min-w-max items-center p-2">
                 <Robot className="w-10 h-10" />
-                <section className="w-[150px]">
+                <section className="w-150p">
                   <h3 className="text-lg font-bold">Automatic</h3>
                   <p className="text-sm">
                     Automatically try to predict data and their respective
@@ -703,7 +702,7 @@ export default function UploadFilePage({config, setTitle}) {
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}>
-          <div className="border-dashed border-4 border-black/30 rounded-lg p-10 flex flex-col justify-center space-y-3 items-center w-4/5 bg-searchbg/[.5] h-[550px]">
+          <div className="border-dashed border-4 border-black/30 rounded-lg p-10 flex flex-col justify-center space-y-3 items-center w-4/5 bg-searchbg/[.5] h-550p">
             <div className="w-full text-center">
               <p className="text-4xl font-bold">Drop your file here</p>
             </div>

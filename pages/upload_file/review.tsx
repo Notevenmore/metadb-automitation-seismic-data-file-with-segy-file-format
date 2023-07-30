@@ -141,7 +141,6 @@ export default function UploadFileReview({setTitle, config}) {
         config,
         spreadsheetID,
         workspaceData,
-        setMessage,
         dispatch,
       );
       if (save_result.success) {
@@ -326,7 +325,7 @@ export default function UploadFileReview({setTitle, config}) {
           ]}
           content={[
             [
-              <div className="h-[750px]" key={1}>
+              <div className="h-750p" key={1}>
                 {loading && !(ReviewData.length >= 1) ? (
                   <div className="flex flex-col items-center justify-center space-y-2 h-full">
                     <div className="w-5 h-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
@@ -423,7 +422,7 @@ export default function UploadFileReview({setTitle, config}) {
       )}
       <div className="flex space-x-3 py-4">
         <Button
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={saveDocumentHandler}
           disabled={
             !spreadsheetID || Message.message || !spreadsheetReady
@@ -436,7 +435,7 @@ export default function UploadFileReview({setTitle, config}) {
           </div>
         </Button>
         <Button
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={e => {
             saveDocumentHandler(e, true);
           }}

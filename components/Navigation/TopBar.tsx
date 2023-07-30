@@ -13,10 +13,10 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 export default function TopBar() {
   const user = useAppSelector(state => state.user.user);
   const [helpLink, setHelpLink] = useState('');
-  const [homeLink, setHomeLink] = useState("/")
+  const [homeLink, setHomeLink] = useState('/');
   const router = useRouter();
   const [profile, setProfile] = useState('');
-  const [profileItem, setProfileItem] = useState({type:"", contents: []});
+  const [profileItem, setProfileItem] = useState({type: '', contents: []});
   const [profileProps, setProfileProps] = useState({});
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function TopBar() {
 
     if (user.type === 'Administrator') {
       setHelpLink('/administrator/help');
-      setHomeLink("/administrator")
+      setHomeLink('/administrator');
       setProfileItem({
         type: '',
         contents: [
@@ -86,7 +86,7 @@ export default function TopBar() {
         </Link>
         <FloatDialog
           items={profileItem}
-          className={`right-0 top-[50px]`}
+          className={`right-0 top-50p`}
           width="263px"
           {...profileProps}>
           <RoundImage

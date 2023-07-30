@@ -123,7 +123,7 @@ export function DroppableBox({
         width: 'fit-content',
         display: 'inline-block',
       }}
-      className="min-w-[100%]">
+      className="min-w-full">
       {children}
       {isHolding && (
         <div

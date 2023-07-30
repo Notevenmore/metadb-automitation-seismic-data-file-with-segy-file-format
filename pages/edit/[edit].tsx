@@ -117,15 +117,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
 
   const saveDocumentHandler = useCallback(() => {
     router.events.emit('routeChangeStart');
-    saveDocument(
-      null,
-      router,
-      config,
-      spreadsheetId,
-      workspaceData,
-      setMessage,
-      dispatch,
-    )
+    saveDocument(null, router, config, spreadsheetId, workspaceData, dispatch)
       .then(async result => {
         if (result.success) {
           setIsSaved(true);
@@ -172,14 +164,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
 
   const downloadWorkspaceHandler = useCallback(() => {
     router.events.emit('routeChangeStart');
-    downloadWorkspace(
-      router,
-      config,
-      spreadsheetId,
-      workspaceData,
-      setMessage,
-      dispatch,
-    )
+    downloadWorkspace(router, config, workspaceData, dispatch)
       .then(result => {
         if (result.success) {
           dispatch(
@@ -370,7 +355,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           content={[
             Data
               ? [
-                  <div className="h-[750px]" key="sheet">
+                  <div className="h-750p" key="sheet">
                     <Sheets
                       type="review"
                       form_type={router?.query.form_type || 'basin'}
@@ -401,7 +386,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             setIsSaved(true);
             settriggerSave('save');
           }}
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] min-w-max justify-center"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p min-w-max justify-center"
           disabled={!spreadsheetReady || Message.message ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-5 h-5" />
@@ -409,7 +394,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           </div>
         </Button>
         <Button
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] min-w-max justify-center"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p min-w-max justify-center"
           onClick={e => {
             e.preventDefault();
             setIsSaved(true);
@@ -431,7 +416,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             setIsSaved(true);
             settriggerSave('download');
           }}
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] min-w-max justify-center"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p min-w-max justify-center"
           disabled={!spreadsheetReady || Message.message ? true : false}>
           <div className="flex space-x-2 items-center">
             <DownloadFolder className="w-5 h-5" />
