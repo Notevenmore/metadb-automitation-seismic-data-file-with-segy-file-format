@@ -72,11 +72,11 @@ const Child = ({icon, name, link = '', collapse}) => {
         className={`flex justify-between items-center px-5 py-2 gap-x-4 hover:bg-gray-200 ${
           router.asPath.split('/').some(path => {
             return path === name?.toLowerCase().replace(/\s/g, '_');
-          }) && 'bg-[#dae0e5]'
+          }) && 'bg-icon_child_gray'
         } relative transition-all`}>
         <div className="flex gap-x-4">
           <Image src={icon} width={14.4} height={22} alt="icon" />
-          {!collapse && <div className="w-[200px]">{name}</div>}
+          {!collapse && <div className="w-200p">{name}</div>}
         </div>
         {!collapse && (
           <div className="absolute right-5">

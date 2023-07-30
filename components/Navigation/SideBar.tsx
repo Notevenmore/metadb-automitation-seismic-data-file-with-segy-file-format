@@ -10,7 +10,7 @@ function deepFilter(nodes, cb) {
     .map(node => {
       if (cb(node)) return node;
       let children = deepFilter(node.child || [], cb);
-      console.log(node)
+      console.log(node);
       return children.length && {...node, child: children};
     })
     .filter(Boolean);
@@ -27,23 +27,23 @@ export const SideBar = () => {
       const result = deepFilter(ROUTING_LIST, node =>
         node.name.toLowerCase().includes(value.searchAll.toLowerCase()),
       );
-      setList(result)
-      return
+      setList(result);
+      return;
     }
 
-    setList(ROUTING_LIST)
+    setList(ROUTING_LIST);
   }, [search, value.searchAll]);
 
   return (
     <div
       className={`float-left justify-between full-height ${
-        iconCollapse ? 'w-[57px]' : 'w-[314px]'
+        iconCollapse ? 'w-57p' : 'w-314p'
       } flex flex-col bg-side_bar overflow-y-auto overflow-x-hidden relative transition-all`}>
       <div className="overflow-y-auto pb-10 overflow-x-hidden">
         {iconCollapse ? (
           <div>
             <NavigationItem icon="/icons/magnify.svg" collapse={iconCollapse} />
-            <div className="border-b border-b-[#dddddd]" />
+            <div className="border-b border-b-graywhite" />
           </div>
         ) : (
           <div>
@@ -55,15 +55,14 @@ export const SideBar = () => {
             <Image
               src={
                 iconCollapse
-                ? '/icons/chevron-double-right.svg'
-                : '/icons/chevron-double-left.svg'
+                  ? '/icons/chevron-double-right.svg'
+                  : '/icons/chevron-double-left.svg'
               }
               width={14.4}
               height={22}
-              alt="icon" />
-            {
-              !iconCollapse && <p className="text-[14.5px] w-[200px]">Collapse</p>
-            }
+              alt="icon"
+            />
+            {!iconCollapse && <p className="text-[14.5px] w-200p">Collapse</p>}
           </div>
         </div>
         {list.map(router => (
@@ -80,8 +79,8 @@ export const SideBar = () => {
       </div>
       <div
         className={`min-h-[35px] ${
-          iconCollapse ? 'hidden' : 'w-[314px]'
-        } flex items-center justify-center text-xs text-[#a3a3a3] bg-side_bar`}>
+          iconCollapse ? 'hidden' : 'w-314p'
+        } flex items-center justify-center text-xs text-icon_collapse_gray bg-side_bar`}>
         <div>&copy; PT Geodwipa Teknika Nusantara</div>
       </div>
     </div>

@@ -43,7 +43,7 @@ type Table = TableRow[];
 type State = Table[];
 
 export default function MatchReview({config, setTitle}: MatchReviewProps) {
-  const [state, setState] = useState<State>([]);
+  const [state, setState] = useState<TableRow[]>([]);
   const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
   const [imageBase64Str, setImageBase64Str] = useState('');
   const [docId, _setDocId] = useState<string | null>(null);
@@ -79,7 +79,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   useEffect(() => {
     if (docId === null) return;
     setImageBase64Str(_ => generateImageUrl(docId, pageNo));
-    postScrapeAnnotate(docId, pageNo).then((responseWords) => {
+    postScrapeAnnotate(docId, pageNo).then(responseWords => {
       const words = responseWords.body?.words;
       if (words) {
         setDropDownOptions(_ => words);
@@ -146,19 +146,15 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
           );
-          let temp_obj = [];
-          for (let idx = 0; idx < summaryResponse.body.page_count; idx++) {
-            let temp = [];
-            row_names.response.forEach((row_name, index) => {
-              temp.push({
-                id: index,
-                key: row_name,
-                value: '',
-              });
+          let temp = [];
+          row_names.response.forEach((row_name, index) => {
+            temp.push({
+              id: index,
+              key: row_name,
+              value: '',
             });
-            temp_obj.push(temp);
-          }
-          setState(temp_obj);
+          });
+          setState(temp);
           setLoading('Awaiting state update...');
           setAwaitingUpdate(true);
           // continue to the useeffect hook directly below this one
@@ -223,49 +219,56 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       }
       return _awaitingUpdate;
     });
-  }, [awaitingUpdate, dispatch, docId, router.events, state?.length, totalPageNo]);
+  }, [
+    awaitingUpdate,
+    dispatch,
+    docId,
+    router.events,
+    state?.length,
+    totalPageNo,
+  ]);
 
   const setValueForId = (id: number, pageNo: number, value: string) => {
     setState(state => {
-      const table = state[pageNo - 1];
-      if (!table) return state;
-      const index = table.findIndex(pair => pair.id === id);
-      const cpair = table.find(pair => pair.id === id);
+      // const table = state[pageNo - 1];
+      // if (!table) return state;
+      const index = state.findIndex(pair => pair.id === id);
+      const cpair = state.find(pair => pair.id === id);
       const newPair = {...cpair, value} as TableRow;
-      const newTable = [
-        ...table.slice(0, index),
-        newPair,
-        ...table.slice(index + 1),
-      ] as Table;
-      return [...state.slice(0, pageNo - 1), newTable, ...state.slice(pageNo)];
+      // const newTable = [
+      //   ...table.slice(0, index),
+      //   newPair,
+      //   ...table.slice(index + 1),
+      // ] as Table;
+      return [...state.slice(0, index), newPair, ...state.slice(index + 1)];
     });
   };
 
   const setPairs = (pair: Map<string, string>, pageNo: number) => {
     setState(state => {
       const keys = Array.from(pair.keys());
-      const table = state[pageNo - 1];
-      if (!table) return state;
+      // const table = state[pageNo - 1];
+      // if (!table) return state;
       let indexes: number[] = [];
-      for (let i = 0; i < table.length; i++) {
-        const row = table[i];
+      for (let i = 0; i < state.length; i++) {
+        const row = state[i];
         if (!row) return state;
         if (keys.includes(row.key)) {
           indexes = indexes.concat(i);
         }
       }
-      let newTable = [...table];
+      let newTable = [...state];
       for (const index of indexes) {
         const cpair = newTable[index];
         if (!cpair) return state;
-        const newPair = {...cpair, value: pair.get(cpair.key)} as TableRow;
+        const newPair = {...cpair, value: pair.get(cpair.key)};
         newTable = [
           ...newTable.slice(0, index),
           newPair,
           ...newTable.slice(index + 1),
         ];
       }
-      return [...state.slice(0, pageNo - 1), newTable, ...state.slice(pageNo)];
+      return newTable;
     });
   };
 
@@ -334,9 +337,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           <p>Data Matching - Automatic</p>
         </div>
       </Container.Title>
-      <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
+      <div className="grid grid-cols-2 gap-2 border-2 rounded-lg p-2">
         <HeaderTable>
-          {state[pageNo - 1]?.map(toRowComponent)}
+          {state.map(toRowComponent)}
           <HeaderDivider additional_styles={undefined} />
         </HeaderTable>
         <div className="h-[calc(100vh-55px)] sticky top-0 grid grid-cols-1 rounded-lg overflow-clip">

@@ -11,8 +11,8 @@ import Button from '@components/button';
 import Image from 'next/image';
 import {FloatDialog} from '@components/FloatDialog';
 import ProfilePic from '../../dummy-data/profile_pic';
-import Mime, { defaultProfile } from '@utils/mime';
-import { uploadIMG } from '@utils/image';
+import Mime, {defaultProfile} from '@utils/mime';
+import {uploadIMG} from '@utils/image';
 
 UserPage.getLayout = getLayoutTop;
 
@@ -33,18 +33,15 @@ export default function UserPage() {
 
   const dispatch = useAppDispatch();
   const handleProfile = useCallback(() => {
-    getProfile(userId).then(
-      setDetail,
-      err => {
-        dispatch(
-          displayErrorMessage({
-            message: String(err),
-            color: 'red',
-          }),
-        );
-        return;
-      },
-    );
+    getProfile(userId).then(setDetail, err => {
+      dispatch(
+        displayErrorMessage({
+          message: String(err),
+          color: 'red',
+        }),
+      );
+      return;
+    });
   }, [dispatch, userId]);
 
   useEffect(() => {
@@ -100,7 +97,6 @@ export default function UserPage() {
     });
   };
 
-
   const handleRemovePhoto = () => {
     router.events.emit('routeChangeStart');
 
@@ -123,7 +119,7 @@ export default function UserPage() {
               alt="image"
               width={500}
               height={500}
-              className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full"
+              className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-150p object-cover border-black rounded-full"
               priority
             />
             <FloatDialog
@@ -133,9 +129,10 @@ export default function UserPage() {
                   {
                     section_title: 'Upload photo',
                     section_content: 'Maximum 1 MB',
-                    handleClick: () => uploadIMG((final) => {
-                      setDetail(prev => ({...prev, profile_picture: final}));
-                    }),
+                    handleClick: () =>
+                      uploadIMG(final => {
+                        setDetail(prev => ({...prev, profile_picture: final}));
+                      }),
                   },
                   {
                     section_title: 'Remove photo',
@@ -144,7 +141,7 @@ export default function UserPage() {
                   },
                 ],
               }}
-              className={`top-[35px] shadow-lg`}
+              className={`top-35p shadow-lg`}
               width="263px">
               <Button
                 button_description="Edit"
@@ -231,10 +228,14 @@ export default function UserPage() {
             <div className="flex items-center gap-x-3">
               <button
                 type="submit"
-                className="px-3 py-1 rounded-[5px] hover:drop-shadow-lg bg-primary">
+                className="px-3 py-1 rounded-5p hover:drop-shadow-lg bg-primary">
                 Update
               </button>
-              <Button button_description='Delete' additional_styles='py-1' onClick={handleRemove} />
+              <Button
+                button_description="Delete"
+                additional_styles="py-1"
+                onClick={handleRemove}
+              />
             </div>
           </form>
         </div>

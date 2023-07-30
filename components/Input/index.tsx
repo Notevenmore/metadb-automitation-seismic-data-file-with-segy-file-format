@@ -39,9 +39,11 @@ const Input: React.FunctionComponent<InputProps> = ({
 
     // to close the dropdown items when the dropdown menu is clicked again
     if (document.activeElement === currentlyFocused) {
-      (document.activeElement as HTMLElement).blur();
-      setCurrentlyFocused(null);
-      setDoSearch(null);
+      if (!doSearch) {
+        (document.activeElement as HTMLElement).blur();
+        setCurrentlyFocused(null);
+        setDoSearch(null);
+      }
     } else {
       setCurrentlyFocused(document.activeElement);
     }
@@ -96,7 +98,7 @@ const Input: React.FunctionComponent<InputProps> = ({
         className={twMerge(
           `${
             label.toLowerCase() !== 'none' ? 'block' : 'hidden'
-          } w-[45%]  border-black`,
+          } w-45pc border-black`,
           additional_styles_label,
         )}>
         {label}
@@ -141,7 +143,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                 handleUnfocus;
               }}
               className={twMerge(
-                'truncate w-[90%] bg-transparent outline-none cursor-default select-none placeholder:text-gray-500',
+                'truncate w-90pc bg-transparent outline-none cursor-default select-none placeholder:text-gray-500',
                 additional_styles_input_dropdown,
               )}
               value={selected || 'Select an item'}
@@ -154,7 +156,7 @@ const Input: React.FunctionComponent<InputProps> = ({
             className={twMerge(
               `${
                 doSearch ? 'block' : 'hidden'
-              } group-focus:block active:block z-50 absolute bg-gray-200 shadow-lg drop-shadow-lg mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
+              } group-focus:block focus-within:block active:block z-50 absolute bg-gray-200 shadow-lg drop-shadow-lg mt-1 overflow-x-hidden overflow-y-auto left-0 rounded-md w-full min-h-[3px]`,
               additional_styles_menu_container,
             )}>
             {withSearch && dropdown_items.length > 0 && (
@@ -169,7 +171,7 @@ const Input: React.FunctionComponent<InputProps> = ({
                 onChange={onSearch}
               />
             )}
-            <ul className="list-none max-h-[230px]">
+            <ul className="list-none max-h-230p">
               {SearchData.length > 0
                 ? SearchData.map((item, index) => {
                     return (

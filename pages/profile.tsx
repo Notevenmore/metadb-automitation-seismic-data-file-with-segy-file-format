@@ -11,7 +11,8 @@ import ProfilePic from '../dummy-data/profile_pic';
 import {updateProfile} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
 import {logOut, setUser} from '../store/userSlice';
-import { uploadIMG } from '@utils/image';
+import {uploadIMG} from '@utils/image';
+import RoundImage from '@components/RoundImage';
 
 const Profile = ({setTitle}) => {
   const user = useAppSelector(state => state.user.user);
@@ -26,7 +27,7 @@ const Profile = ({setTitle}) => {
     setTitle('Profile');
     setContent([
       ['Email', user.name],
-      ['Date joined', moment(user.date_joined).format('DD - MM - YYYY')],
+      ['Expiry Date', user.expiry_date],
       ['Role', user.type],
     ]);
   }, [setTitle, user.date_joined, user.name, user.type]);
@@ -69,15 +70,14 @@ const Profile = ({setTitle}) => {
         <div className="flex space-x-7">
           <div className="flex flex-col items-center justify-center space-y-2">
             {/* // TODO CHANGE THE LINE BELOW TO NOT USE HARDCODED PROFILE PICTURE STRING */}
-            <Image
-              src={
+            <RoundImage
+              source={
                 user.profile_picture ? Mime(user.profile_picture) : ProfilePic
               }
-              alt="image"
               width={500}
-              height={500}
-              className="min-w-[150px] max-w-[150px] min-h-[150px] max-h-[150px] object-cover border-black rounded-full"
-              priority
+              additionalClass={
+                ' min-w-[150px] max-w-[150px] min-h-[150px] max-h-150p object-cover border-black rounded-full'
+              }
             />
             <FloatDialog
               items={{
@@ -86,9 +86,13 @@ const Profile = ({setTitle}) => {
                   {
                     section_title: 'Upload photo',
                     section_content: 'Maximum 1 MB',
-                    handleClick: () => uploadIMG((final) => {
-                      setcurrentUser({...currentUser, profile_picture: final});
-                    }),
+                    handleClick: () =>
+                      uploadIMG(final => {
+                        setcurrentUser({
+                          ...currentUser,
+                          profile_picture: final,
+                        });
+                      }),
                   },
                   {
                     section_title: 'Remove photo',
@@ -97,7 +101,7 @@ const Profile = ({setTitle}) => {
                   },
                 ],
               }}
-              className={`top-[35px] shadow-lg`}
+              className={`top-35p shadow-lg`}
               width="263px">
               <Button
                 button_description="Edit"

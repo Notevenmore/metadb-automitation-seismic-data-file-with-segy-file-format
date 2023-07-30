@@ -77,7 +77,7 @@ type DraggableData = {
 };
 
 export default function MatchReview({config, setTitle}: MatchReviewProps) {
-  const [state, setState] = useState<State>(INITIAL_STATE);
+  const [state, setState] = useState<TableRow[]>([]);
   const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
   const [imageBase64Str, setImageBase64Str] = useState('');
   const [docId, _setDocId] = useState<string | null>(null);
@@ -233,19 +233,15 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
           );
-          let temp_obj = [];
-          for (let idx = 0; idx < summaryResponse.body.page_count; idx++) {
-            let temp = [];
-            row_names.response.forEach((row_name, index) => {
-              temp.push({
-                id: index,
-                key: row_name.toLowerCase(),
-                value: '',
-              });
+          let temp = [];
+          row_names.response.forEach((row_name, index) => {
+            temp.push({
+              id: index,
+              key: row_name.toLowerCase(),
+              value: '',
             });
-            temp_obj.push(temp);
-          }
-          setState(temp_obj);
+          });
+          setState(temp);
           setLoading('');
         } catch (error) {
           setError(String(error));
@@ -274,17 +270,17 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
 
   const setValueForId = (id: number, pageNo: number, value: string) => {
     setState(state => {
-      const table = state[pageNo - 1];
-      if (!table) return state;
-      const index = table.findIndex(pair => pair.id === id);
-      const cpair = table.find(pair => pair.id === id);
+      // const table = state[pageNo - 1];
+      // if (!table) return state;
+      const index = state.findIndex(pair => pair.id === id);
+      const cpair = state.find(pair => pair.id === id);
       const newPair = {...cpair, value} as TableRow;
-      const newTable = [
-        ...table.slice(0, index),
-        newPair,
-        ...table.slice(index + 1),
-      ] as TableType;
-      return [...state.slice(0, pageNo - 1), newTable, ...state.slice(pageNo)];
+      // const newTable = [
+      //   ...table.slice(0, index),
+      //   newPair,
+      //   ...table.slice(index + 1),
+      // ] as TableType;
+      return [...state.slice(0, index), newPair, ...state.slice(index + 1)];
     });
   };
 
@@ -396,9 +392,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
             <p>Data Matching - Drag and Drop</p>
           </div>
         </Container.Title>
-        <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
+        <div className="grid grid-cols-2 gap-2 border-2 rounded-lg p-2">
           <HeaderTable>
-            {state[pageNo - 1]?.map(toRowComponent)}
+            {state.map(toRowComponent)}
             <HeaderDivider additional_styles={undefined} />
           </HeaderTable>
           <div className="h-[calc(100vh-55px)] rounded-lg border border-gray-300 sticky top-0">

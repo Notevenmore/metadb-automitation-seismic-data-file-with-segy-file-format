@@ -55,7 +55,6 @@ export default function NewDocumentPage({setTitle, config}) {
         config,
         spreadsheetID,
         workspaceData,
-        setMessage,
         dispatch,
       );
       if (save_result.success) {
@@ -204,7 +203,7 @@ export default function NewDocumentPage({setTitle, config}) {
           content={[
             [
               workspaceData && router.query.form_type ? (
-                <div className="h-[750px]">
+                <div className="h-750p">
                   <Sheets
                     form_type={router.query.form_type as string}
                     type="new"
@@ -231,7 +230,7 @@ export default function NewDocumentPage({setTitle, config}) {
       <div className="flex space-x-2 py-10">
         <Button
           title="Save this record to the database"
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={saveDocumentHandler}
           disabled={Message.message || !spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
@@ -241,7 +240,7 @@ export default function NewDocumentPage({setTitle, config}) {
         </Button>
         <Button
           title="Save this record to the database and exit from this page"
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={e => {
             saveDocumentHandler(e, true);
           }}

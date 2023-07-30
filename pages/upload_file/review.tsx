@@ -12,7 +12,7 @@ import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import Table from '../../components/table/table';
-import {saveDocument} from '../../components/utility_functions';
+import {init_data, saveDocument} from '../../components/utility_functions';
 import {TableType} from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
@@ -35,6 +35,7 @@ export default function UploadFileReview({setTitle, config}) {
   const [spreadsheetID, setspreadsheetID] = useState('');
   const [loading, setloading] = useState('');
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
+  // const [workspaceData, setworkspaceData] = useState<UploadDocumentSettings>();
 
   const dispatch = useAppDispatch();
 
@@ -67,14 +68,21 @@ export default function UploadFileReview({setTitle, config}) {
             document_summary?.document_id
           }/${PageNo + 1}`,
         );
-        let final = [];
-        for (let idx = 0; idx < document_summary.body.page_count; idx++) {
-          let row = {};
-          Object.values(review_data[idx] as TableType).map(item => {
-            row[item.key.toLowerCase()] = item.value;
+        let record_data: any[],
+          final = [];
+        if (upload_document_settings.afe_exist) {
+          const existing = await init_data(config, router, {
+            afe_number: upload_document_settings.afe_number,
           });
-          final.push(row);
+          record_data = existing.data_content;
+          console.log(record_data);
+          final.push(...record_data);
         }
+        let row = {};
+        Object.values(review_data as TableType).map(item => {
+          row[item.key.toLowerCase()] = item.value;
+        });
+        final.push(row);
         setReviewData(final);
         setloading('');
       } catch (error) {
@@ -133,7 +141,6 @@ export default function UploadFileReview({setTitle, config}) {
         config,
         spreadsheetID,
         workspaceData,
-        setMessage,
         dispatch,
       );
       if (save_result.success) {
@@ -318,7 +325,7 @@ export default function UploadFileReview({setTitle, config}) {
           ]}
           content={[
             [
-              <div className="h-[750px]" key={1}>
+              <div className="h-750p" key={1}>
                 {loading && !(ReviewData.length >= 1) ? (
                   <div className="flex flex-col items-center justify-center space-y-2 h-full">
                     <div className="w-5 h-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
@@ -415,7 +422,7 @@ export default function UploadFileReview({setTitle, config}) {
       )}
       <div className="flex space-x-3 py-4">
         <Button
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={saveDocumentHandler}
           disabled={
             !spreadsheetID || Message.message || !spreadsheetReady
@@ -428,7 +435,7 @@ export default function UploadFileReview({setTitle, config}) {
           </div>
         </Button>
         <Button
-          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-[200px] justify-center"
+          additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={e => {
             saveDocumentHandler(e, true);
           }}

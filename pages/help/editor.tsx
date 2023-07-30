@@ -175,7 +175,7 @@ const Editor = () => {
         <div className="w-full rounded-md bg-yellow-400 p-3 relative">
           <button
             title="Close warning"
-            className="rounded-md absolute right-1 top-1 hover:bg-red-600 hover:text-white p-[2px] bg-white/[.3] cursor-pointer transition-all"
+            className="rounded-md absolute right-1 top-1 hover:bg-red-600 hover:text-white p-2p bg-white/[.3] cursor-pointer transition-all"
             onClick={e => {
               e.preventDefault();
               setWarning(!Warning);
@@ -192,7 +192,7 @@ const Editor = () => {
       )}
       <div className="flex space-x-2">
         <label className="flex items-center w-fit space-x-2 relative">
-          <Check className="text-black absolute left-[10.5px] w-3.5 cursor-pointer"/>
+          <Check className="text-black absolute left-[10.5px] w-3.5 cursor-pointer" />
           <input
             onChange={() => {
               setChecked(!Checked);
@@ -526,16 +526,18 @@ const Editor = () => {
                     language={match[1]}
                     PreTag="div"
                     customStyle={{background: 'none'}}
-                    {...props}
-                  >{String(children).replace(/\n$/, '')}</SyntaxHighlighter>
+                    {...props}>
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
                 ) : (
                   <code className={className} {...props}>
                     {children}
                   </code>
                 );
               },
-            }}
-          >{Description}</ReactMarkdown>
+            }}>
+            {Description}
+          </ReactMarkdown>
         </div>
       </div>
     </div>

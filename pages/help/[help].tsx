@@ -57,10 +57,10 @@ const Documentation = props => {
         defaultValue="hello"
         additional_styles="overflow-visible"
       />
-      <div className="h-[750px] border-2 rounded-md overflow-hidden">
+      <div className="h-750p border-2 rounded-md overflow-hidden">
         {/* <Sheets type="new" form_type="basin" /> */}
       </div>
-      <div className="h-[750px] border-2 rounded-md overflow-hidden">
+      <div className="h-750p border-2 rounded-md overflow-hidden">
         {/* <Sheets type="new" form_type="well_summary" /> */}
       </div>
     </Container>

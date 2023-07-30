@@ -27,7 +27,7 @@ import {delay} from '../../utils/common';
 import {setValueForId} from '../../utils/document';
 
 export default function MatchReview({config, setTitle}) {
-  const [state, setState] = useState({});
+  const [state, setState] = useState([]);
   const [dropDownOptions, setDropDownOptions] = useState([]);
   const [imageBase64Str, setImageBase64Str] = useState('');
   const [docId, _setDocId] = useState(null);
@@ -69,7 +69,7 @@ export default function MatchReview({config, setTitle}) {
   useEffect(() => {
     if (docId === null) return;
     setImageBase64Str(_ => generateImageUrl(docId, pageNo));
-    postScrapeAnnotate(docId, pageNo).then((responseWords) => {
+    postScrapeAnnotate(docId, pageNo).then(responseWords => {
       if (responseWords.status === 'success') {
         setDropDownOptions(_ => responseWords.body.words);
       }
@@ -128,19 +128,15 @@ export default function MatchReview({config, setTitle}) {
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
           );
-          let temp_obj = {};
-          for (let idx = 0; idx < summaryResponse.body.page_count; idx++) {
-            let temp = [];
-            row_names.response.forEach((row_name, index) => {
-              temp.push({
-                id: index,
-                key: row_name.toLowerCase(),
-                value: '',
-              });
+          let temp = [];
+          row_names.response.forEach((row_name, index) => {
+            temp.push({
+              id: index,
+              key: row_name.toLowerCase(),
+              value: '',
             });
-            temp_obj[idx] = temp;
-          }
-          setState(temp_obj);
+          });
+          setState(temp);
           setLoading('');
         } catch (error) {
           setError(String(error));
@@ -261,9 +257,9 @@ export default function MatchReview({config, setTitle}) {
           <p>Data Matching - Dropdown</p>
         </div>
       </Container.Title>
-      <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
+      <div className="grid grid-cols-2 gap-2 border-2 rounded-lg p-2">
         <HeaderTable>
-          {state[pageNo - 1]?.map(toRowComponent)}
+          {state.map(toRowComponent)}
           <HeaderDivider />
         </HeaderTable>
         <div className="h-[calc(100vh-55px)] sticky top-0 grid grid-cols-1 rounded-lg overflow-clip">

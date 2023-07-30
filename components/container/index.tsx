@@ -29,7 +29,7 @@ function BackButton() {
   const router = useRouter();
   return (
     <div
-      className="hover:bg-black/[0.15] rounded w-[50px] h-[50px] flex justify-center items-center"
+      className="hover:bg-black/[0.15] rounded w-50p h-50p flex justify-center items-center"
       onClick={() => router.back()}>
       <Image
         src="/icons/chevron-left.svg"

@@ -1,8 +1,7 @@
-import {parseCookies} from 'nookies';
-import {TokenExpired} from '../services/admin';
-import {setErrorMessage} from '../store/generalSlice';
-import {store} from './../store/index';
-import {getHeader} from '../services/document';
+import { parseCookies } from 'nookies';
+import { TokenExpired } from '../services/admin';
+import { displayErrorMessage } from '../store/generalSlice';
+import { getHeader } from '../services/document';
 
 export const init_data = async (config, router, workspaceData) => {
   if (!workspaceData.afe_number) {
@@ -14,9 +13,8 @@ export const init_data = async (config, router, workspaceData) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${
-          JSON.parse(parseCookies().user_data).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+          }`,
       },
     },
   )
@@ -37,9 +35,8 @@ export const init_data = async (config, router, workspaceData) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${
-          JSON.parse(parseCookies().user_data).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+          }`,
       },
     },
   )
@@ -62,18 +59,16 @@ export const init_data = async (config, router, workspaceData) => {
   if (data) {
     for (const datatype_record_id of data) {
       const data_details = await fetch(
-        `${config[router.query.form_type]['view']}${
-          datatype_record_id[
-            config[router.query.form_type]['workspace_holder_key']
-          ]
+        `${config[router.query.form_type]['view']}${datatype_record_id[
+        config[router.query.form_type]['workspace_holder_key']
+        ]
         }`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${
-              JSON.parse(parseCookies().user_data).access_token
-            }`,
+            Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+              }`,
           },
         },
       )
@@ -102,7 +97,7 @@ export const init_data = async (config, router, workspaceData) => {
       final.push(data_details[0]);
     }
   }
-  return {data: data, data_content: final, workspace_data: workspace_data[0]};
+  return { data: data, data_content: final, workspace_data: workspace_data[0] };
 };
 
 export const saveDocument = async (
@@ -111,7 +106,6 @@ export const saveDocument = async (
   config,
   spreadsheetId,
   workspaceData,
-  setMessage,
   dispatch,
 ) => {
   if (e) {
@@ -121,11 +115,10 @@ export const saveDocument = async (
   // Check if spreadsheetId is available
   if (!spreadsheetId) {
     dispatch(
-      setErrorMessage({
+      displayErrorMessage({
         message:
           'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
         color: 'red',
-        show: true,
       }),
     );
     return;
@@ -133,11 +126,10 @@ export const saveDocument = async (
 
   // Set saving message
   dispatch(
-    setErrorMessage({
+    displayErrorMessage({
       message:
         "Checking changes in record information... Please don't leave this page or click anything",
       color: 'blue',
-      show: true,
     }),
   );
 
@@ -149,9 +141,8 @@ export const saveDocument = async (
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${
-          JSON.parse(parseCookies().user_data).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+          }`,
       },
     },
   )
@@ -175,11 +166,10 @@ export const saveDocument = async (
 
   if (workspace_data_changed) {
     dispatch(
-      setErrorMessage({
+      displayErrorMessage({
         message:
           "Saving record information... Please don't leave this page or click anything",
         color: 'blue',
-        show: true,
       }),
     );
     await fetch(
@@ -188,9 +178,8 @@ export const saveDocument = async (
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${
-            JSON.parse(parseCookies().user_data).access_token
-          }`,
+          Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+            }`,
         },
         body: JSON.stringify(workspaceData),
       },
@@ -209,11 +198,10 @@ export const saveDocument = async (
   }
 
   dispatch(
-    setErrorMessage({
+    displayErrorMessage({
       message:
         "Checking changes in record data... Please don't leave this page or click anything",
       color: 'blue',
-      show: true,
     }),
   );
   // fetch original data from database
@@ -236,9 +224,8 @@ export const saveDocument = async (
     method: 'POST',
     headers: {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${
-        JSON.parse(parseCookies().user_data).access_token
-      }`,
+      Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+        }`,
     },
     body: JSON.stringify({
       form_type: router.query.form_type,
@@ -261,53 +248,44 @@ export const saveDocument = async (
       throw err;
     });
 
-  // for 2d_seismic_field_digital_data only (for now)
   let field_types_final = {};
-  // if (router.query.form_type === "2d_seismic_field_digital_data"){
-  if (true) {
-    dispatch(
-      setErrorMessage({
-        message: 'Getting information about column types...',
-        color: 'blue',
-        show: true,
-      }),
-    );
-    const field_types = await fetch(
-      `${config[router.query.form_type]['view'].slice(0, -1)}-column/`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${
-            JSON.parse(parseCookies().user_data).access_token
+  dispatch(
+    displayErrorMessage({
+      message: 'Getting information about column types...',
+      color: 'blue',
+    }),
+  );
+  const field_types = await fetch(
+    `${config[router.query.form_type]['view'].slice(0, -1)}-column/`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
           }`,
-        },
       },
+    },
+  )
+    .then(res =>
+      Promise.all([res.status, res.status !== 200 ? res.text() : res.json()]),
     )
-      .then(res =>
-        Promise.all([res.status, res.status !== 200 ? res.text() : res.json()]),
-      )
-      .then(([status, res]) => {
-        if (status !== 200) {
-          TokenExpired(status);
-          throw `Service returned with status ${status} on column type GET: ${res}`;
-        }
-        return res;
-      });
-
-    Object.keys(field_types).forEach(key => {
-      field_types_final[key.toLowerCase()] = field_types[key];
+    .then(([status, res]) => {
+      if (status !== 200) {
+        TokenExpired(status);
+        throw `Service returned with status ${status} on column type GET: ${res}`;
+      }
+      return res;
     });
 
-    console.log(field_types_final);
-  }
+  Object.keys(field_types).forEach(key => {
+    field_types_final[key.toLowerCase()] = field_types[key];
+  });
 
   dispatch(
-    setErrorMessage({
+    displayErrorMessage({
       message:
         "Saving record data... Please don't leave this page or click anything",
       color: 'blue',
-      show: true,
     }),
   );
   var idx_row = 0;
@@ -325,19 +303,6 @@ export const saveDocument = async (
         // a try catch was put here to avoid new data being undefined if its length is shorter than old data
         try {
           if (!row[header.toLowerCase()]) {
-            // TODO temporary only for 2d seismic digital data, change later for all data types
-            // if (router.query.form_type === "2d_seismic_field_digital_data") {
-
-            // } else {
-            //   if (header.toLowerCase().includes('page')) {
-            //     row[header.toLowerCase()] =
-            //       spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
-            //   } else {
-            //     row[header.toLowerCase()] =
-            //       spreadsheet_data?.response[idx_row][idx_col] || null;
-            //   }
-            // }
-
             if (/int|float/g.test(field_types_final[header.toLowerCase()])) {
               row[header.toLowerCase()] =
                 spreadsheet_data?.response[idx_row][idx_col] * 1 || null;
@@ -350,7 +315,7 @@ export const saveDocument = async (
               throw 'Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types.';
             }
           }
-        } catch (error) {}
+        } catch (error) { }
 
         // convert date gotten from the database to appropriate format after the checking, to avoid
         // misinterpretating different date formats as different values although the date is the same
@@ -380,8 +345,8 @@ export const saveDocument = async (
               .getDate()
               .toString()
               .padStart(2, '0')}/${(date.getMonth() + 1)
-              .toString()
-              .padStart(2, '0')}/${date.getFullYear()}`;
+                .toString()
+                .padStart(2, '0')}/${date.getFullYear()}`;
           } catch (error) {
             row[header.toLowerCase()] = null;
           }
@@ -423,15 +388,15 @@ export const saveDocument = async (
             !changed &&
             (String(row[header.toLowerCase()])?.replace(/[^\x00-\x7F]/g, '') ||
               null) !==
-              String(
-                old_data.data_content[idx_row][header.toLowerCase()] ||
-                  old_data.data_content[idx_row][header] ||
-                  null,
-              )
+            String(
+              old_data.data_content[idx_row][header.toLowerCase()] ||
+              old_data.data_content[idx_row][header] ||
+              null,
+            )
           ) {
             changed = true;
           }
-        } catch (error) {}
+        } catch (error) { }
       });
       console.log(row, idx_row, idx_row < old_data.data_content.length - 1);
       // if change in row is detected then update the data in the database
@@ -442,16 +407,14 @@ export const saveDocument = async (
       ) {
         console.log('trying to PUT', idx_row);
         await fetch(
-          `${config[router.query.form_type]['view']}${
-            old_data.data_content[idx_row]['id']
+          `${config[router.query.form_type]['view']}${old_data.data_content[idx_row]['id']
           }`,
           {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${
-                JSON.parse(parseCookies().user_data).access_token
-              }`,
+              Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+                }`,
             },
             body: JSON.stringify({
               id: old_data.data_content[idx_row]['id'],
@@ -477,16 +440,14 @@ export const saveDocument = async (
           if (spreadsheet_data.response.length < old_data.data_content.length) {
             console.log('trying to DELETE', idx_row);
             await fetch(
-              `${config[router.query.form_type]['view']}${
-                old_data.data_content[idx_row]['id']
+              `${config[router.query.form_type]['view']}${old_data.data_content[idx_row]['id']
               }`,
               {
                 method: 'DELETE',
                 headers: {
                   'Content-Type': 'application/json',
-                  Authorization: `Bearer ${
-                    JSON.parse(parseCookies().user_data).access_token
-                  }`,
+                  Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+                    }`,
                 },
               },
             )
@@ -510,9 +471,8 @@ export const saveDocument = async (
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
-                  Authorization: `Bearer ${
-                    JSON.parse(parseCookies().user_data).access_token
-                  }`,
+                  Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+                    }`,
                 },
                 body: JSON.stringify(row),
               },
@@ -532,9 +492,8 @@ export const saveDocument = async (
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
+                Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+                  }`,
               },
               body: JSON.stringify({
                 afe_number: workspaceData.afe_number,
@@ -564,9 +523,8 @@ export const saveDocument = async (
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${
-                JSON.parse(parseCookies().user_data).access_token
-              }`,
+              Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+                }`,
             },
           },
         )
@@ -581,39 +539,42 @@ export const saveDocument = async (
       });
     }
   }
-  return {success: true};
+  return { success: true };
 };
 
 export const downloadWorkspace = async (
   router,
   config,
-  spreadsheetId,
   workspaceData,
-  setMessage,
   dispatch,
 ) => {
-  dispatch(
-    setErrorMessage({
-      message: 'Downloading record as XLSX file, please wait...',
-      color: 'blue',
-      show: true,
-    }),
-  );
-  if (spreadsheetId && router.query.form_type && workspaceData.afe_number) {
+  if (router.query.form_type && workspaceData.afe_number) {
+    dispatch(
+      displayErrorMessage({
+        message: 'Getting record  data, please wait...',
+        color: 'blue',
+      }),
+    );
+    const record = await init_data(config, router, workspaceData)
+    dispatch(
+      displayErrorMessage({
+        message: 'Processing record data, please wait...',
+        color: 'blue',
+      }),
+    );
     const spreadsheet_download = await fetch(
       `${config.services.sheets}/downloadSheet`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${
-            JSON.parse(parseCookies().user_data).access_token
-          }`,
+          Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+            }`,
         },
         body: JSON.stringify({
           form_type: router.query.form_type,
-          spreadsheetID: spreadsheetId,
           workspace_data: workspaceData,
+          workspace_content: record.data_content
         }),
       },
     )
@@ -630,6 +591,12 @@ export const downloadWorkspace = async (
     console.log(
       `new temp spreadsheet download: ${spreadsheet_download.response}`,
     );
+    dispatch(
+      displayErrorMessage({
+        message: 'Downloading record as XLSX file, please wait...',
+        color: 'blue',
+      }),
+    );
     await fetch(
       `https://docs.google.com/spreadsheets/d/${spreadsheet_download.response}/export?format=xlsx&id=${spreadsheet_download.response}`,
     )
@@ -645,23 +612,24 @@ export const downloadWorkspace = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${
-          JSON.parse(parseCookies().user_data).access_token
-        }`,
+        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+          }`,
       },
-      body: JSON.stringify({spreadsheetID: spreadsheet_download.response}),
+      body: JSON.stringify({ spreadsheetID: spreadsheet_download.response }),
     }).catch(err => {
       console.log(err);
     });
     dispatch(
-      setErrorMessage({
+      displayErrorMessage({
         message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
         color: 'blue',
-        show: true,
+        duration: 3000,
       }),
     );
+  } else {
+    throw "Failed to download record. Please send a report to application maintainer/developer"
   }
-  return {success: true};
+  return { success: true };
 };
 
 export const checkAfe = async (e, config, data_type, afe_number) => {
@@ -672,9 +640,8 @@ export const checkAfe = async (e, config, data_type, afe_number) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${
-        JSON.parse(parseCookies().user_data).access_token
-      }`,
+      Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
+        }`,
     },
   })
     .then(res => Promise.all([res.status, res.text()]))
@@ -687,3 +654,90 @@ export const checkAfe = async (e, config, data_type, afe_number) => {
     });
   return afe_exist;
 };
+
+export const getColumnBinder = (config, data_type) => {
+  return config[data_type]['column_binder']?.split('-').join(' ') || '!!NOT IMPLEMENTED YET!!'
+}
+
+export const getDataTypeNoUnderscore = (data_type) => {
+  return data_type.split("_").join(" ")
+}
+
+export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Image, datatype, config, dispatch, deleteWorkspace, init) => {
+  if (!workspaces_list) { return workspaces_list }
+  let final = []
+  workspaces_list.forEach(workspace => {
+    final.push({
+      KKKS: workspace.kkks_name,
+      'Working area': workspace.working_area,
+      AFE: workspace.afe_number,
+      Type: workspace.submission_type,
+      Action: (
+        <div className="flex flex-row gap-x-4 items-center">
+          <Button
+            title="Download"
+            additional_styles="px-3 hover:bg-green-300"
+            className="flex"
+            onClick={async e => {
+              try {
+                await downloadWorkspace(
+                  { query: { form_type: datatype } },
+                  config,
+                  workspace,
+                  dispatch,
+                );
+              } catch (error) {
+                dispatch(
+                  displayErrorMessage({
+                    message: String(error),
+                    color: 'blue',
+                  }),
+                );
+              }
+            }}>
+            <div className="w-18p h-18p">
+              <DownloadCommon className="w-5 h-5" />
+            </div>
+          </Button>
+          <Button
+            title="Edit record"
+            additional_styles="px-3"
+            className="flex"
+            path={`/edit/${workspace.workspace_name}`}
+            query={{
+              form_type: datatype,
+              workspace_data: workspace.afe_number,
+            }}>
+            <div className="w-18p h-18p flex items-center">
+              <Image
+                src="/icons/pencil.svg"
+                width={50}
+                height={50}
+                alt="icon"
+              />
+            </div>
+          </Button>
+          <Button
+            additional_styles="px-3 hover:bg-red-400"
+            className="flex"
+            title="Delete record"
+            onClick={e => {
+              deleteWorkspace(e, workspace.afe_number).then(() => {
+                init();
+              });
+            }}>
+            <div className="w-18p h-18p flex items-center">
+              <Image
+                src="/icons/delete.svg"
+                width={50}
+                height={50}
+                alt="icon"
+              />
+            </div>
+          </Button>
+        </div>
+      ),
+    });
+  })
+  return final
+}

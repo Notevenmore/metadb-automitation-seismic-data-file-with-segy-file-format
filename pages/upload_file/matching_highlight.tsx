@@ -28,7 +28,7 @@ import {delay} from '../../utils/common';
 import {setValueForId} from '../../utils/document';
 
 export default function MatchingGuided({config, setTitle}) {
-  const [state, setState] = useState({} as any);
+  const [state, setState] = useState([]);
   const [selectedRow, setSelectedRow] = useState(-1);
   const [pageNo, setPageNo] = useState(1);
   const [totalPageNo, setTotalPageNo] = useState(1);
@@ -116,19 +116,15 @@ export default function MatchingGuided({config, setTitle}) {
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
           );
-          let temp_obj = {};
-          for (let idx = 0; idx < summaryResponse.body.page_count; idx++) {
-            let temp = [];
-            row_names.response.forEach((row_name, index) => {
-              temp.push({
-                id: index,
-                key: row_name.toLowerCase(),
-                value: null,
-              });
+          let temp = [];
+          row_names.response.forEach((row_name, index) => {
+            temp.push({
+              id: index,
+              key: row_name.toLowerCase(),
+              value: null,
             });
-            temp_obj[idx] = temp;
-          }
-          setState(temp_obj);
+          });
+          setState(temp);
           setLoading(null);
         } catch (error) {
           setError(String(error));
@@ -161,7 +157,7 @@ export default function MatchingGuided({config, setTitle}) {
     if (selectedRow === -1) return;
     const last = bounds.length - 1;
     const bound = bounds[last];
-    extractTextFromBounds(docId, pageNo, bound).then((response) => {
+    extractTextFromBounds(docId, pageNo, bound).then(response => {
       if (response.status === 'success') {
         setValueForId(setState, pageNo, selectedRow, response.body.word);
       }
@@ -250,8 +246,8 @@ export default function MatchingGuided({config, setTitle}) {
           <p>Data Matching - Highlight</p>
         </div>
       </Container.Title>
-      <div className="grid grid-cols-2 gap-2 border-[2px] rounded-lg p-2">
-        <HeaderTable>{state[pageNo - 1]?.map(toRowComponent)}</HeaderTable>
+      <div className="grid grid-cols-2 gap-2 border-2 rounded-lg p-2">
+        <HeaderTable>{state.map(toRowComponent)}</HeaderTable>
         <ImageEditor
           boundsObserver={boundsObserver}
           imageUrl={generateImageUrl(docId, pageNo)}
@@ -305,7 +301,7 @@ export default function MatchingGuided({config, setTitle}) {
         />
       </div>
       <div
-        className={`flex items-center space-x-2 fixed top-5 left-1/2 translate-x-[-50%] bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
+        className={`flex items-center space-x-2 fixed top-5 left-1/2 -translate-x-1/2 bg-red-500 text-white px-3 rounded-lg py-2 transition-all ${
           error ? '' : '-translate-y-20'
         }`}>
         <p>{error}</p>

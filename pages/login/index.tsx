@@ -56,27 +56,29 @@ export default function SignInPage({setTitle}) {
       // router.events.emit('routeChangeComplete');
       // return;
     }
-    getLogin(loginData.email, loginData.password).then(res => {
-      const {succeed, data} = res;
-      if (succeed) {
-        dispatch(setUser(data.data));
-        if (data.data.type === 'Administrator') {
-          router.push('/administrator', undefined, {shallow: true});
-          // router.reload("/administrator")
+    getLogin(loginData.email, loginData.password)
+      .then(res => {
+        const {succeed, data} = res;
+        if (succeed) {
+          dispatch(setUser(data.data));
+          if (data.data.type === 'Administrator') {
+            router.push('/administrator', undefined, {shallow: true});
+            // router.reload("/administrator")
+            return;
+          }
+          router.push('/');
           return;
         }
-        router.push('/');
         return;
-      }
-      return;
-    }).catch(error => {
-      dispatch(
-        displayErrorMessage({
-          message: String(error),
-          color: 'red',
-        }),
-      );
-    });
+      })
+      .catch(error => {
+        dispatch(
+          displayErrorMessage({
+            message: String(error),
+            color: 'red',
+          }),
+        );
+      });
     router.events.emit('routeChangeComplete');
   };
 
@@ -84,13 +86,13 @@ export default function SignInPage({setTitle}) {
     <div
       className="h-screen flex flex-col-reverse my-10
          md:flex-row md:my-0 items-center justify-center m-auto gap-y-5">
-      <div className="px-[50px] flex flex-col gap-y-6">
+      <div className="px-50p flex flex-col gap-y-6">
         <div id="title" className="max-md:text-center">
           <p className="text-[100px] leading-[100px] font-bold">MetaDB</p>
           <p className="text-xl">
             Effectively Cataloging and Managing E&amp;P Physical Assets
           </p>
-          <div className="border border-b-[#d9d9d9] mt-2"></div>
+          <div className="border border-b-icon_child_gray mt-2"></div>
         </div>
         <div className="max-md:text-center text-[30px] font-bold">Sign in</div>
         <form
@@ -107,7 +109,7 @@ export default function SignInPage({setTitle}) {
             onChange={e => handleChange(e)}
             required={true}
             additional_styles="space-y-1 text-sm"
-            additional_styles_input="bg-[#ededed]"
+            additional_styles_input="bg-input_gray"
           />
           <Input
             label="Password"
@@ -119,7 +121,7 @@ export default function SignInPage({setTitle}) {
             onChange={e => handleChange(e)}
             required={true}
             additional_styles="space-y-1 text-[14px]"
-            additional_styles_input="bg-[#ededed]"
+            additional_styles_input="bg-input_gray"
           />
           <div className="flex flex-col max-md:items-center gap-y-3">
             <Button
@@ -132,7 +134,7 @@ export default function SignInPage({setTitle}) {
           </div>
         </form>
       </div>
-      <div className="w-1/2 px-[100px] flex flex-row justify-center">
+      <div className="w-1/2 px-100p flex flex-row justify-center">
         <div className="min-w-[400px] space-y-3">
           <Image
             src="/images/metadbpng.png"
