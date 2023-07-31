@@ -8,7 +8,6 @@ import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
 import {
   checkAFETimeout,
-  checkAfe,
   formatWorkspaceList,
   getColumnBinder,
   getDataTypeNoUnderscore,
@@ -701,7 +700,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             </Button>
             <h1 className="font-bold text-3xl">More download option</h1>
             <hr />
-            <div className="border-2 rounded-lg h-85pc overflow-auto relative">
+            <div className="border-2 rounded-lg h-[calc(100%-125px)] overflow-auto relative">
               <div className="flex justify-between items-center p-5 sticky top-0 bg-white">
                 <p className="font-semibold w-1/2 break-words">
                   <strong>Search by {getColumnBinder(config, datatype)}</strong>{' '}
@@ -785,36 +784,35 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                   additional_styles="mb-5"
                 />
               </div>
-              <div className="flex justify-center space-x-3 absolute bottom-5 w-full pointer-events-none">
-                <Button
-                  form="bulk_search_download"
-                  type="submit"
-                  title={`Search ${getDataTypeNoUnderscore(
-                    datatype,
-                  )} records based on ${getColumnBinder(config, datatype)}`}
-                  onClick={onSearchDownload}
-                  additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold pointer-events-auto">
-                  Search
-                </Button>
-                <Button
-                  onClick={e => {
-                    e.preventDefault();
-                    resetBulkSearch();
-                  }}
-                  title="The reset button. Use this button to clear any previous search or to attemp searching if a failure occured."
-                  additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold pointer-events-auto">
-                  Reset search
-                </Button>
-                <Button
-                  onClick={e => {
-                    e.preventDefault();
-                    settoggleOverlayDownload(false);
-                  }}
-                  title="Close pop-up"
-                  additional_styles="pointer-events-auto">
-                  Close
-                </Button>
-              </div>
+            </div>
+            <div className="flex justify-center space-x-3 w-full ">
+              <Button
+                form="bulk_search_download"
+                type="submit"
+                title={`Search ${getDataTypeNoUnderscore(
+                  datatype,
+                )} records based on ${getColumnBinder(config, datatype)}`}
+                onClick={onSearchDownload}
+                additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold ">
+                Search
+              </Button>
+              <Button
+                onClick={e => {
+                  e.preventDefault();
+                  resetBulkSearch();
+                }}
+                title="The reset button. Use this button to clear any previous search or to attemp searching if a failure occured."
+                additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold ">
+                Reset search
+              </Button>
+              <Button
+                onClick={e => {
+                  e.preventDefault();
+                  settoggleOverlayDownload(false);
+                }}
+                title="Close pop-up">
+                Close
+              </Button>
             </div>
           </div>
         </div>
