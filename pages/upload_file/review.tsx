@@ -12,7 +12,12 @@ import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import Table from '../../components/table/table';
-import {init_data, saveDocument} from '../../components/utility_functions';
+import {
+  changePage,
+  changePageTimeout,
+  init_data,
+  saveDocument,
+} from '../../components/utility_functions';
 import {TableType} from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
@@ -70,6 +75,7 @@ export default function UploadFileReview({setTitle, config}) {
         );
         let record_data: any[],
           final = [];
+        console.log(upload_document_settings);
         if (upload_document_settings.afe_exist) {
           const existing = await init_data(config, router, {
             afe_number: upload_document_settings.afe_number,
@@ -94,7 +100,9 @@ export default function UploadFileReview({setTitle, config}) {
     if (files.length < 1) {
       router.push('/upload_file');
     } else {
-      init();
+      if (ReviewData.length === 0) {
+        init();
+      }
     }
 
     // ---| OLD WORKFLOW |---
@@ -109,12 +117,7 @@ export default function UploadFileReview({setTitle, config}) {
   ]);
 
   useEffect(() => {
-    setImageURL(
-      _ =>
-        `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${
-          document_summary?.document_id
-        }/${PageNo + 1}`,
-    );
+    changePage(document_summary, setImageURL, PageNo);
   }, [PageNo, document_summary?.document_id]);
 
   const workspaceData = (({
@@ -383,27 +386,51 @@ export default function UploadFileReview({setTitle, config}) {
             <Button
               title="Previous page"
               button_description=""
-              additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
+              additional_styles="bg-white border-2 p-2 hover:bg-gray-200"
               onClick={e => {
                 e.preventDefault();
                 setPageNo(page_no => {
                   return page_no - 1;
                 });
               }}
-              disabled={PageNo <= 0 ? true : false}>
+              disabled={
+                PageNo <= 0 || !spreadsheetID || !spreadsheetReady
+                  ? true
+                  : false
+              }>
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
             </Button>
             <div
               title="Page number"
-              className="bg-white border-2 p-3 cursor-default select-none rounded-lg text-center">
-              <p className="w-5 h-5">{PageNo + 1}</p>
+              className="bg-white border-2 p-2 cursor-default select-none rounded-lg text-center">
+              <section className="h-5 w-28 flex items-center justify-center">
+                {!spreadsheetID || !spreadsheetReady ? (
+                  <div className="h-5 w-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
+                ) : (
+                  <Input
+                    type="number"
+                    value={PageNo + 1}
+                    onChange={e => {
+                      const page = parseInt(e.target.value) - 1;
+                      if (
+                        page < 0 ||
+                        page > document_summary.body.page_count - 1
+                      ) {
+                        return;
+                      }
+                      setPageNo(page);
+                    }}
+                    additional_styles_input="p-0 focus:bg-white bg-white hover:bg-white focus:outline-transparent text-center [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                )}
+              </section>
             </div>
             <Button
               title="Next page"
               button_description=""
-              additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
+              additional_styles="bg-white border-2 p-2 hover:bg-gray-200"
               onClick={e => {
                 e.preventDefault();
                 setPageNo(page_no => {
@@ -411,7 +438,11 @@ export default function UploadFileReview({setTitle, config}) {
                 });
               }}
               disabled={
-                PageNo >= document_summary.body.page_count - 1 ? true : false
+                PageNo >= document_summary.body.page_count - 1 ||
+                !spreadsheetID ||
+                !spreadsheetReady
+                  ? true
+                  : false
               }>
               <div className="w-5 h-5">
                 <ChevronRight />
