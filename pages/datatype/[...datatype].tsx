@@ -7,10 +7,12 @@ import Button from '../../components/button';
 import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
 import {
+  checkAFETimeout,
   checkAfe,
   formatWorkspaceList,
   getColumnBinder,
   getDataTypeNoUnderscore,
+  handleAfeChange,
 } from '../../components/utility_functions';
 import {TokenExpired} from '../../services/admin';
 import {useAppDispatch} from '../../store';
@@ -37,7 +39,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     kkks_name: '',
     working_area: '',
     submission_type: '',
-    afe_number: 0,
+    afe_number: null,
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
@@ -256,7 +258,25 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     }
   };
 
-  const makenew = async e => {
+  const redirect = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    dispatch(
+      displayErrorMessage({
+        message: 'Redirecting to next page...',
+        color: 'blue',
+        duration: 1500,
+      }),
+    );
+    router.push({
+      pathname: `/edit/${newWorkspace.workspace_name}`,
+      query: {
+        form_type: datatype,
+        workspace_data: newWorkspace.afe_number,
+      },
+    });
+  };
+
+  const makenew = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     try {
@@ -338,7 +358,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         workspace_name: '',
         kkks_name: '',
         working_area: '',
-        afe_number: 0,
+        afe_number: null,
         submission_type: '',
       };
     });
@@ -372,48 +392,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     bulk_search_input.value = '';
     setbulkSearch([-1]);
     setbulkSearchError('');
-  };
-
-  const handleAfeChange = async (e, focused) => {
-    e.preventDefault();
-    try {
-      if (focused) {
-      } else {
-        setpopupMessage({message: '', color: ''});
-        if (!newWorkspace.afe_number) {
-          return;
-        }
-        const result = await checkAfe(
-          false,
-          config,
-          datatype,
-          parseInt(e.target.value),
-        );
-        if (result !== 'null') {
-          setafeExist(true);
-          setpopupMessage({
-            message:
-              'A record with the same AFE number already exists. Please choose a different one',
-            color: 'red',
-          });
-        } else {
-          setafeExist(false);
-          setpopupMessage({message: '', color: ''});
-        }
-      }
-    } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
-            error,
-          )}`,
-          color: 'red',
-        }),
-      );
-      setpopupMessage({message: 'Something went wrong', color: 'red'});
-      await delay(1000);
-      setpopupMessage({message: '', color: ''});
-    }
   };
 
   return (
@@ -558,20 +536,27 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                     type="number"
                     name={'AFE_Number'}
                     placeholder={'Input AFE number'}
-                    value={newWorkspace.afe_number}
+                    value={newWorkspace.afe_number || ''}
                     required={true}
                     additional_styles="w-full"
                     autoComplete="off"
-                    onChange={e =>
+                    onChange={e => {
                       setnewWorkspace({
                         ...newWorkspace,
-                        afe_number: parseInt(e.target.value),
+                        afe_number: parseInt(e.target.value) || null,
                         workspace_name: `record_${e.target.value}`,
-                      })
-                    }
-                    onFocus={e => handleAfeChange(e, true)}
-                    onBlur={e => handleAfeChange(e, false)}
-                    onClick={e => handleAfeChange(e, true)}
+                      });
+                      handleAfeChange(
+                        e,
+                        config,
+                        datatype,
+                        dispatch,
+                        setpopupMessage,
+                        setnewWorkspace,
+                        newWorkspace,
+                        setafeExist,
+                      );
+                    }}
                   />
                   <div
                     className={`${
@@ -614,6 +599,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                       kkks_name: e.target.value,
                     })
                   }
+                  disabled={afeExist}
                 />
                 <p>Working area</p>
                 <Input
@@ -630,10 +616,11 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                       working_area: e.target.value,
                     })
                   }
+                  disabled={afeExist}
                 />
                 <p>Submission type</p>
                 <Input
-                  type="dropdown"
+                  type={`${afeExist ? 'text' : 'dropdown'}`}
                   name={'submissionType'}
                   placeholder={'Select an item'}
                   value={newWorkspace.submission_type}
@@ -656,6 +643,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                     })
                   }
                   withSearch
+                  disabled={afeExist}
                 />
               </div>
               <div className="space-x-2 flex">
@@ -665,12 +653,14 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                   disabled={
                     Object.values(newWorkspace).some(x => {
                       return x === null || x === '';
-                    }) || afeExist
+                    }) || checkAFETimeout
                       ? true
                       : false
                   }
                   additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
-                  onClick={makenew}
+                  onClick={e => {
+                    afeExist ? redirect(e) : makenew(e);
+                  }}
                 />
                 <Button
                   button_description="Cancel"

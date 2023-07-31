@@ -2,6 +2,7 @@ import { parseCookies } from 'nookies';
 import { TokenExpired } from '../services/admin';
 import { displayErrorMessage } from '../store/generalSlice';
 import { getHeader } from '../services/document';
+import { delay } from '../utils/common';
 
 export const init_data = async (config, router, workspaceData) => {
   if (!workspaceData.afe_number) {
@@ -741,3 +742,56 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
   })
   return final
 }
+
+export let checkAFETimeout = undefined;
+export const handleAfeChange = async (e, config, datatype, dispatch, setpopupMessage, setnewWorkspace, newWorkspace, setafeExist) => {
+  const input_value = parseInt(e.target.value);
+  if (!input_value) { return }
+  if (checkAFETimeout !== undefined) {
+    clearTimeout(checkAFETimeout);
+  }
+  checkAFETimeout = setTimeout(async () => {
+    e.preventDefault();
+    console.log(checkAFETimeout);
+    try {
+      setpopupMessage({ message: '', color: '' });
+      if (!newWorkspace.afe_number) {
+        return;
+      }
+      const result = await checkAfe(false, config, datatype, input_value);
+      if (result !== 'null') {
+        const workspace_data =
+          JSON.parse(result)[0];
+        setafeExist(true);
+        setnewWorkspace({
+          ...newWorkspace,
+          afe_number: input_value,
+          kkks_name: workspace_data.kkks_name,
+          working_area: workspace_data.working_area,
+          submission_type: workspace_data.submission_type,
+        });
+        setpopupMessage({
+          message:
+            'A record with the same AFE number already exists. You will be redirected to the edit record page instead if you proceed. You can edit the fields below inside the edit record page.',
+          color: 'blue',
+        });
+      } else {
+        setafeExist(false);
+        setpopupMessage({ message: '', color: '' });
+      }
+    } catch (error) {
+      dispatch(
+        displayErrorMessage({
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
+            error,
+          )}`,
+          color: 'red',
+        }),
+      );
+      setpopupMessage({ message: 'Something went wrong', color: 'red' });
+      await delay(1000);
+      setpopupMessage({ message: '', color: '' });
+    }
+    checkAFETimeout = undefined;
+  }, 300);
+};

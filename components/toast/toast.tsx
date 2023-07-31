@@ -1,21 +1,9 @@
 import {useMeasure} from 'react-use';
 import {twMerge} from 'tailwind-merge';
 import {useAppDispatch, useAppSelector} from '../../store';
-import {setErrorMessage} from '../../store/generalSlice';
+import {displayErrorMessage, setErrorMessage} from '../../store/generalSlice';
 import Button from '../button';
 
-/*
-setmessage is a usestate variable passed from parent with properties
-as such:
-{
-    message: string
-    color: string
-    show: bool
-}
-you can pass the string to show up in the toast with the usestate
-variable above. message.message in the variable above (passed as prop
-from parent) will be ignored if children is specified.
-*/
 const Toast = ({additional_styles = ''}: {additional_styles?: string}) => {
   const colors = {
     blue: 'rgb(59 130 246)',
@@ -24,39 +12,16 @@ const Toast = ({additional_styles = ''}: {additional_styles?: string}) => {
   };
 
   const [ref, bounds] = useMeasure();
-
-  const delay = delay_amount_ms =>
-    new Promise(resolve => setTimeout(() => resolve('delay'), delay_amount_ms));
-
   const dispatch = useAppDispatch();
   const errMsg = useAppSelector((state: any) => state.general.error);
-  const hide = async e => {
-    if (e) {
-      e.preventDefault();
-    }
-    // setmessage({...message, show: false});
-    dispatch(
-      setErrorMessage({
-        ...errMsg,
-        show: false,
-      }),
-    );
-    await delay(300);
-    // setmessage({message: '', color: '', show: false});
-    dispatch(setErrorMessage({message: '', color: '', show: false}));
-  };
-
-  // useEffect(() => {
-  //   console.log(bounds);
-  // }, [bounds]);
 
   return (
     <div
       ref={ref}
       className={twMerge(
         `flex items-center space-x-2 fixed left-1/2
-      translate-x-1/2 text-white
-      px-3 rounded-lg py-2 transition-all duration-230 z-[9999]`,
+        -translate-x-1/2 text-white
+        px-3 rounded-lg py-2 transition-all duration-230 z-[9999]`,
         additional_styles,
       )}
       style={{
@@ -64,7 +29,17 @@ const Toast = ({additional_styles = ''}: {additional_styles?: string}) => {
         top: errMsg.show ? '1.25rem' : `-${bounds.height + 100}px`,
       }}>
       <div>{errMsg.message}</div>
-      <Button additional_styles="px-1 py-1 text-black" onClick={hide}>
+      <Button
+        additional_styles="px-1 py-1 text-black"
+        onClick={() => {
+          dispatch(
+            displayErrorMessage({
+              message: errMsg.message,
+              color: '',
+              duration: 0,
+            }),
+          );
+        }}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

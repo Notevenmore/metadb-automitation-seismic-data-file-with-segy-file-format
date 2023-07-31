@@ -6,7 +6,11 @@ import Input from '../components/Input';
 import Button from '../components/button';
 import Container from '../components/container';
 import TableComponent from '../components/table/table';
-import {checkAfe} from '../components/utility_functions';
+import {
+  checkAFETimeout,
+  checkAfe,
+  handleAfeChange,
+} from '../components/utility_functions';
 import {datatypes} from '../config';
 import draft from '../dummy-data/draft';
 import FileIcon from '../public/icons/file.svg';
@@ -38,7 +42,7 @@ const HomeSection = ({config}) => {
     kkks_name: '',
     working_area: '',
     submission_type: '',
-    afe_number: 0,
+    afe_number: null,
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
@@ -52,7 +56,27 @@ const HomeSection = ({config}) => {
     router.push('/upload_file');
   };
 
-  const makenew = async e => {
+  const redirect = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (dataType) {
+      dispatch(
+        displayErrorMessage({
+          message: 'Redirecting to next page...',
+          color: 'blue',
+          duration: 1500,
+        }),
+      );
+      router.push({
+        pathname: `/edit/${newWorkspace.workspace_name}`,
+        query: {
+          form_type: datatypes[dataType],
+          workspace_data: newWorkspace.afe_number,
+        },
+      });
+    }
+  };
+
+  const makenew = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (dataType) {
       router.events.emit('routeChangeStart');
@@ -141,62 +165,11 @@ const HomeSection = ({config}) => {
         workspace_name: '',
         kkks_name: '',
         working_area: '',
-        afe_number: 0,
+        afe_number: null,
         submission_type: '',
       };
     });
     setpopupMessage({message: '', color: ''});
-  };
-
-  const handleAfeChange = async (e, focused) => {
-    e.preventDefault();
-    try {
-      if (focused) {
-        if (!dataType) {
-          setafeExist(false);
-          setpopupMessage({
-            message: 'Please select a data type first',
-            color: 'red',
-          });
-        }
-      } else {
-        setpopupMessage({message: '', color: ''});
-        if (!dataType || !newWorkspace.afe_number) {
-          return;
-        }
-
-        const result = await checkAfe(
-          false,
-          config,
-          datatypes[dataType],
-          parseInt(e.target.value),
-        );
-
-        if (result !== 'null') {
-          setafeExist(true);
-          setpopupMessage({
-            message:
-              'A record with the same AFE number already exists. Please choose a different one',
-            color: 'red',
-          });
-        } else {
-          setafeExist(false);
-          setpopupMessage({message: '', color: ''});
-        }
-      }
-    } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
-            error,
-          )}`,
-          color: 'red',
-        }),
-      );
-      setpopupMessage({message: 'Something went wrong', color: 'red'});
-      await delay(1000);
-      setpopupMessage({message: '', color: ''});
-    }
   };
 
   return (
@@ -285,22 +258,30 @@ const HomeSection = ({config}) => {
                   <Input
                     type="number"
                     name={'AFE_Number'}
-                    placeholder={'1945'}
-                    value={newWorkspace.afe_number}
+                    placeholder={'Input AFE number'}
+                    value={newWorkspace.afe_number || ''}
                     required={true}
                     additional_styles="w-full"
                     autoComplete="off"
                     onChange={e => {
-                      dataType &&
+                      if (dataType) {
                         setnewWorkspace({
                           ...newWorkspace,
-                          afe_number: parseInt(e.target.value),
+                          afe_number: parseInt(e.target.value) || null,
                           workspace_name: `record_${e.target.value}`,
                         });
+                        handleAfeChange(
+                          e,
+                          config,
+                          datatypes[dataType],
+                          dispatch,
+                          setpopupMessage,
+                          setnewWorkspace,
+                          newWorkspace,
+                          setafeExist,
+                        );
+                      }
                     }}
-                    onFocus={e => handleAfeChange(e, true)}
-                    onBlur={e => handleAfeChange(e, false)}
-                    onClick={e => handleAfeChange(e, true)}
                   />
                   <div
                     className={`${
@@ -343,6 +324,7 @@ const HomeSection = ({config}) => {
                       kkks_name: e.target.value,
                     })
                   }
+                  disabled={afeExist}
                 />
                 <p>Working area</p>
                 <Input
@@ -359,10 +341,11 @@ const HomeSection = ({config}) => {
                       working_area: e.target.value,
                     })
                   }
+                  disabled={afeExist}
                 />
                 <p>Submission type</p>
                 <Input
-                  type="dropdown"
+                  type={`${afeExist ? 'text' : 'dropdown'}`}
                   name={'submissionType'}
                   placeholder={'Select a submission type'}
                   value={newWorkspace.submission_type}
@@ -385,6 +368,7 @@ const HomeSection = ({config}) => {
                     })
                   }
                   withSearch
+                  disabled={afeExist}
                 />
               </div>
               <div className="space-x-2 flex">
@@ -394,12 +378,14 @@ const HomeSection = ({config}) => {
                   disabled={
                     Object.values(newWorkspace).some(x => {
                       return x === null || x === '';
-                    }) || afeExist
+                    }) || checkAFETimeout
                       ? true
                       : false
                   }
                   additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
-                  onClick={makenew}
+                  onClick={e => {
+                    afeExist ? redirect(e) : makenew(e);
+                  }}
                 />
                 <Button
                   button_description="Cancel"
