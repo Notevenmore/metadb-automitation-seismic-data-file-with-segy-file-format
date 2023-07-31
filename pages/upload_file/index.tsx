@@ -329,7 +329,7 @@ export default function UploadFilePage({config, setTitle}) {
   }, [setTitle]);
 
   const activeStyle =
-    'bg-searchbg/60 border-2 border-gray-400 box-border w-254p transition ease-in duration-500';
+    'bg-searchbg/60 outline-2 outline-gray-400 outline-offset-4 w-254p transition-all duration-500';
 
   return (
     <Container additional_class="full-height relative" onDragEnter={handleDrag}>
@@ -522,11 +522,11 @@ export default function UploadFilePage({config, setTitle}) {
         <div className="w-4/5 max-w-[80%] flex items-center justify-center">
           <div
             onWheel={horizontal_scroll}
-            className="flex space-x-3 overflow-auto h-auto">
+            className="flex space-x-3 overflow-auto h-auto p-3">
             <Button
               id="dropdown"
               title=""
-              additional_styles={`h-full active:bg-gray-400/60  ${
+              additional_styles={`h-full active:bg-gray-400/60 outline-none ${
                 UplSettings.Method === 'dropdown' ? activeStyle : ''
               }`}
               onClick={e => {
