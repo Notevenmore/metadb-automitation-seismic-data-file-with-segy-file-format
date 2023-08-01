@@ -13,7 +13,7 @@ const nextConfig = {
     NEXT_PUBLIC_OCR_SERVICE_URL: process.env.NEXT_PUBLIC_OCR_SERVICE_URL,
     NEXT_PUBLIC_BACKEND_AUTH: process.env.NEXT_PUBLIC_BACKEND_AUTH,
     ENDPOINTS: process.env.ENDPOINTS,
-  }
+  },
 };
 
 module.exports = nextConfig;

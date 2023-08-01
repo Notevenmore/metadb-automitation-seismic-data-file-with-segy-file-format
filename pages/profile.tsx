@@ -1,4 +1,3 @@
-import moment from 'moment/moment';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';

@@ -1,3 +1,5 @@
+import {useRouter} from 'next/router';
+import {parseCookies} from 'nookies';
 import {
   ColumnDefinition,
   ReactTabulator,
@@ -7,7 +9,6 @@ import 'react-tabulator/lib/styles.css';
 import 'tabulator-tables/dist/css/tabulator.min.css'; //import Tabulator stylesheet
 import {formatDate, omitID} from './Helper';
 import {RowObject} from './Type';
-import {ACCESS_TOKEN, BASE_URL} from './Constants';
 
 interface TableProps {
   data: RowObject[];
@@ -24,6 +25,9 @@ export default function TableEditor({
   afeNumber,
   options,
 }: TableProps) {
+  const router = useRouter();
+  const config = JSON.parse(process.env.ENDPOINTS);
+
   const sendData = () => {
     for (const row of data) {
       void processData(row);
@@ -51,11 +55,13 @@ export default function TableEditor({
 
   const postData = async (row: RowObject) => {
     filterData(row);
-    const response = await fetch(`${BASE_URL}/api/v1/print-well-report`, {
+    const response = await fetch(`${config[router.query.form_type]['view']}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
       body: JSON.stringify(row, omitID),
     });
@@ -70,36 +76,42 @@ export default function TableEditor({
   };
 
   const bindData = (afe: number, id: number) => {
-    return fetch(`${BASE_URL}/api/v1/print-well-report-workspace`, {
+    return fetch(`${config[router.query.form_type]['workspace']}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
       body: JSON.stringify({
         afe_number: afe,
-        print_well_report_id: id,
+        [config[router.query.form_type]['workspace_holder_key']]: id,
       }),
     });
   };
 
   const deleteData = (id: number) => {
-    return fetch(`${BASE_URL}/api/v1/print-well-report/${id}`, {
+    return fetch(`${config[router.query.form_type]['view']}${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
     });
   };
 
   const putData = (row: RowObject, id: number) => {
     filterData(row);
-    return fetch(`${BASE_URL}/api/v1/print-well-report/${id}`, {
+    return fetch(`${config[router.query.form_type]['view']}${id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
       body: JSON.stringify(row),
     });
@@ -153,7 +165,7 @@ export default function TableEditor({
   };
 
   return (
-    <>
+    <div className="m-8">
       <button className="bg-black text-white my-8 p-2" onClick={sendData}>
         Submit
       </button>
@@ -169,6 +181,6 @@ export default function TableEditor({
         }}
         className="mb-8"
       />
-    </>
+    </div>
   );
 }

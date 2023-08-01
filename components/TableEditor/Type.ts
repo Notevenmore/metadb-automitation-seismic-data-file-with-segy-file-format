@@ -1,7 +1,7 @@
 export interface WorkspaceType {
   id: number;
   afe_number: number;
-  print_well_report_id: number;
+  [key: string]: string | number;
 }
 
 export interface RowObject {
