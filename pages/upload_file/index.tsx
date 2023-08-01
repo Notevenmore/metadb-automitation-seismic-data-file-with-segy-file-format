@@ -371,14 +371,14 @@ export default function UploadFilePage({config, setTitle}) {
                 </div>
               )}
               <p className="text-sm text-black/70 text-center pt-2">
-                *Supported file formats: JPG, PNG, PDF, PPTX, CSV, XLSX, or LAS
+                *Supported file formats: JPG, PNG, PDF, TXT or LAS
               </p>
             </div>
             <input
               type="file"
               className="hidden"
               ref={fileUploadRef}
-              accept="image/png, application/pdf, application/vnd.openxmlformats-officedocument.presentationml.presentation, text/csv, .las, .txt"
+              accept="image/png, application/pdf, .las, .txt, .jpg"
               onChange={changeFile}
             />
           </div>
@@ -394,7 +394,7 @@ export default function UploadFilePage({config, setTitle}) {
             name={'fileFormat'}
             placeholder={'Select a file format'}
             value={UplSettings.FileFormat}
-            dropdown_items={['Image', 'PDF', 'PPTX', 'CSV', 'LAS']}
+            dropdown_items={['Image', 'PDF', 'CSV', 'LAS', 'TXT']}
             required={true}
             additional_styles="w-full"
             additional_styles_label={additional_styles_label}
