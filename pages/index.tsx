@@ -189,8 +189,7 @@ const HomeSection = ({config}) => {
           />
         </div>
         <p className="text-center opacity-50">
-          The document to be uploaded must be in either JPG, PNG, PDF, PPTX,
-          CSV, XLSX, or LAS format.
+          The document to be uploaded must be in either JPG, PNG, PDF, TXT or LAS format.
         </p>
         <section className="flex justify-center items-center">
           <Divider additional_styles={'w-284p'} />

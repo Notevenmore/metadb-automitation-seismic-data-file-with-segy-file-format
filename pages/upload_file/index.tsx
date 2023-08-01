@@ -394,7 +394,7 @@ export default function UploadFilePage({config, setTitle}) {
             name={'fileFormat'}
             placeholder={'Select a file format'}
             value={UplSettings.FileFormat}
-            dropdown_items={['Image', 'PDF', 'CSV', 'LAS', 'TXT']}
+            dropdown_items={['Image', 'PDF', 'LAS', 'TXT']}
             required={true}
             additional_styles="w-full"
             additional_styles_label={additional_styles_label}
