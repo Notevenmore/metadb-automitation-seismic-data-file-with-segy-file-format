@@ -41,7 +41,7 @@ const HeaderRow = ({children, ...props}) => {
 
 const HeaderLabel = ({label1, label2}) => {
   return (
-    <div className={'flex flex-wrap space-x-2 lg:min-w-325p mb-7p lg:my-5p'}>
+    <div className={'flex flex-wrap space-x-2 lg:min-w-[325px] mb-7p lg:my-5p'}>
       {label2 ? (
         <>
           <label>{label1}</label>
@@ -58,12 +58,12 @@ export const HeaderStatic = ({label1, label2, content = ''}) => {
   return (
     <HeaderRow>
       {label2 ? (
-        <p className="font-semibold lg:min-w-325p max-lg:mb-2">
+        <p className="font-semibold lg:min-w-[325px] max-lg:mb-2">
           {label1}
           <span className="font-light text-grayish"> {label2}</span>
         </p>
       ) : (
-        <p className="font-semibold min-w-325p">{label1}</p>
+        <p className="font-semibold min-w-[325px]">{label1}</p>
       )}
       <p className="inline lg:ml-2 w-full">{content}</p>
     </HeaderRow>

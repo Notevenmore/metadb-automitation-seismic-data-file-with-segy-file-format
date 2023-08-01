@@ -795,3 +795,18 @@ export const handleAfeChange = async (e, config, datatype, dispatch, setpopupMes
     checkAFETimeout = undefined;
   }, 300);
 };
+
+export let changePageTimeout = undefined
+export const changePage = (document_summary, setImageURL, PageNo) => {
+  if (changePageTimeout !== undefined) {
+    clearTimeout(changePageTimeout)
+  }
+  changePageTimeout = setTimeout(() => {
+    setImageURL(
+      _ =>
+        `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${document_summary?.document_id
+        }/${PageNo + 1}`,
+    );
+    changePageTimeout = undefined
+  }, 300);
+}

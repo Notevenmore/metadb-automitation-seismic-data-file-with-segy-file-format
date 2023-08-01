@@ -8,13 +8,12 @@ import Container from '../components/container';
 import TableComponent from '../components/table/table';
 import {
   checkAFETimeout,
-  checkAfe,
   handleAfeChange,
 } from '../components/utility_functions';
 import {datatypes} from '../config';
 import draft from '../dummy-data/draft';
 import FileIcon from '../public/icons/file.svg';
-import Close from '../public/icons/close.svg';
+import CloseThin from '../public/icons/close-thin.svg';
 import {TokenExpired} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
 import {
@@ -232,7 +231,7 @@ const HomeSection = ({config}) => {
                 e.preventDefault();
                 reset();
               }}>
-              <Close className="w-5 h-5" />
+              <CloseThin className="w-5 h-5" />
             </Button>
             <h1 className="font-bold text-3xl">New record</h1>
             <hr />
