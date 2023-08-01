@@ -83,7 +83,7 @@ const FloatSection = ({content, index, toggleDialog}) => {
       {index !== 0 && <Divider />}
       <Link href={`${content.link ? content.link : router.asPath}`}>
         <section
-          className="my-3 px-3"
+          className="my-3 px-3 hover:bg-gray-200"
           onClick={e => {
             if (content.handleClick) content.handleClick(e);
             toggleDialog();
