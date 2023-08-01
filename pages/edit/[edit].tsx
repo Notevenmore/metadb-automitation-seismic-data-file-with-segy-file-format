@@ -157,6 +157,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
               error,
             )}`,
             color: 'red',
+            duration: 5000,
           }),
         );
       });
@@ -183,6 +184,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           displayErrorMessage({
             message: `${String(error)}`,
             color: 'red',
+            duration: 5000,
           }),
         );
       })

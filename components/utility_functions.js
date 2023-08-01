@@ -120,6 +120,7 @@ export const saveDocument = async (
         message:
           'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
         color: 'red',
+        duration: 5000
       }),
     );
     return;
@@ -786,6 +787,7 @@ export const handleAfeChange = async (e, config, datatype, dispatch, setpopupMes
             error,
           )}`,
           color: 'red',
+          duration: 5000
         }),
       );
       setpopupMessage({ message: 'Something went wrong', color: 'red' });

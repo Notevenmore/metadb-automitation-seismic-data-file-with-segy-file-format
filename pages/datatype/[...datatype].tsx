@@ -80,14 +80,20 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             displayErrorMessage({
               message: 'Success',
               color: 'blue',
-              duration: 1000,
+              duration: 1500,
             }),
           );
           reset_search();
           router.events.emit('routeChangeComplete');
         })
         .catch(error => {
-          dispatch(displayErrorMessage({message: String(error), color: 'red'}));
+          dispatch(
+            displayErrorMessage({
+              message: String(error),
+              color: 'red',
+              duration: 5000,
+            }),
+          );
           router.events.emit('routeChangeComplete');
         });
     },
@@ -244,6 +250,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             displayErrorMessage({
               message: `Failed to execute bulk searching. ${String(err)}`,
               color: 'red',
+              duration: 5000,
             }),
           );
           setbulkSearch([-1]);
@@ -338,7 +345,13 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       });
     } catch (error) {
       // Handle error and display error message
-      dispatch(displayErrorMessage({message: String(error), color: 'red'}));
+      dispatch(
+        displayErrorMessage({
+          message: String(error),
+          color: 'red',
+          duration: 5000,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
   };

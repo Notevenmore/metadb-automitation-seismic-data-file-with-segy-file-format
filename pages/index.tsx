@@ -142,6 +142,7 @@ const HomeSection = ({config}) => {
           displayErrorMessage({
             message: String(error),
             color: 'red',
+            duration: 5000,
           }),
         );
       }
