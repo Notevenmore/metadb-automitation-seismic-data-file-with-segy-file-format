@@ -26,7 +26,7 @@ export async function getLogin(email, password) {
       if(err.response.status === 404) {
         throw new Error('Incorrent credentials. Try again or use a different account if the problem still persists')
       }
-      throw new Error(`'Incorrent credentials. Try again or use a different account if the problem still persists'`);
+      throw new Error(`Incorrent credentials. Try again or use a different account if the problem still persists`);
     });
 
   return result;
