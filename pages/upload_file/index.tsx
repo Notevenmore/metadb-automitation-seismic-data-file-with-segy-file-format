@@ -243,6 +243,7 @@ export default function UploadFilePage({config, setTitle}) {
               message:
                 'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
               color: 'red',
+              duration: 5000,
             }),
           );
         }
@@ -254,6 +255,7 @@ export default function UploadFilePage({config, setTitle}) {
             error,
           )}`,
           color: 'red',
+          duration: 5000,
         }),
       );
     }
@@ -312,10 +314,11 @@ export default function UploadFilePage({config, setTitle}) {
     } catch (error) {
       dispatch(
         displayErrorMessage({
-          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
             error,
           )}`,
           color: 'red',
+          duration: 5000,
         }),
       );
       setpopupMessage({message: 'Something went wrong', color: 'red'});

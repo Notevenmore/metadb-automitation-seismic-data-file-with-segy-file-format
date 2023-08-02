@@ -1,7 +1,7 @@
 import {useMeasure} from 'react-use';
 import {twMerge} from 'tailwind-merge';
 import {useAppDispatch, useAppSelector} from '../../store';
-import {displayErrorMessage, setErrorMessage} from '../../store/generalSlice';
+import {displayErrorMessage} from '../../store/generalSlice';
 import Button from '../button';
 
 const Toast = ({additional_styles = ''}: {additional_styles?: string}) => {

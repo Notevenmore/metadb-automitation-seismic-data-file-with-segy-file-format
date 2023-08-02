@@ -175,6 +175,7 @@ export default function UploadFileReview({setTitle, config}) {
             error,
           )}`,
           color: 'red',
+          duration: 5000,
         }),
       );
     }

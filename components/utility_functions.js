@@ -120,6 +120,7 @@ export const saveDocument = async (
         message:
           'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
         color: 'red',
+        duration: 5000
       }),
     );
     return;
@@ -664,7 +665,7 @@ export const getDataTypeNoUnderscore = (data_type) => {
   return data_type.split("_").join(" ")
 }
 
-export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Image, datatype, config, dispatch, deleteWorkspace, init) => {
+export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Image, datatype, config, dispatch, settoggleOverlayDelete) => {
   if (!workspaces_list) { return workspaces_list }
   let final = []
   workspaces_list.forEach(workspace => {
@@ -723,9 +724,10 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
             className="flex"
             title="Delete record"
             onClick={e => {
-              deleteWorkspace(e, workspace.afe_number).then(() => {
-                init();
-              });
+              // deleteWorkspace(e, workspace.afe_number).then(() => {
+              //   init();
+              // });
+              settoggleOverlayDelete({ show: true, afe_number: workspace.afe_number })
             }}>
             <div className="w-18p h-18p flex items-center">
               <Image
@@ -786,6 +788,7 @@ export const handleAfeChange = async (e, config, datatype, dispatch, setpopupMes
             error,
           )}`,
           color: 'red',
+          duration: 5000
         }),
       );
       setpopupMessage({ message: 'Something went wrong', color: 'red' });
