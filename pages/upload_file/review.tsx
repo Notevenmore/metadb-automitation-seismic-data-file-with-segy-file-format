@@ -381,7 +381,7 @@ export default function UploadFileReview({setTitle, config}) {
           />
         </div>
       )}
-      {document_summary?.body.page_count > 1 && (
+      {document_summary?.body.page_count > 1 && ImageReview && (
         <div className="flex items-center justify-center sticky bottom-2 my-4 z-[10000] w-full pointer-events-none">
           <div className="w-fit flex space-x-2 items-center justify-center bg-white rounded-lg p-2 border pointer-events-auto">
             <Button
