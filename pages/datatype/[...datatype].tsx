@@ -911,14 +911,14 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
               <strong>This action is irreversible!</strong>
             </p>
             <section className="flex w-full items-center justify-center space-x-2">
+              <Button onClick={resetDeleteOverlay}>Cancel</Button>
               <Button
                 onClick={e => {
                   resetDeleteOverlay(e, true);
                 }}
                 additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold">
-                Yes
+                Confirm
               </Button>
-              <Button onClick={resetDeleteOverlay}>Cancel</Button>
             </section>
           </div>
         </div>
