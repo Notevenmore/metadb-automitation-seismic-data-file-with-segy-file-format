@@ -88,6 +88,7 @@ export default function NewDocumentPage({setTitle, config}) {
             error,
           )}`,
           color: 'red',
+          duration: 5000,
         }),
       );
     }

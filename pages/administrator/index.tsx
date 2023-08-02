@@ -31,6 +31,7 @@ export default function AdministratorPage() {
           displayErrorMessage({
             message: `${String(err)}`,
             color: 'red',
+            duration: 5000,
           }),
         );
       });
@@ -53,6 +54,7 @@ export default function AdministratorPage() {
               displayErrorMessage({
                 message: `${userId} acount successfully deleted.`,
                 color: 'blue',
+                duration: 3000,
               }),
             );
           },
@@ -61,6 +63,7 @@ export default function AdministratorPage() {
               displayErrorMessage({
                 message: String(err),
                 color: 'red',
+                duration: 5000,
               }),
             );
           },

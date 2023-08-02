@@ -41,6 +41,7 @@ export default function AddNewUserPage() {
         displayErrorMessage({
           message: 'Inputted userid cannot contain space. Please retype.',
           color: 'red',
+          duration: 5000,
         }),
       );
       return;
@@ -58,6 +59,7 @@ export default function AddNewUserPage() {
             displayErrorMessage({
               message: String(res),
               color: 'red',
+              duration: 5000,
             }),
           );
           return;
@@ -66,6 +68,7 @@ export default function AddNewUserPage() {
           displayErrorMessage({
             message: `Successfully created ${detail.userid} account.`,
             color: 'blue',
+            duration: 3000,
           }),
         );
         setDetail({
@@ -82,6 +85,7 @@ export default function AddNewUserPage() {
             displayErrorMessage({
               message: 'Inputted userid already exist',
               color: 'red',
+              duration: 5000,
             }),
           );
         }

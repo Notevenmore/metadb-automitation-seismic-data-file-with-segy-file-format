@@ -38,6 +38,7 @@ export default function UserPage() {
         displayErrorMessage({
           message: String(err),
           color: 'red',
+          duration: 5000,
         }),
       );
       return;
@@ -64,6 +65,7 @@ export default function UserPage() {
           displayErrorMessage({
             message: `${userId} data successfully updated.`,
             color: 'blue',
+            duration: 3000,
           }),
         );
       },
@@ -72,6 +74,7 @@ export default function UserPage() {
           displayErrorMessage({
             message: String(err),
             color: 'red',
+            duration: 5000,
           }),
         );
       },
@@ -89,6 +92,7 @@ export default function UserPage() {
             displayErrorMessage({
               message: `${userId} data successfully deleted.`,
               color: 'blue',
+              duration: 3000,
             }),
           );
           router.replace('/administrator');

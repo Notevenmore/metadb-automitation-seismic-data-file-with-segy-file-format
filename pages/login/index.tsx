@@ -76,6 +76,7 @@ export default function SignInPage({setTitle}) {
           displayErrorMessage({
             message: String(error),
             color: 'red',
+            duration: 5000,
           }),
         );
       });

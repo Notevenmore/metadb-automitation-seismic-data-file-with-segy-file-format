@@ -25,6 +25,11 @@ import {
 } from '../../store/generalSlice';
 import {delay} from '../../utils/common';
 
+interface DeleteToggle {
+  show: boolean;
+  afe_number: number;
+}
+
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
   const [searchData, setsearchData] = useState([-1]); // for saving a backup when searching
@@ -33,6 +38,10 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [bulkSearchError, setbulkSearchError] = useState('');
   const [toggleOverlay, settoggleOverlay] = useState(false);
   const [toggleOverlayDownload, settoggleOverlayDownload] = useState(false);
+  const [toggleOverlayDelete, settoggleOverlayDelete] = useState<DeleteToggle>({
+    show: false,
+    afe_number: null,
+  });
   const [newWorkspace, setnewWorkspace] = useState<UploadDocumentSettings>({
     workspace_name: '',
     kkks_name: '',
@@ -80,14 +89,20 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             displayErrorMessage({
               message: 'Success',
               color: 'blue',
-              duration: 1000,
+              duration: 1500,
             }),
           );
           reset_search();
           router.events.emit('routeChangeComplete');
         })
         .catch(error => {
-          dispatch(displayErrorMessage({message: String(error), color: 'red'}));
+          dispatch(
+            displayErrorMessage({
+              message: String(error),
+              color: 'red',
+              duration: 5000,
+            }),
+          );
           router.events.emit('routeChangeComplete');
         });
     },
@@ -132,10 +147,10 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             datatype,
             config,
             dispatch,
-            deleteWorkspace,
-            init,
+            settoggleOverlayDelete,
           );
           setData(final);
+          onSearchDownload();
         })
         .catch(error => {
           seterror(String(error));
@@ -187,14 +202,19 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     }
   };
 
-  const onSearchDownload = e => {
+  const onSearchDownload = (e = null) => {
     try {
-      e.preventDefault();
-      setbulkSearch([0]);
+      if (e) {
+        e.preventDefault();
+      }
       const bulk_search_input = document.getElementById(
         'search_bar_bulk_download',
       ) as HTMLInputElement;
       const bulk_search_identifier = parseInt(bulk_search_input.value);
+      if (!bulk_search_identifier) {
+        return;
+      }
+      setbulkSearch([0]);
       fetch(
         `${config[datatype]['afe'].slice(0, -1)}-${
           config[datatype]['column_binder']
@@ -234,8 +254,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             datatype,
             config,
             dispatch,
-            deleteWorkspace,
-            init,
+            settoggleOverlayDelete,
           );
           setbulkSearch(records);
         })
@@ -244,6 +263,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             displayErrorMessage({
               message: `Failed to execute bulk searching. ${String(err)}`,
               color: 'red',
+              duration: 5000,
             }),
           );
           setbulkSearch([-1]);
@@ -338,7 +358,13 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       });
     } catch (error) {
       // Handle error and display error message
-      dispatch(displayErrorMessage({message: String(error), color: 'red'}));
+      dispatch(
+        displayErrorMessage({
+          message: String(error),
+          color: 'red',
+          duration: 5000,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -365,6 +391,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   };
 
   const resetDownloadOverlay = (element: HTMLElement = undefined) => {
+    console.log(element);
     if (element) {
       const comparator = document.getElementById('overlay_download');
       if (element !== comparator) {
@@ -372,7 +399,40 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       }
     }
     settoggleOverlayDownload(false);
-    setpopupMessage({message: '', color: ''});
+  };
+
+  const resetDeleteOverlay = async (
+    e: React.MouseEvent<HTMLElement>,
+    submit = false,
+    element = false,
+  ) => {
+    e.preventDefault();
+    router.events.emit('routeChangeStart');
+
+    if (element) {
+      const comparator = document.getElementById('overlay_delete');
+      const comparator_parent = document.getElementById(
+        'overlay_delete_parent',
+      );
+      console.log(e.target, comparator, e.target !== comparator);
+      if (![comparator, comparator_parent].includes(e.target as HTMLElement)) {
+        router.events.emit('routeChangeComplete');
+        return;
+      }
+    }
+    settoggleOverlayDelete(prev => {
+      return {
+        show: false,
+        afe_number: prev.afe_number,
+      };
+    });
+    if (submit) {
+      deleteWorkspace(e, toggleOverlayDelete.afe_number).then(res => {
+        init();
+      });
+    }
+
+    router.events.emit('routeChangeComplete');
   };
 
   const reset_search = () => {
@@ -814,6 +874,50 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                 Close
               </Button>
             </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className={`fixed w-screen h-screen flex items-center justify-center bg-black/[.5] top-0 left-0 ${
+          toggleOverlayDelete.show
+            ? 'opacity-100 visible'
+            : 'opacity-0 invisible'
+        } transition-all z-[9999]`}
+        id="overlay_delete_parent"
+        onClick={e => {
+          resetDeleteOverlay(e, false, true);
+        }}>
+        <div
+          id="overlay_delete"
+          className="flex items-center justify-center w-1/2 h-full">
+          <div
+            className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${
+              toggleOverlayDelete.show ? '' : '-translate-y-10 opacity-0'
+            } transition-all`}>
+            <Button
+              path=""
+              additional_styles="absolute top-2 right-2 px-1 py-1 text-black"
+              title="Cancel"
+              onClick={resetDeleteOverlay}>
+              <CloseThin className="w-5 h-5" />
+            </Button>
+            <h1 className="font-bold text-3xl">Delete confirmation</h1>
+            <hr />
+            <p>
+              Are you sure you want to delete a record with afe number{' '}
+              {toggleOverlayDelete.afe_number}?{' '}
+              <strong>This action is irreversible!</strong>
+            </p>
+            <section className="flex w-full items-center justify-center space-x-2">
+              <Button
+                onClick={e => {
+                  resetDeleteOverlay(e, true);
+                }}
+                additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold">
+                Yes
+              </Button>
+              <Button onClick={resetDeleteOverlay}>Cancel</Button>
+            </section>
           </div>
         </div>
       </div>
