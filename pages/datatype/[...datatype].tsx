@@ -148,6 +148,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             config,
             dispatch,
             settoggleOverlayDelete,
+            router,
           );
           setData(final);
           onSearchDownload();
@@ -255,6 +256,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             config,
             dispatch,
             settoggleOverlayDelete,
+            router,
           );
           setbulkSearch(records);
         })
