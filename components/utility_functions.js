@@ -665,7 +665,7 @@ export const getDataTypeNoUnderscore = (data_type) => {
   return data_type.split("_").join(" ")
 }
 
-export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Image, datatype, config, dispatch, settoggleOverlayDelete) => {
+export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Image, datatype, config, dispatch, settoggleOverlayDelete, router) => {
   if (!workspaces_list) { return workspaces_list }
   let final = []
   workspaces_list.forEach(workspace => {
@@ -682,12 +682,14 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
             className="flex"
             onClick={async e => {
               try {
+                router.events.emit("routeChangeStart")
                 await downloadWorkspace(
                   { query: { form_type: datatype } },
                   config,
                   workspace,
                   dispatch,
                 );
+                router.events.emit("routeChangeComplete")
               } catch (error) {
                 dispatch(
                   displayErrorMessage({
@@ -695,6 +697,7 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
                     color: 'blue',
                   }),
                 );
+                router.events.emit("routeChangeComplete")
               }
             }}>
             <div className="w-18p h-18p">
