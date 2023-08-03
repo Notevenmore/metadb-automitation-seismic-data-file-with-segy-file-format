@@ -586,7 +586,7 @@ export default function UploadFilePage({config, setTitle}) {
                 </section>
               </div>
             </Button>
-            <Button
+           {UplSettings.DataType.toLowerCase().includes("2d seismic") && <Button
               id="automatic"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
@@ -606,7 +606,7 @@ export default function UploadFilePage({config, setTitle}) {
                   </p>
                 </section>
               </div>
-            </Button>
+            </Button>}
           </div>
         </div>
         <div className="flex flex-row gap-x-3 pt-3 pb-16">
