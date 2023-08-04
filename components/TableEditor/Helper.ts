@@ -1,13 +1,13 @@
 import moment from 'moment/moment';
 import localization from 'moment/locale/id';
 
-export function omitID(key: string, value: string) {
+export const omitID = (key: string, value: string) => {
   if (key == 'id') {
     return undefined;
   } else {
     return value;
   }
-}
+};
 
 export const formatDate = (obj: string | number, fromDB: boolean) => {
   if (obj) {
