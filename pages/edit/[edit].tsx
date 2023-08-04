@@ -284,6 +284,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
                       workspaceData?.kkks_name || 'Geodwipa Teknika Nusantara'
                     }
                     onChange={handleWorkspaceChange}
+                    disabled
                   />,
                 ],
                 [
