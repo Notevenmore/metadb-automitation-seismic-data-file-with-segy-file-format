@@ -211,7 +211,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       const bulk_search_input = document.getElementById(
         'search_bar_bulk_download',
       ) as HTMLInputElement;
-      const bulk_search_identifier = parseInt(bulk_search_input.value);
+      const bulk_search_identifier = bulk_search_input.value;
       if (!bulk_search_identifier) {
         return;
       }
