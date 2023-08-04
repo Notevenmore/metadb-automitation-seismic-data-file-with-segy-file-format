@@ -122,15 +122,7 @@ const Profile = ({setTitle}) => {
             additional_styles="text-[14.5px]"
           />
         </div>
-        <div>
-          <h3 className="font-semibold">Password</h3>
-          <p>
-            Reset your password by clicking the link below. The password reset
-            confirmation will be sent to your email.
-          </p>
-        </div>
         <div className="flex space-x-2">
-          <Button path="" button_description="Change my password" />
           <Button
             path=""
             button_description="Sign out"

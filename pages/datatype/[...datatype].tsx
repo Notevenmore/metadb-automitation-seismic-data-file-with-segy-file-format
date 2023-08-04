@@ -7,10 +7,11 @@ import Button from '../../components/button';
 import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
 import {
-  checkAfe,
+  checkAFETimeout,
   formatWorkspaceList,
   getColumnBinder,
   getDataTypeNoUnderscore,
+  handleAfeChange,
 } from '../../components/utility_functions';
 import {TokenExpired} from '../../services/admin';
 import {useAppDispatch} from '../../store';
@@ -24,6 +25,11 @@ import {
 } from '../../store/generalSlice';
 import {delay} from '../../utils/common';
 
+interface DeleteToggle {
+  show: boolean;
+  afe_number: number;
+}
+
 const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [data, setData] = useState([]);
   const [searchData, setsearchData] = useState([-1]); // for saving a backup when searching
@@ -32,12 +38,16 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   const [bulkSearchError, setbulkSearchError] = useState('');
   const [toggleOverlay, settoggleOverlay] = useState(false);
   const [toggleOverlayDownload, settoggleOverlayDownload] = useState(false);
+  const [toggleOverlayDelete, settoggleOverlayDelete] = useState<DeleteToggle>({
+    show: false,
+    afe_number: null,
+  });
   const [newWorkspace, setnewWorkspace] = useState<UploadDocumentSettings>({
     workspace_name: '',
     kkks_name: '',
     working_area: '',
     submission_type: '',
-    afe_number: 0,
+    afe_number: null,
     email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
   });
   const [popupMessage, setpopupMessage] = useState({message: '', color: ''});
@@ -79,14 +89,20 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             displayErrorMessage({
               message: 'Success',
               color: 'blue',
-              duration: 1000,
+              duration: 1500,
             }),
           );
           reset_search();
           router.events.emit('routeChangeComplete');
         })
         .catch(error => {
-          dispatch(displayErrorMessage({message: String(error), color: 'red'}));
+          dispatch(
+            displayErrorMessage({
+              message: String(error),
+              color: 'red',
+              duration: 5000,
+            }),
+          );
           router.events.emit('routeChangeComplete');
         });
     },
@@ -131,10 +147,11 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             datatype,
             config,
             dispatch,
-            deleteWorkspace,
-            init,
+            settoggleOverlayDelete,
+            router,
           );
           setData(final);
+          onSearchDownload();
         })
         .catch(error => {
           seterror(String(error));
@@ -186,14 +203,19 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     }
   };
 
-  const onSearchDownload = e => {
+  const onSearchDownload = (e = null) => {
     try {
-      e.preventDefault();
-      setbulkSearch([0]);
+      if (e) {
+        e.preventDefault();
+      }
       const bulk_search_input = document.getElementById(
         'search_bar_bulk_download',
       ) as HTMLInputElement;
       const bulk_search_identifier = parseInt(bulk_search_input.value);
+      if (!bulk_search_identifier) {
+        return;
+      }
+      setbulkSearch([0]);
       fetch(
         `${config[datatype]['afe'].slice(0, -1)}-${
           config[datatype]['column_binder']
@@ -233,8 +255,8 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             datatype,
             config,
             dispatch,
-            deleteWorkspace,
-            init,
+            settoggleOverlayDelete,
+            router,
           );
           setbulkSearch(records);
         })
@@ -243,6 +265,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             displayErrorMessage({
               message: `Failed to execute bulk searching. ${String(err)}`,
               color: 'red',
+              duration: 5000,
             }),
           );
           setbulkSearch([-1]);
@@ -256,7 +279,25 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     }
   };
 
-  const makenew = async e => {
+  const redirect = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    dispatch(
+      displayErrorMessage({
+        message: 'Redirecting to next page...',
+        color: 'blue',
+        duration: 1500,
+      }),
+    );
+    router.push({
+      pathname: `/edit/${newWorkspace.workspace_name}`,
+      query: {
+        form_type: datatype,
+        workspace_data: newWorkspace.afe_number,
+      },
+    });
+  };
+
+  const makenew = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     try {
@@ -319,7 +360,13 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       });
     } catch (error) {
       // Handle error and display error message
-      dispatch(displayErrorMessage({message: String(error), color: 'red'}));
+      dispatch(
+        displayErrorMessage({
+          message: String(error),
+          color: 'red',
+          duration: 5000,
+        }),
+      );
     }
     router.events.emit('routeChangeComplete');
   };
@@ -338,7 +385,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
         workspace_name: '',
         kkks_name: '',
         working_area: '',
-        afe_number: 0,
+        afe_number: null,
         submission_type: '',
       };
     });
@@ -346,6 +393,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   };
 
   const resetDownloadOverlay = (element: HTMLElement = undefined) => {
+    console.log(element);
     if (element) {
       const comparator = document.getElementById('overlay_download');
       if (element !== comparator) {
@@ -353,7 +401,40 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       }
     }
     settoggleOverlayDownload(false);
-    setpopupMessage({message: '', color: ''});
+  };
+
+  const resetDeleteOverlay = async (
+    e: React.MouseEvent<HTMLElement>,
+    submit = false,
+    element = false,
+  ) => {
+    e.preventDefault();
+    router.events.emit('routeChangeStart');
+
+    if (element) {
+      const comparator = document.getElementById('overlay_delete');
+      const comparator_parent = document.getElementById(
+        'overlay_delete_parent',
+      );
+      console.log(e.target, comparator, e.target !== comparator);
+      if (![comparator, comparator_parent].includes(e.target as HTMLElement)) {
+        router.events.emit('routeChangeComplete');
+        return;
+      }
+    }
+    settoggleOverlayDelete(prev => {
+      return {
+        show: false,
+        afe_number: prev.afe_number,
+      };
+    });
+    if (submit) {
+      deleteWorkspace(e, toggleOverlayDelete.afe_number).then(res => {
+        init();
+      });
+    }
+
+    router.events.emit('routeChangeComplete');
   };
 
   const reset_search = () => {
@@ -372,48 +453,6 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
     bulk_search_input.value = '';
     setbulkSearch([-1]);
     setbulkSearchError('');
-  };
-
-  const handleAfeChange = async (e, focused) => {
-    e.preventDefault();
-    try {
-      if (focused) {
-      } else {
-        setpopupMessage({message: '', color: ''});
-        if (!newWorkspace.afe_number) {
-          return;
-        }
-        const result = await checkAfe(
-          false,
-          config,
-          datatype,
-          parseInt(e.target.value),
-        );
-        if (result !== 'null') {
-          setafeExist(true);
-          setpopupMessage({
-            message:
-              'A record with the same AFE number already exists. Please choose a different one',
-            color: 'red',
-          });
-        } else {
-          setafeExist(false);
-          setpopupMessage({message: '', color: ''});
-        }
-      }
-    } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
-            error,
-          )}`,
-          color: 'red',
-        }),
-      );
-      setpopupMessage({message: 'Something went wrong', color: 'red'});
-      await delay(1000);
-      setpopupMessage({message: '', color: ''});
-    }
   };
 
   return (
@@ -558,20 +597,27 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                     type="number"
                     name={'AFE_Number'}
                     placeholder={'Input AFE number'}
-                    value={newWorkspace.afe_number}
+                    value={newWorkspace.afe_number || ''}
                     required={true}
                     additional_styles="w-full"
                     autoComplete="off"
-                    onChange={e =>
+                    onChange={e => {
                       setnewWorkspace({
                         ...newWorkspace,
-                        afe_number: parseInt(e.target.value),
+                        afe_number: parseInt(e.target.value) || null,
                         workspace_name: `record_${e.target.value}`,
-                      })
-                    }
-                    onFocus={e => handleAfeChange(e, true)}
-                    onBlur={e => handleAfeChange(e, false)}
-                    onClick={e => handleAfeChange(e, true)}
+                      });
+                      handleAfeChange(
+                        e,
+                        config,
+                        datatype,
+                        dispatch,
+                        setpopupMessage,
+                        setnewWorkspace,
+                        newWorkspace,
+                        setafeExist,
+                      );
+                    }}
                   />
                   <div
                     className={`${
@@ -614,6 +660,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                       kkks_name: e.target.value,
                     })
                   }
+                  disabled={afeExist}
                 />
                 <p>Working area</p>
                 <Input
@@ -630,10 +677,11 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                       working_area: e.target.value,
                     })
                   }
+                  disabled={afeExist}
                 />
                 <p>Submission type</p>
                 <Input
-                  type="dropdown"
+                  type={`${afeExist ? 'text' : 'dropdown'}`}
                   name={'submissionType'}
                   placeholder={'Select an item'}
                   value={newWorkspace.submission_type}
@@ -656,6 +704,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                     })
                   }
                   withSearch
+                  disabled={afeExist}
                 />
               </div>
               <div className="space-x-2 flex">
@@ -665,12 +714,14 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                   disabled={
                     Object.values(newWorkspace).some(x => {
                       return x === null || x === '';
-                    }) || afeExist
+                    }) || checkAFETimeout
                       ? true
                       : false
                   }
                   additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold"
-                  onClick={makenew}
+                  onClick={e => {
+                    afeExist ? redirect(e) : makenew(e);
+                  }}
                 />
                 <Button
                   button_description="Cancel"
@@ -711,7 +762,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
             </Button>
             <h1 className="font-bold text-3xl">More download option</h1>
             <hr />
-            <div className="border-2 rounded-lg h-85pc overflow-auto relative">
+            <div className="border-2 rounded-lg h-[calc(100%-125px)] overflow-auto relative">
               <div className="flex justify-between items-center p-5 sticky top-0 bg-white">
                 <p className="font-semibold w-1/2 break-words">
                   <strong>Search by {getColumnBinder(config, datatype)}</strong>{' '}
@@ -795,37 +846,80 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                   additional_styles="mb-5"
                 />
               </div>
-              <div className="flex justify-center space-x-3 absolute bottom-5 w-full pointer-events-none">
-                <Button
-                  form="bulk_search_download"
-                  type="submit"
-                  title={`Search ${getDataTypeNoUnderscore(
-                    datatype,
-                  )} records based on ${getColumnBinder(config, datatype)}`}
-                  onClick={onSearchDownload}
-                  additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold pointer-events-auto">
-                  Search
-                </Button>
-                <Button
-                  onClick={e => {
-                    e.preventDefault();
-                    resetBulkSearch();
-                  }}
-                  title="The reset button. Use this button to clear any previous search or to attemp searching if a failure occured."
-                  additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold pointer-events-auto">
-                  Reset search
-                </Button>
-                <Button
-                  onClick={e => {
-                    e.preventDefault();
-                    settoggleOverlayDownload(false);
-                  }}
-                  title="Close pop-up"
-                  additional_styles="pointer-events-auto">
-                  Close
-                </Button>
-              </div>
             </div>
+            <div className="flex justify-center space-x-3 w-full ">
+              <Button
+                form="bulk_search_download"
+                type="submit"
+                title={`Search ${getDataTypeNoUnderscore(
+                  datatype,
+                )} records based on ${getColumnBinder(config, datatype)}`}
+                onClick={onSearchDownload}
+                additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold ">
+                Search
+              </Button>
+              <Button
+                onClick={e => {
+                  e.preventDefault();
+                  resetBulkSearch();
+                }}
+                title="The reset button. Use this button to clear any previous search or to attemp searching if a failure occured."
+                additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold ">
+                Reset search
+              </Button>
+              <Button
+                onClick={e => {
+                  e.preventDefault();
+                  settoggleOverlayDownload(false);
+                }}
+                title="Close pop-up">
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className={`fixed w-screen h-screen flex items-center justify-center bg-black/[.5] top-0 left-0 ${
+          toggleOverlayDelete.show
+            ? 'opacity-100 visible'
+            : 'opacity-0 invisible'
+        } transition-all z-[9999]`}
+        id="overlay_delete_parent"
+        onClick={e => {
+          resetDeleteOverlay(e, false, true);
+        }}>
+        <div
+          id="overlay_delete"
+          className="flex items-center justify-center w-1/2 h-full">
+          <div
+            className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${
+              toggleOverlayDelete.show ? '' : '-translate-y-10 opacity-0'
+            } transition-all`}>
+            <Button
+              path=""
+              additional_styles="absolute top-2 right-2 px-1 py-1 text-black"
+              title="Cancel"
+              onClick={resetDeleteOverlay}>
+              <CloseThin className="w-5 h-5" />
+            </Button>
+            <h1 className="font-bold text-3xl">Delete confirmation</h1>
+            <hr />
+            <p>
+              Are you sure you want to delete a record with afe number{' '}
+              {toggleOverlayDelete.afe_number}?{' '}
+              <strong>This action is irreversible!</strong>
+            </p>
+            <section className="flex w-full items-center justify-center space-x-2">
+              <Button onClick={resetDeleteOverlay}>Cancel</Button>
+              <Button
+                onClick={e => {
+                  resetDeleteOverlay(e, true);
+                }}
+                additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold">
+                Confirm
+              </Button>
+            </section>
           </div>
         </div>
       </div>

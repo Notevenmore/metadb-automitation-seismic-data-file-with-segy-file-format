@@ -6,6 +6,7 @@ import ProgressBar from '../components/ProgressBar';
 import Toast from '../components/toast/toast';
 import {getLayoutIcon} from '../layout/getLayout';
 import {store} from '../store';
+import {PopupProvider} from '@contexts/PopupContext';
 import '../styles/globals.css';
 
 function MyApp({Component, pageProps}) {
@@ -47,17 +48,19 @@ function MyApp({Component, pageProps}) {
 
   return (
     <Provider store={store}>
-      <ProgressBar
-        isRouteChanging={state.isRouteChanging}
-        key={state.loadingKey}
-      />
-      <Head>
-        <title>{PageTitle ? `${PageTitle} - MetaDB` : 'MetaDB'}</title>
-        <meta name="description" content="MetaDB" />
-        <link rel="icon" href="/metadb.svg" />
-      </Head>
-      <Toast />
-      {getLayout(<Component {...pageProps} setTitle={setPageTitle} />)}
+      <PopupProvider>
+        <ProgressBar
+          isRouteChanging={state.isRouteChanging}
+          key={state.loadingKey}
+        />
+        <Head>
+          <title>{PageTitle ? `${PageTitle} - MetaDB` : 'MetaDB'}</title>
+          <meta name="description" content="MetaDB" />
+          <link rel="icon" href="/metadb.svg" />
+        </Head>
+        <Toast />
+        {getLayout(<Component {...pageProps} setTitle={setPageTitle} />)}
+      </PopupProvider>
     </Provider>
   );
 }

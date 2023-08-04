@@ -168,47 +168,50 @@ export default function UploadFilePage({config, setTitle}) {
       }
       settoggleOverlay(false);
       if (submit) {
-        dispatch(
-          displayErrorMessage({
-            message:
-              "Creating a new record... Please don't leave this page or click anything",
-            color: 'blue',
-          }),
-        );
-        if (
-          fileUpload.length < 1 ||
-          Object.values(UplSettings).some(x => {
-            return x === null || x === '';
-          })
-        ) {
-          throw 'Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.';
-        }
-        const post_workspace = await fetch(
-          `${config[datatypes[UplSettings.DataType]]['afe']}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${
-                JSON.parse(parseCookies().user_data).access_token
-              }`,
-            },
-            body: JSON.stringify({
-              afe_number: UplSettings.afe_number,
-              workspace_name: UplSettings.workspace_name,
-              kkks_name: UplSettings.kkks_name,
-              working_area: UplSettings.working_area,
-              submission_type: UplSettings.submission_type,
-              email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
+        let post_workspace: string;
+        if (!afeExist) {
+          dispatch(
+            displayErrorMessage({
+              message:
+                "Creating a new record... Please don't leave this page or click anything",
+              color: 'blue',
             }),
-          },
-        ).then(res => {
-          if (res.status !== 200) {
-            TokenExpired(res.status);
-            throw 'Failed to POST new record. Please try again.';
+          );
+          if (
+            fileUpload.length < 1 ||
+            Object.values(UplSettings).some(x => {
+              return x === null || x === '';
+            })
+          ) {
+            throw 'Please select a file before continuing to the next process. Make sure to also fill in the appropriate settings for the uploaded file.';
           }
-          return res.text();
-        });
+          post_workspace = await fetch(
+            `${config[datatypes[UplSettings.DataType]]['afe']}`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`,
+              },
+              body: JSON.stringify({
+                afe_number: UplSettings.afe_number,
+                workspace_name: UplSettings.workspace_name,
+                kkks_name: UplSettings.kkks_name,
+                working_area: UplSettings.working_area,
+                submission_type: UplSettings.submission_type,
+                email: 'john.richardson@gtn.id', // TODO: SET THIS TO BE BASED ON THE CURRENTLY LOGGED IN USER
+              }),
+            },
+          ).then(res => {
+            if (res.status !== 200) {
+              TokenExpired(res.status);
+              throw 'Failed to POST new record. Please try again.';
+            }
+            return res.text();
+          });
+        }
         if (post_workspace === 'OK' || afeExist) {
           dispatch(
             displayErrorMessage({
@@ -240,6 +243,7 @@ export default function UploadFilePage({config, setTitle}) {
               message:
                 'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
               color: 'red',
+              duration: 5000,
             }),
           );
         }
@@ -251,6 +255,7 @@ export default function UploadFilePage({config, setTitle}) {
             error,
           )}`,
           color: 'red',
+          duration: 5000,
         }),
       );
     }
@@ -258,11 +263,12 @@ export default function UploadFilePage({config, setTitle}) {
     router.events.emit('routeChangeComplete');
   };
 
-  const handleAfeChange = async (
-    e: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>,
-    focused: boolean,
-  ) => {
+  const handleAfeChange = async (e, focused: boolean) => {
     e.preventDefault();
+    const input_value = parseInt(e.target.value);
+    if (!input_value) {
+      return;
+    }
     try {
       if (focused) {
         if (!UplSettings.DataType) {
@@ -290,6 +296,7 @@ export default function UploadFilePage({config, setTitle}) {
           setafeExist(true);
           setUplSettings({
             ...UplSettings,
+            afe_number: input_value,
             kkks_name: workspace_data.kkks_name,
             working_area: workspace_data.working_area,
             submission_type: workspace_data.submission_type,
@@ -307,10 +314,11 @@ export default function UploadFilePage({config, setTitle}) {
     } catch (error) {
       dispatch(
         displayErrorMessage({
-          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additonal message: ${String(
+          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
             error,
           )}`,
           color: 'red',
+          duration: 5000,
         }),
       );
       setpopupMessage({message: 'Something went wrong', color: 'red'});
@@ -324,7 +332,7 @@ export default function UploadFilePage({config, setTitle}) {
   }, [setTitle]);
 
   const activeStyle =
-    'bg-searchbg/60 border-2 border-gray-400 box-border w-254p transition ease-in duration-500';
+    'bg-searchbg/60 outline-2 outline-gray-400 outline-offset-4 w-254p transition-all duration-500';
 
   return (
     <Container additional_class="full-height relative" onDragEnter={handleDrag}>
@@ -366,14 +374,14 @@ export default function UploadFilePage({config, setTitle}) {
                 </div>
               )}
               <p className="text-sm text-black/70 text-center pt-2">
-                *Supported file formats: JPG, PNG, PDF, PPTX, CSV, XLSX, or LAS
+                *Supported file formats: JPG, PNG, PDF, TXT or LAS
               </p>
             </div>
             <input
               type="file"
               className="hidden"
               ref={fileUploadRef}
-              accept="image/png, application/pdf, application/vnd.openxmlformats-officedocument.presentationml.presentation, text/csv, .las, .txt"
+              accept="image/png, application/pdf, .las, .txt, .jpg"
               onChange={changeFile}
             />
           </div>
@@ -389,7 +397,7 @@ export default function UploadFilePage({config, setTitle}) {
             name={'fileFormat'}
             placeholder={'Select a file format'}
             value={UplSettings.FileFormat}
-            dropdown_items={['Image', 'PDF', 'PPTX', 'CSV', 'LAS']}
+            dropdown_items={['Image', 'PDF', 'LAS', 'TXT']}
             required={true}
             additional_styles="w-full"
             additional_styles_label={additional_styles_label}
@@ -426,18 +434,16 @@ export default function UploadFilePage({config, setTitle}) {
               additional_styles="w-full"
               additional_styles_label={additional_styles_label}
               autoComplete="off"
-              onChange={e =>
-                UplSettings.DataType
-                  ? setUplSettings({
-                      ...UplSettings,
-                      afe_number: parseInt(e.target.value, 10),
-                      workspace_name: `record_${e.target.value}`,
-                    })
-                  : null
-              }
-              onFocus={e => handleAfeChange(e, true)}
-              onBlur={e => handleAfeChange(e, false)}
-              onClick={e => handleAfeChange(e, true)}
+              onChange={e => {
+                if (UplSettings.DataType) {
+                  setUplSettings({
+                    ...UplSettings,
+                    afe_number: parseInt(e.target.value, 10),
+                    workspace_name: `record_${e.target.value}`,
+                  });
+                  handleAfeChange(e, false);
+                }
+              }}
             />
             <div
               className={`${
@@ -519,11 +525,11 @@ export default function UploadFilePage({config, setTitle}) {
         <div className="w-4/5 max-w-[80%] flex items-center justify-center">
           <div
             onWheel={horizontal_scroll}
-            className="flex space-x-3 overflow-auto h-auto">
+            className="flex space-x-3 overflow-auto h-auto p-3">
             <Button
               id="dropdown"
               title=""
-              additional_styles={`h-full active:bg-gray-400/60  ${
+              additional_styles={`h-full active:bg-gray-400/60 outline-none ${
                 UplSettings.Method === 'dropdown' ? activeStyle : ''
               }`}
               onClick={e => {
@@ -580,7 +586,7 @@ export default function UploadFilePage({config, setTitle}) {
                 </section>
               </div>
             </Button>
-            <Button
+           {UplSettings.DataType.toLowerCase().includes("2d seismic") && <Button
               id="automatic"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
@@ -600,7 +606,7 @@ export default function UploadFilePage({config, setTitle}) {
                   </p>
                 </section>
               </div>
-            </Button>
+            </Button>}
           </div>
         </div>
         <div className="flex flex-row gap-x-3 pt-3 pb-16">

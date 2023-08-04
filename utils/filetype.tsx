@@ -6,6 +6,7 @@ const types = {
   csv: 'CSV',
   xlsx: 'XLSX',
   las: 'LAS',
+  txt: 'TXT',
 };
 
 const getFileType = (filename: string) => {

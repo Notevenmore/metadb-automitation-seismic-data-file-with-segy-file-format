@@ -281,25 +281,36 @@ export default function MatchReview({config, setTitle}) {
               path=""
               title="Previous page"
               button_description=""
-              additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
+              additional_styles="bg-white border-2 p-2 hover:bg-gray-200"
               onClick={prevPage}
               disabled={!(pageNo > 1)}>
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
             </Button>
-            <Button
-              path=""
-              title=""
-              button_description=""
-              className="bg-white border-2 p-3 cursor-default select-none text-center rounded-lg">
-              <p className="w-5 h-5">{pageNo}</p>
-            </Button>
+            <div
+              title="Page number"
+              className="bg-white border-2 p-2 w-28 cursor-default select-none rounded-lg text-center flex items-center justify-center">
+              <section className="h-5 w-28 flex items-center justify-center">
+                <Input
+                  type="number"
+                  value={pageNo}
+                  onChange={e => {
+                    const page = parseInt(e.target.value);
+                    if (page < 1 || page > totalPageNo) {
+                      return;
+                    }
+                    setPageNo(page);
+                  }}
+                  additional_styles_input="p-0 focus:bg-white bg-white hover:bg-white focus:outline-transparent text-center [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </section>
+            </div>
             <Button
               path=""
               title="Next page"
               button_description=""
-              additional_styles="bg-white border-2 p-3 hover:bg-gray-200"
+              additional_styles="bg-white border-2 p-2 hover:bg-gray-200"
               onClick={nextPage}
               disabled={pageNo >= totalPageNo}>
               <div className="w-5 h-5">

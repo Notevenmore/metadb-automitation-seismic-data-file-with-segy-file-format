@@ -2,7 +2,7 @@ import {useRouter} from 'next/router';
 import {useCallback, useEffect} from 'react';
 import {getProfile} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
-import {setErrorMessage} from '../store/generalSlice';
+import {displayErrorMessage} from '../store/generalSlice';
 import {setUser} from '../store/userSlice';
 
 function CheckAuth() {
@@ -19,10 +19,10 @@ function CheckAuth() {
       err => {
         console.log('???');
         dispatch(
-          setErrorMessage({
+          displayErrorMessage({
             message: String(err),
             color: 'red',
-            show: true,
+            duration: 5000
           }),
         );
       },

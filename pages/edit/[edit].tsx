@@ -291,6 +291,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
               error,
             )}`,
             color: 'red',
+            duration: 5000,
           }),
         );
       });
@@ -298,31 +299,53 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
 
   const downloadWorkspaceHandler = useCallback(() => {
     router.events.emit('routeChangeStart');
-    downloadWorkspace(router, config, workspaceData, dispatch)
-      .then(result => {
+    saveDocument(null, router, config, spreadsheetId, workspaceData, dispatch)
+      .then(async result => {
         if (result.success) {
-          dispatch(
-            displayErrorMessage({
-              message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
-              color: 'blue',
-              duration: 3500,
-            }),
-          );
-          setIsSaved(false);
-          router.events.emit('routeChangeComplete');
+          downloadWorkspace(router, config, workspaceData, dispatch)
+            .then(result => {
+              if (result.success) {
+                dispatch(
+                  displayErrorMessage({
+                    message: `Success. Record converted to XLSX with file name "${workspaceData.workspace_name}.xlsx"`,
+                    color: 'blue',
+                    duration: 3500,
+                  }),
+                );
+                setIsSaved(false);
+                router.events.emit('routeChangeComplete');
+              }
+            })
+            .catch(error => {
+              dispatch(
+                displayErrorMessage({
+                  message: `Failed to download record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+                    error,
+                  )}`,
+                  color: 'red',
+                  duration: 5000,
+                }),
+              );
+            })
+            .finally(() => {
+              router.events.emit('routeChangeComplete');
+              settriggerSave('');
+            });
+        } else {
+          throw 'Something went wrong when saving changes.';
         }
       })
       .catch(error => {
+        // Handle error and display error message
         dispatch(
           displayErrorMessage({
-            message: `${String(error)}`,
+            message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+              error,
+            )}`,
             color: 'red',
+            duration: 5000,
           }),
         );
-      })
-      .finally(() => {
-        router.events.emit('routeChangeComplete');
-        settriggerSave('');
       });
   }, [config, dispatch, router, spreadsheetId, workspaceData]);
 
