@@ -14,7 +14,7 @@ import {
   displayErrorMessage,
 } from '../../store/generalSlice';
 
-const TableDocEditor = ({workspace_name, setTitle, config}) => {
+export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
   const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [error, seterror] = useState('');

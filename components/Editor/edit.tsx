@@ -19,7 +19,7 @@ import {
 } from '../../store/generalSlice';
 import {delay} from '../../utils/common';
 
-const DocEditor = ({workspace_name, setTitle, config}) => {
+export const EditDocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
   const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [error, seterror] = useState('');
