@@ -131,7 +131,7 @@ const Profile = ({setTitle}) => {
           </p>
         </div>
         <div className="flex space-x-2">
-          <Button path="" button_description="Change my password" />
+          {/* <Button path="" button_description="Change my password" /> */}
           <Button
             path=""
             button_description="Sign out"
