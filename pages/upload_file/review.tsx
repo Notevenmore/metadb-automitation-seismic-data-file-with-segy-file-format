@@ -228,6 +228,7 @@ export default function UploadFileReview({setTitle, config}) {
                 kkks_name: e.target.value,
               })
             }
+            disabled
           />
         </HeaderInput>
         <HeaderDivider />
