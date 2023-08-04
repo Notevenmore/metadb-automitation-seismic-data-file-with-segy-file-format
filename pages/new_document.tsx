@@ -125,6 +125,7 @@ export default function NewDocumentPage({setTitle, config}) {
             required={true}
             additional_styles="w-full"
             value={workspaceData.kkks_name}
+            disabled
             onChange={e =>
               setworkspaceData({...workspaceData, kkks_name: e.target.value})
             }
