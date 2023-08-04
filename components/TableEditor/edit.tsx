@@ -189,6 +189,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
                       workspaceData?.kkks_name || 'Geodwipa Teknika Nusantara'
                     }
                     onChange={handleWorkspaceChange}
+                    disabled
                   />,
                 ],
                 [
