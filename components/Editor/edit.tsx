@@ -461,13 +461,3 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
     </div>
   );
 };
-
-// export function getServerSideProps(context) {
-//   const config = JSON.parse(process.env.ENDPOINTS);
-//   return {
-//     props: {
-//       workspace_name: context.params.edit,
-//       config: config,
-//     }, // will be passed to the page component as props
-//   };
-// }

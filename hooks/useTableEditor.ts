@@ -16,7 +16,7 @@ import {ColumnDefinition, ReactTabulatorOptions} from 'react-tabulator';
 export const useTableEditor = (
   workspace_data: UploadDocumentSettings,
   setspreadsheetReady: Dispatch<SetStateAction<boolean>>,
-  afeNumber: number,
+  afeNumber: string | string[],
 ) => {
   const router = useRouter();
   const config = JSON.parse(process.env.ENDPOINTS);
@@ -45,7 +45,7 @@ export const useTableEditor = (
       const data = [];
       try {
         const response = await fetch(
-          `${config[router.query.form_type]['workspace']}${
+          `${config[`${router.query.form_type}`]['workspace']}${
             workspace_data['afe_number']
           }`,
           {
@@ -63,9 +63,9 @@ export const useTableEditor = (
         if (result) {
           for (const datatype_record_id of result) {
             const details = await fetch(
-              `${config[router.query.form_type]['view']}${
+              `${config[`${router.query.form_type}`]['view']}${
                 datatype_record_id[
-                  config[router.query.form_type]['workspace_holder_key']
+                  config[`${router.query.form_type}`]['workspace_holder_key']
                 ]
               }`,
               {
@@ -114,7 +114,7 @@ export const useTableEditor = (
       const columns = [];
       try {
         const response = await fetch(
-          `${config[router.query.form_type]['view'].slice(0, -1)}-column/`,
+          `${config[`${router.query.form_type}`]['view'].slice(0, -1)}-column/`,
           {
             method: 'GET',
             headers: {
@@ -194,16 +194,19 @@ export const useTableEditor = (
 
   const postData = async (row: RowObject) => {
     filterData(row);
-    const response = await fetch(`${config[router.query.form_type]['view']}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${
-          JSON.parse(parseCookies().user_data).access_token
-        }`,
+    const response = await fetch(
+      `${config[`${router.query.form_type}`]['view']}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
+        },
+        body: JSON.stringify(row, omitID),
       },
-      body: JSON.stringify(row, omitID),
-    });
+    );
 
     const result = await response.text();
 
@@ -211,11 +214,11 @@ export const useTableEditor = (
     const pwr_id = parseInt(result_split[result_split.length - 1].trim());
 
     console.log('BINDING');
-    await bindData(afeNumber, pwr_id);
+    await bindData(Number(afeNumber), pwr_id);
   };
 
   const bindData = (afe: number, id: number) => {
-    return fetch(`${config[router.query.form_type]['workspace']}`, {
+    return fetch(`${config[`${router.query.form_type}`]['workspace']}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -225,13 +228,13 @@ export const useTableEditor = (
       },
       body: JSON.stringify({
         afe_number: afe,
-        [config[router.query.form_type]['workspace_holder_key']]: id,
+        [config[`${router.query.form_type}`]['workspace_holder_key']]: id,
       }),
     });
   };
 
   const deleteData = (id: number) => {
-    return fetch(`${config[router.query.form_type]['view']}${id}`, {
+    return fetch(`${config[`${router.query.form_type}`]['view']}${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -244,7 +247,7 @@ export const useTableEditor = (
 
   const putData = (row: RowObject, id: number) => {
     filterData(row);
-    return fetch(`${config[router.query.form_type]['view']}${id}`, {
+    return fetch(`${config[`${router.query.form_type}`]['view']}${id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',

@@ -1,5 +1,5 @@
 import moment from 'moment/moment';
-import localization from 'moment/locale/id';
+import 'moment/locale/id';
 
 export const omitID = (key: string, value: string) => {
   if (key == 'id') {
@@ -11,7 +11,7 @@ export const omitID = (key: string, value: string) => {
 
 export const formatDate = (obj: string | number, fromDB: boolean) => {
   if (obj) {
-    moment.updateLocale('id', localization);
+    moment.locale('id');
 
     if (fromDB) {
       return moment(obj).format('L');
