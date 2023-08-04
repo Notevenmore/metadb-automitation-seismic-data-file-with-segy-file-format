@@ -23,22 +23,22 @@ import {
 } from '../store/generalSlice';
 import {delay} from '../utils/common';
 
-export default function HomePage({setTitle, config}) {
+export default function HomePage({setTitle, config, kkks_name}) {
   useEffect(() => {
     setTitle('Home');
   }, [setTitle]);
 
   // if the search state is true change the view of the home page
   // const searches = useAppSelector(state => state.search.search);
-  return <HomeSection config={config} />;
+  return <HomeSection config={config} kkks_name={kkks_name}/>;
 }
 
-const HomeSection = ({config}) => {
+const HomeSection = ({config, kkks_name}) => {
   const [toggleOverlay, settoggleOverlay] = useState(false);
   const [dataType, setdataType] = useState('');
   const [newWorkspace, setnewWorkspace] = useState<UploadDocumentSettings>({
     workspace_name: '',
-    kkks_name: '',
+    kkks_name: kkks_name,
     working_area: '',
     submission_type: '',
     afe_number: null,
@@ -163,7 +163,7 @@ const HomeSection = ({config}) => {
       return {
         ...x,
         workspace_name: '',
-        kkks_name: '',
+        kkks_name: kkks_name,
         working_area: '',
         afe_number: null,
         submission_type: '',
@@ -323,7 +323,7 @@ const HomeSection = ({config}) => {
                       kkks_name: e.target.value,
                     })
                   }
-                  disabled={afeExist}
+                  disabled
                 />
                 <p>Working area</p>
                 <Input
@@ -435,7 +435,11 @@ const SearchResult = () => {
 
 export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
+  const kkks_name = process.env.KKKS_NAME;
   return {
-    props: {config: config}, // will be passed to the page component as props
+    props: {
+      config: config,
+      kkks_name
+    }, // will be passed to the page component as props
   };
 }

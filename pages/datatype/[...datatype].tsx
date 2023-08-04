@@ -30,7 +30,7 @@ interface DeleteToggle {
   afe_number: number;
 }
 
-const PrintedWellReport = ({datatype, setTitle, config}) => {
+const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
   const [data, setData] = useState([]);
   const [searchData, setsearchData] = useState([-1]); // for saving a backup when searching
   const [bulkSearch, setbulkSearch] = useState([-1]);
@@ -44,7 +44,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
   });
   const [newWorkspace, setnewWorkspace] = useState<UploadDocumentSettings>({
     workspace_name: '',
-    kkks_name: '',
+    kkks_name: kkks_name,
     working_area: '',
     submission_type: '',
     afe_number: null,
@@ -383,7 +383,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
       return {
         ...x,
         workspace_name: '',
-        kkks_name: '',
+        kkks_name: kkks_name,
         working_area: '',
         afe_number: null,
         submission_type: '',
@@ -660,7 +660,7 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
                       kkks_name: e.target.value,
                     })
                   }
-                  disabled={afeExist}
+                  disabled
                 />
                 <p>Working area</p>
                 <Input
@@ -930,10 +930,12 @@ const PrintedWellReport = ({datatype, setTitle, config}) => {
 export function getServerSideProps(context) {
   const datatype = context.params.datatype;
   const config = JSON.parse(process.env.ENDPOINTS);
+  const kkks_name = process.env.KKKS_NAME;
   return {
     props: {
       datatype: datatype[datatype.length - 1],
       config: config,
+      kkks_name
     }, // will be passed to the page component as props
   };
 }
