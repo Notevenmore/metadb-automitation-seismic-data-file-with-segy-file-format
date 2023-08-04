@@ -665,7 +665,7 @@ export const getDataTypeNoUnderscore = (data_type) => {
   return data_type.split("_").join(" ")
 }
 
-export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Image, datatype, config, dispatch, settoggleOverlayDelete, router) => {
+export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Image, datatype, config, dispatch, router, openPopup, deleteWorkspace, init) => {
   if (!workspaces_list) { return workspaces_list }
   let final = []
   workspaces_list.forEach(workspace => {
@@ -727,10 +727,15 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
             className="flex"
             title="Delete record"
             onClick={e => {
-              // deleteWorkspace(e, workspace.afe_number).then(() => {
-              //   init();
-              // });
-              settoggleOverlayDelete({ show: true, afe_number: workspace.afe_number })
+              openPopup({
+                message: `Are you sure you want to delete a record with afe number ${workspace.afe_number}? This action is irreversible!`,
+                title: 'Delete confirmation',
+                onConfirm: () => {
+                  deleteWorkspace(workspace.afe_number).then(() => {
+                    init();
+                  });
+                },
+              });
             }}>
             <div className="w-18p h-18p flex items-center">
               <Image
