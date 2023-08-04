@@ -1,10 +1,6 @@
-import TableEditor from '@components/TableEditor';
-import {formatDate} from '@components/TableEditor/Helper';
-import {RowObject, WorkspaceType} from '@components/TableEditor/Type';
+import Sheets from '@components/Sheets';
 import {useRouter} from 'next/router';
-import {parseCookies} from 'nookies';
-import {useCallback, useEffect, useMemo, useState} from 'react';
-import {ColumnDefinition, ReactTabulatorOptions} from 'react-tabulator';
+import {useCallback, useEffect, useState} from 'react';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
@@ -22,7 +18,6 @@ import {
   displayErrorMessage,
 } from '../../store/generalSlice';
 import {delay} from '../../utils/common';
-import Sheets from '@components/Sheets';
 
 const DocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
@@ -35,133 +30,12 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
   const [spreadsheetId, setspreadsheetId] = useState();
   const [triggerSave, settriggerSave] = useState('');
 
-  const def_data: RowObject[] = [];
-  const def_columns: ColumnDefinition[] = [];
-
-  const [finalData, setFinalData] = useState(def_data);
-  const [finalColumns, setFinalColumns] = useState(def_columns);
-  const [columnData, setColumnData] = useState<string[]>();
-  const tableOptions: ReactTabulatorOptions = {
-    index: 'id',
-    height: '600px',
-  };
-
   const dispatch = useAppDispatch();
 
   const warningText =
     'You have unsaved changes - Are you sure you want to leave this page?';
 
   const router = useRouter();
-
-  const getRow = useCallback(async (workspace_data: UploadDocumentSettings) => {
-    const data = [];
-    try {
-      const response = await fetch(
-        `${config[router.query.form_type]['workspace']}${
-          workspace_data['afe_number']
-        }`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${
-              JSON.parse(parseCookies().user_data).access_token
-            }`,
-          },
-        },
-      );
-      const result = (await response.json()) as WorkspaceType[];
-
-      if (result) {
-        for (const datatype_record_id of result) {
-          const details = await fetch(
-            `${config[router.query.form_type]['view']}${
-              datatype_record_id[
-                config[router.query.form_type]['workspace_holder_key']
-              ]
-            }`,
-            {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
-              },
-            },
-          );
-          const result_details = (await details.json()) as RowObject[];
-          const current = result_details[0];
-
-          // Format string with appropriate Date format
-          for (const key of Object.keys(current)) {
-            if (key.includes('date') && current[key] !== null) {
-              current[key] = formatDate(current[key], true);
-            }
-          }
-          data.push(current);
-        }
-      }
-
-      // Add empty rows at the end
-      const newRow = {ba_long_name: undefined} as unknown as RowObject;
-      for (let i = 0; i < 25; i++) {
-        data.push(Object.assign({}, newRow));
-      }
-
-      setFinalData(data);
-    } catch (e) {
-      console.log(e);
-      console.log('Error in getRow');
-    }
-  }, []);
-
-  const getColumn = useCallback(async () => {
-    const columns = [];
-    try {
-      const response = await fetch(
-        `${config[router.query.form_type]['view'].slice(0, -1)}-column/`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-type': 'application/json',
-            Authorization: `Bearer ${
-              JSON.parse(parseCookies().user_data).access_token
-            }`,
-          },
-        },
-      );
-
-      const result = (await response.json()) as string[];
-      setColumnData(result);
-      const result_details = Object.keys(result);
-
-      for (const title of result_details) {
-        const upper = title.toUpperCase();
-        const lower = title.toLowerCase();
-        if (upper === 'ID') {
-          columns.push({
-            title: upper,
-            field: lower,
-            width: 150,
-            editor: 'input',
-            visible: false,
-          });
-        } else {
-          columns.push({
-            title: upper,
-            field: lower,
-            width: 150,
-            editor: 'input',
-          });
-        }
-      }
-      setFinalColumns(columns);
-    } catch (e) {
-      console.log('Error in getColumn');
-      console.log(e);
-    }
-  }, []);
 
   useEffect(() => {
     const handleWindowClose = e => {
@@ -240,14 +114,6 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       }, 3000);
     }
   }, [dispatch, spreadsheetReady]);
-
-  useEffect(() => {
-    if (workspaceData) {
-      getColumn();
-      getRow(workspaceData);
-      setspreadsheetReady(true);
-    }
-  }, [getColumn, getRow, workspaceData]);
 
   const saveDocumentHandler = useCallback(() => {
     router.events.emit('routeChangeStart');
@@ -513,20 +379,13 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             Data
               ? [
                   <div className="h-750p" key="sheet">
-                    {/* <Sheets
+                    <Sheets
                       type="review"
                       form_type={router?.query.form_type || 'basin'}
                       data={dataContentDetails}
                       finishedInitializing={setspreadsheetReady}
                       getSpreadsheetID={setspreadsheetId}
                       config={config}
-                    /> */}
-                    <TableEditor
-                      data={finalData}
-                      columns={finalColumns}
-                      columnData={columnData}
-                      afeNumber={workspaceData['afe_number']}
-                      options={tableOptions}
                     />
                   </div>,
                 ]
