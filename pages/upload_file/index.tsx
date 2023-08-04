@@ -38,7 +38,7 @@ const routes = {
   automatic: '/upload_file/matching_auto',
 };
 
-export default function UploadFilePage({config, setTitle}) {
+export default function UploadFilePage({config, setTitle, kkks_name}) {
   const router = useRouter();
   const path_query =
     'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
@@ -46,7 +46,7 @@ export default function UploadFilePage({config, setTitle}) {
   const [fileUpload, setFileUpload] = useState<FileList | []>([]);
   const [UplSettings, setUplSettings] = useState<UploadDocumentSettings>({
     workspace_name: '',
-    kkks_name: '',
+    kkks_name: kkks_name,
     working_area: '',
     submission_type: '',
     afe_number: 0,
@@ -474,7 +474,7 @@ export default function UploadFilePage({config, setTitle}) {
             onChange={e =>
               setUplSettings({...UplSettings, kkks_name: e.target.value})
             }
-            disabled={afeExist}
+            disabled
           />
           <Input
             label="Working area"
@@ -586,7 +586,7 @@ export default function UploadFilePage({config, setTitle}) {
                 </section>
               </div>
             </Button>
-            <Button
+           {UplSettings.DataType.toLowerCase().includes("2d seismic") && <Button
               id="automatic"
               title=""
               additional_styles={`h-full active:bg-gray-400/60 outline-none ${
@@ -606,7 +606,7 @@ export default function UploadFilePage({config, setTitle}) {
                   </p>
                 </section>
               </div>
-            </Button>
+            </Button>}
           </div>
         </div>
         <div className="flex flex-row gap-x-3 pt-3 pb-16">
@@ -722,7 +722,11 @@ export default function UploadFilePage({config, setTitle}) {
 
 export function getServerSideProps() {
   const config = JSON.parse(process.env.ENDPOINTS);
+  const kkks_name = process.env.KKKS_NAME;
   return {
-    props: {config: config}, // will be passed to the page component as props
+    props: {
+      config: config,
+      kkks_name
+    }, // will be passed to the page component as props
   };
 }

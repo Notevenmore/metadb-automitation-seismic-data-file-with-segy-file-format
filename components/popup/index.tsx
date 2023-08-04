@@ -11,8 +11,8 @@ const Popup = () => {
     closePopup();
   };
   return (
-    <div className="fixed top-0 left-0 flex items-center justify-center w-screen h-screen bg-black/[.2]">
-      <div className="h-auto min-h-[170px] w-500p bg-white border-gray-300 border-2 rounded-md px-6 py-5">
+    <div className="fixed top-0 left-0 flex items-center justify-center w-screen h-screen bg-black/[.2]" onClick={closePopup}>
+      <div className="h-auto min-h-[170px] w-500p bg-white border-gray-300 border-2 rounded-md px-6 py-5" onClick={(e) => e.stopPropagation()}>
         <div className="font-bold text-lg">{title}</div>
         <div className="border-b border-b-gray-300" />
         <div className="mt-3 w-full text-center">{message}</div>
