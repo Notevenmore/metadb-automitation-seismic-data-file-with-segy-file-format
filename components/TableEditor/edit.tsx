@@ -1,4 +1,5 @@
 import TableEditor from '@components/TableEditor';
+import {delay} from '@utils/common';
 import {useRouter} from 'next/router';
 import {useCallback, useEffect, useState} from 'react';
 import Input from '../../components/Input';
@@ -116,8 +117,45 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
     }
   }, [dispatch, spreadsheetReady]);
 
-  const saveDocumentHandler = useCallback(() => {
-    sendData(finalData);
+  const saveDocumentHandler = useCallback(async () => {
+    router.events.emit('routeChangeStart');
+    try {
+      sendData(finalData);
+
+      setIsSaved(true);
+      dispatch(
+        displayErrorMessage({
+          message: 'Record successfully saved',
+          color: 'blue',
+          duration: 3000,
+        }),
+      );
+      router.events.emit('routeChangeComplete');
+      if (triggerSave.includes('redirect')) {
+        setTimeout(() => {
+          dispatch(
+            displayErrorMessage({
+              message: 'Redirecting back to record list...',
+              color: 'blue',
+              duration: 1500,
+            }),
+          );
+        }, 0);
+        await delay(1000);
+        router.back();
+      }
+      // settriggerSave('');
+    } catch (e) {
+      dispatch(
+        displayErrorMessage({
+          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
+            e,
+          )}`,
+          color: 'red',
+          duration: 5000,
+        }),
+      );
+    }
   }, [finalData]);
 
   useEffect(() => {
