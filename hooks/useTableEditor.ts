@@ -16,7 +16,7 @@ import {ColumnDefinition, ReactTabulatorOptions} from 'react-tabulator';
 export const useTableEditor = (
   workspace_data: UploadDocumentSettings,
   setspreadsheetReady: Dispatch<SetStateAction<boolean>>,
-  afeNumber: string | string[],
+  afeNumber: string | string[] | number,
 ) => {
   const router = useRouter();
   const config = JSON.parse(process.env.ENDPOINTS);
@@ -31,7 +31,6 @@ export const useTableEditor = (
   const tableOptions: ReactTabulatorOptions = {
     index: 'id',
     height: '800px',
-    // maxHeight: '95%',
     downloadReady: (fileContents: string, blob) => {
       return blob;
     },
