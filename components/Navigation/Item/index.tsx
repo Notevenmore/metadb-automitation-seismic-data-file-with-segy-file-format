@@ -71,7 +71,9 @@ const Child = ({icon, name, link = '', collapse}) => {
       <div
         className={`flex justify-between items-center px-5 py-2 gap-x-4 hover:bg-gray-200 ${
           router.asPath.split('/').some(path => {
-            return path === name?.toLowerCase().replace(/\s/g, '_');
+            return (
+              path === name?.toLowerCase().replace(/\s/g, '_').replace('/', '_')
+            );
           }) && 'bg-icon_child_gray'
         } relative transition-all`}>
         <div className="flex gap-x-4">

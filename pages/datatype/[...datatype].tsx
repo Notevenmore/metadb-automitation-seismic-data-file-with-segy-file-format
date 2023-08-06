@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {parseCookies} from 'nookies';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useContext, useEffect, useState} from 'react';
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
@@ -24,6 +24,7 @@ import {
   setUploadDocumentSettings,
 } from '../../store/generalSlice';
 import {delay} from '../../utils/common';
+import {PopupContext} from '@contexts/PopupContext';
 
 interface DeleteToggle {
   show: boolean;
@@ -42,6 +43,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
     show: false,
     afe_number: null,
   });
+  let {openPopup} = useContext(PopupContext);
   const [newWorkspace, setnewWorkspace] = useState<UploadDocumentSettings>({
     workspace_name: '',
     kkks_name: kkks_name,
@@ -61,8 +63,10 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
   let selectedTableData = [[]];
 
   const deleteWorkspace = useCallback(
-    (e, afe_number) => {
-      e.preventDefault();
+    (e = null, afe_number) => {
+      if (e) {
+        e.preventDefault();
+      }
       router.events.emit('routeChangeStart');
       dispatch(
         displayErrorMessage({
@@ -147,8 +151,10 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
             datatype,
             config,
             dispatch,
-            settoggleOverlayDelete,
             router,
+            openPopup,
+            deleteWorkspace,
+            init,
           );
           setData(final);
           onSearchDownload();
@@ -211,7 +217,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
       const bulk_search_input = document.getElementById(
         'search_bar_bulk_download',
       ) as HTMLInputElement;
-      const bulk_search_identifier = parseInt(bulk_search_input.value);
+      const bulk_search_identifier = bulk_search_input.value;
       if (!bulk_search_identifier) {
         return;
       }
@@ -255,8 +261,10 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
             datatype,
             config,
             dispatch,
-            settoggleOverlayDelete,
             router,
+            openPopup,
+            deleteWorkspace,
+            init,
           );
           setbulkSearch(records);
         })
@@ -879,50 +887,6 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
           </div>
         </div>
       </div>
-      <div
-        className={`fixed w-screen h-screen flex items-center justify-center bg-black/[.5] top-0 left-0 ${
-          toggleOverlayDelete.show
-            ? 'opacity-100 visible'
-            : 'opacity-0 invisible'
-        } transition-all z-[9999]`}
-        id="overlay_delete_parent"
-        onClick={e => {
-          resetDeleteOverlay(e, false, true);
-        }}>
-        <div
-          id="overlay_delete"
-          className="flex items-center justify-center w-1/2 h-full">
-          <div
-            className={`bg-white w-fit h-fit border-2 rounded-lg p-10 relative space-y-3 ${
-              toggleOverlayDelete.show ? '' : '-translate-y-10 opacity-0'
-            } transition-all`}>
-            <Button
-              path=""
-              additional_styles="absolute top-2 right-2 px-1 py-1 text-black"
-              title="Cancel"
-              onClick={resetDeleteOverlay}>
-              <CloseThin className="w-5 h-5" />
-            </Button>
-            <h1 className="font-bold text-3xl">Delete confirmation</h1>
-            <hr />
-            <p>
-              Are you sure you want to delete a record with afe number{' '}
-              {toggleOverlayDelete.afe_number}?{' '}
-              <strong>This action is irreversible!</strong>
-            </p>
-            <section className="flex w-full items-center justify-center space-x-2">
-              <Button onClick={resetDeleteOverlay}>Cancel</Button>
-              <Button
-                onClick={e => {
-                  resetDeleteOverlay(e, true);
-                }}
-                additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold">
-                Confirm
-              </Button>
-            </section>
-          </div>
-        </div>
-      </div>
     </Container>
   );
 };
@@ -935,7 +899,7 @@ export function getServerSideProps(context) {
     props: {
       datatype: datatype[datatype.length - 1],
       config: config,
-      kkks_name
+      kkks_name,
     }, // will be passed to the page component as props
   };
 }
