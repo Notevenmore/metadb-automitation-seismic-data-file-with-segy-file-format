@@ -1,6 +1,6 @@
 import {ReactNode, createContext, useEffect, useState} from 'react';
 import Popup from '@components/popup';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 
 const PopupContext = createContext<any | null>(null);
 
@@ -11,7 +11,7 @@ function PopupProvider({children}: {children: ReactNode}) {
     message: '',
     clickOutside: true,
     onConfirm: () => {},
-    title: '',
+    title: ''
   });
 
   const openPopup = ({
@@ -24,24 +24,23 @@ function PopupProvider({children}: {children: ReactNode}) {
       message: message,
       clickOutside: clickOutside,
       onConfirm: onConfirm,
-      title: title,
+      title: title
     });
     setTogglePopup(true);
   };
   const closePopup = () => {
-	setTogglePopup(false)
-    setPopupProps({
-      message: '',
+    setTogglePopup(false);
+    setPopupProps(prev => {return {
+      ...prev, 
       clickOutside: true,
-      onConfirm: () => {},
-      title: '',
-    });
+      onConfirm: () => {}
+    }});
   };
 
   const router = useRouter();
   useEffect(() => {
     closePopup();
-  }, [router])
+  }, [router]);
 
   return (
     <PopupContext.Provider
@@ -49,9 +48,10 @@ function PopupProvider({children}: {children: ReactNode}) {
         openPopup,
         closePopup,
         popupProps,
+        togglePopup
       }}>
       {children}
-      {togglePopup && <Popup />}
+      <Popup />
     </PopupContext.Provider>
   );
 }

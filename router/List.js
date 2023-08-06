@@ -1,22 +1,22 @@
 const ROUTING_LIST = [
   {
-    name: 'General Information',
+    name: 'General Data',
     icon: '/icons/layers-outline.svg',
     child: [
       {
         name: 'Basin',
         link: '/datatype/general_data/basin',
-        icon: '/icons/format-text.svg',
+        icon: '/icons/layers-outline.svg',
       },
       {
         name: 'Working area',
         link: '/datatype/general_data/working_area',
-        icon: '/icons/info.svg',
+        icon: '/icons/layers-outline.svg',
       },
       {
         name: 'Field information',
         link: '/datatype/general_data/field_information',
-        icon: '/icons/table.svg',
+        icon: '/icons/layers-outline.svg',
       },
     ],
   },
@@ -36,12 +36,12 @@ const ROUTING_LIST = [
       },
       {
         name: '2D Seismic Section',
-        link: '/datatype/seismic_data/section',
+        link: '/datatype/seismic_data/2d_seismic_section',
         icon: '/icons/seismic.svg',
       },
       {
-        name: 'Digital 2D Seismic Session',
-        link: '/datatype/seismic_data/digital_2d_seismic_session',
+        name: 'Digital 2D Seismic Section',
+        link: '/datatype/seismic_data/digital_2d_seismic_section',
         icon: '/icons/seismic.svg',
       },
       {
@@ -70,7 +70,7 @@ const ROUTING_LIST = [
         icon: '/icons/seismic.svg',
       },
       {
-        name: '3D Seismic',
+        name: '3D Seismic Summary',
         link: '/datatype/seismic_data/3d_seismic_summary',
         icon: '/icons/seismic.svg',
       },
@@ -105,12 +105,12 @@ const ROUTING_LIST = [
         icon: '/icons/seismic.svg',
       },
       {
-        name: 'Printed 2D/3D Seismic Report',
+        name: '2D/3D Seismic Printed Report',
         link: '/datatype/seismic_data/2d_3d_seismic_printed_report',
         icon: '/icons/seismic.svg',
       },
       {
-        name: 'Digital 2D/3D Seismic Report',
+        name: '2D/3D Seismic Digital Report',
         link: '/datatype/seismic_data/2d_3d_seismic_digital_report',
         icon: '/icons/seismic.svg',
       },
@@ -122,32 +122,32 @@ const ROUTING_LIST = [
     ],
   },
   {
-    name: 'Non-Seismic and Seismis Non-Conventional Data',
+    name: 'Non-Seismic and Seismic Unconventional Data',
     icon: '/icons/non_seismic.svg',
     child: [
       {
-        name: 'Non-Seismic and Seismis Non-Conventional Data Summary',
-        link: '/datatype/non_seismic_and_seismis_non_conventional_data/non-seismic_and_seismic_unconventional_survey_summary',
+        name: 'Non-Seismic and Seismic Unconventional Survey Summary',
+        link: '/datatype/non-seismic_and_seismic_unconventional_data/non-seismic_and_seismic_unconventional_survey_summary',
         icon: '/icons/non_seismic.svg',
       },
       {
-        name: 'Non-Seismic and Seismic Non-Conventional Data Stored in Media',
-        link: '/datatype/non_seismic_and_seismis_non_conventional_data/non-seismic_and_seismic_unconventional_data_stored_in_media',
+        name: 'Non-Seismic and Seismic Unconventional Data Stored in Media',
+        link: '/datatype/non-seismic_and_seismic_unconventional_data/non-seismic_and_seismic_unconventional_data_stored_in_media',
         icon: '/icons/non_seismic.svg',
       },
       {
-        name: 'Non-Seismic and Seismic Non-Conventional Digital Data',
-        link: '/datatype/non_seismic_and_seismis_non_conventional_data/non-seismic_and_seismic_unconventional_digital_data',
+        name: 'Non-Seismic and Seismic Unconventional Digital Data',
+        link: '/datatype/non-seismic_and_seismic_unconventional_data/non-seismic_and_seismic_unconventional_digital_data',
         icon: '/icons/non_seismic.svg',
       },
       {
-        name: 'Printed Non-Seismic and Seismic Non-Conventional Report',
-        link: '/datatype/non_seismic_and_seismis_non_conventional_data/non-seismic_and_seismic_unconventional_printed_report',
+        name: 'Non-Seismic and Seismic Unconventional Printed Report',
+        link: '/datatype/non-seismic_and_seismic_unconventional_data/non-seismic_and_seismic_unconventional_printed_report',
         icon: '/icons/non_seismic.svg',
       },
       {
-        name: 'Digital Non-Seismic and Seismic Non-Conventional Report',
-        link: '/datatype/non_seismic_data/non-seismic_and_seismic_unconventional_digital_report',
+        name: 'Non-Seismic and Seismic Unconventional Digital Report',
+        link: '/datatype/non-seismic_and_seismic_unconventional_data/non-seismic_and_seismic_unconventional_digital_report',
         icon: '/icons/non_seismic.svg',
       },
     ],
@@ -162,12 +162,12 @@ const ROUTING_LIST = [
         icon: '/icons/well_data.svg',
       },
       {
-        name: 'Printed Well Logs',
+        name: 'Printed Well Log',
         link: '/datatype/well_data/printed_well_log',
         icon: '/icons/well_data.svg',
       },
       {
-        name: 'Digital Well Logs',
+        name: 'Digital Well Log',
         link: '/datatype/well_data/digital_well_log',
         icon: '/icons/well_data.svg',
       },
@@ -215,7 +215,7 @@ const ROUTING_LIST = [
     ],
   },
   {
-    name: 'Outcrop',
+    name: 'Outcrop Sample',
     link: '/datatype/outcrop_sample',
     icon: '/icons/outcrop.svg',
   },
@@ -261,7 +261,7 @@ const ROUTING_LIST = [
         icon: '/icons/project_file.svg',
       },
       {
-        name: 'Project File Stored in Media',
+        name: 'Project File Data Stored in Media',
         link: '/datatype/project_file/project_file_data_stored_in_media',
         icon: '/icons/project_file.svg',
       },

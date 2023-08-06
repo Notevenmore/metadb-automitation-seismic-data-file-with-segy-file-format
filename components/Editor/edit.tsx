@@ -160,6 +160,9 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
             duration: 5000,
           }),
         );
+      })
+      .finally(() => {
+        router.events.emit('routeChangeComplete');
       });
   }, [config, dispatch, router, spreadsheetId, triggerSave, workspaceData]);
 
@@ -212,6 +215,9 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
             duration: 5000,
           }),
         );
+      })
+      .finally(() => {
+        router.events.emit('routeChangeComplete');
       });
   }, [config, dispatch, router, spreadsheetId, workspaceData]);
 
