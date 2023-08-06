@@ -4,8 +4,8 @@ import Button from '@components/button';
 import CloseThin from '../../public/icons/close-thin.svg';
 
 const Popup = () => {
-  let {closePopup, popupProps} = useContext(PopupContext);
-  let {title, message, onConfirm, togglePopup} = popupProps;
+  let {closePopup, popupProps, togglePopup} = useContext(PopupContext);
+  let {title, message, onConfirm} = popupProps;
 
   const confirm = () => {
     onConfirm();
