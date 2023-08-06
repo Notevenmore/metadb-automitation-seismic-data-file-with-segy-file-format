@@ -118,7 +118,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
 
   const saveDocumentHandler = useCallback(() => {
     sendData(finalData);
-  }, [finalData, sendData]);
+  }, [finalData]);
 
   useEffect(() => {
     if (triggerSave && IsSaved) {
