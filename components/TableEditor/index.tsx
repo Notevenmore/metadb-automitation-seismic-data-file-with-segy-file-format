@@ -14,6 +14,7 @@ interface TableProps {
   columns: ColumnDefinition[];
   tableRef: any;
   options: ReactTabulatorOptions;
+  hideButton?: boolean;
 }
 
 export default function TableEditor({
@@ -21,6 +22,7 @@ export default function TableEditor({
   columns,
   tableRef,
   options,
+  hideButton,
 }: TableProps) {
   const downloadData = () => {
     tableRef.current.download('csv', 'report.csv');
@@ -45,7 +47,9 @@ export default function TableEditor({
       />
       <Button
         onClick={downloadData}
-        additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p min-w-max justify-center mt-4">
+        additional_styles={`${
+          hideButton && 'hidden'
+        } bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p min-w-max justify-center mt-4`}>
         <div className="flex space-x-2 items-center">
           <DownloadFolder className="w-5 h-5" />
           <p>Download record</p>
