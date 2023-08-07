@@ -11,8 +11,7 @@ function PopupProvider({children}: {children: ReactNode}) {
     message: '',
     clickOutside: true,
     onConfirm: () => {},
-    title: '',
-    togglePopup: togglePopup,
+    title: ''
   });
 
   const openPopup = ({
@@ -25,8 +24,7 @@ function PopupProvider({children}: {children: ReactNode}) {
       message: message,
       clickOutside: clickOutside,
       onConfirm: onConfirm,
-      title: title,
-      togglePopup: true,
+      title: title
     });
     setTogglePopup(true);
   };
@@ -35,8 +33,7 @@ function PopupProvider({children}: {children: ReactNode}) {
     setPopupProps(prev => {return {
       ...prev, 
       clickOutside: true,
-      onConfirm: () => {},
-      togglePopup: false,
+      onConfirm: () => {}
     }});
   };
 
@@ -51,6 +48,7 @@ function PopupProvider({children}: {children: ReactNode}) {
         openPopup,
         closePopup,
         popupProps,
+        togglePopup
       }}>
       {children}
       <Popup />
