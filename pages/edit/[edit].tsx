@@ -106,9 +106,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
         dispatch(
           displayErrorMessage({
             message:
-              'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+              'Please input dates using the YYYY-MM-DD format if you are using Google Spreadsheet as the interface. Spreadsheet will convert it to the correct format (DD/MM/YYYY) afterwards. You can set the date formatting by clicking the input column then going to Format > Number in the menu bar.',
             color: 'blue',
-            duration: 10000,
+            duration: 20000,
           }),
         );
       }, 3000);
@@ -160,6 +160,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             duration: 5000,
           }),
         );
+      })
+      .finally(() => {
+        router.events.emit('routeChangeComplete');
       });
   }, [config, dispatch, router, spreadsheetId, triggerSave, workspaceData]);
 
@@ -212,6 +215,9 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             duration: 5000,
           }),
         );
+      })
+      .finally(() => {
+        router.events.emit('routeChangeComplete');
       });
   }, [config, dispatch, router, spreadsheetId, workspaceData]);
 
