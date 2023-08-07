@@ -44,6 +44,22 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       return;
     };
 
+    const sendDeleteSpreadsheet = async () => {
+      console.log('deleting temp sheet...');
+      await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          spreadsheetID: spreadsheetId,
+        }),
+        keepalive: true
+      }).catch(error => {
+        console.log(`Cannot delete temp spreadsheet, reason: ${error}`);
+      });
+    };
+
     // This function handles navigation away from the current page by checking whether unsaved changes are present and displaying a warning dialog if necessary
     const handleBrowseAway = url => {
       if (!IsSaved) {
@@ -55,16 +71,31 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           throw 'routeChange aborted.';
         }
       }
+      console.log('deleting temp sheet...');
+      fetch(`${config.services.sheets}/deleteSpreadsheet`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          spreadsheetID: spreadsheetId,
+        }),
+        keepalive: true
+      }).catch(error => {
+        console.log(`Cannot delete temp spreadsheet, reason: ${error}`);
+      });
       // If there are no unsaved changes, allow navigation away from the page
       return;
     };
     window.addEventListener('beforeunload', handleWindowClose);
+    window.addEventListener('pagehide', sendDeleteSpreadsheet);
     router.events.on('beforeHistoryChange', handleBrowseAway);
     return () => {
       window.removeEventListener('beforeunload', handleWindowClose);
+      window.removeEventListener('pagehide', sendDeleteSpreadsheet);
       router.events.off('beforeHistoryChange', handleBrowseAway);
     };
-  }, [IsSaved, router]);
+  }, [IsSaved, router, spreadsheetId]);
 
   // This useEffect hook sets up the initial data for the workspace based on the workspace name and form type
   useEffect(() => {
