@@ -14,9 +14,10 @@ import {
 import {ColumnDefinition, ReactTabulatorOptions} from 'react-tabulator';
 
 export const useTableEditor = (
-  workspace_data: UploadDocumentSettings,
   setspreadsheetReady: Dispatch<SetStateAction<boolean>>,
   afeNumber: string | string[] | number,
+  workspace_data?: UploadDocumentSettings,
+  review_data?: any[],
 ) => {
   const router = useRouter();
   const config = JSON.parse(process.env.ENDPOINTS);
@@ -41,6 +42,7 @@ export const useTableEditor = (
       workspace_data: UploadDocumentSettings,
       setFinalData: Dispatch<SetStateAction<RowObject[]>>,
     ) => {
+      console.log('getRow');
       const data = [];
       try {
         const response = await fetch(
@@ -91,7 +93,7 @@ export const useTableEditor = (
         }
 
         // Add empty rows at the end
-        const newRow = {ba_long_name: undefined} as unknown as RowObject;
+        const newRow = {checked_by_ba_id: undefined} as unknown as RowObject;
         for (let i = 0; i < 25; i++) {
           data.push(Object.assign({}, newRow));
         }
@@ -104,6 +106,17 @@ export const useTableEditor = (
     },
     [],
   );
+
+  const addNewRows = useCallback(() => {
+    const data = [];
+    const newRow = {checked_by_ba_id: undefined} as unknown as RowObject;
+    for (let i = 0; i < 25; i++) {
+      data.push(Object.assign({}, newRow));
+    }
+
+    console.log(`data: ${data}`);
+    return data;
+  }, []);
 
   const getColumn = useCallback(
     async (
@@ -163,8 +176,28 @@ export const useTableEditor = (
       getColumn(setFinalColumns, setColumnData);
       getRow(workspace_data, setFinalData);
       setspreadsheetReady(true);
+    } else {
+      getColumn(setFinalColumns, setColumnData);
+
+      if (review_data) {
+        let newRows = addNewRows();
+        for (let i = 0; i < newRows.length; i++) {
+          review_data.push(Object.assign({}, newRows[i]));
+        }
+        console.log(review_data);
+        setFinalData(review_data);
+      }
+
+      setspreadsheetReady(true);
     }
-  }, [getColumn, getRow, setspreadsheetReady, workspace_data]);
+  }, [
+    getColumn,
+    getRow,
+    addNewRows,
+    setspreadsheetReady,
+    workspace_data,
+    review_data,
+  ]);
 
   const sendData = (data: RowObject[]) => {
     for (const row of data) {

@@ -1,18 +1,18 @@
 import {HeaderDivider, HeaderInput, HeaderTable} from '@components/HeaderTable';
 import Input from '@components/Input';
-import Sheets from '@components/Sheets';
+import TableEditor from '@components/TableEditor';
 import Button from '@components/button';
 import Container from '@components/container';
 import TableComponent from '@components/table/table';
-import {saveDocument} from '@components/utility_functions';
 import {UploadDocumentSettings, displayErrorMessage} from '@store/generalSlice';
 import {useAppDispatch, useAppSelector} from '@store/index';
 import {delay} from '@utils/common';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
+import {useTableEditor} from '../../hooks/useTableEditor';
 import Save from '../../public/icons/save.svg';
 
-export default function EditNewDocumentPage({setTitle, config}) {
+export default function TableNewDocumentPage({setTitle}) {
   const router = useRouter();
   const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [spreadsheetID, setspreadsheetID] = useState();
@@ -24,6 +24,13 @@ export default function EditNewDocumentPage({setTitle, config}) {
     state => state.general.upload_document_settings,
   );
 
+  const {finalData, finalColumns, tableRef, tableOptions, sendData} =
+    useTableEditor(
+      setspreadsheetReady,
+      upload_document_settings.afe_number,
+      workspaceData,
+    );
+
   useEffect(() => {
     if (!router.query.form_type) {
       router.push('/');
@@ -33,46 +40,37 @@ export default function EditNewDocumentPage({setTitle, config}) {
       }
     }
     setTitle('New document');
-    delay(500).then(() => {
-      router.events.emit('routeChangeStart');
-    });
+
+    router.events.emit('routeChangeStart');
   }, [router, setTitle, upload_document_settings]);
 
   const saveDocumentHandler = async (e, redirect = false) => {
     e.preventDefault();
     router.events.emit('routeChangeStart');
     try {
-      const save_result = await saveDocument(
-        e,
-        router,
-        config,
-        spreadsheetID,
-        workspaceData,
-        dispatch,
+      sendData(finalData);
+
+      dispatch(
+        displayErrorMessage({
+          message: 'Record successfully saved',
+          color: 'blue',
+          duration: 3000,
+        }),
       );
-      if (save_result.success) {
-        dispatch(
-          displayErrorMessage({
-            message: 'Record successfully saved',
-            color: 'blue',
-            duration: 3000,
-          }),
-        );
-        router.events.emit('routeChangeComplete');
-        if (redirect) {
-          await delay(1000);
-          setTimeout(() => {
-            dispatch(
-              displayErrorMessage({
-                message: 'Redirecting to homepage...',
-                color: 'blue',
-                duration: 1500,
-              }),
-            );
-          }, 0);
-          await delay(1000);
-          router.push('/');
-        }
+      router.events.emit('routeChangeComplete');
+      if (redirect) {
+        await delay(1000);
+        setTimeout(() => {
+          dispatch(
+            displayErrorMessage({
+              message: 'Redirecting to homepage...',
+              color: 'blue',
+              duration: 1500,
+            }),
+          );
+        }, 0);
+        await delay(1000);
+        router.push('/');
       }
     } catch (error) {
       dispatch(
@@ -91,16 +89,14 @@ export default function EditNewDocumentPage({setTitle, config}) {
   useEffect(() => {
     if (spreadsheetReady) {
       router.events.emit('routeChangeComplete');
-      setTimeout(() => {
-        dispatch(
-          displayErrorMessage({
-            message:
-              'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-            color: 'blue',
-            duration: 10000,
-          }),
-        );
-      }, 3000);
+      dispatch(
+        displayErrorMessage({
+          message:
+            'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+          color: 'blue',
+          duration: 10000,
+        }),
+      );
     }
   }, [dispatch, router.events, spreadsheetReady]);
 
@@ -198,16 +194,13 @@ export default function EditNewDocumentPage({setTitle, config}) {
           content={[
             [
               workspaceData && router.query.form_type ? (
-                <div className="h-750p">
-                  <Sheets
-                    form_type={router.query.form_type as string}
-                    type="new"
-                    getSpreadsheetID={setspreadsheetID}
-                    finishedInitializing={setspreadsheetReady}
-                    config={config}
-                    data={undefined}
-                  />
-                </div>
+                <TableEditor
+                  data={finalData}
+                  columns={finalColumns}
+                  tableRef={tableRef}
+                  options={tableOptions}
+                  hideButton={true}
+                />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
                   <div className="animate-spin border-4 border-t-transparent border-gray-500/[.7] rounded-full w-14 h-14"></div>

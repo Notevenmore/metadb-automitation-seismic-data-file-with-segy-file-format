@@ -1,5 +1,5 @@
-import EditNewDocumentPage from '@components/TableEditor/new_document';
-import TableNewDocumentPage from '@components/Editor/new_document';
+import EditNewDocumentPage from '@components/Editor/new_document';
+import TableNewDocumentPage from '@components/TableEditor/new_document';
 
 export default function NewDocumentPage({setTitle, config, use_editorjs}) {
   if (use_editorjs) {

@@ -35,9 +35,9 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
 
   const {finalData, finalColumns, tableRef, tableOptions, sendData} =
     useTableEditor(
-      workspaceData,
       setspreadsheetReady,
       router?.query?.workspace_data,
+      workspaceData,
     );
 
   useEffect(() => {
@@ -104,16 +104,14 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
 
   useEffect(() => {
     if (spreadsheetReady) {
-      setTimeout(() => {
-        dispatch(
-          displayErrorMessage({
-            message:
-              'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
-            color: 'blue',
-            duration: 10000,
-          }),
-        );
-      }, 3000);
+      dispatch(
+        displayErrorMessage({
+          message:
+            'Please input dates using the YYYY-MM-DD format if you are using Google Spreadsheet as the interface. Spreadsheet will convert it to the correct format (DD/MM/YYYY) afterwards. You can set the date formatting by clicking the input column then going to Format > Number in the menu bar.',
+          color: 'blue',
+          duration: 20000,
+        }),
+      );
     }
   }, [dispatch, spreadsheetReady]);
 
@@ -144,7 +142,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
         await delay(1000);
         router.back();
       }
-      // settriggerSave('');
+      settriggerSave('');
     } catch (e) {
       dispatch(
         displayErrorMessage({
@@ -156,6 +154,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
         }),
       );
     }
+    router.events.emit('routeChangeComplete');
   }, [finalData]);
 
   useEffect(() => {
@@ -365,11 +364,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
             setIsSaved(true);
             settriggerSave('save_redirect');
           }}
-          disabled={
-            !spreadsheetId || Message.message || !spreadsheetReady
-              ? true
-              : false
-          }>
+          disabled={Message.message || !spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-5 h-5" />
             <p>Save and exit</p>
