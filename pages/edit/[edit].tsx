@@ -9,6 +9,7 @@ import {
   downloadWorkspace,
   init_data,
   saveDocument,
+  sendDeleteSpreadsheet,
 } from '../../components/utility_functions';
 import DownloadFolder from '../../public/icons/download-folder.svg';
 import Save from '../../public/icons/save.svg';
@@ -21,7 +22,6 @@ import {delay} from '../../utils/common';
 
 const DocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [error, seterror] = useState('');
   const [Data, setData] = useState([-1]);
   const [dataContentDetails, setdataContentDetails] = useState([-1]);
@@ -44,22 +44,6 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
       return;
     };
 
-    const sendDeleteSpreadsheet = async () => {
-      console.log('deleting temp sheet...');
-      await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          spreadsheetID: spreadsheetId,
-        }),
-        keepalive: true
-      }).catch(error => {
-        console.log(`Cannot delete temp spreadsheet, reason: ${error}`);
-      });
-    };
-
     // This function handles navigation away from the current page by checking whether unsaved changes are present and displaying a warning dialog if necessary
     const handleBrowseAway = url => {
       if (!IsSaved) {
@@ -71,28 +55,20 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           throw 'routeChange aborted.';
         }
       }
-      console.log('deleting temp sheet...');
-      fetch(`${config.services.sheets}/deleteSpreadsheet`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          spreadsheetID: spreadsheetId,
-        }),
-        keepalive: true
-      }).catch(error => {
-        console.log(`Cannot delete temp spreadsheet, reason: ${error}`);
-      });
+      sendDeleteSpreadsheet(config, spreadsheetId);
       // If there are no unsaved changes, allow navigation away from the page
       return;
     };
     window.addEventListener('beforeunload', handleWindowClose);
-    window.addEventListener('pagehide', sendDeleteSpreadsheet);
+    window.addEventListener('pagehide', () => {
+      sendDeleteSpreadsheet(config, spreadsheetId);
+    });
     router.events.on('beforeHistoryChange', handleBrowseAway);
     return () => {
       window.removeEventListener('beforeunload', handleWindowClose);
-      window.removeEventListener('pagehide', sendDeleteSpreadsheet);
+      window.removeEventListener('pagehide', () => {
+        sendDeleteSpreadsheet(config, spreadsheetId);
+      });
       router.events.off('beforeHistoryChange', handleBrowseAway);
     };
   }, [IsSaved, router, spreadsheetId]);
@@ -448,7 +424,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             settriggerSave('save');
           }}
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p min-w-max justify-center"
-          disabled={!spreadsheetReady || Message.message ? true : false}>
+          disabled={!spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-5 h-5" />
             <p>Save changes</p>
@@ -462,7 +438,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             settriggerSave('save_redirect');
           }}
           disabled={
-            !spreadsheetId || Message.message || !spreadsheetReady
+            !spreadsheetId || !spreadsheetReady
               ? true
               : false
           }>
@@ -478,7 +454,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             settriggerSave('download');
           }}
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p min-w-max justify-center"
-          disabled={!spreadsheetReady || Message.message ? true : false}>
+          disabled={!spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <DownloadFolder className="w-5 h-5" />
             <p>Download record</p>
