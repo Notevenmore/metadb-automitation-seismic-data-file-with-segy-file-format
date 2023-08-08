@@ -14,9 +14,9 @@ import Container from '../../components/container';
 import Table from '../../components/table/table';
 import {
   changePage,
-  changePageTimeout,
   init_data,
   saveDocument,
+  sendDeleteSpreadsheet,
 } from '../../components/utility_functions';
 import {TableType} from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
@@ -33,7 +33,6 @@ import {delay} from '../../utils/common';
 export default function UploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
   const [ImageReview, setImageReview] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [PageNo, setPageNo] = useState(0);
   const [ImageURL, setImageURL] = useState('');
   const [error, setError] = useState('');
@@ -60,6 +59,23 @@ export default function UploadFileReview({setTitle, config}) {
   useEffect(() => {
     setTitle('Review - Upload Document');
   }, [setTitle]);
+
+  useEffect(() => {
+    window.addEventListener('pagehide', () => {
+      sendDeleteSpreadsheet(config, spreadsheetID);
+    });
+    router.events.on('beforeHistoryChange', () => {
+      sendDeleteSpreadsheet(config, spreadsheetID);
+    });
+    return () => {
+      window.removeEventListener('pagehide', () => {
+        sendDeleteSpreadsheet(config, spreadsheetID);
+      });
+      router.events.off('beforeHistoryChange', () => {
+        sendDeleteSpreadsheet(config, spreadsheetID);
+      });
+    };
+  }, [router, spreadsheetID]);
 
   useEffect(() => {
     // ---| NEW WORKFLOW |---
@@ -458,7 +474,7 @@ export default function UploadFileReview({setTitle, config}) {
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={saveDocumentHandler}
           disabled={
-            !spreadsheetID || Message.message || !spreadsheetReady
+            !spreadsheetID || !spreadsheetReady
               ? true
               : false
           }>
@@ -473,7 +489,7 @@ export default function UploadFileReview({setTitle, config}) {
             saveDocumentHandler(e, true);
           }}
           disabled={
-            !spreadsheetID || Message.message || !spreadsheetReady
+            !spreadsheetID || !spreadsheetReady
               ? true
               : false
           }>

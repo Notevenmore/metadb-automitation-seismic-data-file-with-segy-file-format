@@ -821,3 +821,19 @@ export const changePage = (document_summary, setImageURL, PageNo) => {
     changePageTimeout = undefined
   }, 300);
 }
+
+export const sendDeleteSpreadsheet = async (config, spreadsheetId) => {
+  console.log('deleting temp sheet...');
+  await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      spreadsheetID: spreadsheetId,
+    }),
+    keepalive: true
+  }).catch(error => {
+    console.log(`Cannot delete temp spreadsheet, reason: ${error}`);
+  });
+};
