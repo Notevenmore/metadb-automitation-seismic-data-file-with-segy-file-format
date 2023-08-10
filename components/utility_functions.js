@@ -712,6 +712,7 @@ export const formatWorkspaceList = (workspaces_list, Button, DownloadCommon, Ima
             query={{
               form_type: datatype,
               workspace_data: workspace.afe_number,
+              previous: router.asPath
             }}>
             <div className="w-18p h-18p flex items-center">
               <Image
