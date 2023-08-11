@@ -138,17 +138,15 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
           router.events.emit('routeChangeComplete');
           if (triggerSave.includes('redirect')) {
             await delay(1000);
-            setTimeout(() => {
-              dispatch(
-                displayErrorMessage({
-                  message: 'Redirecting back to record list...',
-                  color: 'blue',
-                  duration: 1500,
-                }),
-              );
-            }, 0);
+            dispatch(
+              displayErrorMessage({
+                message: 'Redirecting back to record list...',
+                color: 'blue',
+                duration: 1500,
+              }),
+            );
             await delay(1000);
-            router.back();
+            router.push(router.query.previous as string);
           }
         }
       })
@@ -437,11 +435,7 @@ const DocEditor = ({workspace_name, setTitle, config}) => {
             setIsSaved(true);
             settriggerSave('save_redirect');
           }}
-          disabled={
-            !spreadsheetId || !spreadsheetReady
-              ? true
-              : false
-          }>
+          disabled={!spreadsheetId || !spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-5 h-5" />
             <p>Save and exit</p>
