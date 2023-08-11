@@ -39,20 +39,6 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
           setSkipInitialization(true);
           return;
         }
-        const previousID = localStorage.getItem('spreadsheetID');
-        if (previousID) {
-          await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              spreadsheetID: previousID,
-            }),
-          }).catch(error => {
-            throw error;
-          });
-        }
         const makeTemp = await fetch(
           `${config.services.sheets}/createSpreadsheet`,
         );

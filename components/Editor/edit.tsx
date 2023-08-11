@@ -9,6 +9,7 @@ import {
   downloadWorkspace,
   init_data,
   saveDocument,
+  sendDeleteSpreadsheet,
 } from '../../components/utility_functions';
 import DownloadFolder from '../../public/icons/download-folder.svg';
 import Save from '../../public/icons/save.svg';
@@ -21,7 +22,6 @@ import {delay} from '../../utils/common';
 
 export const EditDocEditor = ({workspace_name, setTitle, config}) => {
   const [IsSaved, setIsSaved] = useState(false);
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [error, seterror] = useState('');
   const [Data, setData] = useState([-1]);
   const [dataContentDetails, setdataContentDetails] = useState([-1]);
@@ -55,16 +55,23 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
           throw 'routeChange aborted.';
         }
       }
+      sendDeleteSpreadsheet(config, spreadsheetId);
       // If there are no unsaved changes, allow navigation away from the page
       return;
     };
     window.addEventListener('beforeunload', handleWindowClose);
+    window.addEventListener('pagehide', () => {
+      sendDeleteSpreadsheet(config, spreadsheetId);
+    });
     router.events.on('beforeHistoryChange', handleBrowseAway);
     return () => {
       window.removeEventListener('beforeunload', handleWindowClose);
+      window.removeEventListener('pagehide', () => {
+        sendDeleteSpreadsheet(config, spreadsheetId);
+      });
       router.events.off('beforeHistoryChange', handleBrowseAway);
     };
-  }, [IsSaved, router]);
+  }, [IsSaved, router, spreadsheetId]);
 
   // This useEffect hook sets up the initial data for the workspace based on the workspace name and form type
   useEffect(() => {
@@ -130,6 +137,7 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
           );
           router.events.emit('routeChangeComplete');
           if (triggerSave.includes('redirect')) {
+            await delay(1000);
             dispatch(
               displayErrorMessage({
                 message: 'Redirecting back to record list...',
@@ -137,9 +145,9 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
                 duration: 1500,
               }),
             );
+            await delay(1000);
+            router.push(router.query.previous as string);
           }
-          await delay(1000);
-          router.push(router.query.previous as string);
         }
       })
       .then(() => {
@@ -414,7 +422,7 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
             settriggerSave('save');
           }}
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p min-w-max justify-center"
-          disabled={!spreadsheetReady || Message.message ? true : false}>
+          disabled={!spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-5 h-5" />
             <p>Save changes</p>
@@ -427,11 +435,7 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
             setIsSaved(true);
             settriggerSave('save_redirect');
           }}
-          disabled={
-            !spreadsheetId || Message.message || !spreadsheetReady
-              ? true
-              : false
-          }>
+          disabled={!spreadsheetId || !spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-5 h-5" />
             <p>Save and exit</p>
@@ -444,7 +448,7 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
             settriggerSave('download');
           }}
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p min-w-max justify-center"
-          disabled={!spreadsheetReady || Message.message ? true : false}>
+          disabled={!spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <DownloadFolder className="w-5 h-5" />
             <p>Download record</p>

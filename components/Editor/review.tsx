@@ -1,18 +1,23 @@
-import {HeaderDivider, HeaderInput, HeaderTable} from '@components/HeaderTable';
-import {ImageEditor} from '@components/HighlightViewer';
-import Input from '@components/Input';
 import Sheets from '@components/Sheets';
-import Button from '@components/button';
-import Container from '@components/container';
-import Table from '@components/table/table';
+import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
+import Highlight from 'react-highlight';
+import {
+  HeaderDivider,
+  HeaderInput,
+  HeaderTable,
+} from '../../components/HeaderTable';
+import {ImageEditor} from '../../components/HighlightViewer';
+import Input from '../../components/Input';
+import Button from '../../components/button';
+import Container from '../../components/container';
+import Table from '../../components/table/table';
 import {
   changePage,
   init_data,
   saveDocument,
-} from '@components/utility_functions';
-import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
-import Highlight from 'react-highlight';
+  sendDeleteSpreadsheet,
+} from '../../components/utility_functions';
 import {TableType} from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
 import ChevronRight from '../../public/icons/chevron-right.svg';
@@ -28,7 +33,6 @@ import {delay} from '../../utils/common';
 export default function EditUploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
   const [ImageReview, setImageReview] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [PageNo, setPageNo] = useState(0);
   const [ImageURL, setImageURL] = useState('');
   const [error, setError] = useState('');
@@ -55,6 +59,23 @@ export default function EditUploadFileReview({setTitle, config}) {
   useEffect(() => {
     setTitle('Review - Upload Document');
   }, [setTitle]);
+
+  useEffect(() => {
+    window.addEventListener('pagehide', () => {
+      sendDeleteSpreadsheet(config, spreadsheetID);
+    });
+    router.events.on('beforeHistoryChange', () => {
+      sendDeleteSpreadsheet(config, spreadsheetID);
+    });
+    return () => {
+      window.removeEventListener('pagehide', () => {
+        sendDeleteSpreadsheet(config, spreadsheetID);
+      });
+      router.events.off('beforeHistoryChange', () => {
+        sendDeleteSpreadsheet(config, spreadsheetID);
+      });
+    };
+  }, [router, spreadsheetID]);
 
   useEffect(() => {
     // ---| NEW WORKFLOW |---
@@ -452,11 +473,7 @@ export default function EditUploadFileReview({setTitle, config}) {
         <Button
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={saveDocumentHandler}
-          disabled={
-            !spreadsheetID || Message.message || !spreadsheetReady
-              ? true
-              : false
-          }>
+          disabled={!spreadsheetID || !spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-4 h-4" />
             <p>Save changes</p>
@@ -467,11 +484,7 @@ export default function EditUploadFileReview({setTitle, config}) {
           onClick={e => {
             saveDocumentHandler(e, true);
           }}
-          disabled={
-            !spreadsheetID || Message.message || !spreadsheetReady
-              ? true
-              : false
-          }>
+          disabled={!spreadsheetID || !spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-4 h-4" />
             <p>Save and exit</p>

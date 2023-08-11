@@ -4,7 +4,10 @@ import Sheets from '@components/Sheets';
 import Button from '@components/button';
 import Container from '@components/container';
 import TableComponent from '@components/table/table';
-import {saveDocument} from '@components/utility_functions';
+import {
+  saveDocument,
+  sendDeleteSpreadsheet,
+} from '@components/utility_functions';
 import {UploadDocumentSettings, displayErrorMessage} from '@store/generalSlice';
 import {useAppDispatch, useAppSelector} from '@store/index';
 import {delay} from '@utils/common';
@@ -14,7 +17,6 @@ import Save from '../../public/icons/save.svg';
 
 export default function EditNewDocumentPage({setTitle, config}) {
   const router = useRouter();
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [spreadsheetID, setspreadsheetID] = useState();
   const [workspaceData, setworkspaceData] = useState<UploadDocumentSettings>();
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
@@ -37,6 +39,23 @@ export default function EditNewDocumentPage({setTitle, config}) {
       router.events.emit('routeChangeStart');
     });
   }, [router, setTitle, upload_document_settings]);
+
+  useEffect(() => {
+    window.addEventListener('pagehide', () => {
+      sendDeleteSpreadsheet(config, spreadsheetID);
+    });
+    router.events.on('beforeHistoryChange', () => {
+      sendDeleteSpreadsheet(config, spreadsheetID);
+    });
+    return () => {
+      window.removeEventListener('pagehide', () => {
+        sendDeleteSpreadsheet(config, spreadsheetID);
+      });
+      router.events.off('beforeHistoryChange', () => {
+        sendDeleteSpreadsheet(config, spreadsheetID);
+      });
+    };
+  }, [router, spreadsheetID]);
 
   const saveDocumentHandler = async (e, redirect = false) => {
     e.preventDefault();
@@ -227,7 +246,7 @@ export default function EditNewDocumentPage({setTitle, config}) {
           title="Save this record to the database"
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={saveDocumentHandler}
-          disabled={Message.message || !spreadsheetReady ? true : false}>
+          disabled={!spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-4 h-4" />
             <p>Save changes</p>
@@ -239,11 +258,7 @@ export default function EditNewDocumentPage({setTitle, config}) {
           onClick={e => {
             saveDocumentHandler(e, true);
           }}
-          disabled={
-            !spreadsheetID || Message.message || !spreadsheetReady
-              ? true
-              : false
-          }>
+          disabled={!spreadsheetID || !spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-4 h-4" />
             <p>Save and exit</p>
