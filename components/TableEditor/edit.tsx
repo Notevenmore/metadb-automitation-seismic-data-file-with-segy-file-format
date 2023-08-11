@@ -130,18 +130,16 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
       );
       router.events.emit('routeChangeComplete');
       if (triggerSave.includes('redirect')) {
-        setTimeout(() => {
-          dispatch(
-            displayErrorMessage({
-              message: 'Redirecting back to record list...',
-              color: 'blue',
-              duration: 1500,
-            }),
-          );
-        }, 0);
-        await delay(1000);
-        router.back();
+        dispatch(
+          displayErrorMessage({
+            message: 'Redirecting back to record list...',
+            color: 'blue',
+            duration: 1500,
+          }),
+        );
       }
+      await delay(1000);
+      router.push(router.query.previous as string);
       settriggerSave('');
     } catch (e) {
       dispatch(

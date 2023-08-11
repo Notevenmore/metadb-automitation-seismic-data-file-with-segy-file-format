@@ -232,11 +232,7 @@ export default function TableNewDocumentPage({setTitle}) {
           onClick={e => {
             saveDocumentHandler(e, true);
           }}
-          disabled={
-            !spreadsheetID || Message.message || !spreadsheetReady
-              ? true
-              : false
-          }>
+          disabled={Message.message || !spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-4 h-4" />
             <p>Save and exit</p>
