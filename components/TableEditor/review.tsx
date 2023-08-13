@@ -29,7 +29,6 @@ export default function TableUploadFileReview({setTitle, config}) {
   const [PageNo, setPageNo] = useState(0);
   const [ImageURL, setImageURL] = useState('');
   const [error, setError] = useState('');
-  const [spreadsheetID, setspreadsheetID] = useState('');
   const [loading, setloading] = useState('');
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
 
@@ -82,6 +81,7 @@ export default function TableUploadFileReview({setTitle, config}) {
         final.push(row);
         setReviewData(final);
         setloading('');
+        router.events.emit('routeChangeComplete');
       } catch (error) {
         setloading('');
         setError(String(error));
@@ -126,7 +126,7 @@ export default function TableUploadFileReview({setTitle, config}) {
     email: 'john.richardson@gtn.id',
   }))(upload_document_settings);
 
-  const {finalData, finalColumns, tableRef, tableOptions, sendData} =
+  const {finalData, finalColumns, tableRef, tableOptions, sendData, getRow} =
     useTableEditor(
       setspreadsheetReady,
       upload_document_settings.afe_number,
@@ -159,6 +159,9 @@ export default function TableUploadFileReview({setTitle, config}) {
         await delay(1000);
         router.push('/');
       }
+
+      await delay(1000);
+      getRow(workspaceData);
     } catch (error) {
       dispatch(
         displayErrorMessage({
@@ -175,6 +178,7 @@ export default function TableUploadFileReview({setTitle, config}) {
 
   useEffect(() => {
     if (spreadsheetReady) {
+      console.log('spreadsheet Really Ready');
       router.events.emit('routeChangeComplete');
       dispatch(
         displayErrorMessage({
@@ -321,7 +325,7 @@ export default function TableUploadFileReview({setTitle, config}) {
           ]}
           content={[
             [
-              <div className="h-750p" key={1}>
+              <div key={1}>
                 {loading && !(ReviewData.length >= 1) ? (
                   <div className="flex flex-col items-center justify-center space-y-2 h-full">
                     <div className="w-5 h-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
@@ -385,11 +389,7 @@ export default function TableUploadFileReview({setTitle, config}) {
                   return page_no - 1;
                 });
               }}
-              disabled={
-                PageNo <= 0 || !spreadsheetID || !spreadsheetReady
-                  ? true
-                  : false
-              }>
+              disabled={PageNo <= 0 || !spreadsheetReady ? true : false}>
               <div className="w-5 h-5">
                 <ChevronLeft />
               </div>
@@ -398,7 +398,7 @@ export default function TableUploadFileReview({setTitle, config}) {
               title="Page number"
               className="bg-white border-2 p-2 cursor-default select-none rounded-lg text-center">
               <section className="h-5 w-28 flex items-center justify-center">
-                {!spreadsheetID || !spreadsheetReady ? (
+                {!spreadsheetReady ? (
                   <div className="h-5 w-5 border-2 border-black rounded-full border-t-transparent animate-spin"></div>
                 ) : (
                   <Input
@@ -431,7 +431,6 @@ export default function TableUploadFileReview({setTitle, config}) {
               }}
               disabled={
                 PageNo >= document_summary.body.page_count - 1 ||
-                !spreadsheetID ||
                 !spreadsheetReady
                   ? true
                   : false

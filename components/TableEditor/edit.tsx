@@ -23,7 +23,6 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
   const [dataContentDetails, setdataContentDetails] = useState([-1]);
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
   const [workspaceData, setworkspaceData] = useState<UploadDocumentSettings>();
-  const [spreadsheetId, setspreadsheetId] = useState();
   const [triggerSave, settriggerSave] = useState('');
 
   const dispatch = useAppDispatch();
@@ -33,7 +32,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
 
   const router = useRouter();
 
-  const {finalData, finalColumns, tableRef, tableOptions, sendData} =
+  const {finalData, finalColumns, tableRef, tableOptions, sendData, getRow} =
     useTableEditor(
       setspreadsheetReady,
       router?.query?.workspace_data,
@@ -119,7 +118,6 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
     router.events.emit('routeChangeStart');
     try {
       sendData(finalData);
-
       setIsSaved(true);
       dispatch(
         displayErrorMessage({
@@ -130,6 +128,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
       );
       router.events.emit('routeChangeComplete');
       if (triggerSave.includes('redirect')) {
+        await delay(1000);
         dispatch(
           displayErrorMessage({
             message: 'Redirecting back to record list...',
@@ -137,10 +136,14 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
             duration: 1500,
           }),
         );
+        await delay(1000);
+        router.push(router.query.previous as string);
+        return;
       }
+
       await delay(1000);
-      router.push(router.query.previous as string);
       settriggerSave('');
+      getRow(workspaceData);
     } catch (e) {
       dispatch(
         displayErrorMessage({
@@ -153,7 +156,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
       );
     }
     router.events.emit('routeChangeComplete');
-  }, [finalData]);
+  }, [dispatch, triggerSave, router, getRow, workspaceData, finalData]);
 
   useEffect(() => {
     if (triggerSave && IsSaved) {

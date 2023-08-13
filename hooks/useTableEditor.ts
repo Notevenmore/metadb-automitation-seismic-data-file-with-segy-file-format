@@ -37,75 +37,69 @@ export const useTableEditor = (
     },
   };
 
-  const getRow = useCallback(
-    async (
-      workspace_data: UploadDocumentSettings,
-      setFinalData: Dispatch<SetStateAction<RowObject[]>>,
-    ) => {
-      console.log('getRow');
-      const data = [];
-      try {
-        const response = await fetch(
-          `${config[`${router.query.form_type}`]['workspace']}${
-            workspace_data['afe_number']
-          }`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${
-                JSON.parse(parseCookies().user_data).access_token
-              }`,
-            },
+  const getRow = useCallback(async (workspace_data: UploadDocumentSettings) => {
+    console.log('getRow');
+    const data = [];
+    try {
+      const response = await fetch(
+        `${config[`${router.query.form_type}`]['workspace']}${
+          workspace_data['afe_number']
+        }`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${
+              JSON.parse(parseCookies().user_data).access_token
+            }`,
           },
-        );
-        const result = (await response.json()) as WorkspaceType[];
+        },
+      );
+      const result = (await response.json()) as WorkspaceType[];
 
-        if (result) {
-          for (const datatype_record_id of result) {
-            const details = await fetch(
-              `${config[`${router.query.form_type}`]['view']}${
-                datatype_record_id[
-                  config[`${router.query.form_type}`]['workspace_holder_key']
-                ]
-              }`,
-              {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${
-                    JSON.parse(parseCookies().user_data).access_token
-                  }`,
-                },
+      if (result) {
+        for (const datatype_record_id of result) {
+          const details = await fetch(
+            `${config[`${router.query.form_type}`]['view']}${
+              datatype_record_id[
+                config[`${router.query.form_type}`]['workspace_holder_key']
+              ]
+            }`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`,
               },
-            );
-            const result_details = (await details.json()) as RowObject[];
-            const current = result_details[0];
+            },
+          );
+          const result_details = (await details.json()) as RowObject[];
+          const current = result_details[0];
 
-            // Format string with appropriate Date format
-            for (const key of Object.keys(current)) {
-              if (key.includes('date') && current[key] !== null) {
-                current[key] = formatDate(current[key], true);
-              }
+          // Format string with appropriate Date format
+          for (const key of Object.keys(current)) {
+            if (key.includes('date') && current[key] !== null) {
+              current[key] = formatDate(current[key], true);
             }
-            data.push(current);
           }
+          data.push(current);
         }
-
-        // Add empty rows at the end
-        const newRow = {checked_by_ba_id: undefined} as unknown as RowObject;
-        for (let i = 0; i < 25; i++) {
-          data.push(Object.assign({}, newRow));
-        }
-
-        setFinalData(data);
-      } catch (e) {
-        console.log(e);
-        console.log('Error in getRow');
       }
-    },
-    [],
-  );
+
+      // Add empty rows at the end
+      const newRow = {checked_by_ba_id: undefined} as unknown as RowObject;
+      for (let i = 0; i < 25; i++) {
+        data.push(Object.assign({}, newRow));
+      }
+
+      setFinalData(data);
+    } catch (e) {
+      console.log(e);
+      console.log('Error in getRow');
+    }
+  }, []);
 
   const addNewRows = useCallback(() => {
     const data = [];
@@ -174,20 +168,17 @@ export const useTableEditor = (
   useEffect(() => {
     if (workspace_data) {
       getColumn(setFinalColumns, setColumnData);
-      getRow(workspace_data, setFinalData);
+      getRow(workspace_data);
       setspreadsheetReady(true);
-    } else {
+    } else if (review_data) {
       getColumn(setFinalColumns, setColumnData);
 
-      if (review_data) {
-        let newRows = addNewRows();
-        for (let i = 0; i < newRows.length; i++) {
-          review_data.push(Object.assign({}, newRows[i]));
-        }
-        console.log(review_data);
-        setFinalData(review_data);
+      let newRows = addNewRows();
+      for (let i = 0; i < newRows.length; i++) {
+        review_data.push(Object.assign({}, newRows[i]));
       }
 
+      setFinalData(review_data);
       setspreadsheetReady(true);
     }
   }, [
@@ -344,5 +335,6 @@ export const useTableEditor = (
     tableRef,
     tableOptions,
     sendData,
+    getRow,
   };
 };

@@ -15,7 +15,6 @@ import Save from '../../public/icons/save.svg';
 export default function TableNewDocumentPage({setTitle}) {
   const router = useRouter();
   const [Message, setMessage] = useState({message: '', color: '', show: false});
-  const [spreadsheetID, setspreadsheetID] = useState();
   const [workspaceData, setworkspaceData] = useState<UploadDocumentSettings>();
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
 
@@ -24,7 +23,7 @@ export default function TableNewDocumentPage({setTitle}) {
     state => state.general.upload_document_settings,
   );
 
-  const {finalData, finalColumns, tableRef, tableOptions, sendData} =
+  const {finalData, finalColumns, tableRef, tableOptions, sendData, getRow} =
     useTableEditor(
       setspreadsheetReady,
       upload_document_settings.afe_number,
@@ -60,18 +59,20 @@ export default function TableNewDocumentPage({setTitle}) {
       router.events.emit('routeChangeComplete');
       if (redirect) {
         await delay(1000);
-        setTimeout(() => {
-          dispatch(
-            displayErrorMessage({
-              message: 'Redirecting to homepage...',
-              color: 'blue',
-              duration: 1500,
-            }),
-          );
-        }, 0);
+        dispatch(
+          displayErrorMessage({
+            message: 'Redirecting to homepage...',
+            color: 'blue',
+            duration: 1500,
+          }),
+        );
+
         await delay(1000);
         router.push('/');
       }
+
+      await delay(1000);
+      getRow(workspaceData);
     } catch (error) {
       dispatch(
         displayErrorMessage({
