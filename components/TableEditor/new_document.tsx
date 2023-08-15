@@ -92,8 +92,7 @@ export default function TableNewDocumentPage({setTitle}) {
       router.events.emit('routeChangeComplete');
       dispatch(
         displayErrorMessage({
-          message:
-            'Please use DD/MM/YYYY format in any date field. You can set the date formatting by going to Format > Number and selecting the correct date format if the field insisted on inputting wrong date format.',
+          message: 'Please input dates using the DD/MM/YYYY format.',
           color: 'blue',
           duration: 10000,
         }),

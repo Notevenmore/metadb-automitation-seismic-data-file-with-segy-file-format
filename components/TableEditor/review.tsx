@@ -182,8 +182,7 @@ export default function TableUploadFileReview({setTitle, config}) {
       router.events.emit('routeChangeComplete');
       dispatch(
         displayErrorMessage({
-          message:
-            'Please input dates using the YYYY-MM-DD format if you are using Google Spreadsheet as the interface. Spreadsheet will convert it to the correct format (DD/MM/YYYY) afterwards. You can set the date formatting by clicking the input column then going to Format > Number in the menu bar.',
+          message: 'Please input dates using the DD/MM/YYYY format.',
           color: 'blue',
           duration: 20000,
         }),
