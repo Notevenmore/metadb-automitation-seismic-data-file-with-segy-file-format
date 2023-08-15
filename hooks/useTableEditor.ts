@@ -144,14 +144,14 @@ export const useTableEditor = (
           const lower = titles[i].toLowerCase();
           let validation = types[i];
 
-          if (validation.includes('string')) {
+          if (titles[i].includes('date')) {
+            validation = `regex:${dateRegex}`;
+          } else if (validation.includes('string')) {
             validation = 'string';
           } else if (validation.includes('int')) {
             validation = 'integer';
           } else if (validation.includes('float32')) {
             validation = 'integer';
-          } else if (titles[i].includes('date')) {
-            validation = `regex:${dateRegex}`;
           }
 
           if (upper === 'ID') {
