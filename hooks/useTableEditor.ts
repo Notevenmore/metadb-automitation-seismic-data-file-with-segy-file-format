@@ -1,4 +1,4 @@
-import {formatDate, omitID} from '@components/TableEditor/Helper';
+import {dateRegex, formatDate, omitID} from '@components/TableEditor/Helper';
 import {RowObject, WorkspaceType} from '@components/TableEditor/Type';
 import {UploadDocumentSettings} from '@store/generalSlice';
 import {useRouter} from 'next/router';
@@ -32,6 +32,7 @@ export const useTableEditor = (
   const tableOptions: ReactTabulatorOptions = {
     index: 'id',
     height: '800px',
+    validationMode: 'highlight',
     downloadReady: (fileContents: string, blob) => {
       return blob;
     },
@@ -134,11 +135,25 @@ export const useTableEditor = (
 
         const result = (await response.json()) as string[];
         setColumnData(result);
-        const result_details = Object.keys(result);
 
-        for (const title of result_details) {
-          const upper = title.toUpperCase();
-          const lower = title.toLowerCase();
+        const titles = Object.keys(result);
+        const types = Object.values(result);
+
+        for (let i = 0; i < titles.length; i++) {
+          const upper = titles[i].toUpperCase();
+          const lower = titles[i].toLowerCase();
+          let validation = types[i];
+
+          if (validation.includes('string')) {
+            validation = 'string';
+          } else if (validation.includes('int')) {
+            validation = 'integer';
+          } else if (validation.includes('float32')) {
+            validation = 'integer';
+          } else if (titles[i].includes('date')) {
+            validation = `regex:${dateRegex}`;
+          }
+
           if (upper === 'ID') {
             columns.push({
               title: upper,
@@ -153,6 +168,7 @@ export const useTableEditor = (
               field: lower,
               width: 150,
               editor: 'input',
+              validator: validation,
             });
           }
         }
