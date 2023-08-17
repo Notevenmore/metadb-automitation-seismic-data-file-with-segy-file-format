@@ -28,10 +28,10 @@ User also have the ability to manage their own account, they can see their detai
 
 1. The top right of screen will have the user’s profile where they can click and see user settings like the following:
     
-    <p align="center"> <img src ="/markdown/src/Untitled%209.png" style= "border : 2px solid cornflowerblue; border-radius:10px; width:300;"> </p>    
+    <p align="center"> <img src ="/markdown/src/profile.png" style= "border : 2px solid cornflowerblue; border-radius:10px; width:250;"> </p>    
 2. The user will then be sent to a different view where they are able to see their details like E-mail, role and the date they joined. Additionally, they are able to upload their profile picture, change password and even sign out from their profile.
     
-    <p align="center"> <img src ="/markdown/src/Untitled%2010.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>    
+    <p align="center"> <img src ="/markdown/src/profile_page.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>    
 
 After logging in, user will be directed to Add Record page where they can add new records or edit and delete old ones. Here is how the user can manage records:
 
@@ -44,11 +44,11 @@ In this page, user has the ability to enter new records to the database. User ha
 
 Both actions will have the same output, which is an xls format that is suitable for Pusdatin ESDM.
 
-<p align="center"> <img src ="/markdown/src/SCR-20230628-sfkt.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>
+<p align="center"> <img src ="/markdown/src/dashboard.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>
 
 ## Choose file manually
 
-If you click on `Choose file manually` you can see this page. Here is where you can upload the file and also type the name and pick the type of data you wan to make. The user is able to upload data from a number of different file extensions (PDF, Images, CSV, LAS, PPTX) that an Optical Character Reader (OCR) is able to directly convert to text. This can be done as follows:
+If you click on `Choose file manually` you can see this page. Here is where you can upload the file and also type the name and pick the type of data you wan to make. The user is able to upload data from a number of different file extensions (PDF, /markdown/src, CSV, LAS, PPTX) that an Optical Character Reader (OCR) is able to directly convert to text. This can be done as follows:
 
 MetaDB is able to convert this to a record that will be saved later on that is directly converted to a record.
 
@@ -61,7 +61,7 @@ There are four different data matching methods that can help user to make the pr
 - Dropdown: once user uploaded their file, our service will read your file and make a list of possible inputs that user can then match with the headers. Users just use our dropdown feature and click on the right data that matches with the header.
 - Highlighting: once user uploaded their file, user can select the words by dragging the cursor to the specific word, then our service will read it and translate it to a processable text that can be inputted to the matching header.
 - Drag and drop: once user uploaded their file, our service will identify the words and user can drag and drop those words from the document to the input fields next to the header to fill in.
-- Automatic: once user uploaded their file, our service will review your file and try to match the records to the matching header. Do not worry, user still have the ability to change the inputs.
+- Automatic: once user uploaded their file, our service will review your file and try to match the records to the matching header. Do not worry, user still have the ability to change the inputs. *only available for 2d datatypes
 
 In this example, the data type used is `print well report`, other data types works the same. 
 
@@ -133,6 +133,7 @@ Users are able to specifically decide which texts belong to what headers with th
 
 
 ### Automatic
+> Only avilable for 2d datatypes
 
 For automatic, the user simply needs to press automatic and allows MetaDB to make predictions on what texts belong to the different headers. The user needs to simply click a single button and let MetaDB handle all the predictions
 
@@ -175,8 +176,24 @@ By clicking on the pencil icon, user can edit their record. User will be taken t
 
 <p align="center"> <img src ="/markdown/src/Untitled%2025.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>
 
+## Download record
+
+User able to download record into `xlxs` format by clicking on the download logo under the `Action` section.
+
+<p align="center"> <img src ="/markdown/src/downloadButton.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>
+
+The download button will individually download the record.
+
+To download in bulk (records shares the same UWI or line name) user can click on the download button at the bottom of the page. It will pop up a search page where user can input the UWI or line name that they want to download, then the records that share the same UWI or line name will be displayed and user can easily download them all.
+
+<p align="center"> <img src ="/markdown/src/bulkDownload.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>
+
+<p align="center"> <img src ="/markdown/src/bulkSearch.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>
+
+<p align="center"> <img src ="/markdown/src/searchResult.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>
+
 ## Delete record
 
 By clicking on the trash icon, user can remove the record from the database. This will permanently remove the record from the database. 
 
-<p align="center"> <img src ="/markdown/src/Untitled%2026.png" style= "border : 2px solid cornflowerblue; border-radius:10px;">
+<p align="center"> <img src ="/markdown/src/deleteButton.png" style= "border : 2px solid cornflowerblue; border-radius:10px;">
