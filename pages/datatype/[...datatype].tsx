@@ -63,7 +63,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
   let selectedTableData = [[]];
 
   const deleteWorkspace = useCallback(
-    (e = null, afe_number) => {
+    (afe_number, e = null) => {
       if (e) {
         e.preventDefault();
       }
