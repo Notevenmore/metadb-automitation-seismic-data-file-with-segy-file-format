@@ -127,7 +127,7 @@ export default function MatchingGuided({config, setTitle}) {
           setState(temp);
           setLoading(null);
         } catch (error) {
-          setError(String(error));
+          setError(JSON.stringify(error));
           setLoading(null);
         }
       }
@@ -229,7 +229,9 @@ export default function MatchingGuided({config, setTitle}) {
         Something happened. Please try again or contact administrator/maintainer
         if the problem still persists by giving them the information below:
       </p>
-      <Highlight className="html rounded-md border-2">{error}</Highlight>
+      <code className='w-full rounded-md p-2 border-2 break-words'>
+        {error}
+      </code>
       <Button
         path=""
         button_description="Back"
