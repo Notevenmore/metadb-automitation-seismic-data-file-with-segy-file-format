@@ -261,14 +261,14 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
     }
 
     router.events.emit('routeChangeComplete');
-  };
+  };  
 
-  const handleAfeChange = async (e, focused: boolean) => {
-    e.preventDefault();
-    const input_value = parseInt(e.target.value);
-    if (!input_value) {
+  const handleAfeChange = async (afe_number: number, focused: boolean, datatype: string) => {
+    // const afe_number = parseInt(e.target.value);
+    if (!afe_number) {
       return;
     }
+    // console.log("onchange fired", afe_number, focused)
     try {
       if (focused) {
         if (!UplSettings.DataType) {
@@ -281,22 +281,24 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
       } else {
         setpopupMessage({message: '', color: ''});
 
-        if (!UplSettings.afe_number || !UplSettings.DataType) {
+        if (!afe_number || !UplSettings.DataType) {
           return;
         }
 
         const result: string = await checkAfe(
           false,
           config,
-          datatypes[UplSettings.DataType],
-          parseInt((e.target as HTMLInputElement).value),
+          datatypes[datatype],
+          afe_number,
         );
         if (result !== 'null') {
           const workspace_data: UploadDocumentSettings = JSON.parse(result)[0];
           setafeExist(true);
           setUplSettings({
             ...UplSettings,
-            afe_number: input_value,
+            DataType: datatype, 
+            afe_number: afe_number,
+            workspace_name: `record_${afe_number}`,
             kkks_name: workspace_data.kkks_name,
             working_area: workspace_data.working_area,
             submission_type: workspace_data.submission_type,
@@ -417,9 +419,10 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
             required={true}
             additional_styles="w-full"
             additional_styles_label={additional_styles_label}
-            onChange={e =>
-              setUplSettings({...UplSettings, DataType: e.target.value})
-            }
+            onChange={e => {
+              setUplSettings({...UplSettings, DataType: e.target.value});
+              handleAfeChange(UplSettings.afe_number, false, e.target.value);
+            }}
             withSearch
           />
           <div className={`${popupMessage.message ? 'space-y-2' : ''}`}>
@@ -438,10 +441,10 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
                 if (UplSettings.DataType) {
                   setUplSettings({
                     ...UplSettings,
-                    afe_number: parseInt(e.target.value, 10),
+                    afe_number: parseInt(e.target.value) || null,
                     workspace_name: `record_${e.target.value}`,
                   });
-                  handleAfeChange(e, false);
+                  handleAfeChange(parseInt(e.target.value), false, UplSettings.DataType);
                 }
               }}
             />
@@ -586,27 +589,29 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
                 </section>
               </div>
             </Button>
-           {UplSettings.DataType.toLowerCase().includes("2d seismic") && <Button
-              id="automatic"
-              title=""
-              additional_styles={`h-full active:bg-gray-400/60 outline-none ${
-                UplSettings.Method === 'automatic' ? activeStyle : ''
-              }`}
-              onClick={e => {
-                e.preventDefault();
-                setUplSettings({...UplSettings, Method: 'automatic'});
-              }}>
-              <div className="flex space-x-2 min-w-max items-center p-2">
-                <Robot className="w-10 h-10" />
-                <section className="w-150p">
-                  <h3 className="text-lg font-bold">Automatic</h3>
-                  <p className="text-sm">
-                    Automatically try to predict data and their respective
-                    matches.
-                  </p>
-                </section>
-              </div>
-            </Button>}
+            {UplSettings.DataType.toLowerCase().includes('2d seismic') && (
+              <Button
+                id="automatic"
+                title=""
+                additional_styles={`h-full active:bg-gray-400/60 outline-none ${
+                  UplSettings.Method === 'automatic' ? activeStyle : ''
+                }`}
+                onClick={e => {
+                  e.preventDefault();
+                  setUplSettings({...UplSettings, Method: 'automatic'});
+                }}>
+                <div className="flex space-x-2 min-w-max items-center p-2">
+                  <Robot className="w-10 h-10" />
+                  <section className="w-150p">
+                    <h3 className="text-lg font-bold">Automatic</h3>
+                    <p className="text-sm">
+                      Automatically try to predict data and their respective
+                      matches.
+                    </p>
+                  </section>
+                </div>
+              </Button>
+            )}
           </div>
         </div>
         <div className="flex flex-row gap-x-3 pt-3 pb-16">
@@ -726,7 +731,7 @@ export function getServerSideProps() {
   return {
     props: {
       config: config,
-      kkks_name
+      kkks_name,
     }, // will be passed to the page component as props
   };
 }
