@@ -244,7 +244,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setState(temp);
           setLoading('');
         } catch (error) {
-          setError(String(error));
+          setError(JSON.stringify(error));
           setLoading('');
         }
       }
@@ -374,7 +374,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         Something happened. Please try again or contact administrator/maintainer
         if the problem still persists by giving them the information below:
       </p>
-      <Highlight className="html rounded-md border-2">{error}</Highlight>
+      <code className='w-full rounded-md p-2 border-2 break-words'>
+        {error}
+      </code>
       <Button
         path=""
         button_description="Back"

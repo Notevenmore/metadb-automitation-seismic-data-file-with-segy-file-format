@@ -25,7 +25,6 @@ import {delay} from '../../utils/common';
 export default function TableUploadFileReview({setTitle, config}) {
   const [ReviewData, setReviewData] = useState([]);
   const [ImageReview, setImageReview] = useState('');
-  const [Message, setMessage] = useState({message: '', color: '', show: false});
   const [PageNo, setPageNo] = useState(0);
   const [ImageURL, setImageURL] = useState('');
   const [error, setError] = useState('');
@@ -196,7 +195,9 @@ export default function TableUploadFileReview({setTitle, config}) {
         Something happened. Please try again or contact administrator/maintainer
         if the problem still persists by giving them the information below:
       </p>
-      <Highlight className="html rounded-md border-2">{error}</Highlight>
+      <code className='w-full rounded-md p-2 border-2 break-words'>
+        {error}
+      </code>
       <Button path="/" button_description="Go back home" />
     </div>
   ) : workspaceData ? (
@@ -445,7 +446,7 @@ export default function TableUploadFileReview({setTitle, config}) {
         <Button
           additional_styles="bg-searchbg/[.6] hover:bg-searchbg font-semibold w-200p justify-center"
           onClick={saveDocumentHandler}
-          disabled={Message.message || !spreadsheetReady ? true : false}>
+          disabled={!spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-4 h-4" />
             <p>Save changes</p>
@@ -456,7 +457,7 @@ export default function TableUploadFileReview({setTitle, config}) {
           onClick={e => {
             saveDocumentHandler(e, true);
           }}
-          disabled={Message.message || !spreadsheetReady ? true : false}>
+          disabled={!spreadsheetReady ? true : false}>
           <div className="flex space-x-2 items-center">
             <Save className="w-4 h-4" />
             <p>Save and exit</p>
