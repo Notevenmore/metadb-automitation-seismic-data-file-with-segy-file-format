@@ -25,11 +25,7 @@ import {
 } from '../../store/generalSlice';
 import {delay} from '../../utils/common';
 import {PopupContext} from '@contexts/PopupContext';
-
-interface DeleteToggle {
-  show: boolean;
-  afe_number: number;
-}
+import { DeleteToggle } from '@utils/types';
 
 const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
   const [data, setData] = useState([]);
