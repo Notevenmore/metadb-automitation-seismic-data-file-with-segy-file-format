@@ -261,72 +261,83 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
     }
 
     router.events.emit('routeChangeComplete');
-  };  
+  };
 
-  const handleAfeChange = async (afe_number: number, focused: boolean, datatype: string) => {
+  let checkAFETimeout = undefined;
+  const handleAfeChange = async (
+    afe_number: number,
+    focused: boolean,
+    datatype: string,
+  ) => {
     // const afe_number = parseInt(e.target.value);
     if (!afe_number) {
       return;
     }
-    // console.log("onchange fired", afe_number, focused)
-    try {
-      if (focused) {
-        if (!UplSettings.DataType) {
-          setafeExist(false);
-          setpopupMessage({
-            message: 'Please select a data type first',
-            color: 'red',
-          });
-        }
-      } else {
-        setpopupMessage({message: '', color: ''});
-
-        if (!afe_number || !UplSettings.DataType) {
-          return;
-        }
-
-        const result: string = await checkAfe(
-          false,
-          config,
-          datatypes[datatype],
-          afe_number,
-        );
-        if (result !== 'null') {
-          const workspace_data: UploadDocumentSettings = JSON.parse(result)[0];
-          setafeExist(true);
-          setUplSettings({
-            ...UplSettings,
-            DataType: datatype, 
-            afe_number: afe_number,
-            workspace_name: `record_${afe_number}`,
-            kkks_name: workspace_data.kkks_name,
-            working_area: workspace_data.working_area,
-            submission_type: workspace_data.submission_type,
-            afe_exist: true,
-          });
-          setpopupMessage({
-            message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Data acquired from this file will be appended to the existing record. You can edit the fields below in the review section later on.`,
-            color: 'blue',
-          });
-        } else {
-          setafeExist(false);
-          setpopupMessage({message: '', color: ''});
-        }
-      }
-    } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
-      );
-      setpopupMessage({message: 'Something went wrong', color: 'red'});
-      await delay(1000);
-      setpopupMessage({message: '', color: ''});
+    if (checkAFETimeout !== undefined) {
+      clearTimeout(checkAFETimeout);
     }
+    checkAFETimeout = setTimeout(async () => {
+      try {
+        if (focused) {
+          if (!UplSettings.DataType) {
+            setafeExist(false);
+            setpopupMessage({
+              message: 'Please select a data type first',
+              color: 'red',
+            });
+          }
+        } else {
+          setpopupMessage({message: '', color: ''});
+
+          if (!afe_number || !UplSettings.DataType) {
+            return;
+          }
+
+          const result: string = await checkAfe(
+            false,
+            config,
+            datatypes[datatype],
+            afe_number,
+          );
+          if (result !== 'null') {
+            const workspace_data: UploadDocumentSettings =
+              JSON.parse(result)[0];
+            setafeExist(true);
+            setUplSettings({
+              ...UplSettings,
+              DataType: datatype,
+              afe_number: afe_number,
+              workspace_name: `record_${afe_number}`,
+              kkks_name: workspace_data.kkks_name,
+              working_area: workspace_data.working_area,
+              submission_type: workspace_data.submission_type,
+              afe_exist: true,
+            });
+            setpopupMessage({
+              message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Data acquired from this file will be appended to the existing record. You can edit the fields below in the review section later on.`,
+              color: 'blue',
+            });
+          } else {
+            setafeExist(false);
+            setpopupMessage({message: '', color: ''});
+          }
+        }
+      } catch (error) {
+        dispatch(
+          displayErrorMessage({
+            message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
+              error,
+            )}`,
+            color: 'red',
+            duration: 5000,
+          }),
+        );
+        setpopupMessage({message: 'Something went wrong', color: 'red'});
+        await delay(1000);
+        setpopupMessage({message: '', color: ''});
+      }
+      checkAFETimeout = undefined;
+    }, 300);
   };
 
   useEffect(() => {
@@ -444,7 +455,11 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
                     afe_number: parseInt(e.target.value) || null,
                     workspace_name: `record_${e.target.value}`,
                   });
-                  handleAfeChange(parseInt(e.target.value), false, UplSettings.DataType);
+                  handleAfeChange(
+                    parseInt(e.target.value),
+                    false,
+                    UplSettings.DataType,
+                  );
                 }
               }}
             />
