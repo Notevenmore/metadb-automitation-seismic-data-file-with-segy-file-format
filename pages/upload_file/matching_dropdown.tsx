@@ -25,6 +25,7 @@ import {
 import {toBase64} from '../../utils/base64';
 import {delay} from '../../utils/common';
 import {setValueForId} from '../../utils/document';
+import {HeaderResponse} from '@utils/types';
 
 export default function MatchReview({config, setTitle}) {
   const [state, setState] = useState([]);
@@ -117,13 +118,37 @@ export default function MatchReview({config, setTitle}) {
           );
           setDocId(docId);
 
-          setLoading(
-            `Getting appropriate properties for data type ${router.query.form_type}`,
-          );
-          const row_names = await getHeader(
-            config,
-            router.query?.form_type as string,
-          );
+          let row_names: HeaderResponse;
+          const max_retry = 3;
+          let count = 0;
+          let retry_seconds = 3;
+          while (count !== max_retry + 1) {
+            if (count !== 0) {
+              while (retry_seconds !== 0) {
+                setLoading(
+                  `Failed getting properties for data type ${router.query.form_type}, retrying in ${retry_seconds} seconds (Attemp ${count}/${max_retry})`,
+                );
+                await delay(1000);
+                retry_seconds--;
+              }
+              retry_seconds = 3;
+            }
+            setLoading(
+              `Getting appropriate properties for data type ${router.query.form_type}`,
+            );
+            row_names = await getHeader(
+              config,
+              router.query?.form_type as string,
+            );
+            if (row_names.status === 200) {
+              break;
+            } else if (row_names.status !== 200 && count === max_retry) {
+              throw `Something went wrong with the Sheets service. Response returned error with the following details: ${JSON.stringify(
+                row_names.response,
+              )}`;
+            }
+            count++;
+          }
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -138,6 +163,14 @@ export default function MatchReview({config, setTitle}) {
           });
           setState(temp);
           setLoading('');
+          dispatch(
+            displayErrorMessage({
+              message:
+                'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+              color: 'blue',
+              duration: 5000,
+            }),
+          );
         } catch (error) {
           setError(JSON.stringify(error));
           setLoading('');
@@ -145,14 +178,6 @@ export default function MatchReview({config, setTitle}) {
       }
       router.events.emit('routeChangeComplete');
       setLoading('');
-      dispatch(
-        displayErrorMessage({
-          message:
-            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-          color: 'blue',
-          duration: 5000,
-        }),
-      );
     };
     if (router.isReady) {
       init();

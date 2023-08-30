@@ -6,7 +6,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import Highlight from 'react-highlight';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {Tuple4, useNaturalImageDim} from '../../components/HighlightViewer';
 import Input from '../../components/Input';
@@ -42,6 +41,7 @@ import {
 } from '../../store/generalSlice';
 import {toBase64} from '../../utils/base64';
 import {delay} from '../../utils/common';
+import {HeaderResponse} from '@utils/types';
 
 interface MatchReviewProps {
   setTitle: (title: string) => void;
@@ -222,13 +222,37 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setDocId(docId);
           setLoading('Populating draggable items...');
 
-          setLoading(
-            `Getting appropriate properties for data type ${router.query.form_type}`,
-          );
-          const row_names = await getHeader(
-            config,
-            router.query?.form_type as string,
-          );
+          let row_names: HeaderResponse;
+          const max_retry = 3;
+          let count = 0;
+          let retry_seconds = 3;
+          while (count !== max_retry + 1) {
+            if (count !== 0) {
+              while (retry_seconds !== 0) {
+                setLoading(
+                  `Failed getting properties for data type ${router.query.form_type}, retrying in ${retry_seconds} seconds (Attemp ${count}/${max_retry})`,
+                );
+                await delay(1000);
+                retry_seconds--;
+              }
+              retry_seconds = 3;
+            }
+            setLoading(
+              `Getting appropriate properties for data type ${router.query.form_type}`,
+            );
+            row_names = await getHeader(
+              config,
+              router.query?.form_type as string,
+            );
+            if (row_names.status === 200) {
+              break;
+            } else if (row_names.status !== 200 && count === max_retry) {
+              throw `Something went wrong with the Sheets service. Response returned error with the following details: ${JSON.stringify(
+                row_names.response,
+              )}`;
+            }
+            count++;
+          }
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -243,6 +267,14 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           });
           setState(temp);
           setLoading('');
+          dispatch(
+            displayErrorMessage({
+              message:
+                'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+              color: 'blue',
+              duration: 5000,
+            }),
+          );
         } catch (error) {
           setError(JSON.stringify(error));
           setLoading('');
@@ -250,14 +282,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
       }
       router.events.emit('routeChangeComplete');
       setLoading('');
-      dispatch(
-        displayErrorMessage({
-          message:
-            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-          color: 'blue',
-          duration: 5000,
-        }),
-      );
     };
     if (router.isReady) {
       init();
@@ -374,7 +398,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         Something happened. Please try again or contact administrator/maintainer
         if the problem still persists by giving them the information below:
       </p>
-      <code className='w-full rounded-md p-2 border-2 break-words'>
+      <code className="w-full rounded-md p-2 border-2 break-words">
         {error}
       </code>
       <Button
