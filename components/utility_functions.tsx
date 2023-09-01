@@ -4,6 +4,7 @@ import {DocumentSummary, displayErrorMessage} from '../store/generalSlice';
 import {getHeader} from '../services/document';
 import {delay} from '../utils/common';
 import { DatatypeConfig, ServicesConfig } from '@utils/types';
+import { Dispatch, SetStateAction } from 'react';
 
 export const init_data = async (config, router, workspaceData) => {
   if (!workspaceData.afe_number) {
@@ -890,7 +891,7 @@ export const handleAfeChange = async (
 };
 
 export let changePageTimeout = undefined;
-export const changePage = (document_summary: DocumentSummary, setImageURL: (x: any) => {}, PageNo: number) => {
+export const changePage = (document_summary: DocumentSummary, setImageURL: Dispatch<SetStateAction<string>>, PageNo: number) => {
   if (changePageTimeout !== undefined) {
     clearTimeout(changePageTimeout);
   }
