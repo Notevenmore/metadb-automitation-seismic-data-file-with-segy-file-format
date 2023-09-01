@@ -17,6 +17,7 @@ import {
   init_data,
   saveDocument,
   sendDeleteSpreadsheet,
+  showErrorToast,
 } from '../../components/utility_functions';
 import {TableType} from '../../constants/table';
 import ChevronLeft from '../../public/icons/chevron-left.svg';
@@ -185,15 +186,7 @@ export default function EditUploadFileReview({setTitle, config}) {
         }
       }
     } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
-      );
+      showErrorToast(dispatch, error);
     }
     router.events.emit('routeChangeComplete');
   };

@@ -1,3 +1,4 @@
+import {logError} from '@components/utility_functions';
 import {useEffect, useState} from 'react';
 
 interface IframeProps extends React.ComponentProps<'iframe'> {
@@ -46,9 +47,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         setsheetID(spreadsheetID.response);
         try {
           getSpreadsheetID(spreadsheetID.response);
-        } catch (error) {
-          console.log('You are not supposed to be here');
-        }
+        } catch (error) {}
         setSkipInitialization(false);
       } catch (error) {
         sethasError(true);
@@ -82,11 +81,11 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         .then(response => {
           if (response.status !== 200) {
             sethasError(true);
-            setErrorMessage(response.response);
+            setErrorMessage(
+              `An error occured while appending record data to Google Spreadsheet. Please try again by reloading this page`,
+            );
+            logError('spreadsheet error update formatting:', response.response);
           }
-        })
-        .catch(error => {
-          throw error;
         });
 
       if (type === 'review') {
@@ -120,8 +119,12 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
             .then(response => {
               if (response.status !== 200) {
                 sethasError(true);
-                setErrorMessage(response.response);
-                console.log(response);
+                setErrorMessage(
+                  'An error occured while appending record data to Google Spreadsheet. Please try again by reloading this page',
+                );
+                logError('error spreadsheet append data', response.response);
+              } else {
+                finishedInitializing(true);
               }
             })
             .catch(error => {
@@ -130,15 +133,11 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         } catch (error) {
           sethasError(true);
           setErrorMessage(String(error));
+          finishedInitializing(false);
         }
       }
       setLoadingMsg('All done');
       setLoading(false);
-      try {
-        finishedInitializing(true);
-      } catch (error) {
-        console.log('What are you still doing here');
-      }
     };
     if (sheetID) {
       localStorage.setItem('spreadsheetID', sheetID);

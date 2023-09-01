@@ -10,6 +10,7 @@ import {useAppDispatch} from '../../store';
 import Input from '@components/Input';
 import {PopupContext} from '@contexts/PopupContext';
 import {useContext} from 'react';
+import {showErrorToast} from '@components/utility_functions';
 
 AdministratorPage.getLayout = getLayoutTop;
 
@@ -26,14 +27,8 @@ export default function AdministratorPage() {
         setList(users);
         setFilteredList(users);
       })
-      .catch(err => {
-        dispatch(
-          displayErrorMessage({
-            message: `${String(err)}`,
-            color: 'red',
-            duration: 5000,
-          }),
-        );
+      .catch(error => {
+        showErrorToast(dispatch, error);
       });
   };
 
@@ -59,13 +54,7 @@ export default function AdministratorPage() {
             );
           },
           err => {
-            dispatch(
-              displayErrorMessage({
-                message: String(err),
-                color: 'red',
-                duration: 5000,
-              }),
-            );
+            showErrorToast(dispatch, err);
           },
         );
       },

@@ -11,7 +11,11 @@ import React, {
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import {checkAfe} from '../../components/utility_functions';
+import {
+  checkAfe,
+  logError,
+  showErrorToast,
+} from '../../components/utility_functions';
 import {datatypes} from '../../config';
 import CloseThin from '../../public/icons/close-thin.svg';
 import DropFile from '../../public/icons/drop-file.svg';
@@ -238,26 +242,18 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
             },
           });
         } else {
-          dispatch(
-            displayErrorMessage({
-              message:
-                'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
-              color: 'red',
-              duration: 5000,
-            }),
+          showErrorToast(
+            dispatch,
+            'Failed to create a new record. Please try again',
           );
         }
       }
     } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed to create a new record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
+      showErrorToast(
+        dispatch,
+        `Failed to create a new record, please try again`,
       );
+      logError('', error);
     }
 
     router.events.emit('routeChangeComplete');
@@ -323,15 +319,7 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
           }
         }
       } catch (error) {
-        dispatch(
-          displayErrorMessage({
-            message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
-              error,
-            )}`,
-            color: 'red',
-            duration: 5000,
-          }),
-        );
+        showErrorToast(dispatch, error);
         setpopupMessage({message: 'Something went wrong', color: 'red'});
         await delay(1000);
         setpopupMessage({message: '', color: ''});

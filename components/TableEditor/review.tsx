@@ -4,7 +4,11 @@ import Input from '@components/Input';
 import Button from '@components/button';
 import Container from '@components/container';
 import Table from '@components/table/table';
-import {changePage, init_data} from '@components/utility_functions';
+import {
+  changePage,
+  init_data,
+  showErrorToast,
+} from '@components/utility_functions';
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import Highlight from 'react-highlight';
@@ -162,15 +166,7 @@ export default function TableUploadFileReview({setTitle, config}) {
       await delay(1000);
       getRow(workspaceData);
     } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
-      );
+      showErrorToast(dispatch, error);
     }
     router.events.emit('routeChangeComplete');
   };
@@ -195,7 +191,7 @@ export default function TableUploadFileReview({setTitle, config}) {
         Something happened. Please try again or contact administrator/maintainer
         if the problem still persists by giving them the information below:
       </p>
-      <code className='w-full rounded-md p-2 border-2 break-words'>
+      <code className="w-full rounded-md p-2 border-2 break-words">
         {error}
       </code>
       <Button path="/" button_description="Go back home" />

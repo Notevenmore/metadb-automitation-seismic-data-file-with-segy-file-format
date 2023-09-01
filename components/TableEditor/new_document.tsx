@@ -11,6 +11,7 @@ import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {useTableEditor} from '../../hooks/useTableEditor';
 import Save from '../../public/icons/save.svg';
+import {showErrorToast} from '@components/utility_functions';
 
 export default function TableNewDocumentPage({setTitle}) {
   const router = useRouter();
@@ -74,15 +75,7 @@ export default function TableNewDocumentPage({setTitle}) {
       await delay(1000);
       getRow(workspaceData);
     } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
-      );
+      showErrorToast(dispatch, error);
     }
     router.events.emit('routeChangeComplete');
   };
