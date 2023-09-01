@@ -1,9 +1,9 @@
-import { parseCookies } from 'nookies';
-import { TokenExpired } from '../services/admin';
-import { displayErrorMessage } from '../store/generalSlice';
-import { getHeader } from '../services/document';
-import { delay } from '../utils/common';
-import { useDispatch } from 'react-redux';
+import {parseCookies} from 'nookies';
+import {TokenExpired} from '../services/admin';
+import {DocumentSummary, displayErrorMessage} from '../store/generalSlice';
+import {getHeader} from '../services/document';
+import {delay} from '../utils/common';
+import { DatatypeConfig, ServicesConfig } from '@utils/types';
 
 export const init_data = async (config, router, workspaceData) => {
   if (!workspaceData.afe_number) {
@@ -15,8 +15,9 @@ export const init_data = async (config, router, workspaceData) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-          }`,
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
     },
   )
@@ -37,8 +38,9 @@ export const init_data = async (config, router, workspaceData) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-          }`,
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
     },
   )
@@ -61,16 +63,18 @@ export const init_data = async (config, router, workspaceData) => {
   if (data) {
     for (const datatype_record_id of data) {
       const data_details = await fetch(
-        `${config[router.query.form_type]['view']}${datatype_record_id[
-        config[router.query.form_type]['workspace_holder_key']
-        ]
+        `${config[router.query.form_type]['view']}${
+          datatype_record_id[
+            config[router.query.form_type]['workspace_holder_key']
+          ]
         }`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-              }`,
+            Authorization: `Bearer ${
+              JSON.parse(parseCookies().user_data).access_token
+            }`,
           },
         },
       )
@@ -99,7 +103,7 @@ export const init_data = async (config, router, workspaceData) => {
       final.push(data_details[0]);
     }
   }
-  return { data: data, data_content: final, workspace_data: workspace_data[0] };
+  return {data: data, data_content: final, workspace_data: workspace_data[0]};
 };
 
 export const saveDocument = async (
@@ -116,7 +120,10 @@ export const saveDocument = async (
 
   // Check if spreadsheetId is available
   if (!spreadsheetId) {
-    showErrorToast(dispatch, 'Failed to get spreadsheet information, please reload this page. Changes will not be saved')
+    showErrorToast(
+      dispatch,
+      'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
+    );
     return;
   }
 
@@ -137,8 +144,9 @@ export const saveDocument = async (
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-          }`,
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
     },
   )
@@ -148,7 +156,10 @@ export const saveDocument = async (
     .then(([status, res]) => {
       if (status !== 200) {
         TokenExpired(status);
-        logError(`Service returned with status ${status} on record metadata GET (save_doc)`, res)
+        logError(
+          `Service returned with status ${status} on record metadata GET (save_doc)`,
+          res,
+        );
         throw `An error occurred while trying to acquire this record's previous metadata details. Please try again`;
       }
       return res;
@@ -175,8 +186,9 @@ export const saveDocument = async (
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-            }`,
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
         body: JSON.stringify(workspaceData),
       },
@@ -186,10 +198,15 @@ export const saveDocument = async (
         if (status !== 200) {
           TokenExpired(status);
           if (res.toLowerCase().includes('workspace_name_unique')) {
-            logError(`A record with the name "${workspaceData.workspace_name}" already exists.`)
+            logError(
+              `A record with the name "${workspaceData.workspace_name}" already exists.`,
+            );
             throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`;
           } else {
-            logError(`Service returned with status ${status} on record metadata PUT (save_doc)`, res)
+            logError(
+              `Service returned with status ${status} on record metadata PUT (save_doc)`,
+              res,
+            );
             throw `An error occurred while trying to update this record's metadata. Please try again`;
           }
         }
@@ -213,7 +230,10 @@ export const saveDocument = async (
   ).then(response => {
     if (response.status !== 200) {
       TokenExpired(response.status);
-      logError(`Service returned with status ${response.status} on spreadsheet GET headers (save_doc):`, response.response)
+      logError(
+        `Service returned with status ${response.status} on spreadsheet GET headers (save_doc):`,
+        response.response,
+      );
       throw `An error occurred from Google Sheets that MetaDB is unable to handle. Please try again`;
     }
     return response;
@@ -224,8 +244,9 @@ export const saveDocument = async (
     method: 'POST',
     headers: {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-        }`,
+      Authorization: `Bearer ${
+        JSON.parse(parseCookies().user_data).access_token
+      }`,
     },
     body: JSON.stringify({
       form_type: router.query.form_type,
@@ -240,11 +261,14 @@ export const saveDocument = async (
       // Handle non-200 response status
       if (response.status !== 200) {
         TokenExpired(response.status);
-        logError(`Service returned with status ${response.status} on spreadsheet GET rows (save_doc):`, response.response)
+        logError(
+          `Service returned with status ${response.status} on spreadsheet GET rows (save_doc):`,
+          response.response,
+        );
         throw `An error occurred from Google Sheets that MetaDB is unable to handle. Please try again`;
       }
       return response;
-    })
+    });
 
   let field_types_final = {};
   dispatch(
@@ -259,8 +283,9 @@ export const saveDocument = async (
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-          }`,
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
     },
   )
@@ -270,8 +295,11 @@ export const saveDocument = async (
     .then(([status, res]) => {
       if (status !== 200) {
         TokenExpired(status);
-        logError(`Service returned with status ${status} on column type GET (save_doc):`, res)
-        throw `An error occured while trying to get information regarding column types (text, numbers, etc). Please try again.`
+        logError(
+          `Service returned with status ${status} on column type GET (save_doc):`,
+          res,
+        );
+        throw `An error occured while trying to get information regarding column types (text, numbers, etc). Please try again.`;
       }
       return res;
     });
@@ -310,7 +338,7 @@ export const saveDocument = async (
                 spreadsheet_data?.response[idx_row][idx_col] || null;
             }
           }
-        } catch (error) { }
+        } catch (error) {}
 
         // convert date gotten from the database to appropriate format after the checking, to avoid
         // misinterpretating different date formats as different values although the date is the same
@@ -340,8 +368,8 @@ export const saveDocument = async (
               .getDate()
               .toString()
               .padStart(2, '0')}/${(date.getMonth() + 1)
-                .toString()
-                .padStart(2, '0')}/${date.getFullYear()}`;
+              .toString()
+              .padStart(2, '0')}/${date.getFullYear()}`;
           } catch (error) {
             row[header.toLowerCase()] = null;
           }
@@ -383,17 +411,19 @@ export const saveDocument = async (
             !changed &&
             (String(row[header.toLowerCase()])?.replace(/[^\x00-\x7F]/g, '') ||
               null) !==
-            String(
-              old_data.data_content[idx_row][header.toLowerCase()] ||
-              old_data.data_content[idx_row][header] ||
-              null,
-            )
+              String(
+                old_data.data_content[idx_row][header.toLowerCase()] ||
+                  old_data.data_content[idx_row][header] ||
+                  null,
+              )
           ) {
             changed = true;
           }
-        } catch (error) { }
+        } catch (error) {}
       });
-      logDebug(row, idx_row, idx_row < old_data.data_content.length - 1);
+      logDebug(
+        `${row} ${idx_row} ${idx_row < old_data.data_content.length - 1}`,
+      );
       // if change in row is detected then update the data in the database
       if (
         changed &&
@@ -402,14 +432,16 @@ export const saveDocument = async (
       ) {
         logDebug('trying to PUT' + idx_row);
         await fetch(
-          `${config[router.query.form_type]['view']}${old_data.data_content[idx_row]['id']
+          `${config[router.query.form_type]['view']}${
+            old_data.data_content[idx_row]['id']
           }`,
           {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-                }`,
+              Authorization: `Bearer ${
+                JSON.parse(parseCookies().user_data).access_token
+              }`,
             },
             body: JSON.stringify({
               id: old_data.data_content[idx_row]['id'],
@@ -421,7 +453,10 @@ export const saveDocument = async (
           .then(([status, res]) => {
             if (status !== 200) {
               TokenExpired(status);
-              logError(`Service returned with status ${status} on record content PUT (save_doc): `, res)
+              logError(
+                `Service returned with status ${status} on record content PUT (save_doc): `,
+                res,
+              );
               throw `An error occured while trying to save the record. Please try again.`;
             }
           });
@@ -436,14 +471,16 @@ export const saveDocument = async (
           if (spreadsheet_data.response.length < old_data.data_content.length) {
             logDebug('trying to DELETE' + idx_row);
             await fetch(
-              `${config[router.query.form_type]['view']}${old_data.data_content[idx_row]['id']
+              `${config[router.query.form_type]['view']}${
+                old_data.data_content[idx_row]['id']
               }`,
               {
                 method: 'DELETE',
                 headers: {
                   'Content-Type': 'application/json',
-                  Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-                    }`,
+                  Authorization: `Bearer ${
+                    JSON.parse(parseCookies().user_data).access_token
+                  }`,
                 },
               },
             )
@@ -451,7 +488,10 @@ export const saveDocument = async (
               .then(([status, res]) => {
                 if (status !== 200) {
                   TokenExpired(status);
-                  logError(`Service returned with status ${status} on record content DELETE (save_doc):`, res)
+                  logError(
+                    `Service returned with status ${status} on record content DELETE (save_doc):`,
+                    res,
+                  );
                   throw `An error occured while trying to save the record. Please try again`;
                 }
               });
@@ -468,8 +508,9 @@ export const saveDocument = async (
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
-                  Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-                    }`,
+                  Authorization: `Bearer ${
+                    JSON.parse(parseCookies().user_data).access_token
+                  }`,
                 },
                 body: JSON.stringify(row),
               },
@@ -478,20 +519,24 @@ export const saveDocument = async (
               .then(([status, res]) => {
                 if (status !== 200) {
                   TokenExpired(status);
-                  logError(`Service returned with status ${status} on record content POST (save_doc):`, res)
+                  logError(
+                    `Service returned with status ${status} on record content POST (save_doc):`,
+                    res,
+                  );
                   throw `An error occured while trying to save the record. Please try again`;
                 }
                 return res;
               });
             logDebug('success POSTING new record, appending to record...');
-            let uploaded_id = upload.split(':');
+            let uploaded_id: string[] | number = upload.split(':');
             uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim());
             await fetch(`${config[router.query.form_type]['workspace']}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-                  }`,
+                Authorization: `Bearer ${
+                  JSON.parse(parseCookies().user_data).access_token
+                }`,
               },
               body: JSON.stringify({
                 afe_number: workspaceData.afe_number,
@@ -503,7 +548,10 @@ export const saveDocument = async (
               .then(([status, res]) => {
                 if (status !== 200) {
                   TokenExpired(status);
-                  logError(`Service returned with status ${status} on append data to record POST (save_doc):`, res)
+                  logError(
+                    `Service returned with status ${status} on append data to record POST (save_doc):`,
+                    res,
+                  );
                   throw `An error occured while trying to save the record. Please try again`;
                 }
               });
@@ -522,8 +570,9 @@ export const saveDocument = async (
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-                }`,
+              Authorization: `Bearer ${
+                JSON.parse(parseCookies().user_data).access_token
+              }`,
             },
           },
         )
@@ -531,7 +580,10 @@ export const saveDocument = async (
           .then(([status, res]) => {
             if (status !== 200) {
               TokenExpired(status);
-              logError(`Service returned with status ${status} on record DELETE (save_doc):`, res)
+              logError(
+                `Service returned with status ${status} on record DELETE (save_doc):`,
+                res,
+              );
               throw `An error occured while trying to save the record. Please try again`;
             }
           });
@@ -539,7 +591,7 @@ export const saveDocument = async (
       });
     }
   }
-  return { success: true };
+  return {success: true};
 };
 
 export const downloadWorkspace = async (
@@ -568,8 +620,9 @@ export const downloadWorkspace = async (
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-            }`,
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
         },
         body: JSON.stringify({
           form_type: router.query.form_type,
@@ -584,14 +637,15 @@ export const downloadWorkspace = async (
       .then(res => {
         if (res.status !== 200) {
           TokenExpired(res.status);
-          logError(`Service returned with status code ${res.status} on spreadsheet api (download):`, res.response)
+          logError(
+            `Service returned with status code ${res.status} on spreadsheet api (download):`,
+            res.response,
+          );
           throw `An error occurred from Google Sheets that MetaDB is unable to handle. Please try again`;
         }
         return res;
       });
-    logDebug(
-      `new temp spreadsheet download: ${spreadsheet_download.response}`,
-    );
+    logDebug(`new temp spreadsheet download: ${spreadsheet_download.response}`);
     dispatch(
       displayErrorMessage({
         message: 'Downloading record as XLSX file, please wait...',
@@ -616,10 +670,11 @@ export const downloadWorkspace = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-          }`,
+        Authorization: `Bearer ${
+          JSON.parse(parseCookies().user_data).access_token
+        }`,
       },
-      body: JSON.stringify({ spreadsheetID: spreadsheet_download.response }),
+      body: JSON.stringify({spreadsheetID: spreadsheet_download.response}),
     }).catch(err => {
       logError(err);
     });
@@ -633,7 +688,7 @@ export const downloadWorkspace = async (
   } else {
     throw 'Failed to download record. Please send a report to application maintainer/developer';
   }
-  return { success: true };
+  return {success: true};
 };
 
 export const checkAfe = async (e, config, data_type, afe_number) => {
@@ -644,15 +699,16 @@ export const checkAfe = async (e, config, data_type, afe_number) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${JSON.parse(parseCookies().user_data).access_token
-        }`,
+      Authorization: `Bearer ${
+        JSON.parse(parseCookies().user_data).access_token
+      }`,
     },
   })
     .then(res => Promise.all([res.status, res.text()]))
     .then(([status, res]) => {
       if (status !== 200) {
         TokenExpired(status);
-        logError(`Service returned with status ${status} (afe_check):`, res)
+        logError(`Service returned with status ${status} (afe_check):`, res);
         throw `Failed checking AFE availability, please try again`;
       }
       return res;
@@ -704,7 +760,7 @@ export const formatWorkspaceList = (
               try {
                 router.events.emit('routeChangeStart');
                 await downloadWorkspace(
-                  { query: { form_type: datatype } },
+                  {query: {form_type: datatype}},
                   config,
                   workspace,
                   dispatch,
@@ -795,7 +851,7 @@ export const handleAfeChange = async (
   checkAFETimeout = setTimeout(async () => {
     e.preventDefault();
     try {
-      setpopupMessage({ message: '', color: '' });
+      setpopupMessage({message: '', color: ''});
       if (!newWorkspace.afe_number) {
         return;
       }
@@ -817,35 +873,39 @@ export const handleAfeChange = async (
         });
       } else {
         setafeExist(false);
-        setpopupMessage({ message: '', color: '' });
+        setpopupMessage({message: '', color: ''});
       }
     } catch (error) {
-      showErrorToast(dispatch, `Failed checking AFE availability, please try again or contact maintainer if the problem persists.`)
-      logError(": AFE check failure: ", error)
-      setpopupMessage({ message: 'Something went wrong', color: 'red' });
+      showErrorToast(
+        dispatch,
+        `Failed checking AFE availability, please try again or contact maintainer if the problem persists.`,
+      );
+      logError(': AFE check failure: ', error);
+      setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
-      setpopupMessage({ message: '', color: '' });
+      setpopupMessage({message: '', color: ''});
     }
     checkAFETimeout = undefined;
   }, 300);
 };
 
 export let changePageTimeout = undefined;
-export const changePage = (document_summary, setImageURL, PageNo) => {
+export const changePage = (document_summary: DocumentSummary, setImageURL: (x: any) => {}, PageNo: number) => {
   if (changePageTimeout !== undefined) {
     clearTimeout(changePageTimeout);
   }
   changePageTimeout = setTimeout(() => {
     setImageURL(
       _ =>
-        `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${document_summary?.document_id
+        `${process.env.NEXT_PUBLIC_OCR_SERVICE_URL}/ocr_service/v1/image/${
+          document_summary?.document_id
         }/${PageNo + 1}`,
     );
     changePageTimeout = undefined;
   }, 300);
 };
 
-export const sendDeleteSpreadsheet = async (config, spreadsheetId) => {
+export const sendDeleteSpreadsheet = async (config: ServicesConfig & DatatypeConfig, spreadsheetId: string) => {
   logDebug('deleting temp sheet...');
   await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
     method: 'POST',
@@ -862,19 +922,33 @@ export const sendDeleteSpreadsheet = async (config, spreadsheetId) => {
 };
 
 // details is preferrably an Object type, while message is String
-export const logDebug = (message, details = null) => {
-  console.log(new Date().toString().split(' ').splice(1, 4).join(' ') + ': ' + message)
-  if (details) { console.log(details) }
-}
+export const logDebug = (
+  message: string,
+  details: null | JSON | string = null,
+) => {
+  console.log(
+    new Date().toString().split(' ').splice(1, 4).join(' ') + ': ' + message,
+  );
+  if (details) {
+    console.log(details);
+  }
+};
 
 // details is preferrably an Object type, while message is String
-export const logError = (message, details = null) => {
-  console.error(new Date().toString().split(' ').splice(1, 4).join(' ') + ': ' + message)
-  if (details) { console.error(details) }
-}
+export const logError = (
+  message: string,
+  details: null | JSON | string = null,
+) => {
+  console.error(
+    new Date().toString().split(' ').splice(1, 4).join(' ') + ': ' + message,
+  );
+  if (details) {
+    console.error(details);
+  }
+};
 
 // message is preferably a string
-export const showErrorToast = (dispatch, message) => {
+export const showErrorToast = (dispatch: any, message: string) => {
   dispatch(
     displayErrorMessage({
       message: String(message),
@@ -882,4 +956,4 @@ export const showErrorToast = (dispatch, message) => {
       duration: 5000,
     }),
   );
-}
+};
