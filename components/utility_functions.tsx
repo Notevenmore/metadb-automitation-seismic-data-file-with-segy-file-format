@@ -1,17 +1,28 @@
 import {parseCookies} from 'nookies';
 import {TokenExpired} from '../services/admin';
-import {DocumentSummary, displayErrorMessage} from '../store/generalSlice';
+import {
+  DocumentSummary,
+  UploadDocumentSettings,
+  displayErrorMessage,
+} from '../store/generalSlice';
 import {getHeader} from '../services/document';
 import {delay} from '../utils/common';
-import { DatatypeConfig, ServicesConfig } from '@utils/types';
-import { Dispatch, SetStateAction } from 'react';
+import {DatatypeConfig, RecordMetadata, ServicesConfig} from '@utils/types';
+import {Dispatch, SetStateAction} from 'react';
+import {NextRouter} from 'next/router';
 
-export const init_data = async (config, router, workspaceData) => {
+export const init_data = async (
+  config: ServicesConfig & DatatypeConfig,
+  router: NextRouter | {query: {form_type: string}},
+  workspaceData: {afe_number: number},
+) => {
   if (!workspaceData.afe_number) {
     throw 'Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer.';
   }
   const workspace_data = await fetch(
-    `${config[router.query.form_type]['afe']}${workspaceData.afe_number}`,
+    `${config[String(router.query.form_type)]['afe']}${
+      workspaceData.afe_number
+    }`,
     {
       method: 'GET',
       headers: {
@@ -34,7 +45,9 @@ export const init_data = async (config, router, workspaceData) => {
     });
 
   const data = await fetch(
-    `${config[router.query.form_type]['workspace']}${workspaceData.afe_number}`,
+    `${config[String(router.query.form_type)]['workspace']}${
+      workspaceData.afe_number
+    }`,
     {
       method: 'GET',
       headers: {
@@ -64,9 +77,9 @@ export const init_data = async (config, router, workspaceData) => {
   if (data) {
     for (const datatype_record_id of data) {
       const data_details = await fetch(
-        `${config[router.query.form_type]['view']}${
+        `${config[String(router.query.form_type)]['view']}${
           datatype_record_id[
-            config[router.query.form_type]['workspace_holder_key']
+            config[String(router.query.form_type)]['workspace_holder_key']
           ]
         }`,
         {
@@ -108,12 +121,12 @@ export const init_data = async (config, router, workspaceData) => {
 };
 
 export const saveDocument = async (
-  e,
-  router,
-  config,
-  spreadsheetId,
-  workspaceData,
-  dispatch,
+  e: any,
+  router: NextRouter,
+  config: ServicesConfig & DatatypeConfig,
+  spreadsheetId: string,
+  workspaceData: UploadDocumentSettings,
+  dispatch: any,
 ) => {
   if (e) {
     e.preventDefault();
@@ -140,7 +153,9 @@ export const saveDocument = async (
   // check for changes in the workspace data, if there are any then push the updates to the db
   let workspace_data_changed = false;
   const old_workspace_data = await fetch(
-    `${config[router.query.form_type]['afe']}${workspaceData['afe_number']}`,
+    `${config[String(router.query.form_type)]['afe']}${
+      workspaceData['afe_number']
+    }`,
     {
       method: 'GET',
       headers: {
@@ -182,7 +197,9 @@ export const saveDocument = async (
       }),
     );
     await fetch(
-      `${config[router.query.form_type]['afe']}${workspaceData['afe_number']}`,
+      `${config[String(router.query.form_type)]['afe']}${
+        workspaceData['afe_number']
+      }`,
       {
         method: 'PUT',
         headers: {
@@ -227,7 +244,7 @@ export const saveDocument = async (
   // Fetch header from spreadsheet
   const spreadsheet_header = await getHeader(
     config,
-    router.query.form_type,
+    String(router.query.form_type),
   ).then(response => {
     if (response.status !== 200) {
       TokenExpired(response.status);
@@ -279,7 +296,7 @@ export const saveDocument = async (
     }),
   );
   const field_types = await fetch(
-    `${config[router.query.form_type]['view'].slice(0, -1)}-column/`,
+    `${config[String(router.query.form_type)]['view'].slice(0, -1)}-column/`,
     {
       method: 'GET',
       headers: {
@@ -326,7 +343,7 @@ export const saveDocument = async (
     ) {
       let row = {};
       let changed = false;
-      spreadsheet_header.response.forEach((header, idx_col) => {
+      spreadsheet_header.response.forEach((header: string, idx_col: number) => {
         // try converting any string to integer if possible, if fails then just skip and append the raw string
         // a try catch was put here to avoid new data being undefined if its length is shorter than old data
         try {
@@ -433,7 +450,7 @@ export const saveDocument = async (
       ) {
         logDebug('trying to PUT' + idx_row);
         await fetch(
-          `${config[router.query.form_type]['view']}${
+          `${config[String(router.query.form_type)]['view']}${
             old_data.data_content[idx_row]['id']
           }`,
           {
@@ -472,7 +489,7 @@ export const saveDocument = async (
           if (spreadsheet_data.response.length < old_data.data_content.length) {
             logDebug('trying to DELETE' + idx_row);
             await fetch(
-              `${config[router.query.form_type]['view']}${
+              `${config[String(router.query.form_type)]['view']}${
                 old_data.data_content[idx_row]['id']
               }`,
               {
@@ -504,7 +521,7 @@ export const saveDocument = async (
           ) {
             logDebug('trying to POST' + idx_row);
             const upload = await fetch(
-              `${config[router.query.form_type]['view']}`,
+              `${config[String(router.query.form_type)]['view']}`,
               {
                 method: 'POST',
                 headers: {
@@ -531,20 +548,24 @@ export const saveDocument = async (
             logDebug('success POSTING new record, appending to record...');
             let uploaded_id: string[] | number = upload.split(':');
             uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim());
-            await fetch(`${config[router.query.form_type]['workspace']}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
+            await fetch(
+              `${config[String(router.query.form_type)]['workspace']}`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${
+                    JSON.parse(parseCookies().user_data).access_token
+                  }`,
+                },
+                body: JSON.stringify({
+                  afe_number: workspaceData.afe_number,
+                  [config[String(router.query.form_type)][
+                    'workspace_holder_key'
+                  ]]: uploaded_id,
+                }),
               },
-              body: JSON.stringify({
-                afe_number: workspaceData.afe_number,
-                [config[router.query.form_type]['workspace_holder_key']]:
-                  uploaded_id,
-              }),
-            })
+            )
               .then(res => Promise.all([res.status, res.text()]))
               .then(([status, res]) => {
                 if (status !== 200) {
@@ -566,7 +587,7 @@ export const saveDocument = async (
       old_data.data_content.forEach(async (record, idx_row_del) => {
         logDebug('trying to DELETE' + idx_row_del);
         await fetch(
-          `${config[router.query.form_type]['view']}${record['id']}`,
+          `${config[String(router.query.form_type)]['view']}${record['id']}`,
           {
             method: 'DELETE',
             headers: {
@@ -596,10 +617,10 @@ export const saveDocument = async (
 };
 
 export const downloadWorkspace = async (
-  router,
-  config,
-  workspaceData,
-  dispatch,
+  router: NextRouter | {query: {form_type: string}},
+  config: ServicesConfig & DatatypeConfig,
+  workspaceData: UploadDocumentSettings,
+  dispatch: any,
 ) => {
   if (router.query.form_type && workspaceData.afe_number) {
     dispatch(
@@ -692,7 +713,12 @@ export const downloadWorkspace = async (
   return {success: true};
 };
 
-export const checkAfe = async (e, config, data_type, afe_number) => {
+export const checkAfe = async (
+  e: any,
+  config: ServicesConfig & DatatypeConfig,
+  data_type: string,
+  afe_number: number,
+) => {
   if (e) {
     e.preventDefault();
   }
@@ -717,28 +743,31 @@ export const checkAfe = async (e, config, data_type, afe_number) => {
   return afe_exist;
 };
 
-export const getColumnBinder = (config, data_type) => {
+export const getColumnBinder = (
+  config: ServicesConfig & DatatypeConfig,
+  data_type: string,
+) => {
   return (
     config[data_type]['column_binder']?.split('-').join(' ') ||
     '!!NOT IMPLEMENTED YET!!'
   );
 };
 
-export const getDataTypeNoUnderscore = data_type => {
+export const getDataTypeNoUnderscore = (data_type: string) => {
   return data_type.split('_').join(' ');
 };
 
 export const formatWorkspaceList = (
-  workspaces_list,
-  Button,
-  DownloadCommon,
-  Image,
-  datatype,
-  config,
-  dispatch,
-  router,
-  openPopup,
-  deleteWorkspace,
+  workspaces_list: RecordMetadata[],
+  Button: any,
+  DownloadCommon: any,
+  Image: any,
+  datatype: string,
+  config: ServicesConfig & DatatypeConfig,
+  dispatch: any,
+  router: NextRouter,
+  openPopup: any,
+  deleteWorkspace: (afe_number: number, e?: any) => Promise<void>,
   init,
 ) => {
   if (!workspaces_list) {
@@ -833,14 +862,14 @@ export const formatWorkspaceList = (
 
 export let checkAFETimeout = undefined;
 export const handleAfeChange = async (
-  e,
-  config,
-  datatype,
-  dispatch,
-  setpopupMessage,
-  setnewWorkspace,
-  newWorkspace,
-  setafeExist,
+  e: React.ChangeEvent<HTMLInputElement>,
+  config: ServicesConfig & DatatypeConfig,
+  datatype: string,
+  dispatch: any,
+  setpopupMessage: Dispatch<SetStateAction<{message: string; color: string}>>,
+  setnewWorkspace: Dispatch<SetStateAction<UploadDocumentSettings>>,
+  newWorkspace: UploadDocumentSettings,
+  setafeExist: Dispatch<SetStateAction<boolean>>,
 ) => {
   const input_value = parseInt(e.target.value);
   if (!input_value) {
@@ -866,6 +895,7 @@ export const handleAfeChange = async (
           kkks_name: workspace_data.kkks_name,
           working_area: workspace_data.working_area,
           submission_type: workspace_data.submission_type,
+          
         });
         setpopupMessage({
           message:
@@ -891,7 +921,11 @@ export const handleAfeChange = async (
 };
 
 export let changePageTimeout = undefined;
-export const changePage = (document_summary: DocumentSummary, setImageURL: Dispatch<SetStateAction<string>>, PageNo: number) => {
+export const changePage = (
+  document_summary: DocumentSummary,
+  setImageURL: Dispatch<SetStateAction<string>>,
+  PageNo: number,
+) => {
   if (changePageTimeout !== undefined) {
     clearTimeout(changePageTimeout);
   }
@@ -906,7 +940,10 @@ export const changePage = (document_summary: DocumentSummary, setImageURL: Dispa
   }, 300);
 };
 
-export const sendDeleteSpreadsheet = async (config: ServicesConfig & DatatypeConfig, spreadsheetId: string) => {
+export const sendDeleteSpreadsheet = async (
+  config: ServicesConfig & DatatypeConfig,
+  spreadsheetId: string,
+) => {
   logDebug('deleting temp sheet...');
   await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
     method: 'POST',
