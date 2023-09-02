@@ -71,6 +71,7 @@ const HomeSection = ({config, kkks_name}) => {
         query: {
           form_type: datatypes[dataType],
           workspace_data: newWorkspace.afe_number,
+          previous: router.asPath,
         },
       });
     }

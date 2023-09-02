@@ -292,6 +292,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
       query: {
         form_type: datatype,
         workspace_data: newWorkspace.afe_number,
+        previous: router.asPath,
       },
     });
   };
