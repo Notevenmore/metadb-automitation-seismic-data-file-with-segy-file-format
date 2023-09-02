@@ -61,7 +61,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
   let selectedTableData = [[]];
 
   const deleteWorkspace = useCallback(
-    (afe_number, e = null) => {
+    async (afe_number: number, e = null) => {
       if (e) {
         e.preventDefault();
       }
@@ -422,7 +422,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
       };
     });
     if (submit) {
-      deleteWorkspace(e, toggleOverlayDelete.afe_number).then(res => {
+      deleteWorkspace(toggleOverlayDelete.afe_number, e).then(res => {
         init();
       });
     }
