@@ -895,7 +895,7 @@ export const handleAfeChange = async (
           kkks_name: workspace_data.kkks_name,
           working_area: workspace_data.working_area,
           submission_type: workspace_data.submission_type,
-          
+          workspace_name: workspace_data.workspace_name,
         });
         setpopupMessage({
           message:
