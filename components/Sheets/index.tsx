@@ -1,14 +1,15 @@
 import {logError} from '@components/utility_functions';
-import {useEffect, useState} from 'react';
+import {DatatypeConfig, ServicesConfig} from '@utils/types';
+import {Dispatch, SetStateAction, useEffect, useState} from 'react';
 
 interface IframeProps extends React.ComponentProps<'iframe'> {
-  existingID?: any;
-  type: any;
-  form_type: any;
+  existingID?: string;
+  type: string;
+  form_type: string | string[];
   data: any;
-  getSpreadsheetID: any;
-  finishedInitializing: any;
-  config: any;
+  getSpreadsheetID: Dispatch<SetStateAction<string>>;
+  finishedInitializing: Dispatch<SetStateAction<boolean>>;
+  config: ServicesConfig & DatatypeConfig;
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
@@ -22,7 +23,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
     existingID,
   } = props;
 
-  const [sheetID, setsheetID] = useState();
+  const [sheetID, setsheetID] = useState<string>();
   const [Loading, setLoading] = useState(true);
   const [LoadingMsg, setLoadingMsg] = useState('');
   const [hasError, sethasError] = useState(false);
@@ -30,7 +31,6 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
   const [SkipInitialization, setSkipInitialization] = useState(false);
 
   useEffect(() => {
-    console.log(type, form_type);
     const getInit = async () => {
       setLoading(true);
       try {
@@ -90,13 +90,10 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
 
       if (type === 'review') {
         try {
-          console.log('first');
           setLoadingMsg('Appending OCR data to the spreadsheet');
           console.log(data);
           if (!data) {
-            throw new Error(
-              'Data not found. Make sure you correctly passed the data into the component.',
-            );
+            throw 'Data not found. Make sure you correctly passed the data into the component.';
           }
 
           // TODO finish this new workflow
@@ -124,7 +121,6 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
                 );
                 logError('error spreadsheet append data', response.response);
               } else {
-                finishedInitializing(true);
               }
             })
             .catch(error => {
@@ -133,14 +129,13 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         } catch (error) {
           sethasError(true);
           setErrorMessage(String(error));
-          finishedInitializing(false);
         }
       }
+      finishedInitializing(true);
       setLoadingMsg('All done');
       setLoading(false);
     };
     if (sheetID) {
-      localStorage.setItem('spreadsheetID', sheetID);
       if (!SkipInitialization) {
         updateSheet();
       }
@@ -163,13 +158,15 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
       <p>{LoadingMsg}</p>
     </div>
   ) : hasError ? (
-    <div className="h-full flex items-center justify-center">
-      <p className="text-center text-red-500">
-        Internal server error. Please contact maintainer. <br />
-        ---
-        <br />
-        <strong>{ErrorMessage}</strong>
-      </p>
+    <div className="flex items-center justify-center h-full">
+      <div className="flex flex-col text-red-500 overflow-x-auto">
+        <p className="flex items-center justify-center w-full select-none">
+          <p className='p-2 rounded-full border-2 border-red-500 text-xl font-bold w-8 h-8 flex items-center justify-center'>!</p>
+        </p>
+        <p>
+          <strong>{ErrorMessage}</strong>
+        </p>
+      </div>
     </div>
   ) : (
     <div className="h-full">
