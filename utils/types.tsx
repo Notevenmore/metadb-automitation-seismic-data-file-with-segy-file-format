@@ -31,3 +31,13 @@ export interface ServicesConfig {
     sheets: string;
   };
 }
+
+export interface RecordMetadata {
+  afe_number: number,
+  workspace_name: string,
+  kkks_name: string,
+  working_area: string,
+  submission_type: string,
+  data_type?: string,
+  email: string
+}
