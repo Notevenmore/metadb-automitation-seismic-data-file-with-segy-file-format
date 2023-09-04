@@ -82,7 +82,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
           if (response.status !== 200) {
             sethasError(true);
             setErrorMessage(
-              `An error occured while appending record data to Google Spreadsheet. Please try again by reloading this page`,
+              `Google Spreadsheet was not able append the record data. Please try again by reloading this page`,
             );
             logError('spreadsheet error update formatting:', response.response);
           }
@@ -117,7 +117,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
               if (response.status !== 200) {
                 sethasError(true);
                 setErrorMessage(
-                  'An error occured while appending record data to Google Spreadsheet. Please try again by reloading this page',
+                  'Google Spreadsheet was not able append the record data. Please try again by reloading this page',
                 );
                 logError('error spreadsheet append data', response.response);
               } else {
