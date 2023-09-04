@@ -6,6 +6,7 @@ import {getLayoutTop} from '../../layout/getLayout';
 import {addProfile} from '../../services/admin';
 import {useAppDispatch} from '../../store';
 import {displayErrorMessage} from '../../store/generalSlice';
+import {showErrorToast} from '@components/utility_functions';
 
 AddNewUserPage.getLayout = getLayoutTop;
 
@@ -37,12 +38,9 @@ export default function AddNewUserPage() {
     e.preventDefault();
 
     if (detail.userid && /\s/.test(detail.userid)) {
-      dispatch(
-        displayErrorMessage({
-          message: 'Inputted userid cannot contain space. Please retype.',
-          color: 'red',
-          duration: 5000,
-        }),
+      showErrorToast(
+        dispatch,
+        'Inputted userid cannot contain space. Please retype.',
       );
       return;
     }
@@ -55,13 +53,7 @@ export default function AddNewUserPage() {
       res => {
         if (res && res.response) {
           console.log(res.response.data.detail);
-          dispatch(
-            displayErrorMessage({
-              message: String(res),
-              color: 'red',
-              duration: 5000,
-            }),
-          );
+          showErrorToast(dispatch, res);
           return;
         }
         dispatch(
@@ -81,13 +73,7 @@ export default function AddNewUserPage() {
       },
       err => {
         if (err.response.status === 409) {
-          dispatch(
-            displayErrorMessage({
-              message: 'Inputted userid already exist',
-              color: 'red',
-              duration: 5000,
-            }),
-          );
+          showErrorToast(dispatch, 'Inputted userid already exist');
         }
       },
     );

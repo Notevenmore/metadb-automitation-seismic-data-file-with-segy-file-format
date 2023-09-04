@@ -4,6 +4,7 @@ import {getProfile} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
 import {displayErrorMessage} from '../store/generalSlice';
 import {setUser} from '../store/userSlice';
+import { showErrorToast } from '@components/utility_functions';
 
 function CheckAuth() {
   const user = useAppSelector(state => state.user.user);
@@ -18,13 +19,7 @@ function CheckAuth() {
       },
       err => {
         console.log('???');
-        dispatch(
-          displayErrorMessage({
-            message: String(err),
-            color: 'red',
-            duration: 5000
-          }),
-        );
+        showErrorToast(dispatch, err);
       },
     );
   }, [dispatch, user.userid]);

@@ -7,6 +7,7 @@ import TableComponent from '@components/table/table';
 import {
   saveDocument,
   sendDeleteSpreadsheet,
+  showErrorToast,
 } from '@components/utility_functions';
 import {UploadDocumentSettings, displayErrorMessage} from '@store/generalSlice';
 import {useAppDispatch, useAppSelector} from '@store/index';
@@ -94,15 +95,7 @@ export default function EditNewDocumentPage({setTitle, config}) {
         }
       }
     } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
-      );
+      showErrorToast(dispatch, error);
     }
     router.events.emit('routeChangeComplete');
   };

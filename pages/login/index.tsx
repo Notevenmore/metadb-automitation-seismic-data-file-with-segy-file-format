@@ -8,6 +8,7 @@ import {getLogin} from '../../services/user';
 import {useAppDispatch, useAppSelector} from '../../store';
 import {displayErrorMessage} from '../../store/generalSlice';
 import {setUser} from '../../store/userSlice';
+import {showErrorToast} from '@components/utility_functions';
 
 SignInPage.getLayout = getLayoutBlank;
 
@@ -72,13 +73,7 @@ export default function SignInPage({setTitle}) {
         return;
       })
       .catch(error => {
-        dispatch(
-          displayErrorMessage({
-            message: String(error),
-            color: 'red',
-            duration: 5000,
-          }),
-        );
+        showErrorToast(dispatch, error);
       });
     router.events.emit('routeChangeComplete');
   };

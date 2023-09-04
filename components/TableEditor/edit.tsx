@@ -6,7 +6,7 @@ import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
-import {init_data} from '../../components/utility_functions';
+import {init_data, showErrorToast} from '../../components/utility_functions';
 import {useTableEditor} from '../../hooks/useTableEditor';
 import Save from '../../public/icons/save.svg';
 import {useAppDispatch} from '../../store';
@@ -143,16 +143,8 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
       await delay(1000);
       settriggerSave('');
       getRow(workspaceData);
-    } catch (e) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            e,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
-      );
+    } catch (error) {
+      showErrorToast(dispatch, error);
     }
     router.events.emit('routeChangeComplete');
   }, [dispatch, triggerSave, router, getRow, workspaceData, finalData]);

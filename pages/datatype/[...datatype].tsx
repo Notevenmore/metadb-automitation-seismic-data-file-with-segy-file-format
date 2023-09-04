@@ -12,6 +12,8 @@ import {
   getColumnBinder,
   getDataTypeNoUnderscore,
   handleAfeChange,
+  logError,
+  showErrorToast,
 } from '../../components/utility_functions';
 import {TokenExpired} from '../../services/admin';
 import {useAppDispatch} from '../../store';
@@ -25,7 +27,7 @@ import {
 } from '../../store/generalSlice';
 import {delay} from '../../utils/common';
 import {PopupContext} from '@contexts/PopupContext';
-import { DeleteToggle } from '@utils/types';
+import {DeleteToggle} from '@utils/types';
 
 const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
   const [data, setData] = useState([]);
@@ -59,7 +61,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
   let selectedTableData = [[]];
 
   const deleteWorkspace = useCallback(
-    (afe_number, e = null) => {
+    async (afe_number: number, e = null) => {
       if (e) {
         e.preventDefault();
       }
@@ -96,13 +98,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
           router.events.emit('routeChangeComplete');
         })
         .catch(error => {
-          dispatch(
-            displayErrorMessage({
-              message: String(error),
-              color: 'red',
-              duration: 5000,
-            }),
-          );
+          showErrorToast(dispatch, error);
           router.events.emit('routeChangeComplete');
         });
     },
@@ -265,21 +261,20 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
           setbulkSearch(records);
         })
         .catch(err => {
-          dispatch(
-            displayErrorMessage({
-              message: `Failed to execute bulk searching. ${String(err)}`,
-              color: 'red',
-              duration: 5000,
-            }),
+          showErrorToast(
+            dispatch,
+            `Failed to execute bulk searching. Please try again`,
           );
+          logError('', err);
           setbulkSearch([-1]);
           setbulkSearchError(
-            `Failed to execute bulk searching. ${String(err)}`,
+            `Failed to execute bulk searching. Please try again`,
           );
         });
     } catch (error) {
       setbulkSearch([-1]);
-      setbulkSearchError(`Failed to execute bulk searching. ${String(error)}`);
+      setbulkSearchError(`Failed to execute bulk searching. Please try again`);
+      logError('', error);
     }
   };
 
@@ -297,6 +292,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
       query: {
         form_type: datatype,
         workspace_data: newWorkspace.afe_number,
+        previous: router.asPath,
       },
     });
   };
@@ -364,13 +360,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
       });
     } catch (error) {
       // Handle error and display error message
-      dispatch(
-        displayErrorMessage({
-          message: String(error),
-          color: 'red',
-          duration: 5000,
-        }),
-      );
+      showErrorToast(dispatch, error);
     }
     router.events.emit('routeChangeComplete');
   };
@@ -433,7 +423,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
       };
     });
     if (submit) {
-      deleteWorkspace(e, toggleOverlayDelete.afe_number).then(res => {
+      deleteWorkspace(toggleOverlayDelete.afe_number, e).then(res => {
         init();
       });
     }

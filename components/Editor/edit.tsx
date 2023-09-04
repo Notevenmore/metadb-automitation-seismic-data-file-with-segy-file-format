@@ -8,8 +8,10 @@ import TableComponent from '../../components/table/table';
 import {
   downloadWorkspace,
   init_data,
+  logError,
   saveDocument,
   sendDeleteSpreadsheet,
+  showErrorToast,
 } from '../../components/utility_functions';
 import DownloadFolder from '../../public/icons/download-folder.svg';
 import Save from '../../public/icons/save.svg';
@@ -82,7 +84,7 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
         await delay(500);
         router.events.emit('routeChangeStart');
         const initial_data = await init_data(config, router, {
-          afe_number: router?.query?.workspace_data,
+          afe_number: parseInt(String(router?.query?.workspace_data)),
         });
         console.log(initial_data);
         setData(initial_data.data ? initial_data.data : [{}]);
@@ -156,18 +158,11 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
       })
       .catch(error => {
         // Handle error and display error message
-        dispatch(
-          displayErrorMessage({
-            message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-              error,
-            )}`,
-            color: 'red',
-            duration: 5000,
-          }),
-        );
+        showErrorToast(dispatch, error);
       })
       .finally(() => {
         router.events.emit('routeChangeComplete');
+        settriggerSave('');
       });
   }, [config, dispatch, router, spreadsheetId, triggerSave, workspaceData]);
 
@@ -191,15 +186,7 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
               }
             })
             .catch(error => {
-              dispatch(
-                displayErrorMessage({
-                  message: `Failed to download record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-                    error,
-                  )}`,
-                  color: 'red',
-                  duration: 5000,
-                }),
-              );
+              showErrorToast(dispatch, error);
             })
             .finally(() => {
               router.events.emit('routeChangeComplete');
@@ -211,18 +198,11 @@ export const EditDocEditor = ({workspace_name, setTitle, config}) => {
       })
       .catch(error => {
         // Handle error and display error message
-        dispatch(
-          displayErrorMessage({
-            message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-              error,
-            )}`,
-            color: 'red',
-            duration: 5000,
-          }),
-        );
+        showErrorToast(dispatch, error);
       })
       .finally(() => {
         router.events.emit('routeChangeComplete');
+        settriggerSave('');
       });
   }, [config, dispatch, router, spreadsheetId, workspaceData]);
 

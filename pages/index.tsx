@@ -9,6 +9,7 @@ import TableComponent from '../components/table/table';
 import {
   checkAFETimeout,
   handleAfeChange,
+  showErrorToast,
 } from '../components/utility_functions';
 import {datatypes} from '../config';
 import draft from '../dummy-data/draft';
@@ -30,7 +31,7 @@ export default function HomePage({setTitle, config, kkks_name}) {
 
   // if the search state is true change the view of the home page
   // const searches = useAppSelector(state => state.search.search);
-  return <HomeSection config={config} kkks_name={kkks_name}/>;
+  return <HomeSection config={config} kkks_name={kkks_name} />;
 }
 
 const HomeSection = ({config, kkks_name}) => {
@@ -70,6 +71,7 @@ const HomeSection = ({config, kkks_name}) => {
         query: {
           form_type: datatypes[dataType],
           workspace_data: newWorkspace.afe_number,
+          previous: router.asPath,
         },
       });
     }
@@ -138,13 +140,7 @@ const HomeSection = ({config, kkks_name}) => {
         });
       } catch (error) {
         // Handle error and display error message
-        dispatch(
-          displayErrorMessage({
-            message: String(error),
-            color: 'red',
-            duration: 5000,
-          }),
-        );
+        showErrorToast(dispatch, error);
       }
       router.events.emit('routeChangeComplete');
     }
@@ -190,7 +186,8 @@ const HomeSection = ({config, kkks_name}) => {
           />
         </div>
         <p className="text-center opacity-50">
-          The document to be uploaded must be in either JPG, PNG, PDF, TXT or LAS format.
+          The document to be uploaded must be in either JPG, PNG, PDF, TXT or
+          LAS format.
         </p>
         <section className="flex justify-center items-center">
           <Divider additional_styles={'w-284p'} />
@@ -439,7 +436,7 @@ export function getServerSideProps() {
   return {
     props: {
       config: config,
-      kkks_name
+      kkks_name,
     }, // will be passed to the page component as props
   };
 }
