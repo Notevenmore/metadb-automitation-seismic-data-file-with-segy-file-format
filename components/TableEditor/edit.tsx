@@ -76,7 +76,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
         // console.log(router.query.workspace_data);
         router.events.emit('routeChangeStart');
         const initial_data = await init_data(config, router, {
-          afe_number: router?.query?.workspace_data,
+          afe_number: parseInt(String(router?.query?.workspace_data)),
         });
         console.log(initial_data);
         setData(initial_data.data ? initial_data.data : [{}]);
