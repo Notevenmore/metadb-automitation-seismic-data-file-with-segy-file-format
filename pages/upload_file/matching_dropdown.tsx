@@ -176,7 +176,7 @@ export default function MatchReview({config, setTitle}) {
           setLoading('');
         }
       }
-      router.events.emit('routeChangeComplete');
+      // router.events.emit('routeChangeComplete');
       setLoading('');
     };
     if (router.isReady) {

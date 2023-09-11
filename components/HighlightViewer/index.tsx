@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import {
   Context,
   createContext,
@@ -9,6 +10,7 @@ import {
   useReducer,
   useRef,
   useState,
+  useCallback
 } from 'react';
 
 export type Tuple4<T> = [T, T, T, T];
@@ -273,7 +275,6 @@ export const ImageEditorProvider = ({
   }, [bounds]);
 
   useEffect(() => {
-    // console.log(`mousePosition: ${mousePositionRelativeToImage}`);
   }, [mousePositionRelativeToImage]);
 
   return (
@@ -851,7 +852,6 @@ export const useNaturalImageDim = (ref: MutableRefObject<null>) => {
     const width = element.naturalWidth;
     const height = element.naturalHeight;
     setDim(_ => [element.naturalWidth, element.naturalHeight]);
-    console.log(`natural image dim called: ${width}, ${height}`);
   }, [check]);
 
   return {dim, reload};
@@ -859,9 +859,10 @@ export const useNaturalImageDim = (ref: MutableRefObject<null>) => {
 
 interface ImageEditorViewProps {
   imageUrl: string;
+  onImageLoad: () => void;
 }
 
-const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
+const ImageEditorView = ({imageUrl, onImageLoad}: ImageEditorViewProps) => {
   const viewerRef = useRef(null);
   const imageWrapperRef = useRef(null);
   const imageRef = useRef(null);
@@ -913,6 +914,11 @@ const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
     </div>
   );
 
+  const reloadImage = () => {
+    reload();
+    onImageLoad();
+  }
+
   const SelectingBox = () => {
     if (selectorState.stateType !== SelectorStateType.COMPLETE) {
       return <SelectionBox bound={selectorState.bounds} />;
@@ -955,7 +961,7 @@ const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
           src={imageUrl}
           alt=""
           ref={imageRef}
-          onLoad={_ => reload()}
+          onLoad={_ => reloadImage()}
           draggable={false}
           style={{
             width: `${width}px`,
@@ -967,15 +973,36 @@ const ImageEditorView = ({imageUrl}: ImageEditorViewProps) => {
   );
 };
 
+interface ImageEditorRawProps {
+  boundsObserver?: (bounds: Tuple4<number>[]) => void;
+  imageUrl: string;
+  onImageLoad: () => void;
+}
+
+
+export const ImageEditorRaw = ({boundsObserver, imageUrl, onImageLoad}: ImageEditorRawProps) => {
+  return (
+    <ImageEditorProvider boundsObserver={boundsObserver}>
+      <ImageEditorView imageUrl={imageUrl} onImageLoad={onImageLoad}/>
+    </ImageEditorProvider>
+  );
+};
+
 interface ImageEditorProps {
   boundsObserver?: (bounds: Tuple4<number>[]) => void;
   imageUrl: string;
 }
 
 export const ImageEditor = ({boundsObserver, imageUrl}: ImageEditorProps) => {
-  return (
-    <ImageEditorProvider boundsObserver={boundsObserver}>
-      <ImageEditorView imageUrl={imageUrl} />
-    </ImageEditorProvider>
+  const router = useRouter();
+  const onImageLoad = useCallback(() => {
+    router.events.emit("routeChangeComplete");
+  }, []);
+
+  useEffect(() => {
+    router.events.emit("routeChangeStart");
+  }, [imageUrl]);
+
+  return ( <ImageEditorRaw boundsObserver={boundsObserver} imageUrl={imageUrl} onImageLoad={onImageLoad}/>
   );
 };
