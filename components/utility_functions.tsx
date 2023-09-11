@@ -1,15 +1,28 @@
 import {parseCookies} from 'nookies';
 import {TokenExpired} from '../services/admin';
-import {displayErrorMessage} from '../store/generalSlice';
+import {
+  DocumentSummary,
+  UploadDocumentSettings,
+  displayErrorMessage,
+} from '../store/generalSlice';
 import {getHeader} from '../services/document';
 import {delay} from '../utils/common';
+import {DatatypeConfig, RecordMetadata, ServicesConfig} from '@utils/types';
+import {Dispatch, SetStateAction} from 'react';
+import {NextRouter} from 'next/router';
 
-export const init_data = async (config, router, workspaceData) => {
+export const init_data = async (
+  config: ServicesConfig & DatatypeConfig,
+  router: NextRouter | {query: {form_type: string}},
+  workspaceData: {afe_number: number},
+) => {
   if (!workspaceData.afe_number) {
     throw 'Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer.';
   }
   const workspace_data = await fetch(
-    `${config[router.query.form_type]['afe']}${workspaceData.afe_number}`,
+    `${config[String(router.query.form_type)]['afe']}${
+      workspaceData.afe_number
+    }`,
     {
       method: 'GET',
       headers: {
@@ -26,13 +39,15 @@ export const init_data = async (config, router, workspaceData) => {
     .then(([status, res]) => {
       if (status !== 200) {
         TokenExpired(status);
-        throw `Service returned with status ${status}: ${res}`;
+        throw `Service returned with status ${status} on record metadata GET (init_data): ${res}`;
       }
       return res;
     });
 
   const data = await fetch(
-    `${config[router.query.form_type]['workspace']}${workspaceData.afe_number}`,
+    `${config[String(router.query.form_type)]['workspace']}${
+      workspaceData.afe_number
+    }`,
     {
       method: 'GET',
       headers: {
@@ -49,7 +64,7 @@ export const init_data = async (config, router, workspaceData) => {
     .then(([status, res]) => {
       if (status !== 200) {
         TokenExpired(status);
-        throw `Service returned with status ${status}: ${res}`;
+        throw `Service returned with status ${status} on record content binder GET (init_data): ${res}`;
       }
       return res;
     });
@@ -62,9 +77,9 @@ export const init_data = async (config, router, workspaceData) => {
   if (data) {
     for (const datatype_record_id of data) {
       const data_details = await fetch(
-        `${config[router.query.form_type]['view']}${
+        `${config[String(router.query.form_type)]['view']}${
           datatype_record_id[
-            config[router.query.form_type]['workspace_holder_key']
+            config[String(router.query.form_type)]['workspace_holder_key']
           ]
         }`,
         {
@@ -86,7 +101,7 @@ export const init_data = async (config, router, workspaceData) => {
         .then(([status, res]) => {
           if (status !== 200) {
             TokenExpired(status);
-            throw `Service returned with status ${status}: ${res}`;
+            throw `Service returned with status ${status} on record content details GET (init_data): ${res}`;
           }
           return res;
         });
@@ -106,12 +121,12 @@ export const init_data = async (config, router, workspaceData) => {
 };
 
 export const saveDocument = async (
-  e,
-  router,
-  config,
-  spreadsheetId,
-  workspaceData,
-  dispatch,
+  e: any,
+  router: NextRouter,
+  config: ServicesConfig & DatatypeConfig,
+  spreadsheetId: string,
+  workspaceData: UploadDocumentSettings,
+  dispatch: any,
 ) => {
   if (e) {
     e.preventDefault();
@@ -119,13 +134,9 @@ export const saveDocument = async (
 
   // Check if spreadsheetId is available
   if (!spreadsheetId) {
-    dispatch(
-      displayErrorMessage({
-        message:
-          'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
-        color: 'red',
-        duration: 5000,
-      }),
+    showErrorToast(
+      dispatch,
+      'Failed to get spreadsheet information, please reload this page. Changes will not be saved',
     );
     return;
   }
@@ -142,7 +153,9 @@ export const saveDocument = async (
   // check for changes in the workspace data, if there are any then push the updates to the db
   let workspace_data_changed = false;
   const old_workspace_data = await fetch(
-    `${config[router.query.form_type]['afe']}${workspaceData['afe_number']}`,
+    `${config[String(router.query.form_type)]['afe']}${
+      workspaceData['afe_number']
+    }`,
     {
       method: 'GET',
       headers: {
@@ -159,7 +172,11 @@ export const saveDocument = async (
     .then(([status, res]) => {
       if (status !== 200) {
         TokenExpired(status);
-        throw `Service returned with status ${status} on record details GET: ${res}`;
+        logError(
+          `Service returned with status ${status} on record metadata GET (save_doc)`,
+          res,
+        );
+        throw `An error occurred while trying to acquire this record's previous metadata details. Please try again`;
       }
       return res;
     });
@@ -180,7 +197,9 @@ export const saveDocument = async (
       }),
     );
     await fetch(
-      `${config[router.query.form_type]['afe']}${workspaceData['afe_number']}`,
+      `${config[String(router.query.form_type)]['afe']}${
+        workspaceData['afe_number']
+      }`,
       {
         method: 'PUT',
         headers: {
@@ -197,9 +216,16 @@ export const saveDocument = async (
         if (status !== 200) {
           TokenExpired(status);
           if (res.toLowerCase().includes('workspace_name_unique')) {
+            logError(
+              `A record with the name "${workspaceData.workspace_name}" already exists.`,
+            );
             throw `A record with the name "${workspaceData.workspace_name}" already exists. Please choose a different name.`;
           } else {
-            throw `Service returned with status ${status} on record details PUT: ${res}`;
+            logError(
+              `Service returned with status ${status} on record metadata PUT (save_doc)`,
+              res,
+            );
+            throw `An error occurred while trying to update this record's metadata. Please try again`;
           }
         }
       });
@@ -218,11 +244,15 @@ export const saveDocument = async (
   // Fetch header from spreadsheet
   const spreadsheet_header = await getHeader(
     config,
-    router.query.form_type,
+    String(router.query.form_type),
   ).then(response => {
     if (response.status !== 200) {
       TokenExpired(response.status);
-      throw `Service returned with status ${response.status} on spreadsheet GET headers: ${response.response}`;
+      logError(
+        `Service returned with status ${response.status} on spreadsheet GET headers (save_doc):`,
+        response.response,
+      );
+      throw `An error occurred from Google Sheets that MetaDB is unable to handle. Please try again`;
     }
     return response;
   });
@@ -249,12 +279,13 @@ export const saveDocument = async (
       // Handle non-200 response status
       if (response.status !== 200) {
         TokenExpired(response.status);
-        throw `Service returned with status ${response.status} on spreadsheet GET rows: ${response.response}`;
+        logError(
+          `Service returned with status ${response.status} on spreadsheet GET rows (save_doc):`,
+          response.response,
+        );
+        throw `An error occurred from Google Sheets that MetaDB is unable to handle. Please try again`;
       }
       return response;
-    })
-    .catch(err => {
-      throw err;
     });
 
   let field_types_final = {};
@@ -265,7 +296,7 @@ export const saveDocument = async (
     }),
   );
   const field_types = await fetch(
-    `${config[router.query.form_type]['view'].slice(0, -1)}-column/`,
+    `${config[String(router.query.form_type)]['view'].slice(0, -1)}-column/`,
     {
       method: 'GET',
       headers: {
@@ -282,7 +313,11 @@ export const saveDocument = async (
     .then(([status, res]) => {
       if (status !== 200) {
         TokenExpired(status);
-        throw `Service returned with status ${status} on column type GET: ${res}`;
+        logError(
+          `Service returned with status ${status} on column type GET (save_doc):`,
+          res,
+        );
+        throw `An error occured while trying to get information regarding column types (text, numbers, etc). Please try again.`;
       }
       return res;
     });
@@ -308,7 +343,7 @@ export const saveDocument = async (
     ) {
       let row = {};
       let changed = false;
-      spreadsheet_header.response.forEach((header, idx_col) => {
+      spreadsheet_header.response.forEach((header: string, idx_col: number) => {
         // try converting any string to integer if possible, if fails then just skip and append the raw string
         // a try catch was put here to avoid new data being undefined if its length is shorter than old data
         try {
@@ -319,10 +354,6 @@ export const saveDocument = async (
             } else {
               row[header.toLowerCase()] =
                 spreadsheet_data?.response[idx_row][idx_col] || null;
-            }
-
-            if (row[header.toLowerCase()] === '') {
-              throw 'Please fill out every column in a row although there is no data to be inserted based on the reference document. Make sure to insert correct value types based on their own respective column types.';
             }
           }
         } catch (error) {}
@@ -408,16 +439,18 @@ export const saveDocument = async (
           }
         } catch (error) {}
       });
-      console.log(row, idx_row, idx_row < old_data.data_content.length - 1);
+      logDebug(
+        `${row} ${idx_row} ${idx_row < old_data.data_content.length - 1}`,
+      );
       // if change in row is detected then update the data in the database
       if (
         changed &&
         idx_row <= old_data.data_content.length - 1 &&
         JSON.stringify(row) !== '{}'
       ) {
-        console.log('trying to PUT', idx_row);
+        logDebug('trying to PUT' + idx_row);
         await fetch(
-          `${config[router.query.form_type]['view']}${
+          `${config[String(router.query.form_type)]['view']}${
             old_data.data_content[idx_row]['id']
           }`,
           {
@@ -438,10 +471,14 @@ export const saveDocument = async (
           .then(([status, res]) => {
             if (status !== 200) {
               TokenExpired(status);
-              throw `Service returned with status ${status} on record PUT: ${res}`;
+              logError(
+                `Service returned with status ${status} on record content PUT (save_doc): `,
+                res,
+              );
+              throw `An error occured while trying to save the record. Please try again.`;
             }
           });
-        console.log('PUT succeeded');
+        logDebug('PUT succeeded');
       } else {
         // else if current index is already beyond the length of original data or the new data
         if (
@@ -450,9 +487,9 @@ export const saveDocument = async (
         ) {
           // if the new data length is shorter than the new data then the old data is deleted
           if (spreadsheet_data.response.length < old_data.data_content.length) {
-            console.log('trying to DELETE', idx_row);
+            logDebug('trying to DELETE' + idx_row);
             await fetch(
-              `${config[router.query.form_type]['view']}${
+              `${config[String(router.query.form_type)]['view']}${
                 old_data.data_content[idx_row]['id']
               }`,
               {
@@ -469,18 +506,22 @@ export const saveDocument = async (
               .then(([status, res]) => {
                 if (status !== 200) {
                   TokenExpired(status);
-                  throw `Service returned with status ${status} on record DELETE: ${res}`;
+                  logError(
+                    `Service returned with status ${status} on record content DELETE (save_doc):`,
+                    res,
+                  );
+                  throw `An error occured while trying to save the record. Please try again`;
                 }
               });
-            console.log('DELETE succeeded');
+            logDebug('DELETE succeeded');
           }
           // else if the new data length is greater than the old data then there's a new row appended
           else if (
             spreadsheet_data.response.length > old_data.data_content.length
           ) {
-            console.log('trying to POST', idx_row);
+            logDebug('trying to POST' + idx_row);
             const upload = await fetch(
-              `${config[router.query.form_type]['view']}`,
+              `${config[String(router.query.form_type)]['view']}`,
               {
                 method: 'POST',
                 headers: {
@@ -496,35 +537,47 @@ export const saveDocument = async (
               .then(([status, res]) => {
                 if (status !== 200) {
                   TokenExpired(status);
-                  throw `Service returned with status ${status} on record POST: ${res}`;
+                  logError(
+                    `Service returned with status ${status} on record content POST (save_doc):`,
+                    res,
+                  );
+                  throw `An error occured while trying to save the record. Please try again`;
                 }
                 return res;
               });
-            console.log('success POSTING new record, appending to record...');
-            let uploaded_id = upload.split(':');
+            logDebug('success POSTING new record, appending to record...');
+            let uploaded_id: string[] | number = upload.split(':');
             uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim());
-            await fetch(`${config[router.query.form_type]['workspace']}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${
-                  JSON.parse(parseCookies().user_data).access_token
-                }`,
+            await fetch(
+              `${config[String(router.query.form_type)]['workspace']}`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${
+                    JSON.parse(parseCookies().user_data).access_token
+                  }`,
+                },
+                body: JSON.stringify({
+                  afe_number: workspaceData.afe_number,
+                  [config[String(router.query.form_type)][
+                    'workspace_holder_key'
+                  ]]: uploaded_id,
+                }),
               },
-              body: JSON.stringify({
-                afe_number: workspaceData.afe_number,
-                [config[router.query.form_type]['workspace_holder_key']]:
-                  uploaded_id,
-              }),
-            })
+            )
               .then(res => Promise.all([res.status, res.text()]))
               .then(([status, res]) => {
                 if (status !== 200) {
                   TokenExpired(status);
-                  throw `Service returned with status ${status} on append data to record POST: ${res}`;
+                  logError(
+                    `Service returned with status ${status} on append data to record POST (save_doc):`,
+                    res,
+                  );
+                  throw `An error occured while trying to save the record. Please try again`;
                 }
               });
-            console.log('success');
+            logDebug('success');
           }
         }
       }
@@ -532,9 +585,9 @@ export const saveDocument = async (
   } else {
     if (old_data.data_content.length > 0) {
       old_data.data_content.forEach(async (record, idx_row_del) => {
-        console.log('trying to DELETE', idx_row_del);
+        logDebug('trying to DELETE' + idx_row_del);
         await fetch(
-          `${config[router.query.form_type]['view']}${record['id']}`,
+          `${config[String(router.query.form_type)]['view']}${record['id']}`,
           {
             method: 'DELETE',
             headers: {
@@ -549,10 +602,14 @@ export const saveDocument = async (
           .then(([status, res]) => {
             if (status !== 200) {
               TokenExpired(status);
-              throw `Service returned with status ${status} on record DELETE: ${res}`;
+              logError(
+                `Service returned with status ${status} on record DELETE (save_doc):`,
+                res,
+              );
+              throw `An error occured while trying to save the record. Please try again`;
             }
           });
-        console.log('DELETE succeeded');
+        logDebug('DELETE succeeded');
       });
     }
   }
@@ -560,10 +617,10 @@ export const saveDocument = async (
 };
 
 export const downloadWorkspace = async (
-  router,
-  config,
-  workspaceData,
-  dispatch,
+  router: NextRouter | {query: {form_type: string}},
+  config: ServicesConfig & DatatypeConfig,
+  workspaceData: UploadDocumentSettings,
+  dispatch: any,
 ) => {
   if (router.query.form_type && workspaceData.afe_number) {
     dispatch(
@@ -602,13 +659,15 @@ export const downloadWorkspace = async (
       .then(res => {
         if (res.status !== 200) {
           TokenExpired(res.status);
-          throw `Service returned with status code ${res.status}: ${res.response}`;
+          logError(
+            `Service returned with status code ${res.status} on spreadsheet api (download):`,
+            res.response,
+          );
+          throw `An error occurred from Google Sheets that MetaDB is unable to handle. Please try again`;
         }
         return res;
       });
-    console.log(
-      `new temp spreadsheet download: ${spreadsheet_download.response}`,
-    );
+    logDebug(`new temp spreadsheet download: ${spreadsheet_download.response}`);
     dispatch(
       displayErrorMessage({
         message: 'Downloading record as XLSX file, please wait...',
@@ -625,7 +684,10 @@ export const downloadWorkspace = async (
         link.download = `${workspaceData.workspace_name}`;
         link.click();
       })
-      .catch(console.error);
+      .catch(err => {
+        logError(`Service returned error on Google service (download):`, err);
+        throw `An error occurred from Google Sheets that MetaDB is unable to handle. Please try again`;
+      });
     await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
       method: 'POST',
       headers: {
@@ -636,7 +698,7 @@ export const downloadWorkspace = async (
       },
       body: JSON.stringify({spreadsheetID: spreadsheet_download.response}),
     }).catch(err => {
-      console.log(err);
+      logError(err);
     });
     dispatch(
       displayErrorMessage({
@@ -651,7 +713,12 @@ export const downloadWorkspace = async (
   return {success: true};
 };
 
-export const checkAfe = async (e, config, data_type, afe_number) => {
+export const checkAfe = async (
+  e: any,
+  config: ServicesConfig & DatatypeConfig,
+  data_type: string,
+  afe_number: number,
+) => {
   if (e) {
     e.preventDefault();
   }
@@ -668,35 +735,39 @@ export const checkAfe = async (e, config, data_type, afe_number) => {
     .then(([status, res]) => {
       if (status !== 200) {
         TokenExpired(status);
-        throw `Service returned with status ${status}: ${res}`;
+        logError(`Service returned with status ${status} (afe_check):`, res);
+        throw `Failed checking AFE availability, please try again`;
       }
       return res;
     });
   return afe_exist;
 };
 
-export const getColumnBinder = (config, data_type) => {
+export const getColumnBinder = (
+  config: ServicesConfig & DatatypeConfig,
+  data_type: string,
+) => {
   return (
     config[data_type]['column_binder']?.split('-').join(' ') ||
     '!!NOT IMPLEMENTED YET!!'
   );
 };
 
-export const getDataTypeNoUnderscore = data_type => {
+export const getDataTypeNoUnderscore = (data_type: string) => {
   return data_type.split('_').join(' ');
 };
 
 export const formatWorkspaceList = (
-  workspaces_list,
-  Button,
-  DownloadCommon,
-  Image,
-  datatype,
-  config,
-  dispatch,
-  router,
-  openPopup,
-  deleteWorkspace,
+  workspaces_list: RecordMetadata[],
+  Button: any,
+  DownloadCommon: any,
+  Image: any,
+  datatype: string,
+  config: ServicesConfig & DatatypeConfig,
+  dispatch: any,
+  router: NextRouter,
+  openPopup: any,
+  deleteWorkspace: (afe_number: number, e?: any) => Promise<void>,
   init,
 ) => {
   if (!workspaces_list) {
@@ -728,7 +799,7 @@ export const formatWorkspaceList = (
               } catch (error) {
                 dispatch(
                   displayErrorMessage({
-                    message: String(error),
+                    message: JSON.stringify(error),
                     color: 'blue',
                   }),
                 );
@@ -791,14 +862,14 @@ export const formatWorkspaceList = (
 
 export let checkAFETimeout = undefined;
 export const handleAfeChange = async (
-  e,
-  config,
-  datatype,
-  dispatch,
-  setpopupMessage,
-  setnewWorkspace,
-  newWorkspace,
-  setafeExist,
+  e: React.ChangeEvent<HTMLInputElement>,
+  config: ServicesConfig & DatatypeConfig,
+  datatype: string,
+  dispatch: any,
+  setpopupMessage: Dispatch<SetStateAction<{message: string; color: string}>>,
+  setnewWorkspace: Dispatch<SetStateAction<UploadDocumentSettings>>,
+  newWorkspace: UploadDocumentSettings,
+  setafeExist: Dispatch<SetStateAction<boolean>>,
 ) => {
   const input_value = parseInt(e.target.value);
   if (!input_value) {
@@ -809,7 +880,6 @@ export const handleAfeChange = async (
   }
   checkAFETimeout = setTimeout(async () => {
     e.preventDefault();
-    console.log(checkAFETimeout);
     try {
       setpopupMessage({message: '', color: ''});
       if (!newWorkspace.afe_number) {
@@ -825,6 +895,7 @@ export const handleAfeChange = async (
           kkks_name: workspace_data.kkks_name,
           working_area: workspace_data.working_area,
           submission_type: workspace_data.submission_type,
+          workspace_name: workspace_data.workspace_name,
         });
         setpopupMessage({
           message:
@@ -836,15 +907,11 @@ export const handleAfeChange = async (
         setpopupMessage({message: '', color: ''});
       }
     } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
+      showErrorToast(
+        dispatch,
+        `Failed checking AFE availability, please try again or contact maintainer if the problem persists.`,
       );
+      logError(': AFE check failure: ', error);
       setpopupMessage({message: 'Something went wrong', color: 'red'});
       await delay(1000);
       setpopupMessage({message: '', color: ''});
@@ -854,7 +921,11 @@ export const handleAfeChange = async (
 };
 
 export let changePageTimeout = undefined;
-export const changePage = (document_summary, setImageURL, PageNo) => {
+export const changePage = (
+  document_summary: DocumentSummary,
+  setImageURL: Dispatch<SetStateAction<string>>,
+  PageNo: number,
+) => {
   if (changePageTimeout !== undefined) {
     clearTimeout(changePageTimeout);
   }
@@ -869,8 +940,11 @@ export const changePage = (document_summary, setImageURL, PageNo) => {
   }, 300);
 };
 
-export const sendDeleteSpreadsheet = async (config, spreadsheetId) => {
-  console.log('deleting temp sheet...');
+export const sendDeleteSpreadsheet = async (
+  config: ServicesConfig & DatatypeConfig,
+  spreadsheetId: string,
+) => {
+  logDebug('deleting temp sheet...');
   await fetch(`${config.services.sheets}/deleteSpreadsheet`, {
     method: 'POST',
     headers: {
@@ -881,6 +955,43 @@ export const sendDeleteSpreadsheet = async (config, spreadsheetId) => {
     }),
     keepalive: true,
   }).catch(error => {
-    console.log(`Cannot delete temp spreadsheet, reason: ${error}`);
+    logError(`Cannot delete temp spreadsheet, reason:`, error);
   });
+};
+
+// details is preferrably an Object type, while message is String
+export const logDebug = (
+  message: string,
+  details: null | JSON | string = null,
+) => {
+  console.log(
+    new Date().toString().split(' ').splice(1, 4).join(' ') + ': ' + message,
+  );
+  if (details) {
+    console.log(details);
+  }
+};
+
+// details is preferrably an Object type, while message is String
+export const logError = (
+  message: string,
+  details: null | JSON | string = null,
+) => {
+  console.error(
+    new Date().toString().split(' ').splice(1, 4).join(' ') + ': ' + message,
+  );
+  if (details) {
+    console.error(details);
+  }
+};
+
+// message is preferably a string
+export const showErrorToast = (dispatch: any, message: string) => {
+  dispatch(
+    displayErrorMessage({
+      message: String(message),
+      color: 'red',
+      duration: 5000,
+    }),
+  );
 };

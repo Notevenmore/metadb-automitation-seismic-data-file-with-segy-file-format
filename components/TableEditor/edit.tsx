@@ -6,7 +6,7 @@ import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
 import TableComponent from '../../components/table/table';
-import {init_data} from '../../components/utility_functions';
+import {init_data, showErrorToast} from '../../components/utility_functions';
 import {useTableEditor} from '../../hooks/useTableEditor';
 import Save from '../../public/icons/save.svg';
 import {useAppDispatch} from '../../store';
@@ -76,7 +76,7 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
         // console.log(router.query.workspace_data);
         router.events.emit('routeChangeStart');
         const initial_data = await init_data(config, router, {
-          afe_number: router?.query?.workspace_data,
+          afe_number: parseInt(String(router?.query?.workspace_data)),
         });
         console.log(initial_data);
         setData(initial_data.data ? initial_data.data : [{}]);
@@ -143,16 +143,8 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
       await delay(1000);
       settriggerSave('');
       getRow(workspaceData);
-    } catch (e) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed to save record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            e,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
-      );
+    } catch (error) {
+      showErrorToast(dispatch, error);
     }
     router.events.emit('routeChangeComplete');
   }, [dispatch, triggerSave, router, getRow, workspaceData, finalData]);

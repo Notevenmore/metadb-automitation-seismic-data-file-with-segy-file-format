@@ -20,7 +20,6 @@ export function DraggableBox({
   const {dispatch, state} = useContext(DraggableContext);
   const item = state.draggableItems.find(item => item.id === id);
   useEffect(() => {
-    console.log(initialPos);
     if (Number.isNaN(initialPos[0])) return;
     dispatch({
       act: DraggableAct.ADD_DRAGGABLE,
@@ -40,7 +39,6 @@ export function DraggableBox({
       <div
         draggable={false}
         onMouseEnter={() => {
-          console.log('Mouse Enter');
           dispatch({
             act: DraggableAct.SET_DRAG_ITEM_CAN_HOLD,
             id: id,
@@ -48,7 +46,6 @@ export function DraggableBox({
           });
         }}
         onMouseLeave={() => {
-          console.log('Mouse Leave');
           dispatch({
             act: DraggableAct.SET_DRAG_ITEM_CAN_HOLD,
             id: id,

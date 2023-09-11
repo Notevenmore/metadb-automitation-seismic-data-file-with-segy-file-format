@@ -11,7 +11,11 @@ import React, {
 import Input from '../../components/Input';
 import Button from '../../components/button';
 import Container from '../../components/container';
-import {checkAfe} from '../../components/utility_functions';
+import {
+  checkAfe,
+  logError,
+  showErrorToast,
+} from '../../components/utility_functions';
 import {datatypes} from '../../config';
 import CloseThin from '../../public/icons/close-thin.svg';
 import DropFile from '../../public/icons/drop-file.svg';
@@ -238,93 +242,90 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
             },
           });
         } else {
-          dispatch(
-            displayErrorMessage({
-              message:
-                'Failed to create a new record. Please try again or contact maintainer if the problem persists.',
-              color: 'red',
-              duration: 5000,
-            }),
+          showErrorToast(
+            dispatch,
+            'Failed to create a new record. Please try again',
           );
         }
       }
     } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed to create a new record, please try again or contact maintainer if the problem persists. Additional error message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
+      showErrorToast(
+        dispatch,
+        `Failed to create a new record, please try again`,
       );
+      logError('', error);
     }
 
     router.events.emit('routeChangeComplete');
   };
 
-  const handleAfeChange = async (e, focused: boolean) => {
-    e.preventDefault();
-    const input_value = parseInt(e.target.value);
-    if (!input_value) {
+  let checkAFETimeout = undefined;
+  const handleAfeChange = async (
+    afe_number: number,
+    focused: boolean,
+    datatype: string,
+  ) => {
+    // const afe_number = parseInt(e.target.value);
+    if (!afe_number) {
       return;
     }
-    try {
-      if (focused) {
-        if (!UplSettings.DataType) {
-          setafeExist(false);
-          setpopupMessage({
-            message: 'Please select a data type first',
-            color: 'red',
-          });
-        }
-      } else {
-        setpopupMessage({message: '', color: ''});
-
-        if (!UplSettings.afe_number || !UplSettings.DataType) {
-          return;
-        }
-
-        const result: string = await checkAfe(
-          false,
-          config,
-          datatypes[UplSettings.DataType],
-          parseInt((e.target as HTMLInputElement).value),
-        );
-        if (result !== 'null') {
-          const workspace_data: UploadDocumentSettings = JSON.parse(result)[0];
-          setafeExist(true);
-          setUplSettings({
-            ...UplSettings,
-            afe_number: input_value,
-            kkks_name: workspace_data.kkks_name,
-            working_area: workspace_data.working_area,
-            submission_type: workspace_data.submission_type,
-            afe_exist: true,
-          });
-          setpopupMessage({
-            message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Data acquired from this file will be appended to the existing record. You can edit the fields below in the review section later on.`,
-            color: 'blue',
-          });
-        } else {
-          setafeExist(false);
-          setpopupMessage({message: '', color: ''});
-        }
-      }
-    } catch (error) {
-      dispatch(
-        displayErrorMessage({
-          message: `Failed checking AFE availability, please try again or contact maintainer if the problem persists. Additional message: ${String(
-            error,
-          )}`,
-          color: 'red',
-          duration: 5000,
-        }),
-      );
-      setpopupMessage({message: 'Something went wrong', color: 'red'});
-      await delay(1000);
-      setpopupMessage({message: '', color: ''});
+    if (checkAFETimeout !== undefined) {
+      clearTimeout(checkAFETimeout);
     }
+    checkAFETimeout = setTimeout(async () => {
+      try {
+        if (focused) {
+          if (!UplSettings.DataType) {
+            setafeExist(false);
+            setpopupMessage({
+              message: 'Please select a data type first',
+              color: 'red',
+            });
+          }
+        } else {
+          setpopupMessage({message: '', color: ''});
+
+          if (!afe_number || !UplSettings.DataType) {
+            return;
+          }
+
+          const result: string = await checkAfe(
+            false,
+            config,
+            datatypes[datatype],
+            afe_number,
+          );
+          if (result !== 'null') {
+            const workspace_data: UploadDocumentSettings =
+              JSON.parse(result)[0];
+            setafeExist(true);
+            setUplSettings({
+              ...UplSettings,
+              DataType: datatype,
+              afe_number: afe_number,
+              workspace_name: `record_${afe_number}`,
+              kkks_name: workspace_data.kkks_name,
+              working_area: workspace_data.working_area,
+              submission_type: workspace_data.submission_type,
+              afe_exist: true,
+            });
+            setpopupMessage({
+              message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Data acquired from this file will be appended to the existing record. You can edit the fields below in the review section later on.`,
+              color: 'blue',
+            });
+          } else {
+            setafeExist(false);
+            setpopupMessage({message: '', color: ''});
+          }
+        }
+      } catch (error) {
+        showErrorToast(dispatch, error);
+        setpopupMessage({message: 'Something went wrong', color: 'red'});
+        await delay(1000);
+        setpopupMessage({message: '', color: ''});
+      }
+      checkAFETimeout = undefined;
+    }, 300);
   };
 
   useEffect(() => {
@@ -417,9 +418,10 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
             required={true}
             additional_styles="w-full"
             additional_styles_label={additional_styles_label}
-            onChange={e =>
-              setUplSettings({...UplSettings, DataType: e.target.value})
-            }
+            onChange={e => {
+              setUplSettings({...UplSettings, DataType: e.target.value});
+              handleAfeChange(UplSettings.afe_number, false, e.target.value);
+            }}
             withSearch
           />
           <div className={`${popupMessage.message ? 'space-y-2' : ''}`}>
@@ -438,10 +440,14 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
                 if (UplSettings.DataType) {
                   setUplSettings({
                     ...UplSettings,
-                    afe_number: parseInt(e.target.value, 10),
+                    afe_number: parseInt(e.target.value) || null,
                     workspace_name: `record_${e.target.value}`,
                   });
-                  handleAfeChange(e, false);
+                  handleAfeChange(
+                    parseInt(e.target.value),
+                    false,
+                    UplSettings.DataType,
+                  );
                 }
               }}
             />
@@ -586,27 +592,29 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
                 </section>
               </div>
             </Button>
-           {UplSettings.DataType.toLowerCase().includes("2d seismic") && <Button
-              id="automatic"
-              title=""
-              additional_styles={`h-full active:bg-gray-400/60 outline-none ${
-                UplSettings.Method === 'automatic' ? activeStyle : ''
-              }`}
-              onClick={e => {
-                e.preventDefault();
-                setUplSettings({...UplSettings, Method: 'automatic'});
-              }}>
-              <div className="flex space-x-2 min-w-max items-center p-2">
-                <Robot className="w-10 h-10" />
-                <section className="w-150p">
-                  <h3 className="text-lg font-bold">Automatic</h3>
-                  <p className="text-sm">
-                    Automatically try to predict data and their respective
-                    matches.
-                  </p>
-                </section>
-              </div>
-            </Button>}
+            {UplSettings.DataType.toLowerCase().includes('2d seismic') && (
+              <Button
+                id="automatic"
+                title=""
+                additional_styles={`h-full active:bg-gray-400/60 outline-none ${
+                  UplSettings.Method === 'automatic' ? activeStyle : ''
+                }`}
+                onClick={e => {
+                  e.preventDefault();
+                  setUplSettings({...UplSettings, Method: 'automatic'});
+                }}>
+                <div className="flex space-x-2 min-w-max items-center p-2">
+                  <Robot className="w-10 h-10" />
+                  <section className="w-150p">
+                    <h3 className="text-lg font-bold">Automatic</h3>
+                    <p className="text-sm">
+                      Automatically try to predict data and their respective
+                      matches.
+                    </p>
+                  </section>
+                </div>
+              </Button>
+            )}
           </div>
         </div>
         <div className="flex flex-row gap-x-3 pt-3 pb-16">
@@ -726,7 +734,7 @@ export function getServerSideProps() {
   return {
     props: {
       config: config,
-      kkks_name
+      kkks_name,
     }, // will be passed to the page component as props
   };
 }

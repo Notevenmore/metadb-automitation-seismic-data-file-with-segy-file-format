@@ -1,6 +1,6 @@
 import { parseCookies } from 'nookies';
 
-export function getHeader(config: any, form_type: string) {
+export async function getHeader(config: any, form_type: string) {
   return fetch(
     `${config.services.sheets}/getHeaders`,
     {
@@ -19,10 +19,4 @@ export function getHeader(config: any, form_type: string) {
   .then(response => {
     return response.json();
   })
-  .then(response => {
-    if (response.status !== 200) {
-      throw response.response;
-    }
-    return response;
-  });
 }

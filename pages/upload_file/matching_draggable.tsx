@@ -6,7 +6,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import Highlight from 'react-highlight';
 import {HeaderDivider, HeaderTable} from '../../components/HeaderTable';
 import {Tuple4, useNaturalImageDim} from '../../components/HighlightViewer';
 import Input from '../../components/Input';
@@ -42,6 +41,7 @@ import {
 } from '../../store/generalSlice';
 import {toBase64} from '../../utils/base64';
 import {delay} from '../../utils/common';
+import {HeaderResponse} from '@utils/types';
 
 interface MatchReviewProps {
   setTitle: (title: string) => void;
@@ -63,7 +63,6 @@ export const useElementDim = (ref: MutableRefObject<null>) => {
     const element = ref.current as HTMLElement;
     if (!element) return;
     const {width, height} = element.getBoundingClientRect();
-    console.log(`element dim called: ${width}, ${height}`);
     setDim(_ => [width, height]);
   }, [ref, check]);
   return {dim, reload};
@@ -74,6 +73,7 @@ type DraggableData = {
   dim: Tuple2<number>;
   src: string;
   word: string;
+  imageLoaded: boolean;
 };
 
 export default function MatchReview({config, setTitle}: MatchReviewProps) {
@@ -88,28 +88,27 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const {dim: naturalDim, reload: naturalReload} = useNaturalImageDim(imageRef);
   const {dim: actualDim, reload: actualReload} = useElementDim(imageRef);
   const [dragData, setDragData] = useState<DraggableData[]>([]);
-  const draggables: DraggableData[] = [
-    {
-      initialPos: [100, 100],
-      dim: [40, 40],
-      src: '/favicon.ico',
-      word: 'icon',
-    },
-  ];
   const [formType, setformType] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  useEffect(() => {
-    console.log(`naturalDim: ${naturalDim}`);
-    console.log(`actualDim: ${actualDim}`);
-  }, [actualDim, naturalDim]);
-
+  
   const files = useAppSelector(state => state.general.file);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const path_query =
-    'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
+  'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
+  useEffect(() => {
+    const allLoaded = dragData.every(i => i.imageLoaded);
+    const allNotLoaded = dragData.every(i => !i.imageLoaded);
+    if (allLoaded) {
+      router.events.emit("routeChangeComplete");
+    } else if (allNotLoaded) {
+      router.events.emit("routeChangeStart");
+    } else {
+    }
+  }, [dragData, router]);
+  
   const setDocId = useCallback((newDocId: string) => {
     _setDocId(id => {
       if (id === null) {
@@ -142,6 +141,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           dim: [width, height],
           initialPos: [bound[1], bound[0]],
           src: generateDragImageSrc(docId, pageNo, bound),
+          imageLoaded: false,
         };
       });
       return newDragData;
@@ -222,13 +222,37 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setDocId(docId);
           setLoading('Populating draggable items...');
 
-          setLoading(
-            `Getting appropriate properties for data type ${router.query.form_type}`,
-          );
-          const row_names = await getHeader(
-            config,
-            router.query?.form_type as string,
-          );
+          let row_names: HeaderResponse;
+          const max_retry = 3;
+          let count = 0;
+          let retry_seconds = 3;
+          while (count !== max_retry + 1) {
+            if (count !== 0) {
+              while (retry_seconds !== 0) {
+                setLoading(
+                  `Failed getting properties for data type ${router.query.form_type}, retrying in ${retry_seconds} seconds (Attemp ${count}/${max_retry})`,
+                );
+                await delay(1000);
+                retry_seconds--;
+              }
+              retry_seconds = 3;
+            }
+            setLoading(
+              `Getting appropriate properties for data type ${router.query.form_type}`,
+            );
+            row_names = await getHeader(
+              config,
+              router.query?.form_type as string,
+            );
+            if (row_names.status === 200) {
+              break;
+            } else if (row_names.status !== 200 && count === max_retry) {
+              throw `Something went wrong with the Sheets service. Response returned error with the following details: ${JSON.stringify(
+                row_names.response,
+              )}`;
+            }
+            count++;
+          }
 
           setLoading(
             `Setting appropriate properties for data type ${router.query.form_type}`,
@@ -243,21 +267,21 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           });
           setState(temp);
           setLoading('');
+          dispatch(
+            displayErrorMessage({
+              message:
+                'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
+              color: 'blue',
+              duration: 5000,
+            }),
+          );
         } catch (error) {
-          setError(String(error));
+          setError(JSON.stringify(error));
           setLoading('');
         }
       }
-      router.events.emit('routeChangeComplete');
+      // router.events.emit('routeChangeComplete');
       setLoading('');
-      dispatch(
-        displayErrorMessage({
-          message:
-            'Make sure you have inputted all of the data correctly before proceeding to view them in the spreadsheet.',
-          color: 'blue',
-          duration: 5000,
-        }),
-      );
     };
     if (router.isReady) {
       init();
@@ -325,12 +349,11 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   };
 
   const Draggables = () => {
-    if (!draggables) return <></>;
     const sw = actualDim[0] / naturalDim[0];
     const sh = actualDim[1] / naturalDim[1];
     return (
       <>
-        {dragData.map(it => (
+        {dragData.map((it, idx) => (
           <DraggableBox
             id={it.initialPos[0] * 10000 + it.initialPos[1]}
             initialPos={[it.initialPos[0] * sh, it.initialPos[1] * sw]}
@@ -355,6 +378,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                   userSelect: 'none',
                   MozUserSelect: '-moz-none',
                 }}
+                onLoad={() => setDragData(prev => [...prev.slice(0, idx), {...it, imageLoaded: true }, ...prev.slice(idx + 1)])}
               />
             </div>
           </DraggableBox>
@@ -374,7 +398,9 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         Something happened. Please try again or contact administrator/maintainer
         if the problem still persists by giving them the information below:
       </p>
-      <Highlight className="html rounded-md border-2">{error}</Highlight>
+      <code className="w-full rounded-md p-2 border-2 break-words">
+        {error}
+      </code>
       <Button
         path=""
         button_description="Back"
@@ -411,7 +437,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               onLoad={() => {
                 naturalReload();
                 actualReload();
-                console.log('reloaded');
               }}
             />
           </div>

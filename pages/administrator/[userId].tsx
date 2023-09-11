@@ -13,6 +13,7 @@ import {FloatDialog} from '@components/FloatDialog';
 import ProfilePic from '../../dummy-data/profile_pic';
 import Mime, {defaultProfile} from '@utils/mime';
 import {uploadIMG} from '@utils/image';
+import { showErrorToast } from '@components/utility_functions';
 
 UserPage.getLayout = getLayoutTop;
 
@@ -34,13 +35,7 @@ export default function UserPage() {
   const dispatch = useAppDispatch();
   const handleProfile = useCallback(() => {
     getProfile(userId).then(setDetail, err => {
-      dispatch(
-        displayErrorMessage({
-          message: String(err),
-          color: 'red',
-          duration: 5000,
-        }),
-      );
+      showErrorToast(dispatch, err)
       return;
     });
   }, [dispatch, userId]);
@@ -71,14 +66,7 @@ export default function UserPage() {
       },
       err => {
         const entityTooLarge = (err.response && err.response.status) ?? 400
-        console.log(err)
-        dispatch(
-          displayErrorMessage({
-            message: entityTooLarge===413 ? "The image you attempted to upload is too large." : String(err),
-            color: 'red',
-            duration: 5000,
-          }),
-        );
+        showErrorToast(dispatch, entityTooLarge===413 ? "The image you attempted to upload is too large. The maximum upload size is 1MB." : err)
       },
     );
   };
