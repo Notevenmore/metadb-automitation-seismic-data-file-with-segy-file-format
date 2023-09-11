@@ -70,9 +70,11 @@ export default function UserPage() {
         );
       },
       err => {
+        const entityTooLarge = (err.response && err.response.status) ?? 400
+        console.log(err)
         dispatch(
           displayErrorMessage({
-            message: String(err),
+            message: entityTooLarge===413 ? "The image you attempted to upload is too large." : String(err),
             color: 'red',
             duration: 5000,
           }),
