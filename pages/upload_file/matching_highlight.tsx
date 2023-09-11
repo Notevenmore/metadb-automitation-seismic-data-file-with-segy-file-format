@@ -165,7 +165,7 @@ export default function MatchingGuided({config, setTitle}) {
           setLoading(null);
         }
       }
-      router.events.emit('routeChangeComplete');
+      // router.events.emit('routeChangeComplete');
       setLoading('');
     };
     if (router.isReady) {

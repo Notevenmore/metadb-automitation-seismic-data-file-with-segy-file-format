@@ -227,7 +227,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
         Promise.all(promises)
           .then(() => {
             setLoading('');
-            router.events.emit('routeChangeComplete');
+            // router.events.emit('routeChangeComplete');
             dispatch(
               displayErrorMessage({
                 message:

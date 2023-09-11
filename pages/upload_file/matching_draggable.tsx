@@ -63,7 +63,6 @@ export const useElementDim = (ref: MutableRefObject<null>) => {
     const element = ref.current as HTMLElement;
     if (!element) return;
     const {width, height} = element.getBoundingClientRect();
-    console.log(`element dim called: ${width}, ${height}`);
     setDim(_ => [width, height]);
   }, [ref, check]);
   return {dim, reload};
@@ -74,6 +73,7 @@ type DraggableData = {
   dim: Tuple2<number>;
   src: string;
   word: string;
+  imageLoaded: boolean;
 };
 
 export default function MatchReview({config, setTitle}: MatchReviewProps) {
@@ -88,28 +88,27 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   const {dim: naturalDim, reload: naturalReload} = useNaturalImageDim(imageRef);
   const {dim: actualDim, reload: actualReload} = useElementDim(imageRef);
   const [dragData, setDragData] = useState<DraggableData[]>([]);
-  const draggables: DraggableData[] = [
-    {
-      initialPos: [100, 100],
-      dim: [40, 40],
-      src: '/favicon.ico',
-      word: 'icon',
-    },
-  ];
   const [formType, setformType] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  useEffect(() => {
-    console.log(`naturalDim: ${naturalDim}`);
-    console.log(`actualDim: ${actualDim}`);
-  }, [actualDim, naturalDim]);
-
+  
   const files = useAppSelector(state => state.general.file);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const path_query =
-    'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
+  'Home' + router.pathname.replace(/\//g, ' > ').replace(/\_/g, ' ');
 
+  useEffect(() => {
+    const allLoaded = dragData.every(i => i.imageLoaded);
+    const allNotLoaded = dragData.every(i => !i.imageLoaded);
+    if (allLoaded) {
+      router.events.emit("routeChangeComplete");
+    } else if (allNotLoaded) {
+      router.events.emit("routeChangeStart");
+    } else {
+    }
+  }, [dragData, router]);
+  
   const setDocId = useCallback((newDocId: string) => {
     _setDocId(id => {
       if (id === null) {
@@ -142,6 +141,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           dim: [width, height],
           initialPos: [bound[1], bound[0]],
           src: generateDragImageSrc(docId, pageNo, bound),
+          imageLoaded: false,
         };
       });
       return newDragData;
@@ -280,7 +280,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
           setLoading('');
         }
       }
-      router.events.emit('routeChangeComplete');
+      // router.events.emit('routeChangeComplete');
       setLoading('');
     };
     if (router.isReady) {
@@ -349,12 +349,11 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
   };
 
   const Draggables = () => {
-    if (!draggables) return <></>;
     const sw = actualDim[0] / naturalDim[0];
     const sh = actualDim[1] / naturalDim[1];
     return (
       <>
-        {dragData.map(it => (
+        {dragData.map((it, idx) => (
           <DraggableBox
             id={it.initialPos[0] * 10000 + it.initialPos[1]}
             initialPos={[it.initialPos[0] * sh, it.initialPos[1] * sw]}
@@ -379,6 +378,7 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
                   userSelect: 'none',
                   MozUserSelect: '-moz-none',
                 }}
+                onLoad={() => setDragData(prev => [...prev.slice(0, idx), {...it, imageLoaded: true }, ...prev.slice(idx + 1)])}
               />
             </div>
           </DraggableBox>
@@ -437,7 +437,6 @@ export default function MatchReview({config, setTitle}: MatchReviewProps) {
               onLoad={() => {
                 naturalReload();
                 actualReload();
-                console.log('reloaded');
               }}
             />
           </div>

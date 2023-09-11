@@ -22,7 +22,6 @@ export const draggableReducer = (
   state: DraggableState,
   action: DraggableAction,
 ): DraggableState => {
-  console.log(state);
   switch (action.act) {
     case DraggableAct.SET_DRAGGABLE_POSITION: {
       // private
