@@ -754,7 +754,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
               }}>
               <CloseThin className="w-5 h-5" />
             </Button>
-            <h1 className="font-bold text-3xl">More download option</h1>
+            <h1 className="font-bold text-3xl">Bulk search</h1>
             <hr />
             <div className="border-2 rounded-lg h-[calc(100%-125px)] overflow-auto relative">
               <div className="flex justify-between items-center p-5 sticky top-0 bg-white">
