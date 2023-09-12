@@ -153,6 +153,8 @@ User also have the choice to use MetaDB as a platform to record their data. This
  <p align="center"> <img src ="/markdown/src/Untitled%2021.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>  
 
 2. After clicking confirm, user will be redirected to the New Record page. In this page, user can change the KKKS name, working area, and submission type. User can also directly use the sheets shown to record new data. 
+
+> For some data types, they have duplicates of `ba_long_name` and `ba_type`. There are `ba_long_name` and `ba_long_name_2` may share the same value but they do not have to, they are independent of each other. Same goes with `ba_type` and `ba_type_2`.
     
 <p align="center"> <img src ="/markdown/src/Untitled%2022.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p> 
 
@@ -180,7 +182,7 @@ By clicking on the pencil icon, user can edit their record. User will be taken t
 
 User able to download record into `xlxs` format by clicking on the download logo under the `Action` section.
 
-<p align="center"> <img src ="/markdown/src/downloadButton.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>
+<p align="center"> <img src ="/markdown/src/downloadbutton.png" style= "border : 2px solid cornflowerblue; border-radius:10px;"> </p>
 
 The download button will individually download the record.
 
