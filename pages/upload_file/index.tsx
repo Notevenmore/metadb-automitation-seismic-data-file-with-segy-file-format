@@ -454,7 +454,7 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
             <div
               className={`${
                 popupMessage.message
-                  ? 'p-1 max-h-[1000px] visible'
+                  ? 'py-1 px-2 max-h-[1000px] visible'
                   : 'max-h-0 -translate-y-1'
               } ${
                 popupMessage.message
@@ -462,7 +462,7 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
                     ? 'border-2 border-red-500 bg-red-100'
                     : 'border-2 border-blue-500 bg-blue-100'
                   : ''
-              } text-sm w-full text-center transition-all pointer-events-none`}>
+              } text-sm w-full transition-all pointer-events-none`}>
               <p>{popupMessage.message}</p>
             </div>
           </div>
