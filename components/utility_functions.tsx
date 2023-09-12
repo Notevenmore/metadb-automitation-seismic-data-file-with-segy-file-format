@@ -774,88 +774,94 @@ export const formatWorkspaceList = (
     return workspaces_list;
   }
   let final = [];
+  let temp_afe_dupe_check = [];
   workspaces_list.forEach(workspace => {
-    final.push({
-      KKKS: workspace.kkks_name,
-      'Working area': workspace.working_area,
-      AFE: workspace.afe_number,
-      Type: workspace.submission_type,
-      Action: (
-        <div className="flex flex-row gap-x-4 items-center">
-          <Button
-            title="Download"
-            additional_styles="px-3 hover:bg-green-300"
-            className="flex"
-            onClick={async e => {
-              try {
-                router.events.emit('routeChangeStart');
-                await downloadWorkspace(
-                  {query: {form_type: datatype}},
-                  config,
-                  workspace,
-                  dispatch,
-                );
-                router.events.emit('routeChangeComplete');
-              } catch (error) {
-                dispatch(
-                  displayErrorMessage({
-                    message: JSON.stringify(error),
-                    color: 'blue',
-                  }),
-                );
-                router.events.emit('routeChangeComplete');
-              }
-            }}>
-            <div className="w-18p h-18p">
-              <DownloadCommon className="w-5 h-5" />
-            </div>
-          </Button>
-          <Button
-            title="Edit record"
-            additional_styles="px-3"
-            className="flex"
-            path={`/edit/${workspace.workspace_name}`}
-            query={{
-              form_type: datatype,
-              workspace_data: workspace.afe_number,
-              previous: router.asPath,
-            }}>
-            <div className="w-18p h-18p flex items-center">
-              <Image
-                src="/icons/pencil.svg"
-                width={50}
-                height={50}
-                alt="icon"
-              />
-            </div>
-          </Button>
-          <Button
-            additional_styles="px-3 hover:bg-red-400"
-            className="flex"
-            title="Delete record"
-            onClick={e => {
-              openPopup({
-                message: `Are you sure you want to delete a record with afe number ${workspace.afe_number}? This action is irreversible!`,
-                title: 'Delete confirmation',
-                onConfirm: () => {
-                  deleteWorkspace(workspace.afe_number).then(() => {
-                    init();
-                  });
-                },
-              });
-            }}>
-            <div className="w-18p h-18p flex items-center">
-              <Image
-                src="/icons/delete.svg"
-                width={50}
-                height={50}
-                alt="icon"
-              />
-            </div>
-          </Button>
-        </div>
-      ),
-    });
+    if (!temp_afe_dupe_check.includes(workspace.afe_number)){
+      final.push({
+        KKKS: workspace.kkks_name,
+        'Working area': workspace.working_area,
+        AFE: workspace.afe_number,
+        Type: workspace.submission_type,
+        Action: (
+          <div className="flex flex-row gap-x-4 items-center">
+            <Button
+              title="Download"
+              additional_styles="px-3 hover:bg-green-300"
+              className="flex"
+              onClick={async e => {
+                try {
+                  router.events.emit('routeChangeStart');
+                  await downloadWorkspace(
+                    {query: {form_type: datatype}},
+                    config,
+                    workspace,
+                    dispatch,
+                  );
+                  router.events.emit('routeChangeComplete');
+                } catch (error) {
+                  dispatch(
+                    displayErrorMessage({
+                      message: JSON.stringify(error),
+                      color: 'blue',
+                    }),
+                  );
+                  router.events.emit('routeChangeComplete');
+                }
+              }}>
+              <div className="w-18p h-18p">
+                <DownloadCommon className="w-5 h-5" />
+              </div>
+            </Button>
+            <Button
+              title="Edit record"
+              additional_styles="px-3"
+              className="flex"
+              path={`/edit/${workspace.workspace_name}`}
+              query={{
+                form_type: datatype,
+                workspace_data: workspace.afe_number,
+                previous: router.asPath,
+              }}>
+              <div className="w-18p h-18p flex items-center">
+                <Image
+                  src="/icons/pencil.svg"
+                  width={50}
+                  height={50}
+                  alt="icon"
+                />
+              </div>
+            </Button>
+            <Button
+              additional_styles="px-3 hover:bg-red-400"
+              className="flex"
+              title="Delete record"
+              onClick={e => {
+                openPopup({
+                  message: `Are you sure you want to delete a record with afe number ${workspace.afe_number}? This action is irreversible!`,
+                  title: 'Delete confirmation',
+                  onConfirm: () => {
+                    deleteWorkspace(workspace.afe_number).then(() => {
+                      init();
+                    });
+                  },
+                });
+              }}>
+              <div className="w-18p h-18p flex items-center">
+                <Image
+                  src="/icons/delete.svg"
+                  width={50}
+                  height={50}
+                  alt="icon"
+                />
+              </div>
+            </Button>
+          </div>
+        ),
+      });
+
+      // append afe number to the temp check array
+      temp_afe_dupe_check.push(workspace.afe_number);
+    }
   });
   return final;
 };
