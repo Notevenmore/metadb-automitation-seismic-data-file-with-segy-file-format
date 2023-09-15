@@ -147,7 +147,7 @@ export const useTableEditor = (
           if (titles[i].includes('date')) {
             validation = `regex:${dateRegex}`;
           } else if (validation.includes('string')) {
-            validation = 'string';
+            validation = 'string|integer';
           } else if (validation.includes('int')) {
             validation = 'max:9000000000000000';
           } else if (validation.includes('float32')) {
