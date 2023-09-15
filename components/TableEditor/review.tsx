@@ -10,7 +10,7 @@ import {
   showErrorToast,
 } from '@components/utility_functions';
 import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 import Highlight from 'react-highlight';
 import TableEditor from '.';
 import {TableType} from '../../constants/table';
@@ -170,6 +170,26 @@ export default function TableUploadFileReview({setTitle, config}) {
     }
     router.events.emit('routeChangeComplete');
   };
+
+  const onDateValidationError = useCallback(() => {
+    dispatch(
+      displayErrorMessage({
+        message: 'Please input dates using the DD/MM/YYYY format.',
+        color: 'blue',
+        duration: 20000,
+      }),
+    );
+  }, [dispatch]);
+
+  const onMaxNumericLimitValidationError = useCallback(() => {
+    dispatch(
+      displayErrorMessage({
+        message: 'Value must be numeric and below 9,000,000,000,000,000',
+        color: 'red',
+        duration: 20000,
+      }),
+    );
+  }, [dispatch]);
 
   useEffect(() => {
     if (spreadsheetReady) {
@@ -334,6 +354,8 @@ export default function TableUploadFileReview({setTitle, config}) {
                     tableRef={tableRef}
                     options={tableOptions}
                     hideButton={true}
+                    onDateValidationError={onDateValidationError}
+                    onMaxNumericLimitError={onMaxNumericLimitValidationError}
                   />
                 )}
               </div>,
