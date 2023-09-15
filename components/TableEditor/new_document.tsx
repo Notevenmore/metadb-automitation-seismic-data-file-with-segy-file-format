@@ -8,7 +8,7 @@ import {UploadDocumentSettings, displayErrorMessage} from '@store/generalSlice';
 import {useAppDispatch, useAppSelector} from '@store/index';
 import {delay} from '@utils/common';
 import {useRouter} from 'next/router';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 import {useTableEditor} from '../../hooks/useTableEditor';
 import Save from '../../public/icons/save.svg';
 import {showErrorToast} from '@components/utility_functions';
@@ -92,6 +92,26 @@ export default function TableNewDocumentPage({setTitle}) {
       );
     }
   }, [dispatch, router.events, spreadsheetReady]);
+
+  const onDateValidationError = useCallback(() => {
+    dispatch(
+      displayErrorMessage({
+        message: 'Please input dates using the DD/MM/YYYY format.',
+        color: 'blue',
+        duration: 20000,
+      }),
+    );
+  }, [dispatch]);
+
+  const onMaxNumericLimitValidationError = useCallback(() => {
+    dispatch(
+      displayErrorMessage({
+        message: 'Value must be numeric and below 9,000,000,000,000,000',
+        color: 'red',
+        duration: 20000,
+      }),
+    );
+  }, [dispatch]);
 
   return workspaceData ? (
     <Container additional_class="full-height relative">
@@ -193,6 +213,8 @@ export default function TableNewDocumentPage({setTitle}) {
                   tableRef={tableRef}
                   options={tableOptions}
                   hideButton={true}
+                  onDateValidationError={onDateValidationError}
+                  onMaxNumericLimitError={onMaxNumericLimitValidationError}
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
@@ -206,6 +228,7 @@ export default function TableNewDocumentPage({setTitle}) {
           ]}
           additional_styles="overflow-hidden"
           additional_styles_row="p-0"
+          
         />
       </div>
       <div className="flex space-x-2 py-10">

@@ -113,6 +113,26 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
     }
   }, [dispatch, spreadsheetReady]);
 
+  const onDateValidationError = useCallback(() => {
+    dispatch(
+      displayErrorMessage({
+        message: 'Please input dates using the DD/MM/YYYY format.',
+        color: 'blue',
+        duration: 20000,
+      }),
+    );
+  }, [dispatch]);
+
+  const onMaxNumericLimitValidationError = useCallback(() => {
+    dispatch(
+      displayErrorMessage({
+        message: 'Value must be numeric and below 9,000,000,000,000,000',
+        color: 'red',
+        duration: 20000,
+      }),
+    );
+  }, [dispatch]);
+
   const saveDocumentHandler = useCallback(async () => {
     router.events.emit('routeChangeStart');
     try {
@@ -319,6 +339,8 @@ export const EditTableDocEditor = ({workspace_name, setTitle, config}) => {
                       columns={finalColumns}
                       tableRef={tableRef}
                       options={tableOptions}
+                      onDateValidationError={onDateValidationError}
+                      onMaxNumericLimitError={onMaxNumericLimitValidationError}
                     />
                   </div>,
                 ]
