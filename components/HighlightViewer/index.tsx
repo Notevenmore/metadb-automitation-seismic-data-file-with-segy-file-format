@@ -350,6 +350,18 @@ export const useElementOffset = (ref: MutableRefObject<null>) => {
   }
 
   useEffect(() => {
+    if (ref.current === null) return;
+    const element = ref.current as unknown as HTMLElement;
+    const onResize = () => {
+      const {top, left} = element.getBoundingClientRect();
+      setElementOffset(_ => [left, top]);
+    };
+    const observer = new ResizeObserver(onResize);
+    observer.observe(element);
+    return () => { observer.disconnect(); }
+  }, []);
+
+  useEffect(() => {
     calculateOffset();
   }, []);
 
@@ -544,6 +556,18 @@ export const useElementDim = (ref: MutableRefObject<null>) => {
     const {width, height} = element.getBoundingClientRect();
     setDim(_ => [width, height]);
   }, [ref]);
+
+  useEffect(() => {
+    if (ref.current === null) return;
+    const element = ref.current as unknown as HTMLElement;
+    const onResize = () => {
+      const {width, height} = element.getBoundingClientRect();
+      setDim([width, height]);
+    };
+    const observer = new ResizeObserver(onResize);
+    observer.observe(element);
+    return () => { observer.disconnect(); }
+  }, []);
 
   return dim;
 };
