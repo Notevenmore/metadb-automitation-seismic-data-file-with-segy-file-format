@@ -142,18 +142,18 @@ export const useTableEditor = (
         for (let i = 0; i < titles.length; i++) {
           const upper = titles[i].toUpperCase();
           const lower = titles[i].toLowerCase();
-          let validation: string = types[i];
+          let validation: string | string[] = types[i];
 
           if (titles[i].includes('date')) {
             validation = `regex:${dateRegex}`;
           } else if (validation.includes('string')) {
             validation = 'string|integer';
           } else if (validation.includes('int')) {
-            validation = 'max:9000000000000000';
+            validation = ['integer', 'max:9000000000000000', 'min:-9000000000000000'];
           } else if (validation.includes('float32')) {
-            validation = 'max:9000000000000000';
+            validation = ['numeric', 'max:9000000000000000', 'min:-9000000000000000'];
           } else if (validation.includes('float64')) {
-            validation = 'max:9000000000000000';
+            validation = ['numeric', 'max:9000000000000000', 'min:-9000000000000000'];
           }
 
           if (upper === 'ID') {
