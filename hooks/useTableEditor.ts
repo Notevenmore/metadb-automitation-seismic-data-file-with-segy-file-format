@@ -151,9 +151,9 @@ export const useTableEditor = (
           } else if (validation.includes('int')) {
             validation = ['integer', 'max:9000000000000000'];
           } else if (validation.includes('float32')) {
-            validation = ['integer', 'max:9000000000000000'];
+            validation = ['numeric', 'max:9000000000000000'];
           } else if (validation.includes('float64')) {
-            validation = ['integer', 'max:9000000000000000'];
+            validation = ['numeric', 'max:9000000000000000'];
           }
 
           if (upper === 'ID') {

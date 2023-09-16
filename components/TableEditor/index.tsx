@@ -62,6 +62,10 @@ export default function TableEditor({
                 if (onMaxNumericLimitError) onMaxNumericLimitError();
                 return;
               }
+              if (validator.type === "numeric") {
+                if (onMaxNumericLimitError) onMaxNumericLimitError();
+                return;
+              }
               if (validator.type === "max" && validator.parameters === "9000000000000000") {
                 if (onMaxNumericLimitError) onMaxNumericLimitError();
                 return;
