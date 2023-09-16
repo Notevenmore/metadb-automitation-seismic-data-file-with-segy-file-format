@@ -157,9 +157,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
     } catch (error) {
       if (String(error).includes('Cannot read properties')) {
         seterror(
-          String(
-            'Error: Datatype not implemented yet. Please contact maintainer/developer.',
-          ),
+          'Error: Datatype not implemented yet. Please contact maintainer/developer.',
         );
       } else {
         seterror(String(error));
@@ -602,7 +600,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
                         workspace_name: `record_${e.target.value}`,
                       });
                       handleAfeChange(
-                        e,
+                        parseInt(e.target.value),
                         config,
                         datatype,
                         dispatch,
