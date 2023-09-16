@@ -51,13 +51,20 @@ export default function TableEditor({
               console.log('ajaxError', error);
             },
             validationFailed: (cell, value, validators) => {
+              cell.setValue("", true);
               if (validators.length === 0) return;
               const validator = validators[0];
               if (validator.type === "regex" && validator.parameters === dateRegex) {
                 if (onDateValidationError) onDateValidationError();
+                return;
+              }
+              if (validator.type === "integer") {
+                if (onMaxNumericLimitError) onMaxNumericLimitError();
+                return;
               }
               if (validator.type === "max" && validator.parameters === "9000000000000000") {
                 if (onMaxNumericLimitError) onMaxNumericLimitError();
+                return;
               }
             }
           }}
