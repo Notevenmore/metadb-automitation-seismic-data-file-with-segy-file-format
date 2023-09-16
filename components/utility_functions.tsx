@@ -776,7 +776,7 @@ export const formatWorkspaceList = (
   let final = [];
   let temp_afe_dupe_check = [];
   workspaces_list.forEach(workspace => {
-    if (!temp_afe_dupe_check.includes(workspace.afe_number)){
+    if (!temp_afe_dupe_check.includes(workspace.afe_number)) {
       final.push({
         KKKS: workspace.kkks_name,
         'Working area': workspace.working_area,
@@ -866,9 +866,28 @@ export const formatWorkspaceList = (
   return final;
 };
 
+export let popUpMessageTimeout = undefined;
+export const handlePopUpMessageError = async (
+  message: string,
+  setpopupMessage: Dispatch<SetStateAction<{message: string; color: string}>>,
+) => {
+  if (popUpMessageTimeout) {
+    clearTimeout(popUpMessageTimeout);
+  }
+
+  setpopupMessage({
+    message: message,
+    color: 'red',
+  });
+
+  popUpMessageTimeout = setTimeout(() => {
+    setpopupMessage({message: '', color: ''});
+  }, 2000);
+};
+
 export let checkAFETimeout = undefined;
 export const handleAfeChange = async (
-  e: React.ChangeEvent<HTMLInputElement>,
+  afe_number: number,
   config: ServicesConfig & DatatypeConfig,
   datatype: string,
   dispatch: any,
@@ -877,27 +896,34 @@ export const handleAfeChange = async (
   newWorkspace: UploadDocumentSettings,
   setafeExist: Dispatch<SetStateAction<boolean>>,
 ) => {
-  const input_value = parseInt(e.target.value);
-  if (!input_value) {
+  if (!afe_number) {
+    return;
+  }
+  if (afe_number < 0) {
+    showErrorToast(dispatch, `AFE number must be greater than 1`);
+    handlePopUpMessageError(`AFE number must be greater than 1`, setpopupMessage);
+    setnewWorkspace({
+      ...newWorkspace,
+      afe_number: null,
+    });
     return;
   }
   if (checkAFETimeout !== undefined) {
     clearTimeout(checkAFETimeout);
   }
   checkAFETimeout = setTimeout(async () => {
-    e.preventDefault();
     try {
       setpopupMessage({message: '', color: ''});
       if (!newWorkspace.afe_number) {
         return;
       }
-      const result = await checkAfe(false, config, datatype, input_value);
+      const result = await checkAfe(false, config, datatype, afe_number);
       if (result !== 'null') {
         const workspace_data = JSON.parse(result)[0];
         setafeExist(true);
         setnewWorkspace({
           ...newWorkspace,
-          afe_number: input_value,
+          afe_number: afe_number,
           kkks_name: workspace_data.kkks_name,
           working_area: workspace_data.working_area,
           submission_type: workspace_data.submission_type,
@@ -918,9 +944,7 @@ export const handleAfeChange = async (
         `Failed checking AFE availability, please try again or contact maintainer if the problem persists.`,
       );
       logError(': AFE check failure: ', error);
-      setpopupMessage({message: 'Something went wrong', color: 'red'});
-      await delay(1000);
-      setpopupMessage({message: '', color: ''});
+      handlePopUpMessageError(`Something went wrong`, setpopupMessage);
     }
     checkAFETimeout = undefined;
   }, 300);

@@ -13,6 +13,7 @@ import Button from '../../components/button';
 import Container from '../../components/container';
 import {
   checkAfe,
+  handlePopUpMessageError,
   logError,
   showErrorToast,
 } from '../../components/utility_functions';
@@ -115,41 +116,6 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
     settoggleOverlay(true);
     return true;
   };
-
-  // TODO: DEBUG ONLY, COMMENT ON PRODUCTION AND PROPER TESTING
-  // AND UNCOMMENT THE COMMENTED METHOD WITH THE SAME NAME
-
-  // const proceed = async (e, submit = false, element = false) => {
-  //   e.preventDefault();
-  //   if (element) {
-  //     const comparator = document.getElementById('overlay');
-  //     const comparator_parent = document.getElementById('overlay_parent');
-  //     console.log(e.target, comparator, e.target !== comparator);
-  //     if (![comparator, comparator_parent].includes(e.target)) {
-  //       router.events.emit('routeChangeComplete');
-  //       return;
-  //     }
-  //   }
-  //   settoggleOverlay(false);
-  //   if (submit) {
-  //     router.push({
-  //       pathname:
-  //         UplSettings.Method === 'dropdown'
-  //           ? '/upload_file/matching_dropdown'
-  //           : UplSettings.Method === 'highlight'
-  //           ? '/upload_file/matching_highlight'
-  //           : UplSettings.Method === 'dragdrop'
-  //           ? '/upload_file/matching_draggable'
-  //           : '/upload_file/matching_auto',
-  //       query: {
-  //         form_type: datatypes[UplSettings.DataType],
-  //       },
-  //     });
-  //   }
-  // };
-
-  // TODO: UNCOMMENT ON TESTING AND PRODUCTION AND COMMENT THE OTHER METHOD WITH THE
-  // SAME NAME
 
   const proceed = async (
     e: React.MouseEvent<HTMLElement>,
@@ -269,6 +235,18 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
     if (!afe_number) {
       return;
     }
+    if (afe_number < 0) {
+      showErrorToast(dispatch, `AFE number must be greater than 1`);
+      handlePopUpMessageError(
+        'AFE number must be greater than 1',
+        setpopupMessage,
+      );
+      setUplSettings({
+        ...UplSettings,
+        afe_number: null,
+      });
+      return;
+    }
     if (checkAFETimeout !== undefined) {
       clearTimeout(checkAFETimeout);
     }
@@ -310,7 +288,7 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
               afe_exist: true,
             });
             setpopupMessage({
-              message: `A ${UplSettings.DataType.toLowerCase()} record with the same AFE number already exists. Data acquired from this file will be appended to the existing record. You can edit the fields below in the review section later on.`,
+              message: `A ${datatype.toLowerCase()} record with the same AFE number already exists. Data acquired from this file will be appended to the existing record. You can edit the fields below in the review section later on.`,
               color: 'blue',
             });
           } else {
