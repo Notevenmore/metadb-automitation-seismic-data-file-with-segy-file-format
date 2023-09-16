@@ -246,7 +246,20 @@ const HomeSection = ({config, kkks_name}) => {
                   dropdown_items={Array.from(Object.keys(datatypes))}
                   required={true}
                   additional_styles="w-full"
-                  onChange={e => setdataType(e.target.value)}
+                  onChange={e => {
+                    setdataType(e.target.value);
+                    console.log("hadeh")
+                    handleAfeChange(
+                      newWorkspace.afe_number,
+                      config,
+                      datatypes[e.target.value],
+                      dispatch,
+                      setpopupMessage,
+                      setnewWorkspace,
+                      newWorkspace,
+                      setafeExist,
+                    );
+                  }}
                   withSearch
                 />
                 <p>AFE number</p>
@@ -267,7 +280,7 @@ const HomeSection = ({config, kkks_name}) => {
                           workspace_name: `record_${e.target.value}`,
                         });
                         handleAfeChange(
-                          e,
+                          parseInt(e.target.value),
                           config,
                           datatypes[dataType],
                           dispatch,
