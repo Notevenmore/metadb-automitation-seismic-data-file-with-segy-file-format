@@ -529,7 +529,7 @@ const PrintedWellReport = ({datatype, setTitle, config, kkks_name}) => {
       ) : null}
       <div className="fixed bottom-9 right-12 flex space-x-2">
         <Button
-          className="shadow-black/10 shadow-lg drop-shadow-lg hover:w-250p w-60p h-60p border rounded-full bg-gray-200 flex items-center transition-all overflow-hidden outline-none"
+          className={`shadow-black/10 shadow-lg drop-shadow-lg hover:w-250p w-60p h-60p border rounded-full bg-gray-200 ${config[datatype]['column_binder']? 'flex' : 'hidden'} items-center transition-all overflow-hidden outline-none`}
           onClick={e => {
             e.preventDefault;
             settoggleOverlayDownload(true);
