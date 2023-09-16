@@ -70,6 +70,10 @@ export default function TableEditor({
                 if (onMaxNumericLimitError) onMaxNumericLimitError();
                 return;
               }
+              if (validator.type === "min" && validator.parameters === "-9000000000000000") {
+                if (onMaxNumericLimitError) onMaxNumericLimitError();
+                return;
+              }
             }
           }}
         />
