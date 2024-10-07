@@ -30,13 +30,15 @@
     "react-nprogress": "^0.1.6",
     "react-panel": "^0.0.5",
     "react-redux": "^8.0.5",
+    "react-spreadsheet": "^0.9.5",
     "react-syntax-highlighter": "^15.5.0",
     "react-tabulator": "^0.18.1",
     "react-use": "^17.4.0",
     "rehype-raw": "^6.1.1",
     "remark-gfm": "^3.0.1",
     "sharp": "^0.32.1",
-    "tailwind-merge": "^1.9.1"
+    "tailwind-merge": "^1.9.1",
+    "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
