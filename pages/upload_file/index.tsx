@@ -23,6 +23,7 @@ import DropFile from '../../public/icons/drop-file.svg';
 import Hand from '../../public/icons/hand.svg';
 import List from '../../public/icons/list.svg';
 import Robot from '../../public/icons/robot.svg';
+import LocalDir from '../../public/icons/LocalDirectory.svg';
 import Select from '../../public/icons/selection_tool.svg';
 import Upload from '../../public/icons/upload.svg';
 import {TokenExpired} from '../../services/admin';
@@ -111,10 +112,20 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(storeFile(fileUpload));
-    dispatch(setUploadDocumentSettings(UplSettings));
-    settoggleOverlay(true);
-    return true;
+    if (UplSettings.Method !== 'connect-local-directory') {
+      dispatch(storeFile(fileUpload));
+      dispatch(setUploadDocumentSettings(UplSettings));
+      settoggleOverlay(true);
+      return true;
+    } else {
+      localStorage.setItem('data', JSON.stringify(UplSettings));
+      router.push({
+        pathname: `connect-to-local-directory/${UplSettings.DataType.toLowerCase().replaceAll(
+          ' ',
+          '_',
+        )}`,
+      });
+    }
   };
 
   const proceed = async (
@@ -376,7 +387,7 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
             name={'fileFormat'}
             placeholder={'Select a file format'}
             value={UplSettings.FileFormat}
-            dropdown_items={['Image', 'PDF', 'LAS', 'TXT']}
+            dropdown_items={['Image', 'PDF', 'LAS', 'TXT', 'SGY/SEGY']}
             required={true}
             additional_styles="w-full"
             additional_styles_label={additional_styles_label}
@@ -593,6 +604,42 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
                 </div>
               </Button>
             )}
+            {((UplSettings.DataType.toLowerCase().includes('seismic') &&
+              !UplSettings.DataType.toLowerCase().includes('non') &&
+              UplSettings.FileFormat === 'SGY/SEGY') ||
+              (UplSettings.DataType.toLowerCase().includes(
+                'digital well log',
+              ) &&
+                UplSettings.FileFormat === 'LAS')) && (
+              <Button
+                id="connect"
+                title=""
+                additional_styles={`h-full active:bg-gray-400/60 outline-none ${
+                  UplSettings.Method === 'connect-local-directory'
+                    ? activeStyle
+                    : ''
+                }`}
+                onClick={e => {
+                  e.preventDefault();
+                  setUplSettings({
+                    ...UplSettings,
+                    Method: 'connect-local-directory',
+                  });
+                }}>
+                <div className="flex space-x-2 min-w-max items-center p-2">
+                  <LocalDir className="w-10 h-10" />
+                  <section className="w-150p">
+                    <h3 className="text-lg font-bold">
+                      Connect Local Directory
+                    </h3>
+                    <p className="text-sm">
+                      Load and Adjust SEGY/SGY for Seismic Data or LAS for Well
+                      Log Data from local into an Excel format
+                    </p>
+                  </section>
+                </div>
+              </Button>
+            )}
           </div>
         </div>
         <div className="flex flex-row gap-x-3 pt-3 pb-16">
@@ -616,7 +663,12 @@ export default function UploadFilePage({config, setTitle, kkks_name}) {
               Object.values(UplSettings).some(x => {
                 return x === null || x === '';
               })
-                ? true
+                ? UplSettings.Method !== 'connect-local-directory' ||
+                  Object.values(UplSettings).some(x => {
+                    return x === null || x === '';
+                  })
+                  ? true
+                  : false
                 : false
             }
           />
