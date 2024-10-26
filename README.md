@@ -5,7 +5,7 @@
 ## Fitur Utama
 
 1. **Koneksi dengan Direktori Lokal**
-   - Pengguna dapat memilih direktori lokal yang berisi file seismik untuk dihubungkan dengan website. Hal ini memudahkan dalam mengakses dan mengelola file yang diperlukan.
+   Pengguna dapat memilih direktori lokal yang berisi file seismik untuk dihubungkan dengan website. Hal ini memudahkan dalam mengakses dan mengelola file yang diperlukan.
      <table align="center" style="border: none;">
       <tr>
         <td align="center">
@@ -17,7 +17,7 @@
     </table>
 
 2. **Pemilihan File untuk Ekstraksi**
-   - Setelah menghubungkan direktori, pengguna dapat memilih file yang akan diekstrak untuk mendapatkan data seismik. Proses pemilihan file ini dirancang untuk memudahkan pengguna dalam menavigasi dan menemukan file yang relevan.
+   Setelah menghubungkan direktori, pengguna dapat memilih file yang akan diekstrak untuk mendapatkan data seismik. Proses pemilihan file ini dirancang untuk memudahkan pengguna dalam menavigasi dan menemukan file yang relevan.
      <table align="center" style="border: none;">
       <tr>
         <td align="center">
@@ -29,7 +29,7 @@
     </table>
 
 3. **Konfirmasi Data**
-   - Setelah ekstraksi data, pengguna akan diminta untuk mengonfirmasi data yang telah diambil. Ini memastikan bahwa hanya data yang relevan dan akurat yang akan diproses lebih lanjut.
+   Setelah ekstraksi data, pengguna akan diminta untuk mengonfirmasi data yang telah diambil. Ini memastikan bahwa hanya data yang relevan dan akurat yang akan diproses lebih lanjut.
      <table align="center" style="border: none;">
       <tr>
         <td align="center">
@@ -41,7 +41,7 @@
     </table>
 
 4. **Integrasi dengan Google Spreadsheet**
-   - Semua prosedur ekstraksi dan data yang dihasilkan akan ditampilkan di Google Spreadsheet. Ini memberikan tampilan yang terorganisir dan mudah diakses untuk analisis lebih lanjut.
+   Semua prosedur ekstraksi dan data yang dihasilkan akan ditampilkan di Google Spreadsheet. Ini memberikan tampilan yang terorganisir dan mudah diakses untuk analisis lebih lanjut.
      <table align="center" style="border: none;">
       <tr>
         <td align="center">
@@ -53,7 +53,7 @@
     </table>
 
 5. **Ekspor Data**
-   - Pengguna memiliki opsi untuk mengekspor data dari Google Spreadsheet dan menyimpan data tersebut ke dalam database. Fitur ini memungkinkan pengelolaan data yang lebih baik dan aksesibilitas di masa depan.
+   Pengguna memiliki opsi untuk mengekspor data dari Google Spreadsheet dan menyimpan data tersebut ke dalam database. Fitur ini memungkinkan pengelolaan data yang lebih baik dan aksesibilitas di masa depan.
      <table align="center" style="border: none;">
       <tr>
         <td align="center">
