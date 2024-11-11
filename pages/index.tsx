@@ -13,7 +13,7 @@ import {
 } from '../components/utility_functions';
 import {datatypes} from '../config';
 import draft from '../dummy-data/draft';
-import FileIcon from '../public/icons/file.svg';
+import FileIcon from '../public/icons/File.svg';
 import CloseThin from '../public/icons/close-thin.svg';
 import {TokenExpired} from '../services/admin';
 import {useAppDispatch, useAppSelector} from '../store';
@@ -179,10 +179,18 @@ const HomeSection = ({config, kkks_name}) => {
           side bar,
           <br></br>or drag and drop a document here to be uploaded
         </h1>
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-12">
           <Button
             path={'/upload_file'}
             button_description="Upload record file"
+          />
+          <Button
+            path=""
+            button_description="Input record manually"
+            onClick={e => {
+              e.preventDefault();
+              settoggleOverlay(true);
+            }}
           />
         </div>
         <p className="text-center opacity-50">
@@ -196,14 +204,13 @@ const HomeSection = ({config, kkks_name}) => {
         </section>
         <section className="flex flex-row gap-x-3">
           <Button
-            path=""
-            button_description="Input record manually"
-            onClick={e => {
-              e.preventDefault();
-              settoggleOverlay(true);
-            }}
+            path="/connect-to-local-directory/index"
+            button_description="Connect to Directory"
           />
         </section>
+        <p className="text-center opacity-50">
+          The document to be uploaded must be in either LAS, SEGY/SGY, or SEGD file format.
+        </p>
       </section>
       <div
         className={`fixed w-screen h-screen bg-black/[.5] top-0 left-0 ${

@@ -25,20 +25,54 @@ interface FormData {
   afenumber: number;
 }
 
+interface AutomaticDataStructure {
+  data: any[];
+  otherData: any[];
+  fileFormat: string;
+  dataType: string;
+}
+
 export default function Preview({ config, preview }: Props) {
   const [data, setData] = useState([{}]);
   const [workspace, setWorkspace] = useState<UploadDocumentSettings>();
+  const [workspaceAutomatic, setWorkspaceAutomatic] = useState<UploadDocumentSettings[]>(); 
   const [cellBase, setCellBase] = useState<Matrix<CellBase<any>>>();
   const [load, setLoad] = useState<boolean>(false);
   const router = useRouter();
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
   const [spreadsheetId, setspreadsheetId] = useState();
   const [IsSaved, setIsSaved] = useState(false);
+  const [automaticData, setAutomaticData] = useState<AutomaticDataStructure[]>();
+  const [selectedDataType, setSelectedDataType] = useState<string>();
   const warningText =
     'You have unsaved changes - Are you sure you want to leave this page?';
 
   const dispatch = useAppDispatch();
   const [submission, setSubmission] = useState(['Quarterly', 'Relinquishment', 'Termination', 'Spec New', 'Spec Ext', 'Spec Term', 'Joint Study', 'DIPA']);
+
+  useEffect(() => {
+    const confirmedData = localStorage.getItem("confirmedData");
+    if(confirmedData) setAutomaticData(JSON.parse(confirmedData));
+  }, [])
+
+  useEffect(() => {
+    if(preview === "index") {
+      if(automaticData) {
+        const automatic = automaticData.map((value) => {
+          return {
+            workspace_name: "",
+            kkks_name: "",
+            working_area: "",
+            submission_type: "",
+            afe_number: null,
+            DataType: value.dataType,
+          }
+        });
+        setSelectedDataType(automaticData[0].dataType);
+        setWorkspaceAutomatic(automatic);
+      }
+    }
+  }, [automaticData])
 
   useEffect(() => {
     const datas = localStorage.getItem(`confirmed${preview}`);
@@ -149,48 +183,6 @@ export default function Preview({ config, preview }: Props) {
       }, 3000);
     }
   }, [dispatch, spreadsheetReady]);
-
-  const exportData = () => {
-    const workbook = XLSX.utils.book_new();
-    const headers = Object.keys(data[0] as {});
-    const worksheet = XLSX.utils.json_to_sheet([], { header: headers });
-    const headerCellStyle = {
-      font: { bold: true },
-      alignment: { horizontal: "center", vertical: "center" },
-      fill: {
-        patternType: "solid",
-        fgColor: { rgb: "FFFF00" },
-      },
-      border: {
-        top: { style: "thin", color: { rgb: "000000" } },
-        bottom: { style: "thin", color: { rgb: "000000" } },
-        left: { style: "thin", color: { rgb: "000000" } },
-        right: { style: "thin", color: { rgb: "000000" } },
-      },
-    };
-    headers.forEach((header, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ c: index, r: 0 });
-      worksheet[cellAddress] = { t: "s", v: header, s: headerCellStyle };
-    });
-    XLSX.utils.sheet_add_json(worksheet, data, { skipHeader: true, origin: -1 });
-    const colWidths = headers.map((header) => ({ wpx: Math.max(header.length * 20, 100) }));
-    worksheet["!cols"] = colWidths;
-    if (worksheet["!ref"]) {
-      const maxRow = parseInt(worksheet["!ref"].split(":")[1].match(/\d+/)?.[0] || "1", 10);
-      headers.forEach((header, colIndex) => {
-        const alignment = "center";
-        for (let rowIndex = 1; rowIndex <= maxRow; rowIndex++) {
-          const cellAddress = XLSX.utils.encode_cell({ c: colIndex, r: rowIndex });
-          if (!worksheet[cellAddress]) continue;
-          worksheet[cellAddress].s = {
-            alignment: { horizontal: alignment },
-          };
-        }
-      });
-    }
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, `${preview}-data-metadb.xlsx`);
-  };
 
   const addMoreData = () => {
     localStorage.removeItem(preview);
@@ -311,20 +303,41 @@ export default function Preview({ config, preview }: Props) {
                     </label>
                     <p className="text-gray-400">( Working area )</p>
                   </div>
-                  <input
-                    type="text"
-                    className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
-                    placeholder="Nama Wilayah Kerja"
-                    value={workspace.working_area ?workspace.working_area : ""}
-                    onChange={(e) =>
-                      setWorkspace((prev) => {
-                        return {
-                          ...prev,
-                          working_area: e.target.value,
-                        };
-                      })
-                    }
-                  />
+                  {
+                    preview !== "index"
+                      ? <input
+                          type="text"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          placeholder="Nama Wilayah Kerja"
+                          value={workspace.working_area ?workspace.working_area : ""}
+                          onChange={(e) =>
+                            setWorkspace((prev) => {
+                              return {
+                                ...prev,
+                                working_area: e.target.value,
+                              };
+                            })
+                          }
+                        />
+                      : <input
+                          type="text"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          placeholder="Nama Wilayah Kerja"
+                          value={workspaceAutomatic ? workspaceAutomatic.find(value => value.DataType !== selectedDataType).working_area : ""}
+                          onChange={(e) => {
+                            if(workspaceAutomatic) {
+                              const updated =  workspaceAutomatic.map((value) => {
+                                return {
+                                  ...value,
+                                  working_area: e.target.value,
+                                }
+                              });
+                              console.log(updated);
+                              setWorkspaceAutomatic(updated);
+                            }
+                          }}
+                        />
+                  }
                 </div>
                 <div className="border-gray-400 border-y-2 flex items-center justify-between w-full px-5 py-2 ">
                   <div className="flex flex-row gap-10">
@@ -333,12 +346,36 @@ export default function Preview({ config, preview }: Props) {
                     </label>
                     <p className="text-gray-400">( Submission type )</p>
                   </div>
-                  <select value={workspace.submission_type} className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black" onChange={(e) => setWorkspace({...workspace, submission_type: e.target.value})}>
-                    {submission.map((data, index) => {
-                      return <option key={index} value={data}>{data}</option>
-                    })}
-                    <option value="">{"Choose Submission type"}</option>
-                  </select>
+                  {
+                  preview !== "index"
+                    ? <select value={workspace.submission_type} className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black" onChange={(e) => setWorkspace({...workspace, submission_type: e.target.value})}>
+                        {submission.map((data, index) => {
+                          return <option key={index} value={data}>{data}</option>
+                        })}
+                        <option value="">{"Choose Submission type"}</option>
+                      </select>
+                    : <select 
+                        value={workspaceAutomatic && workspaceAutomatic.find(value => value.DataType === selectedDataType).submission_type} 
+                        className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black" 
+                        onChange={(e) => {
+                          if(workspaceAutomatic) {
+                            const updated =  workspaceAutomatic.map((value) => {
+                              return {
+                                ...value,
+                                submission_type: e.target.value,
+                              }
+                            });
+                            setWorkspaceAutomatic(updated);
+                          }
+                        }}
+                      >
+                        {submission.map((data, index) => {
+                          return <option key={index} value={data}>{data}</option>
+                        })}
+                        <option value="">{"Choose Submission type"}</option>
+                      </select>
+                  }
+                  
                 </div>
                 <div className="border-gray-400 border-y-2 flex items-center justify-between w-full px-5 py-2 ">
                   <div className="flex flex-row gap-10">
@@ -347,21 +384,42 @@ export default function Preview({ config, preview }: Props) {
                     </label>
                     <p className="text-gray-400">( AFE Number )</p>
                   </div>
-                  <input
-                    type="number"
-                    className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
-                    placeholder="Nama KKKS"
-                    value={workspace.afe_number ? workspace.afe_number : ""}
-                    onChange={(e) =>
-                      setWorkspace((prev) => {
-                        return {
-                          ...prev,
-                          afe_number: e.target.value !== "" ? Number(e.target.value) : 0,
-                        };
-                      })
-                    }
-                    disabled
-                  />
+                  {
+                    preview !== "index"
+                      ? <input
+                          type="number"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          placeholder="Nama KKKS"
+                          value={workspace.afe_number ? workspace.afe_number : ""}
+                          onChange={(e) =>
+                            setWorkspace((prev) => {
+                              return {
+                                ...prev,
+                                afe_number: e.target.value !== "" ? Number(e.target.value) : 0,
+                              };
+                            })
+                          }
+                          disabled
+                        />
+                      : <input
+                          type="number"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          placeholder="AFE Number"
+                          value={workspaceAutomatic && workspaceAutomatic.find(value => value.DataType === selectedDataType).afe_number || ""}
+                          onChange={(e) => {
+                            if(workspaceAutomatic) {
+                              const updated =  workspaceAutomatic.map((value) => {
+                                return {
+                                  ...value,
+                                  afe_number: e.target.value != "" ? Number(e.target.value) : 0,
+                                }
+                              });
+                              setWorkspaceAutomatic(updated)
+                              console.log(updated)
+                            }
+                          }}
+                        />
+                  }
                 </div>
                 <div className="border-gray-400 border-y-2 flex items-center justify-between w-full px-5 py-2 ">
                   <div className="flex flex-row gap-10">
@@ -370,16 +428,28 @@ export default function Preview({ config, preview }: Props) {
                     </label>
                     =
                   </div>
-                  <input
-                    type="text"
-                    className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
-                    placeholder="Nama KKKS"
-                    value={preview
-                      .split("_")
-                      .map((value) => value.charAt(0).toUpperCase() + value.slice(1))
-                      .join(" ")}
-                    disabled
-                  />
+                  {
+                    preview !== "index"
+                      ? <input
+                          type="text"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          placeholder="Nama KKKS"
+                          value={preview
+                            .split("_")
+                            .map((value) => value.charAt(0).toUpperCase() + value.slice(1))
+                            .join(" ")}
+                          disabled
+                        />
+                      : <select 
+                          value={selectedDataType} 
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black" 
+                          onChange={(e) => { setSelectedDataType(e.target.value) }}
+                        >
+                          {automaticData && automaticData.map((data, index) => {
+                            return <option key={index} value={data.dataType}>{data.dataType.split("_").map((value => value.charAt(0).toUpperCase()+value.slice(1))).join(" ")}</option>
+                          })}
+                        </select>
+                  }
                 </div>
               </form>
             ) : (
@@ -401,14 +471,29 @@ export default function Preview({ config, preview }: Props) {
                 </button>
               </div>
               <div className="w-full h-full overflow-scroll text-center [scrollbar-width:thin]">
-                <Sheets
-                    type="review"
-                    form_type={router?.query.form_type || 'basin'}
-                    data={data}
-                    finishedInitializing={setspreadsheetReady}
-                    getSpreadsheetID={setspreadsheetId}
-                    config={config}
-                />
+                {
+                  preview !== "index"
+                    ? <Sheets
+                          type="review"
+                          form_type={router?.query.form_type || 'basin'}
+                          data={data}
+                          finishedInitializing={setspreadsheetReady}
+                          getSpreadsheetID={setspreadsheetId}
+                          config={config}
+                      />
+                    : workspaceAutomatic && workspaceAutomatic.map((value, index) => <div key={index} className={value.DataType !== selectedDataType ? "hidden" : "block"}>
+                      <Sheets 
+                              key={index}
+                              type="review"
+                              form_type={value.DataType}
+                              data={automaticData.find(v => v.dataType === value.DataType).data}
+                              finishedInitializing={setspreadsheetReady}
+                              getSpreadsheetID={setspreadsheetId}
+                              config={config}
+                      />
+                    </div>)
+            
+                }
               </div>
             </div>
           ) : (
@@ -430,3 +515,11 @@ export async function getServerSideProps(context: any) {
     },
   };
 }
+// : workspaceAutomatic && workspaceAutomatic.find(value => value.DataType === selectedDataType) && automaticData && <Sheets
+//                           type="review"
+//                           form_type={workspaceAutomatic.find(value => value.DataType === selectedDataType).DataType}
+//                           data={automaticData.find(value => value.dataType === selectedDataType).data}
+//                           finishedInitializing={setspreadsheetReady}
+//                           getSpreadsheetID={setspreadsheetId}
+//                           config={config}
+//                       />

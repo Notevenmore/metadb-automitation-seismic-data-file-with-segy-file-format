@@ -12,6 +12,7 @@ import {
 import {useAppDispatch} from '../../store';
 import {delay} from '../../utils/common';
 import {showErrorToast} from '../../components/utility_functions';
+import {datatypes} from '../../config';
 
 interface Props {
   preview: string;
@@ -43,6 +44,13 @@ interface Cordinate {
   y: number;
 }
 
+interface AutomaticDataStructure {
+  data: any[];
+  otherData: any[];
+  fileFormat: string;
+  dataType: string;
+}
+
 function RowComponent({label, value, index}: any) {
   return (
     <tr className="first:px-5">
@@ -64,6 +72,10 @@ export default function Preview({config, preview}: Props) {
   const [fileDrag, setFileDrag] = useState<string[]>();
   const [fileDragTemp, setFileDragTemp] = useState<string>();
   const [newWorkspace, setNewWorkspace] = useState<UploadDocumentSettings>();
+  const [formatFile, newFormatFile] = useState(["SGY/SEGY", "LAS"]);
+  const [selectedFormatFile, setSelectedFormatFile] = useState<string>("");
+  const [selectedDataType, setSelectedDataType] = useState<string>("");
+  const [automaticData, setAutomaticData] = useState<AutomaticDataStructure[]>();
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -71,10 +83,19 @@ export default function Preview({config, preview}: Props) {
     const workspace = localStorage.getItem('data');
     if (workspace) {
       setNewWorkspace(JSON.parse(workspace));
-    } else {
-      router.push('/');
-    }
-  }, []);
+    } else if (preview !== "index") {
+      router.push('/'); 
+    } 
+  }, [router, preview]);
+
+  useEffect(() => {
+    setShowIndex(0);
+  }, [selectedDataType, selectedFormatFile])
+
+  useEffect(() => {
+    setSelectedDataType("");
+    setDirectory(undefined);
+  }, [selectedFormatFile])
 
   const readFileContent = async (fileHandle: any) => {
     try {
@@ -83,25 +104,55 @@ export default function Preview({config, preview}: Props) {
         setFileItem(file);
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('format', newWorkspace.FileFormat);
-        console.log('bentar');
+        formData.append('format', newWorkspace?.FileFormat || selectedFormatFile);
         axios
           .post('http://127.0.0.1:5000/read-file', formData)
           .then(response => {
-            setData(prev => {
-              if (prev) return [...prev, JSON.parse(response.data.result)];
-              else return [JSON.parse(response.data.result)];
-            });
-            setOtherData(prev => {
-              if (prev) return [...prev, JSON.parse(response.data.data)];
-              else return [JSON.parse(response.data.data)];
-            });
-            setFile(prev => {
-              if (prev) return [...prev, file.name];
-              else return [file.name];
-            });
+            if(preview !== "index") {
+              setData(prev => {
+                if (prev) return [...prev, JSON.parse(response.data.result)];
+                else return [JSON.parse(response.data.result)];
+              });
+              setOtherData(prev => {
+                if (prev) return [...prev, JSON.parse(response.data.data)];
+                else return [JSON.parse(response.data.data)];
+              });
+              setFile(prev => {
+                if (prev) return [...prev, file.name];
+                else return [file.name];
+              });
+            } else if(selectedDataType){
+              const automatic = {
+                data: [JSON.parse(response.data.result)],
+                otherData: [JSON.parse(response.data.data)],
+                fileFormat: selectedFormatFile,
+                dataType: selectedDataType
+              };
+              if(automaticData && automaticData.some((value) => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile)) {
+                const automaticTemp = automaticData.find((value) => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile);
+                const automaticStore = {
+                  data: [...automaticTemp.data, ...automatic.data],
+                  otherData: [...automaticTemp.otherData, ...automatic.otherData],
+                  fileFormat: selectedFormatFile,
+                  dataType: selectedDataType
+                };
+                setAutomaticData((current: AutomaticDataStructure[]) => {
+                  return current.map((value) => {
+                    if(value.dataType === selectedDataType) return automaticStore;
+                    else return value;
+                  });
+                });
+              } else {
+                if(automaticData) {
+                  setAutomaticData([...automaticData, automatic]);
+                } else {
+                  setAutomaticData([automatic]);
+                }
+              }
+            }
           })
-          .catch(() => {
+          .catch((e) => {
+            console.log(e);
             console.log('Gagal membaca file.');
           });
       } else {
@@ -113,9 +164,14 @@ export default function Preview({config, preview}: Props) {
   };
 
   const redirect = () => {
-    localStorage.setItem(preview, JSON.stringify(data));
-    localStorage.setItem(`${preview}Data`, JSON.stringify(otherData));
-    makenew();
+    if(preview !== "index") {
+      localStorage.setItem(preview, JSON.stringify(data));
+      localStorage.setItem(`${preview}Data`, JSON.stringify(otherData));
+      makenew();
+    } else {
+      localStorage.setItem("data", JSON.stringify(automaticData));
+      router.push(`/connect-to-local-directory/confirm/index`);
+    }
   };
 
   const toggleFolder = (path: string) => {
@@ -140,9 +196,7 @@ export default function Preview({config, preview}: Props) {
     for await (const entry of directory.values()) {
       if (entry.kind === 'file') {
         if (
-          newWorkspace.FileFormat.toLowerCase().includes(
-            entry.name.split('.')[1].toLowerCase(),
-          )
+          newWorkspace?.FileFormat?.toLowerCase().includes(entry.name.split('.')[1].toLowerCase()) || (selectedFormatFile && selectedFormatFile.toLowerCase().includes(entry.name.split('.')[1].toLowerCase()) && preview === "index") 
         ) {
           items.push({
             name: entry.name,
@@ -452,11 +506,17 @@ export default function Preview({config, preview}: Props) {
 
   return (
     <main className="flex min-h-screen flex-col p-7 gap-5">
-      <div className="flex flex-row gap-3 text-gray-600 items-center">
-        <p>Seismic Data</p>
-        <p> {'>'} </p>
-        <p>Load Data</p>
-      </div>
+      {
+        preview !== "index" 
+          ? <div className="flex flex-row gap-3 text-gray-600 items-center">
+              <p>Upload Data</p>
+              <p> {'>'} </p>
+              <p>Load Data</p>
+            </div>
+          : <div className="flex flex-row gap-3 text-gray-600 items-center">
+              <p>Local Directory</p>
+            </div>
+      }
       <div
         className="flex min-h-screen flex-col p-7 gap-5 relative"
         onMouseDown={handleMouseDown}>
@@ -465,12 +525,36 @@ export default function Preview({config, preview}: Props) {
             className={`bg-blue-500 opacity-50 border-2 border-blue-900 fixed top-0 left-0`}
             style={{...size, top: `${now.y}px`, left: `${now.x}px`}}></div>
         )}
-        <div className="flex flex-row items-center gap-3 text-black font-bold text-lg">
+        <div className="flex flex-row items-center gap-20 text-black font-bold text-lg">
           <button
             onClick={connectLocalDirectory}
             className="border-2 border-black py-1 px-3 rounded-lg hover:bg-slate-400 hover:text-white hover:border-slate-400 z-10">
             Connect Local Directory
           </button>
+          {
+            preview === "index" && 
+            <div className="flex flex-row gap-7">
+              <select className="border-2 border-black py-1 px-3 rounded-lg bg-white text-black" value={selectedFormatFile} onChange={(e) => {setSelectedFormatFile(e.target.value)}} >
+                {
+                  formatFile.map((value, index) => {
+                    return <option key={index} value={value}>{value}</option>
+                  })
+                }
+                <option value={""}>Choose your format file</option>
+              </select>
+              <select className="border-2 border-black py-1 px-3 rounded-lg bg-white text-black" value={selectedDataType || ""} onChange={(e) => {setSelectedDataType(e.target.value)}}>
+                {
+                  Object.entries(datatypes).map(([key, value], index) => {
+                    if(value.includes("seismic") && !value.includes("non") && selectedFormatFile === "SGY/SEGY")
+                      return <option key={index} value={value}>{key}</option>
+                    else if(value === "digital_well_log" && selectedFormatFile === "LAS")
+                      return <option key={index} value={value}>{key}</option>
+                  })
+                }
+                <option value={""}>Choose the Data Type</option>
+              </select>
+            </div>
+          }
         </div>
         <div className="flex flex-row gap-5 text-black items-start justify-start">
           <div className="flex flex-col gap-7 w-96">
@@ -528,24 +612,40 @@ export default function Preview({config, preview}: Props) {
           </div>
           <div className="flex flex-col gap-7">
             <h1 className="font-bold">Preview Data</h1>
-            {data && data.length > 0 ? (
+            {(data && data.length > 0 && preview !== "index") || (automaticData && automaticData.some(value => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile) && preview === "index") ? (
               <div className="overflow-y-scroll h-[60vh] w-[45vw]">
                 <table
                   className={`text-black font-semibold min-w-[50vw] min-h-[60vh]`}>
                   <tbody>
-                    {data[showIndex] &&
-                      Object.entries(data[showIndex]).map(
-                        ([key, value], index) => {
-                          return (
-                            <RowComponent
-                              key={index}
-                              value={value}
-                              label={key.replaceAll('_', ' ')}
-                              index={`C${index + 1}`}
-                            />
-                          );
-                        },
-                      )}
+                    {
+                      preview !== "index"
+                        ? data[showIndex] &&
+                            Object.entries(data[showIndex]).map(
+                              ([key, value], index) => {
+                                return (
+                                  <RowComponent
+                                    key={index}
+                                    value={value}
+                                    label={key.replaceAll('_', ' ')}
+                                    index={`C${index + 1}`}
+                                  />
+                                );
+                              },
+                            )
+                        :  automaticData.find(value => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile).data[showIndex] &&
+                                Object.entries(automaticData.find(value => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile).data[showIndex]).map(
+                                  ([key, value], index) => {
+                                    return (
+                                      <RowComponent
+                                        key={index}
+                                        value={value}
+                                        label={key.replaceAll('_', ' ')}
+                                        index={`C${index + 1}`}
+                                      />
+                                    );
+                                  },
+                                )
+                    }
                   </tbody>
                 </table>
               </div>
@@ -554,7 +654,7 @@ export default function Preview({config, preview}: Props) {
                 Connect to your local directory and choose the data from it
               </div>
             )}
-            {data && data.length > 1 && (
+            {((data && data.length > 1 && preview !== "index") || (automaticData && automaticData.some(value => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile) && preview === "index"  && automaticData?.find(value => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile).data.length > 1)) && (
               <div className="z-10 self-center bg-slate-500 px-5 flex items-center justify-center py-2 gap-7 rounded-2xl text-white font-black text-2xl">
                 <button
                   className="flex items-center justify-center h-full"
@@ -565,7 +665,7 @@ export default function Preview({config, preview}: Props) {
                 <button
                   className="flex items-center justify-center h-full"
                   onClick={() => setShowIndex(showIndex + 1)}
-                  disabled={showIndex >= data.length - 1}>
+                  disabled={preview !== "index" ? showIndex >= data.length - 1 : showIndex >= automaticData?.find(value => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile).data.length - 1}>
                   {'>'}
                 </button>
               </div>
@@ -574,9 +674,9 @@ export default function Preview({config, preview}: Props) {
         </div>
         <div className="flex flex-row text-black justify-end text-xl font-semibold">
           <button
-            disabled={data ? false : true}
+            disabled={data || automaticData ? false : true}
             className={`border-black border-2 py-1 px-5 rounded-lg z-10 ${
-              data
+              data || automaticData
                 ? 'bg-inherit hover:bg-slate-400 hover:border-slate-400 hover:text-white'
                 : 'bg-gray-400 text-white border-gray-400'
             }`}
