@@ -15,12 +15,13 @@ export const init_data = async (
   config: ServicesConfig & DatatypeConfig,
   router: NextRouter | {query: {form_type: string}},
   workspaceData: {afe_number: number},
+  automaticType?: string,
 ) => {
   if (!workspaceData.afe_number) {
     throw 'Record data not found, please try again. Additionally, try opening other records if the problem persists. If other records behave the same, please contact maintainer.';
   }
   const workspace_data = await fetch(
-    `${config[String(router.query.form_type)]['afe']}${
+    `${config[automaticType ? automaticType : String(router.query.form_type)]['afe']}${
       workspaceData.afe_number
     }`,
     {
@@ -45,7 +46,7 @@ export const init_data = async (
     });
 
   const data = await fetch(
-    `${config[String(router.query.form_type)]['workspace']}${
+    `${config[automaticType ? automaticType : String(router.query.form_type)]['workspace']}${
       workspaceData.afe_number
     }`,
     {
@@ -77,9 +78,9 @@ export const init_data = async (
   if (data) {
     for (const datatype_record_id of data) {
       const data_details = await fetch(
-        `${config[String(router.query.form_type)]['view']}${
+        `${config[automaticType ? automaticType : String(router.query.form_type)]['view']}${
           datatype_record_id[
-            config[String(router.query.form_type)]['workspace_holder_key']
+            config[automaticType ? automaticType : String(router.query.form_type)]['workspace_holder_key']
           ]
         }`,
         {
@@ -127,6 +128,7 @@ export const saveDocument = async (
   spreadsheetId: string,
   workspaceData: UploadDocumentSettings,
   dispatch: any,
+  automaticType?: string,
 ) => {
   if (e) {
     e.preventDefault();
@@ -153,7 +155,7 @@ export const saveDocument = async (
   // check for changes in the workspace data, if there are any then push the updates to the db
   let workspace_data_changed = false;
   const old_workspace_data = await fetch(
-    `${config[String(router.query.form_type)]['afe']}${
+    `${config[automaticType ? automaticType : String(router.query.form_type)]['afe']}${
       workspaceData['afe_number']
     }`,
     {
@@ -197,7 +199,7 @@ export const saveDocument = async (
       }),
     );
     await fetch(
-      `${config[String(router.query.form_type)]['afe']}${
+      `${config[automaticType ? automaticType : String(router.query.form_type)]['afe']}${
         workspaceData['afe_number']
       }`,
       {
@@ -239,12 +241,12 @@ export const saveDocument = async (
     }),
   );
   // fetch original data from database
-  const old_data = await init_data(config, router, workspaceData);
+  const old_data = await init_data(config, router, workspaceData, automaticType ? automaticType : undefined);
 
   // Fetch header from spreadsheet
   const spreadsheet_header = await getHeader(
     config,
-    String(router.query.form_type),
+    automaticType ? automaticType : String(router.query.form_type),
   ).then(response => {
     if (response.status !== 200) {
       TokenExpired(response.status);
@@ -267,7 +269,7 @@ export const saveDocument = async (
       }`,
     },
     body: JSON.stringify({
-      form_type: router.query.form_type,
+      form_type: automaticType ? automaticType : router.query.form_type,
       spreadsheetID: spreadsheetId,
       without_header: true,
     }),
@@ -296,7 +298,7 @@ export const saveDocument = async (
     }),
   );
   const field_types = await fetch(
-    `${config[String(router.query.form_type)]['view'].slice(0, -1)}-column/`,
+    `${config[automaticType ? automaticType : String(router.query.form_type)]['view'].slice(0, -1)}-column/`,
     {
       method: 'GET',
       headers: {
@@ -450,7 +452,7 @@ export const saveDocument = async (
       ) {
         logDebug('trying to PUT' + idx_row);
         await fetch(
-          `${config[String(router.query.form_type)]['view']}${
+          `${config[automaticType ? automaticType : String(router.query.form_type)]['view']}${
             old_data.data_content[idx_row]['id']
           }`,
           {
@@ -489,7 +491,7 @@ export const saveDocument = async (
           if (spreadsheet_data.response.length < old_data.data_content.length) {
             logDebug('trying to DELETE' + idx_row);
             await fetch(
-              `${config[String(router.query.form_type)]['view']}${
+              `${config[automaticType ? automaticType : String(router.query.form_type)]['view']}${
                 old_data.data_content[idx_row]['id']
               }`,
               {
@@ -521,7 +523,7 @@ export const saveDocument = async (
           ) {
             logDebug('trying to POST' + idx_row);
             const upload = await fetch(
-              `${config[String(router.query.form_type)]['view']}`,
+              `${config[automaticType ? automaticType : String(router.query.form_type)]['view']}`,
               {
                 method: 'POST',
                 headers: {
@@ -549,7 +551,7 @@ export const saveDocument = async (
             let uploaded_id: string[] | number = upload.split(':');
             uploaded_id = parseInt(uploaded_id[uploaded_id.length - 1].trim());
             await fetch(
-              `${config[String(router.query.form_type)]['workspace']}`,
+              `${config[automaticType ? automaticType : String(router.query.form_type)]['workspace']}`,
               {
                 method: 'POST',
                 headers: {
@@ -560,7 +562,7 @@ export const saveDocument = async (
                 },
                 body: JSON.stringify({
                   afe_number: workspaceData.afe_number,
-                  [config[String(router.query.form_type)][
+                  [config[ automaticType ? automaticType : String(router.query.form_type)][
                     'workspace_holder_key'
                   ]]: uploaded_id,
                 }),
@@ -587,7 +589,7 @@ export const saveDocument = async (
       old_data.data_content.forEach(async (record, idx_row_del) => {
         logDebug('trying to DELETE' + idx_row_del);
         await fetch(
-          `${config[String(router.query.form_type)]['view']}${record['id']}`,
+          `${config[automaticType ? automaticType : String(router.query.form_type)]['view']}${record['id']}`,
           {
             method: 'DELETE',
             headers: {
@@ -621,15 +623,16 @@ export const downloadWorkspace = async (
   config: ServicesConfig & DatatypeConfig,
   workspaceData: UploadDocumentSettings,
   dispatch: any,
+  automaticType? :string
 ) => {
-  if (router.query.form_type && workspaceData.afe_number) {
+  if (automaticType ? automaticType : router.query.form_type && workspaceData.afe_number) {
     dispatch(
       displayErrorMessage({
         message: 'Getting record  data, please wait...',
         color: 'blue',
       }),
     );
-    const record = await init_data(config, router, workspaceData);
+    const record = await init_data(config, router, workspaceData, automaticType ? automaticType : undefined);
     dispatch(
       displayErrorMessage({
         message: 'Processing record data, please wait...',
@@ -647,7 +650,7 @@ export const downloadWorkspace = async (
           }`,
         },
         body: JSON.stringify({
-          form_type: router.query.form_type,
+          form_type: automaticType ? automaticType : router.query.form_type,
           workspace_data: workspaceData,
           workspace_content: record.data_content,
         }),

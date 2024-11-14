@@ -10,6 +10,7 @@ interface IframeProps extends React.ComponentProps<'iframe'> {
   getSpreadsheetID: Dispatch<SetStateAction<string>>;
   finishedInitializing: Dispatch<SetStateAction<boolean>>;
   config: ServicesConfig & DatatypeConfig;
+  getAutomaticType?: Dispatch<SetStateAction<string>>;
 }
 
 const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
@@ -21,6 +22,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
     finishedInitializing,
     data,
     existingID,
+    getAutomaticType
   } = props;
 
   const [sheetID, setsheetID] = useState<string>();
@@ -47,6 +49,7 @@ const Sheets: React.FunctionComponent<IframeProps> = ({...props}) => {
         setsheetID(spreadsheetID.response);
         try {
           getSpreadsheetID(spreadsheetID.response);
+          if(getAutomaticType) getAutomaticType(form_type as string);
         } catch (error) {}
         setSkipInitialization(false);
       } catch (error) {

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import * as XLSX from "xlsx-js-style";
 import Spreadsheet, { CellBase, Matrix } from "react-spreadsheet";
-import { UploadDocumentSettings, displayErrorMessage   } from "@store/generalSlice";
+import { UploadDocumentSettings, displayErrorMessage, setUploadDocumentSettings } from "@store/generalSlice";
 import Sheets from "@components/Sheets";
 import {useAppDispatch} from '@store/index';
 import {
@@ -13,6 +13,8 @@ import {
   sendDeleteSpreadsheet,
   showErrorToast,
 } from '../../../components/utility_functions';
+import {parseCookies} from 'nookies';
+import {TokenExpired} from '../../../services/admin';
 import {delay} from '../../../utils/common';
 
 interface Props {
@@ -43,6 +45,8 @@ export default function Preview({ config, preview }: Props) {
   const [spreadsheetId, setspreadsheetId] = useState();
   const [IsSaved, setIsSaved] = useState(false);
   const [automaticData, setAutomaticData] = useState<AutomaticDataStructure[]>();
+  const [automaticType, setAutomaticType] = useState<string>();
+  const [multiSpreadSheetId, setMultiSpreadSheetId] = useState<any>();
   const [selectedDataType, setSelectedDataType] = useState<string>();
   const warningText =
     'You have unsaved changes - Are you sure you want to leave this page?';
@@ -61,7 +65,7 @@ export default function Preview({ config, preview }: Props) {
         const automatic = automaticData.map((value) => {
           return {
             workspace_name: "",
-            kkks_name: "",
+            kkks_name: "Acme.Co",
             working_area: "",
             submission_type: "",
             afe_number: null,
@@ -170,6 +174,12 @@ export default function Preview({ config, preview }: Props) {
   }, [IsSaved, router, spreadsheetId]);
 
   useEffect(() => {
+    if(spreadsheetId && automaticType){
+      setMultiSpreadSheetId({...multiSpreadSheetId, [automaticType]: spreadsheetId});
+    }
+  }, [spreadsheetId, automaticType]);
+
+  useEffect(() => {
     if (spreadsheetReady) {
       setTimeout(() => {
         dispatch(
@@ -192,9 +202,37 @@ export default function Preview({ config, preview }: Props) {
     router.push(`/connect-to-local-directory/${preview}`);
   };
 
-  const saveDocumentHandler = (redirect: boolean = false) => {
+  const saveDocumentOperation = async (redirect: boolean = false) => {
+    if(preview !== "index") {
+      saveDocumentHandler(redirect, spreadsheetId, workspace);
+    } else {
+      if(workspaceAutomatic) {
+        Object.entries(multiSpreadSheetId).map(async ([key, value]) => {
+          const workspaceData = {...workspaceAutomatic.find(value => value.DataType === key), DataType: key, workspace_name: `record_${workspaceAutomatic.find(value => value.DataType === key).afe_number}`}
+          await makenew(workspaceData, key);
+          await saveDocumentHandler(false, value as string, workspaceData, key);
+        });
+      }
+
+      if(redirect) {
+        localStorage.removeItem("confirmedData");
+        localStorage.getItem("data");
+        dispatch(
+          displayErrorMessage({
+            message: 'Redirecting back to record list...',
+            color: 'blue',
+            duration: 1500,
+          }),
+        );
+        await delay(1000);
+        router.push("/");
+      }
+    }
+  }
+
+  const saveDocumentHandler = async (redirect: boolean = false, spreadsheetId: string, workspace: UploadDocumentSettings, automatic?: string) => {
     router.events.emit('routeChangeStart');
-    saveDocument(null, router, config, spreadsheetId, workspace, dispatch)
+    saveDocument(null, router, config, spreadsheetId, workspace, dispatch, automatic? automatic : undefined)
       .then(async result => {
         if (result.success) {
           setIsSaved(true);
@@ -235,6 +273,69 @@ export default function Preview({ config, preview }: Props) {
         router.events.emit('routeChangeComplete');
       });
   }
+
+  const makenew = async (newWorkspace, preview: string) => {
+    router.events.emit('routeChangeStart'); 
+    try {
+      dispatch(
+        displayErrorMessage({
+          message:
+            "Creating a new record... Please don't leave this page or click anything",
+          color: 'blue',
+        }),
+      );
+      await fetch(`${config[preview]['afe']}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            JSON.parse(parseCookies().user_data).access_token
+          }`,
+        },
+        body: JSON.stringify(newWorkspace),
+      })
+        .then(res => {
+          if (res.status === 200) {
+            console.log(res.statusText);
+            return res.statusText;
+          } else {
+            TokenExpired(res.status);
+            console.log(res);
+            return res.text();
+          }
+        })
+        .then(res => {
+          if (res.toLowerCase() === 'ok') {
+            return true;
+          } else if (res.toLowerCase().includes('workspace_name_unique')) {
+            throw `A record with the name "${newWorkspace.workspace_name}" already exists. Please choose a different name.`;
+          } else if (res.toLowerCase().includes('afe_pk_error')) {
+            throw `A record with AFE number ${newWorkspace.afe_number} already exists. Please choose a different one.`;
+          } else {
+            throw (
+              res ||
+              'Something happened while updating record information data. Please try again or contact maintainer if the problem persists.'
+            );
+          }
+        });
+      dispatch(setUploadDocumentSettings(newWorkspace));
+      setTimeout(() => {
+        dispatch(
+          displayErrorMessage({
+            message: 'Success. Redirecting to the next page...',
+            color: 'blue',
+            duration: 1500,
+          }),
+        );
+      }, 0);
+      router.events.emit('routeChangeComplete');
+    } catch (error) {
+      // Handle error and display error message
+      showErrorToast(dispatch, error);
+    }
+    await delay(1500);
+    router.events.emit('routeChangeComplete');
+  };
 
   const downloadWorkspaceHandler = () => {
     router.events.emit('routeChangeStart');
@@ -332,7 +433,6 @@ export default function Preview({ config, preview }: Props) {
                                   working_area: e.target.value,
                                 }
                               });
-                              console.log(updated);
                               setWorkspaceAutomatic(updated);
                             }
                           }}
@@ -414,8 +514,7 @@ export default function Preview({ config, preview }: Props) {
                                   afe_number: e.target.value != "" ? Number(e.target.value) : 0,
                                 }
                               });
-                              setWorkspaceAutomatic(updated)
-                              console.log(updated)
+                              setWorkspaceAutomatic(updated);
                             }
                           }}
                         />
@@ -466,7 +565,7 @@ export default function Preview({ config, preview }: Props) {
                 <button className="bg-black text-white rounded-xl p-2 mx-2 font-bold hover:bg-white hover:text-black" onClick={addMoreData}>
                   Add More Data
                 </button>
-                <button className="bg-black text-white rounded-xl p-2 mx-2 font-bold hover:bg-white hover:text-black" onClick={() => saveDocumentHandler(true)}>
+                <button className="bg-black text-white rounded-xl p-2 mx-2 font-bold hover:bg-white hover:text-black" onClick={() => saveDocumentOperation(true)}>
                   Save Changes & Exit
                 </button>
               </div>
@@ -481,17 +580,20 @@ export default function Preview({ config, preview }: Props) {
                           getSpreadsheetID={setspreadsheetId}
                           config={config}
                       />
-                    : workspaceAutomatic && workspaceAutomatic.map((value, index) => <div key={index} className={value.DataType !== selectedDataType ? "hidden" : "block"}>
-                      <Sheets 
-                              key={index}
-                              type="review"
-                              form_type={value.DataType}
-                              data={automaticData.find(v => v.dataType === value.DataType).data}
-                              finishedInitializing={setspreadsheetReady}
-                              getSpreadsheetID={setspreadsheetId}
-                              config={config}
-                      />
-                    </div>)
+                    : workspaceAutomatic && workspaceAutomatic.map((value, index) => {
+                      return <div key={index} className={value.DataType !== selectedDataType ? "hidden" : "block w-full h-full"}>
+                        <Sheets 
+                            key={index}
+                            type="review"
+                            form_type={value.DataType}
+                            data={automaticData.find(v => v.dataType === value.DataType).data}
+                            finishedInitializing={setspreadsheetReady}
+                            getSpreadsheetID={setspreadsheetId}
+                            config={config}
+                            getAutomaticType={setAutomaticType}
+                        />
+                      </div>
+                    })
             
                 }
               </div>
@@ -515,11 +617,3 @@ export async function getServerSideProps(context: any) {
     },
   };
 }
-// : workspaceAutomatic && workspaceAutomatic.find(value => value.DataType === selectedDataType) && automaticData && <Sheets
-//                           type="review"
-//                           form_type={workspaceAutomatic.find(value => value.DataType === selectedDataType).DataType}
-//                           data={automaticData.find(value => value.dataType === selectedDataType).data}
-//                           finishedInitializing={setspreadsheetReady}
-//                           getSpreadsheetID={setspreadsheetId}
-//                           config={config}
-//                       />
