@@ -183,6 +183,8 @@ export const saveDocument = async (
       return res;
     });
 
+  console.log("old_workspace_data",old_workspace_data);
+
   Object.keys(old_workspace_data[0]).some(key => {
     if (old_workspace_data[0][key] !== workspaceData[key]) {
       workspace_data_changed = true;
@@ -242,6 +244,7 @@ export const saveDocument = async (
   );
   // fetch original data from database
   const old_data = await init_data(config, router, workspaceData, automaticType ? automaticType : undefined);
+  console.log("old_data", old_data);
 
   // Fetch header from spreadsheet
   const spreadsheet_header = await getHeader(
@@ -336,6 +339,7 @@ export const saveDocument = async (
     }),
   );
   var idx_row = 0;
+  let data = [];
   if (spreadsheet_data.response) {
     for (
       idx_row;
@@ -444,6 +448,7 @@ export const saveDocument = async (
       logDebug(
         `${row} ${idx_row} ${idx_row < old_data.data_content.length - 1}`,
       );
+      data.push(row);
       // if change in row is detected then update the data in the database
       if (
         changed &&
@@ -584,6 +589,7 @@ export const saveDocument = async (
         }
       }
     }
+    localStorage.setItem(automaticType ? automaticType : String(router.query.form_type), JSON.stringify(data));
   } else {
     if (old_data.data_content.length > 0) {
       old_data.data_content.forEach(async (record, idx_row_del) => {
@@ -684,7 +690,7 @@ export const downloadWorkspace = async (
       .then(blob => {
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `${workspaceData.workspace_name}`;
+        link.download = `${workspaceData.workspace_name}_${workspaceData.DataType || router.query.form_type}`;
         link.click();
       })
       .catch(err => {

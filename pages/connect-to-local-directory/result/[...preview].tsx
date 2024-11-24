@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import * as XLSX from "xlsx-js-style";
@@ -32,14 +33,13 @@ interface AutomaticDataStructure {
   otherData: any[];
   fileFormat: string;
   dataType: string;
+  fileName: string[];
 }
 
 export default function Preview({ config, preview }: Props) {
   const [data, setData] = useState([{}]);
   const [workspace, setWorkspace] = useState<UploadDocumentSettings>();
   const [workspaceAutomatic, setWorkspaceAutomatic] = useState<UploadDocumentSettings[]>(); 
-  const [cellBase, setCellBase] = useState<Matrix<CellBase<any>>>();
-  const [load, setLoad] = useState<boolean>(false);
   const router = useRouter();
   const [spreadsheetReady, setspreadsheetReady] = useState(false);
   const [spreadsheetId, setspreadsheetId] = useState();
@@ -55,87 +55,53 @@ export default function Preview({ config, preview }: Props) {
   const [submission, setSubmission] = useState(['Quarterly', 'Relinquishment', 'Termination', 'Spec New', 'Spec Ext', 'Spec Term', 'Joint Study', 'DIPA']);
 
   useEffect(() => {
-    const confirmedData = localStorage.getItem("confirmedData");
-    if(confirmedData) setAutomaticData(JSON.parse(confirmedData));
+    if(preview === "index") {
+      const confirmedData = localStorage.getItem("confirmedData");
+      if(confirmedData) {
+        setAutomaticData(JSON.parse(confirmedData));
+        const workspaceData = localStorage.getItem("workspaceData");
+        if(workspaceData) {
+          let parseWorkspaceData = JSON.parse(workspaceData);
+          const parseConfirmedData = JSON.parse(confirmedData);
+          if(parseWorkspaceData.length < parseConfirmedData.length) {
+            const diff = parseConfirmedData.length - parseWorkspaceData.length;
+            parseWorkspaceData = [...parseWorkspaceData, ...parseWorkspaceData.slice(0, diff).map((value, index) => {
+              let newData = {...value, DataType: parseConfirmedData[parseWorkspaceData.length + index].dataType};
+              return newData;
+            })];
+            setWorkspaceAutomatic(parseWorkspaceData);
+            setSelectedDataType(parseConfirmedData[0].dataType);
+          } else setWorkspaceAutomatic(JSON.parse(workspaceData));
+        } else {
+          const automatic = JSON.parse(confirmedData).map((value) => {
+            return {
+              workspace_name: "",
+              kkks_name: "",
+              working_area: "",
+              submission_type: "",
+              afe_number: null,
+              DataType: value.dataType,
+            }
+          });
+          setSelectedDataType(JSON.parse(confirmedData)[0].dataType);
+          setWorkspaceAutomatic(automatic);
+        }
+      }
+    }
   }, [])
 
   useEffect(() => {
-    if(preview === "index") {
-      if(automaticData) {
-        const automatic = automaticData.map((value) => {
-          return {
-            workspace_name: "",
-            kkks_name: "Acme.Co",
-            working_area: "",
-            submission_type: "",
-            afe_number: null,
-            DataType: value.dataType,
-          }
-        });
-        setSelectedDataType(automaticData[0].dataType);
-        setWorkspaceAutomatic(automatic);
+    if(preview !== "index") {
+      const datas = localStorage.getItem(`confirmed${preview}`);
+      const formData = localStorage.getItem("data");
+      if (datas) {
+        setData(JSON.parse(datas));
+      }
+      if (formData) {
+        setWorkspace(JSON.parse(formData));
       }
     }
-  }, [automaticData])
-
-  useEffect(() => {
-    const datas = localStorage.getItem(`confirmed${preview}`);
-    const formData = localStorage.getItem("data");
-    if (datas) {
-      setData(JSON.parse(datas));
-    }
-    if (formData) {
-      setWorkspace(JSON.parse(formData));
-    }
   }, []);
-
-  useEffect(() => {
-    if (data.length > 0 && typeof data[0] === "object") {
-      const headingData = Object.keys(data[0]).map((key) => {
-        return { value: key, readOnly: true };
-      });
-      const contentsData: { value: unknown; readOnly: boolean }[][] = [];
-      data.map((value) => {
-        const contentData = Object.values(value).map((val) => {
-          return { value: val, readOnly: false };
-        });
-        contentsData.push(contentData);
-      });
-      const cellData = [headingData, ...contentsData];
-      setCellBase(cellData);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (load && cellBase) {
-      const key = cellBase[0].map((items) => {
-        return items?.value;
-      });
-      cellBase.map((items, index) => {
-        if (index > 0) {
-          const datas = Object.values(data[index - 1]);
-          let id = 0;
-          let thekey = null;
-          const changesData = items.find((value, i) => {
-            if (datas[i] !== items[i]?.value) {
-              id = index;
-              thekey = key[i];
-              return value;
-            }
-          });
-          if (thekey && id > 0) {
-            let updateData = [...data];
-            updateData[id - 1] = {
-              ...updateData[id - 1],
-              [thekey]: changesData?.value,
-            };
-            setData(updateData);
-          }
-        }
-      });
-      setLoad(false);
-    }
-  }, [load]);
 
   useEffect(() => {
     const handleWindowClose = e => {
@@ -195,10 +161,28 @@ export default function Preview({ config, preview }: Props) {
   }, [dispatch, spreadsheetReady]);
 
   const addMoreData = () => {
-    localStorage.removeItem(preview);
-    localStorage.removeItem(`${preview}Data`);
-    localStorage.removeItem(`confirmed${preview}`);
-    localStorage.setItem(`confirmed${preview}`, JSON.stringify(data));
+    if(preview !== "index") {
+      localStorage.removeItem(preview);
+      localStorage.removeItem(`${preview}Data`);
+      localStorage.removeItem(`confirmed${preview}`);
+      localStorage.setItem(`confirmed${preview}`, JSON.stringify(data));
+    } else {
+      // const data = automaticData.map((value) => {
+      //   const datas = localStorage.getItem(value.dataType);
+      //   if(datas) {
+      //     const parsedData = JSON.parse(datas);
+      //     const pretty_data = parsedData.map((val) =>  {
+      //       return Object.entries(val).reduce((acc, [key, item]) => {
+      //         acc[key.toUpperCase()] = item;
+      //         return acc;
+      //       }, {});
+      //     });
+      //     return {data: pretty_data, otherData: value.otherData, fileFormat: value.fileFormat, dataType: value.dataType, fileName: value.fileName}
+      //   } else return undefined;
+      // }).filter(value => value !== undefined);
+      localStorage.setItem('workspaceData', JSON.stringify(workspaceAutomatic));
+      // localStorage.setItem("data", JSON.stringify(data));
+    }
     router.push(`/connect-to-local-directory/${preview}`);
   };
 
@@ -226,6 +210,8 @@ export default function Preview({ config, preview }: Props) {
         );
         await delay(1000);
         router.push("/");
+      } else {
+        addMoreData();
       }
     }
   }
@@ -249,6 +235,8 @@ export default function Preview({ config, preview }: Props) {
             localStorage.removeItem(`${preview}Data`);
             localStorage.removeItem(`confirmed${preview}`);
             localStorage.removeItem('data');
+            localStorage.removeItem("confirmedData");
+            localStorage.removeItem('workspaceData');
             await delay(1000);
             dispatch(
               displayErrorMessage({
@@ -337,12 +325,26 @@ export default function Preview({ config, preview }: Props) {
     router.events.emit('routeChangeComplete');
   };
 
-  const downloadWorkspaceHandler = () => {
+  const downloadOperation = async () => {
+    if(preview === "index") {
+      if(workspaceAutomatic) {
+        Object.entries(multiSpreadSheetId).map(async ([key, value]) => {
+          const workspaceData = {...workspaceAutomatic.find(value => value.DataType === key), DataType: key, workspace_name: `record_${workspaceAutomatic.find(value => value.DataType === key).afe_number}`};
+          await makenew(workspaceData, key);
+          await downloadWorkspaceHandler(value as string, workspaceData, key);
+        });
+      }
+    } else {
+      await downloadWorkspaceHandler(spreadsheetId, workspace);
+    }
+  }
+
+  const downloadWorkspaceHandler = async (spreadsheetId: string, workspace: UploadDocumentSettings, automatic?: string) => {
     router.events.emit('routeChangeStart');
-    saveDocument(null, router, config, spreadsheetId, workspace, dispatch)
+    saveDocument(null, router, config, spreadsheetId, workspace, dispatch, automatic?automatic:undefined)
       .then(async result => {
         if (result.success) {
-          downloadWorkspace(router, config, workspace, dispatch)
+          downloadWorkspace(router, config, workspace, dispatch, automatic)
             .then(result => {
               if (result.success) {
                 dispatch(
@@ -386,7 +388,7 @@ export default function Preview({ config, preview }: Props) {
         <div className="flex flex-col items-center w-full gap-8">
           <div className="flex flex-col w-full bg-white rounded-xl border-gray-400 border-2 overflow-hidden items-center">
             <h1 className="w-full bg-gray-300 p-3 text-black font-bold text-base">Header</h1>
-            {workspace ? (
+            {workspace || workspaceAutomatic ? (
               <form className="w-full flex flex-col">
                 <div className="border-gray-400 border-y-2 flex items-center justify-between w-full px-5 py-2 ">
                   <div className="flex flex-row gap-10">
@@ -395,7 +397,27 @@ export default function Preview({ config, preview }: Props) {
                     </label>
                     <p className="text-gray-400">( KKKS Name )</p>
                   </div>
-                  <input type="text" className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black" placeholder="Nama KKKS" value={"Acme.Co"} />
+                  {
+                    preview !== "index"
+                      ? <input type="text" className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-grey" placeholder="Nama KKKS" value={"Acme.Co"} />
+                      : <input
+                          type="text"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-grey"
+                          placeholder="KKKS Name"
+                          value={workspaceAutomatic ? workspaceAutomatic.find(value => value.DataType !== selectedDataType).kkks_name : ""}
+                          onChange={(e) => {
+                            if(workspaceAutomatic) {
+                              const updated =  workspaceAutomatic.map((value) => {
+                                return {
+                                  ...value,
+                                  kkks_name: e.target.value,
+                                }
+                              });
+                              setWorkspaceAutomatic(updated);
+                            }
+                          }}
+                        />
+                  }
                 </div>
                 <div className="border-gray-400 border-y-2 flex items-center justify-between w-full px-5 py-2 ">
                   <div className="flex flex-row gap-10">
@@ -408,7 +430,7 @@ export default function Preview({ config, preview }: Props) {
                     preview !== "index"
                       ? <input
                           type="text"
-                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-grey"
                           placeholder="Nama Wilayah Kerja"
                           value={workspace.working_area ?workspace.working_area : ""}
                           onChange={(e) =>
@@ -422,7 +444,7 @@ export default function Preview({ config, preview }: Props) {
                         />
                       : <input
                           type="text"
-                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-grey"
                           placeholder="Nama Wilayah Kerja"
                           value={workspaceAutomatic ? workspaceAutomatic.find(value => value.DataType !== selectedDataType).working_area : ""}
                           onChange={(e) => {
@@ -455,7 +477,7 @@ export default function Preview({ config, preview }: Props) {
                         <option value="">{"Choose Submission type"}</option>
                       </select>
                     : <select 
-                        value={workspaceAutomatic && workspaceAutomatic.find(value => value.DataType === selectedDataType).submission_type} 
+                        value={workspaceAutomatic &&  workspaceAutomatic.find(value => value.DataType === selectedDataType) && workspaceAutomatic.find(value => value.DataType === selectedDataType).submission_type} 
                         className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black" 
                         onChange={(e) => {
                           if(workspaceAutomatic) {
@@ -488,7 +510,7 @@ export default function Preview({ config, preview }: Props) {
                     preview !== "index"
                       ? <input
                           type="number"
-                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-grey"
                           placeholder="Nama KKKS"
                           value={workspace.afe_number ? workspace.afe_number : ""}
                           onChange={(e) =>
@@ -503,9 +525,9 @@ export default function Preview({ config, preview }: Props) {
                         />
                       : <input
                           type="number"
-                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-grey"
                           placeholder="AFE Number"
-                          value={workspaceAutomatic && workspaceAutomatic.find(value => value.DataType === selectedDataType).afe_number || ""}
+                          value={workspaceAutomatic && workspaceAutomatic.find(value => value.DataType === selectedDataType) && workspaceAutomatic.find(value => value.DataType === selectedDataType).afe_number || ""}
                           onChange={(e) => {
                             if(workspaceAutomatic) {
                               const updated =  workspaceAutomatic.map((value) => {
@@ -531,7 +553,7 @@ export default function Preview({ config, preview }: Props) {
                     preview !== "index"
                       ? <input
                           type="text"
-                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-black"
+                          className="p-2 w-96 bg-gray-300 rounded-lg text-black placeholder:text-grey"
                           placeholder="Nama KKKS"
                           value={preview
                             .split("_")
@@ -555,14 +577,14 @@ export default function Preview({ config, preview }: Props) {
               <div>{"Waiting..."}</div>
             )}
           </div>
-          {cellBase ? (
+          {workspaceAutomatic && preview === "index" || preview !== "index" ? (
             <div className="flex flex-col w-full h-[100vh] bg-white rounded-xl border-gray-400 border-2 gap-3 overflow-hidden items-center">
               <h1 className="w-full bg-gray-300 p-3 text-black font-bold text-base">Data</h1>
               <div className="flex flex-row self-start">
-                <button className="bg-black text-white rounded-xl p-2 mx-2 font-bold hover:bg-white hover:text-black" onClick={downloadWorkspaceHandler}>
+                <button className="bg-black text-white rounded-xl p-2 mx-2 font-bold hover:bg-white hover:text-black" onClick={() => downloadOperation()}>
                   Export to XLSX
                 </button>
-                <button className="bg-black text-white rounded-xl p-2 mx-2 font-bold hover:bg-white hover:text-black" onClick={addMoreData}>
+                <button className="bg-black text-white rounded-xl p-2 mx-2 font-bold hover:bg-white hover:text-black" onClick={() => addMoreData()}>
                   Add More Data
                 </button>
                 <button className="bg-black text-white rounded-xl p-2 mx-2 font-bold hover:bg-white hover:text-black" onClick={() => saveDocumentOperation(true)}>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {useState, useEffect} from 'react';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
@@ -34,21 +35,12 @@ declare global {
   }
 }
 
-interface Size {
-  width: string;
-  height: string;
-}
-
-interface Cordinate {
-  x: number;
-  y: number;
-}
-
 interface AutomaticDataStructure {
   data: any[];
   otherData: any[];
   fileFormat: string;
   dataType: string;
+  fileName: string[];
 }
 
 function RowComponent({label, value, index}: any) {
@@ -64,18 +56,17 @@ function RowComponent({label, value, index}: any) {
 
 export default function Preview({config, preview}: Props) {
   const [directory, setDirectory] = useState<Directory>();
+  const [allFile, setAllFile] = useState<Directory[]>([]);
   const [data, setData] = useState<any[]>();
   const [file, setFile] = useState<string[]>();
-  const [fileItem, setFileItem] = useState<File>();
   const [otherData, setOtherData] = useState<any[]>();
   const [showIndex, setShowIndex] = useState(0);
-  const [fileDrag, setFileDrag] = useState<string[]>();
-  const [fileDragTemp, setFileDragTemp] = useState<string>();
   const [newWorkspace, setNewWorkspace] = useState<UploadDocumentSettings>();
-  const [formatFile, newFormatFile] = useState(["SGY/SEGY", "LAS"]);
+  const [formatFile, setFormatFile] = useState(["SGY/SEGY", "LAS"]);
   const [selectedFormatFile, setSelectedFormatFile] = useState<string>("");
   const [selectedDataType, setSelectedDataType] = useState<string>("");
-  const [automaticData, setAutomaticData] = useState<AutomaticDataStructure[]>();
+  const [automaticData, setAutomaticData] = useState<AutomaticDataStructure[]>([]);
+  const [triggeredAutomaticData, setTriggeredAutomaticData] = useState<AutomaticDataStructure>();
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -89,19 +80,49 @@ export default function Preview({config, preview}: Props) {
   }, [router, preview]);
 
   useEffect(() => {
+    if(preview === "index") {
+      const oldAutomaticData = localStorage.getItem("data");
+      if(oldAutomaticData) {
+        setAutomaticData(JSON.parse(oldAutomaticData));
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     setShowIndex(0);
-  }, [selectedDataType, selectedFormatFile])
+  }, [selectedDataType, selectedFormatFile]);
 
   useEffect(() => {
     setSelectedDataType("");
-    setDirectory(undefined);
-  }, [selectedFormatFile])
+  }, [selectedFormatFile]);
 
-  const readFileContent = async (fileHandle: any) => {
+  useEffect(() => {
+    if(triggeredAutomaticData) {
+      if(automaticData && automaticData.some((value) => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile)) {
+        const automaticTemp = automaticData.find((value) => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile);
+        const automaticStore = {
+          data: [...automaticTemp.data, ...triggeredAutomaticData.data],
+          otherData: [...automaticTemp.otherData, ...triggeredAutomaticData.otherData],
+          fileFormat: selectedFormatFile,
+          dataType: selectedDataType,
+          fileName: [...automaticTemp.fileName, ...triggeredAutomaticData.fileName]
+        };
+        setAutomaticData((current: AutomaticDataStructure[]) => {
+          return current.map((value) => {
+            if(value.dataType === selectedDataType) return automaticStore;
+            else return value;
+          });
+        });
+      } else {
+        setAutomaticData(prev => [...prev, triggeredAutomaticData]);
+      }
+    }
+  }, [triggeredAutomaticData])
+
+  const readFileContent = async (fileHandle: Directory) => {
     try {
       if (fileHandle.type === 'file') {
         const file = await fileHandle.file;
-        setFileItem(file);
         const formData = new FormData();
         formData.append('file', file);
         formData.append('format', newWorkspace?.FileFormat || selectedFormatFile);
@@ -126,34 +147,14 @@ export default function Preview({config, preview}: Props) {
                 data: [JSON.parse(response.data.result)],
                 otherData: [JSON.parse(response.data.data)],
                 fileFormat: selectedFormatFile,
-                dataType: selectedDataType
+                dataType: selectedDataType, 
+                fileName: [file.name]
               };
-              if(automaticData && automaticData.some((value) => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile)) {
-                const automaticTemp = automaticData.find((value) => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile);
-                const automaticStore = {
-                  data: [...automaticTemp.data, ...automatic.data],
-                  otherData: [...automaticTemp.otherData, ...automatic.otherData],
-                  fileFormat: selectedFormatFile,
-                  dataType: selectedDataType
-                };
-                setAutomaticData((current: AutomaticDataStructure[]) => {
-                  return current.map((value) => {
-                    if(value.dataType === selectedDataType) return automaticStore;
-                    else return value;
-                  });
-                });
-              } else {
-                if(automaticData) {
-                  setAutomaticData([...automaticData, automatic]);
-                } else {
-                  setAutomaticData([automatic]);
-                }
-              }
+              setTriggeredAutomaticData(automatic);
             }
           })
           .catch((e) => {
             console.log(e);
-            console.log('Gagal membaca file.');
           });
       } else {
         console.error('Handle bukan file, tidak dapat membaca isi file.');
@@ -196,7 +197,7 @@ export default function Preview({config, preview}: Props) {
     for await (const entry of directory.values()) {
       if (entry.kind === 'file') {
         if (
-          newWorkspace?.FileFormat?.toLowerCase().includes(entry.name.split('.')[1].toLowerCase()) || (selectedFormatFile && selectedFormatFile.toLowerCase().includes(entry.name.split('.')[1].toLowerCase()) && preview === "index") 
+          newWorkspace?.FileFormat?.toLowerCase().includes(entry.name.split('.')[1].toLowerCase()) || ((entry.name.split('.')[1].toLowerCase().includes("las") || entry.name.split('.')[1].toLowerCase().includes("segy") || entry.name.split('.')[1].toLowerCase().includes('sgy')) && preview === "index") 
         ) {
           items.push({
             name: entry.name,
@@ -204,6 +205,12 @@ export default function Preview({config, preview}: Props) {
             path: `${path}/${entry.name}`,
             file: entry.getFile(),
           });
+          setAllFile(prev => [...prev, {
+            name: entry.name,
+            type: 'file',
+            path: `${path}/${entry.name}`,
+            file: entry.getFile(),
+          }]);
         }
       } else if (entry.kind === 'directory') {
         const subDirectoryItems: Directory[] = await readDirectory(
@@ -244,26 +251,72 @@ export default function Preview({config, preview}: Props) {
     }
   };
 
+  const handleRemoveFile = (items: Directory, i: number) => {
+    if(preview !== "index") {
+      const indexes = file.map((value, index) => {
+        if(value === items.name) return index;
+      }).find(value => value !== undefined);
+      if(showIndex >= indexes && showIndex !== 0) setShowIndex(showIndex - 1);
+      setFile(prev => {
+        return prev?.filter(value => value !== items.name);
+      });
+      setData(prev => {
+        return prev?.filter((value) => {
+          return value['ORIGINAL_FILE_NAME'] !== items.name;
+        });
+      });
+      setOtherData(prev => {
+        return prev?.filter((value, index) => {
+          if (index !== indexes) return value;
+        });
+      });
+    } else {
+      const dataType = automaticData.find(value => value.dataType === selectedDataType);
+      let index = 0;
+      dataType.fileName.forEach((value, indexes) => {
+        if(value === items.name) index = indexes
+      });
+      const newDataType = {
+        ...dataType,
+        data: dataType.data.filter((value, indexes) => indexes !== index),
+        otherData: dataType.otherData.filter((value, indexes) => indexes !== index),
+        fileName: dataType.fileName.filter((value, indexes) => indexes !== index),
+      }
+      if(newDataType.data.length !== 0 && newDataType.otherData.length !== 0 && newDataType.fileName.length !== 0) {
+        setAutomaticData([
+          ...automaticData.filter(value => value.dataType !== selectedDataType),
+          newDataType
+        ]);
+        if(showIndex >= index && showIndex !== 0) {
+          setShowIndex(showIndex - 1);
+        } 
+      } else {
+        setAutomaticData(automaticData.filter(value => value.dataType !== selectedDataType));
+      }
+    }
+  }
+
   const folderComponent = (lists: Directory[], isopen?: boolean) => {
     return (
-      <div className={`flex-col gap-10 ps-10`}>
+      <div className={`flex-col`}>
         {Array.from(lists).map((items, index) => {
           return (
             <div
               key={index}
-              className={`flex flex-row gap-2 py-2 ${
+              className={`flex flex-row gap-2 ${
                 isopen ? 'flex' : 'hidden'
               }`}>
-              {items.type === 'file' ? (
+              {(items.type === 'file' && preview !== "index") || (items.type === 'file' && selectedFormatFile.toLowerCase().includes(items.name.split(".")[1]) && preview === "index") ? (
                 <div
-                  className={`flex gap-7 justify-start items-center hover:bg-gray-300 p-2 cursor-pointer break-all w-full file ${
-                    file?.includes(items.name) || fileDrag?.includes(items.name)
+                  className={`flex gap-5 justify-start items-center hover:bg-gray-300 cursor-pointer break-all w-full file px-10 py-4 ${
+                    file?.includes(items.name) || (automaticData && automaticData.filter((value) => value.dataType === selectedDataType).some(value => value.fileName.some(val => val === items.name)))
                       ? 'bg-gray-300'
                       : 'bg-inherit'
                   }`}
                   onClick={() => {
-                    if (file) {
-                      if (!file.includes(items.name)) readFileContent(items);
+                    if ((file && preview !== "index") || (automaticData && preview === "index")) {
+                      if ((file && !file.includes(items.name) && preview !== "index") || (automaticData && !automaticData.filter((value) => value.dataType === selectedDataType).some(value => value.fileName.some(val => val === items.name)) && preview === "index")) readFileContent(items);
+                      else handleRemoveFile(items, 0); 
                     } else {
                       readFileContent(items);
                     }
@@ -275,36 +328,12 @@ export default function Preview({config, preview}: Props) {
                     height={24}
                   />
                   <p className="text-sm">{items.name}</p>
-                  {file?.includes(items.name) ? (
-                    <button
-                      className="z-10 justify-self-end text-end rounded-full bg-red-500 px-2 w-5 h-5 flex items-center justify-center font-bold text-white text-[0.5rem]"
-                      onClick={async e => {
-                        e.preventDefault();
-                        let i = 0;
-                        setFile(prev => {
-                          return prev?.filter(value => value !== items.name);
-                        });
-                        setData(prev => {
-                          return prev?.filter((value, index) => {
-                            i = index;
-                            return value['ORIGINAL_FILE_NAME'] !== items.name;
-                          });
-                        });
-                        setOtherData(prev => {
-                          return prev?.filter((value, index) => {
-                            if (index !== i) return value;
-                          });
-                        });
-                      }}>
-                      X
-                    </button>
-                  ) : null}
+                  
                 </div>
-              ) : (
+              ) : items.type !== "file" && (
                 <div
                   key={index}
-                  className={`flex flex-col gap-3`}
-                  onMouseDown={handleMouseDown}>
+                  className={`flex flex-col px-8 py-4`}>
                   <button
                     className="flex flex-row items-center gap-3 hover:bg-gray-300 p-2 break-all"
                     onClick={() => toggleFolder(items.path)}>
@@ -340,86 +369,6 @@ export default function Preview({config, preview}: Props) {
     );
   };
 
-  const [start, setStart] = useState<Cordinate>({x: 0, y: 0});
-  const [now, setNow] = useState<Cordinate>({x: 0, y: 0});
-  const [size, setSize] = useState<Size>();
-  const [press, setPress] = useState<boolean>(false);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!press) {
-      setPress(true);
-      setStart({x: e.clientX, y: e.clientY});
-      setNow({x: e.clientX, y: e.clientY});
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (press) {
-      setPress(false);
-      setStart({x: 0, y: 0});
-      setNow({x: 0, y: 0});
-      setSize({width: `0px`, height: `0px`});
-    }
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (press) {
-      if (e.clientX >= start.x) {
-        setNow(prev => {
-          return {...prev, x: start.x};
-        });
-      } else {
-        setNow(prev => {
-          return {...prev, x: e.clientX};
-        });
-      }
-      if (e.clientY >= now.y) {
-        setNow(prev => {
-          return {...prev, y: start.y};
-        });
-      } else {
-        setNow(prev => {
-          return {...prev, y: e.clientY};
-        });
-      }
-      setSize({
-        width: `${Math.abs(start.x - e.clientX)}px`,
-        height: `${Math.abs(start.y - e.clientY)}px`,
-      });
-      const eventTarget = e.target as HTMLElement;
-      if (eventTarget.classList.contains('file')) {
-        setFileDragTemp(eventTarget.children[1].innerHTML);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (fileDragTemp) {
-      if (fileDrag) {
-        if (!fileDrag.includes(fileDragTemp)) {
-          setFileDrag([...fileDrag, fileDragTemp]);
-        }
-      } else {
-        setFileDrag([fileDragTemp]);
-      }
-    }
-  }, [fileDragTemp]);
-
-  useEffect(() => {
-    if (press) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    } else {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [press]);
-
   const getDirectory = (dir: Directory[], value: string) => {
     Array.from(dir).map(async lists => {
       if (lists.type === 'file' && lists.name === value) {
@@ -430,16 +379,45 @@ export default function Preview({config, preview}: Props) {
     });
   };
 
-  const handleDragSelectFile = () => {
-    if (fileDrag && directory) {
-      fileDrag.forEach(value => {
-        if (directory.items) {
-          getDirectory(directory.items, value);
+  const handleSelectAll = async () => {
+    if(preview === "index") {
+      if(automaticData && automaticData.some(value => value.dataType === selectedDataType)) {
+        const dataType = automaticData.find(value => value.dataType === selectedDataType);
+        for (const value of allFile.filter(value => selectedFormatFile.toLowerCase().includes(value.name.split(".")[1].toLowerCase()))) {
+          if (!dataType.fileName.some(val => val === value.name)) {
+            await readFileContent(value);
+          }
         }
-      });
-      setFileDrag(undefined);
+      } else {
+        for (const value of allFile.filter(value => selectedFormatFile.toLowerCase().includes(value.name.split(".")[1].toLowerCase()))) {
+          await readFileContent(value);
+        }
+      }
+    } else {
+      if(file) {
+        for (const value of allFile) {
+          if (!file.some(val => val === value.name)) {
+            await readFileContent(value);
+          }
+        }
+      } else {
+        for (const value of allFile) {
+          await readFileContent(value);
+        }
+      }
     }
-  };
+  }
+
+  const handleRemoveAll = () => {
+    if(preview === "index") {
+      const filteredAutomaticData = automaticData.filter(value => value.dataType !== selectedDataType);
+      setAutomaticData(filteredAutomaticData);
+    } else {
+      setFile(null);
+      setData(null);
+      setOtherData(null);
+    }
+  }
 
   const makenew = async () => {
     router.events.emit('routeChangeStart');
@@ -496,7 +474,6 @@ export default function Preview({config, preview}: Props) {
       }, 0);
       router.events.emit('routeChangeComplete');
     } catch (error) {
-      // Handle error and display error message
       showErrorToast(dispatch, error);
     }
     await delay(1500);
@@ -518,13 +495,7 @@ export default function Preview({config, preview}: Props) {
             </div>
       }
       <div
-        className="flex min-h-screen flex-col p-7 gap-5 relative"
-        onMouseDown={handleMouseDown}>
-        {press && (
-          <div
-            className={`bg-blue-500 opacity-50 border-2 border-blue-900 fixed top-0 left-0`}
-            style={{...size, top: `${now.y}px`, left: `${now.x}px`}}></div>
-        )}
+        className="flex min-h-screen flex-col p-7 gap-5 relative">
         <div className="flex flex-row items-center gap-20 text-black font-bold text-lg">
           <button
             onClick={connectLocalDirectory}
@@ -561,6 +532,15 @@ export default function Preview({config, preview}: Props) {
             <h1 className="font-bold w-full">Files</h1>
             {directory ? (
               <div className="flex flex-col ps-3 gap-3 w-[25vw] h-[60vh] overflow-y-scroll z-10">
+                <div className="flex items-center justify-center gap-5 py-1">
+                  {
+                    (preview !== "index" || selectedDataType) && <button className="bg-green-600 hover:bg-green-900 text-white px-3 py-1 rounded-md font-bold text-sm" onClick={handleSelectAll}>Select All</button>
+                  }
+                  {
+                    ((data && data.length > 0 && preview !== "index") || (automaticData && automaticData.some(value => value.dataType === selectedDataType && value.fileFormat === selectedFormatFile) && preview === "index")) && 
+                      (<button className="bg-red-600 hover:bg-red-900 text-white px-3 py-1 rounded-md font-bold text-sm" onClick={handleRemoveAll}>Remove All</button>)
+                  }
+                </div>
                 <button
                   className="flex flex-row items-center gap-3 hover:bg-gray-300 p-2"
                   onClick={() => toggleFolder(directory.path)}>
@@ -587,22 +567,6 @@ export default function Preview({config, preview}: Props) {
                   directory.items ? directory.items : [],
                   directory.isOpen,
                 )}
-                {fileDrag ? (
-                  <div className="w-72 flex items-center justify-center self-center gap-3">
-                    <button
-                      className="bg-green-500 w-32 self-center rounded-xl font-bold text-white"
-                      onClick={handleDragSelectFile}>
-                      Confirm
-                    </button>
-                    <button
-                      className="bg-red-500 w-32 self-center rounded-xl font-bold text-white"
-                      onClick={() => {
-                        setFileDrag(undefined);
-                      }}>
-                      Remove All Dragging File
-                    </button>
-                  </div>
-                ) : null}
               </div>
             ) : (
               <div className="w-[25vw] h-[60vh] items-center justify-center flex bg-gray-200 font-bold text-xl">

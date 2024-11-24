@@ -1,5 +1,0 @@
-warna placeholder form
-Acme.Co itu dapat di edit
-Penanda select pada connect to local (file sudah dipilih)
-download sekaligus semua file 
-minor bug kalau kenapa di load 2x (optional)

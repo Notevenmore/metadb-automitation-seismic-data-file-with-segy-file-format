@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
@@ -144,7 +145,7 @@ export default function Confirm({ confirm }: Props) {
             confirm === "index" && 
             <select className="border-2 border-black py-1 px-3 rounded-lg bg-white text-black" value={selectedDataType} onChange={(e) => {setSelectedDataType(e.target.value)}} >
               {
-                automaticData.map((value, index) => <option key={index} value={value.dataType}>{value.dataType.replaceAll("_", " ")}</option>)
+                automaticData.map((value, index) => <option key={index} value={value.dataType}>{value.dataType.replaceAll("_", " ").split(" ").map(value => value.charAt(0).toUpperCase() + value.slice(1)).join(" ")}</option>)
               }
               <option value={""}>Choose your data type</option>
             </select>
